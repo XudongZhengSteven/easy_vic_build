@@ -1,0 +1,29 @@
+// TMP Unit formation
+TMP=TMP-273.15;
+TMP@units="C";
+
+// PRES Unit formation
+PRES=PRES/1000;
+PRES@units="kPa";
+
+// VP calcluation
+VP[$time,$lat,$lon]=(SPFH(:,0,:,:)*PRES)/(0.622+SPFH(:,0,:,:));
+VP@units="kPa";
+VP@long_name="Vapor pressure";
+VP@calcluation="(SPFH * PERS) / (0.622 + SPFH)";
+VP@code=0;
+VP@original_name="None";
+VP@table=0;
+
+// WS windspeed calcluation
+WS[$time,$lat,$lon]=(UGRD(:,0,:,:)^2+VGRD(:,0,:,:)^2)^0.5;
+WS@units="m/s";
+WS@long_name="Wind Speed";
+WS@calculation="(UGRD^2+VGRD^2)^0.5";
+WS@code=0;
+WS@original_name="None";
+WS@table=0;
+
+// dimension conversion
+SPFH_d[$time,$lat,$lon]=SPFH(:,0,:,:);
+TMP_d[$time,$lat,$lon]=TMP(:,0,:,:);
