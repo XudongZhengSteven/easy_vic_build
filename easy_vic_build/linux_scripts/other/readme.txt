@@ -1,0 +1,1 @@
+there is a TODO function: formationForcing with NCO in Linux to increase speed
