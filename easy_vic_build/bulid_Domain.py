@@ -8,6 +8,7 @@ from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
 from .tools.utilities import grids_array_coord_map
+from tqdm import *
 
 UTM_proj_map = {"UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "EPSG:32610"},
                 "UTM Zone 11N": {"lon_min": -120, "lon_max": -114, "crs_code": "EPSG:32611"},
@@ -43,7 +44,7 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
     # array init
     mask = np.empty((len(lat_list), len(lon_list)), dtype=int)
     frac = np.empty((len(lat_list), len(lon_list)), dtype=float)
-    for i in grid_shp.index:
+    for i in tqdm(grid_shp.index, colour="green", desc="loop for grids to cal mask, frac"):
         center = grid_shp.loc[i, "point_geometry"]
         cen_lon = center.x
         cen_lat = center.y
@@ -70,7 +71,7 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
     y_length = np.empty((len(lat_list), len(lon_list)), dtype=float)
     
     # loop for grids to calculate area
-    for i in grid_shp_projection.index:
+    for i in tqdm(grid_shp_projection.index, colour="green", desc="loop for grids to cal area, x(y)_length"):
         center = grid_shp_projection.loc[i, "point_geometry"]
         cen_lon = center.x
         cen_lat = center.y

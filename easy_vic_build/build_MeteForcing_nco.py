@@ -373,7 +373,7 @@ def buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
         formationForcing(dpc_VIC_level1, evb_dir, date_period, reverse_lat, check_search, year_re_exp)
     
     elif step == 3:
-    # -------------------- remove temp data --------------------
+    # -------------------- clean temp data --------------------
         print(f"removing {linux_share_temp_clip_dir}")
         shutil.rmtree(linux_share_temp_clip_dir)
         

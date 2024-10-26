@@ -89,7 +89,6 @@ class dataProcess_VIC_level0(dataProcess_base):
         
         return fig, ax
         
-        
 
 class dataProcess_VIC_level1(dataProcess_VIC_level0):
         

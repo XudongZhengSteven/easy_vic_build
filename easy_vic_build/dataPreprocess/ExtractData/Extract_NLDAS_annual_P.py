@@ -29,6 +29,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
     grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
     
     # search grids
+    print("========== search grids for NLDSA annual P ==========")
     searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(dst_lat=grids_lat, dst_lon=grids_lon,
                                                                               src_lat=annual_P_lat, src_lon=annual_P_lon,
                                                                               lat_radius=annual_P_lat_res/2, lon_radius=annual_P_lon_res/2)

@@ -13,7 +13,6 @@ from .tools.params_func.createParametersDataset import createFlowDirectionFile
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
 import matplotlib.pyplot as plt
 from configparser import ConfigParser
-from rvic.parameters import parameters
 
 
 def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
@@ -43,6 +42,7 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     buildParamCFGFile(evb_dir, **cfg_params)
     
     # build rvic parameters
+    from rvic.parameters import parameters
     parameters.parameters(param_cfg_file_path, np=1)
     
 

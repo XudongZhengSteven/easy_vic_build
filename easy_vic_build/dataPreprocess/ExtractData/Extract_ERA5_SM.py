@@ -83,7 +83,7 @@ def ExtractData(grid_shp, period=["19800101", "20101231"], var_name="1", aggrega
         src_lon = np.array(dataset["longitude"].values)
         src_lat = np.array(dataset["latitude"].values)
         
-        searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, 0.25/2, 0.25/2)
+        searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, 0.25/2, 0.25/2, leave=False)
         
         # loop for grid to extract GlobalSnow_SWE
         grid_df_list = []
