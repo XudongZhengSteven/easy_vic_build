@@ -661,8 +661,8 @@ def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searc
     lat_list_level1_2D_flatten = lat_list_level1_2D.flatten()
     
     # search grids
-    if searched_grid_index is None:
-        searched_grid_index = scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1)
+    if searched_grids_index is None:
+        searched_grids_index = scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1)
     
     # ======================= scaling (resample) =======================
     scaling_operator = Scaling_operator()
