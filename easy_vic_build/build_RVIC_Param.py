@@ -25,14 +25,12 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
     
     # cp domain.nc to RVICParam_dir
-    shutil.copy(domainFile_path, os.path.join(RVICParam_dir, "domain.nc"))
-    
-    # cp RVIC_input to RVICParam_dir
-    # RVIC_input_path = os.path.join(RVICParam_dir, "RVIC_input.nc")
+    if not os.path.exists(os.path.join(RVICParam_dir, "domain.nc")):
+        shutil.copy(domainFile_path, os.path.join(RVICParam_dir, "domain.nc"))
     
     # buildFlowDirectionFile
     buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat, stream_acc_threshold)
-
+    
     # buildPourPointFile
     buildPourPointFile(dpc_VIC_level1, evb_dir, **ppf_kwargs)
     
@@ -98,11 +96,12 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     # ====================== build flow drection based on arcpy ======================
     out = buildFlowDirection_arcpy(arcpy_workspace_dir, dem_level1_tif_path, arcpy_python_path, arcpy_python_script_path, stream_acc_threshold)
     # TODO implement Whitebox Workflows to build Flowdirection File
-    
-    # ====================== cp data from workspace to RVICParam_dir and read them ======================
+
+    # cp data from workspace to RVICParam_dir
     shutil.copy(os.path.join(workspace_dir, "flow_direction.tif"), flow_direction_path)
     shutil.copy(os.path.join(workspace_dir, "flow_acc.tif"), flow_acc_path)
     
+    # read
     with rasterio.open(flow_direction_path, 'r', driver='GTiff') as dataset:
         flow_direction_array = dataset.read(1)
         
@@ -112,8 +111,8 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     # ====================== cal flow distance and save it ======================
     flow_direction_distance_map = {"zonal": [64, 4], "meridional": [1, 16], "diagonal": [32, 128, 8, 2]}
     flow_distance_func_map = {"zonal": lambda x_length, y_length: y_length,
-                              "meridional": lambda x_length, y_length: x_length,
-                              "diagonal": lambda x_length, y_length: (x_length**2 + y_length**2)**0.5}
+                            "meridional": lambda x_length, y_length: x_length,
+                            "diagonal": lambda x_length, y_length: (x_length**2 + y_length**2)**0.5}
     
     def flow_distance_funcion(flow_direction, x_length, y_length):
         for k in flow_direction_distance_map:
@@ -128,16 +127,19 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     flow_distance_array = flow_distance_funcion_vect(flow_direction_array, x_length_array, y_length_array)
     
     # save as tif file, transform same as dem
-    if not os.path.exists(flow_distance_path):
-        with rasterio.open(flow_distance_path, 'w', driver='GTiff',
-                           height=flow_distance_array.shape[0],
-                           width=flow_distance_array.shape[1],
-                           count=1,
-                           dtype=flow_distance_array.dtype,
-                           crs=CRS.from_string("EPSG:4326"),
-                           transform=transform,
-                           ) as dst:
-            dst.write(flow_distance_array, 1)
+    with rasterio.open(flow_distance_path, 'w', driver='GTiff',
+                    height=flow_distance_array.shape[0],
+                    width=flow_distance_array.shape[1],
+                    count=1,
+                    dtype=flow_distance_array.dtype,
+                    crs=CRS.from_string("EPSG:4326"),
+                    transform=transform,
+                    ) as dst:
+        dst.write(flow_distance_array, 1)
+    
+    # read
+    with rasterio.open(flow_distance_path, 'r', driver='GTiff') as dataset:
+        flow_distance_array = dataset.read(1)
     
     # ====================== combine them into a nc file ======================
     # create nc file
