@@ -13,20 +13,17 @@ from .tools.params_func.createParametersDataset import createFlowDirectionFile
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
 import matplotlib.pyplot as plt
 from configparser import ConfigParser
-from rvic.parameters import parameters
 
 
 def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
-                        ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=False,
-                        cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):
+                   ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=False,
+                   cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):
     # set dir
-    domainFile_path = os.path.join(evb_dir.DomainFile_dir, "domain.nc")
     RVICParam_dir = evb_dir.RVICParam_dir
     param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
     
     # cp domain.nc to RVICParam_dir
-    if not os.path.exists(os.path.join(RVICParam_dir, "domain.nc")):
-        shutil.copy(domainFile_path, os.path.join(RVICParam_dir, "domain.nc"))
+    copy_domain(evb_dir)
     
     # buildFlowDirectionFile
     buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat, stream_acc_threshold)
@@ -41,8 +38,18 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     buildParamCFGFile(evb_dir, **cfg_params)
     
     # build rvic parameters
+    from rvic.parameters import parameters
     parameters.parameters(param_cfg_file_path, np=1)
+
+
+def copy_domain(evb_dir):
+    # set dir
+    domainFile_path = os.path.join(evb_dir.DomainFile_dir, "domain.nc")
+    RVICParam_dir = evb_dir.RVICParam_dir
     
+    # cp domain.nc to RVICParam_dir
+    shutil.copy(domainFile_path, os.path.join(RVICParam_dir, "domain.nc"))
+
 
 def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0):
     # ====================== set dir and path ======================

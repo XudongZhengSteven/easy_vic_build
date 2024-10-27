@@ -68,7 +68,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot=True, save_original=False, ch
     # searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon, 
     #                                                          src_lat=umd_lat_clip, src_lon=umd_lon_clip,
     #                                                          search_num=1)
-
+    print("========== search grids for UMD 1km ==========")
     searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat=grids_lat, dst_lon=grids_lon,
                                                                       src_lat=umd_lat_clip, src_lon=umd_lon_clip,
                                                                       lat_radius=grid_shp_res/2, lon_radius=grid_shp_res/2)

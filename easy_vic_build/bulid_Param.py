@@ -127,6 +127,7 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
         
     # TODO Q1: different layer have different global params? Ksat: 3 or 9?
     """
+    print("building Param_level0... ...")
     ## ====================== set dir and path ======================
     # set path
     params_dataset_level0_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level0.nc")
@@ -404,7 +405,8 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     return params_dataset_level0
 
 
-def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True):
+def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=None):
+    print("building Param_level1... ...")
     ## ====================== set dir and path ======================
     # set path
     params_dataset_level1_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level1.nc")
@@ -439,7 +441,10 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True):
     params_dataset_level1.variables["lats"][:, :] = grid_array_lats
     
     # run_cell, bool, same as mask in DomainFile
-    mask, frac, area, x_length, y_length = cal_mask_frac_area_length(dpc_VIC_level1, reverse_lat=reverse_lat, plot=False)  #* all lat set as reverse
+    if domain_dataset is None:
+        mask, frac, area, x_length, y_length = cal_mask_frac_area_length(dpc_VIC_level1, reverse_lat=reverse_lat, plot=False)  #* all lat set as reverse
+    else:
+        mask = domain_dataset.variables["mask"][:, :]  #* note the reverse_lat should be same
     params_dataset_level1.variables["run_cell"][:, :] = mask
     
     # grid_cell
@@ -607,8 +612,7 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True):
     return params_dataset_level1
 
 
-def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1):
-    # ======================= get grids match (search grids) ======================= 
+def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1):
     # read lon, lat from params, cal res
     lon_list_level0, lat_list_level0 = params_dataset_level0.variables["lon"][:], params_dataset_level0.variables["lat"][:]
     lon_list_level1, lat_list_level1 = params_dataset_level1.variables["lon"][:], params_dataset_level1.variables["lat"][:]
@@ -629,8 +633,36 @@ def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1):
     
     # search grids
     searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat=lat_list_level1_2D_flatten, dst_lon=lon_list_level1_2D_flatten,
-                                                                      src_lat=lat_list_level0, src_lon=lon_list_level0,
-                                                                      lat_radius=res_lat_level1, lon_radius=res_lon_level1)
+                                                                        src_lat=lat_list_level0, src_lon=lon_list_level0,
+                                                                        lat_radius=res_lat_level1, lon_radius=res_lon_level1)
+    
+    return searched_grids_index
+
+
+def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_index=None):
+    print("scaling Param_level0 to Param_level1... ...")
+    # ======================= get grids match (search grids) ======================= 
+    # read lon, lat from params, cal res
+    lon_list_level0, lat_list_level0 = params_dataset_level0.variables["lon"][:], params_dataset_level0.variables["lat"][:]
+    lon_list_level1, lat_list_level1 = params_dataset_level1.variables["lon"][:], params_dataset_level1.variables["lat"][:]
+    lon_list_level0 = np.ma.filled(lon_list_level0, fill_value=np.NAN)
+    lat_list_level0 = np.ma.filled(lat_list_level0, fill_value=np.NAN)
+    lon_list_level1 = np.ma.filled(lon_list_level1, fill_value=np.NAN)
+    lat_list_level1 = np.ma.filled(lat_list_level1, fill_value=np.NAN)
+    
+    res_lon_level0 = (max(lon_list_level0) - min(lon_list_level0)) / (len(lon_list_level0) - 1)
+    res_lat_level0 = (max(lat_list_level0) - min(lat_list_level0)) / (len(lat_list_level0) - 1)
+    res_lon_level1 = (max(lon_list_level1) - min(lon_list_level1)) / (len(lon_list_level1) - 1)
+    res_lat_level1 = (max(lat_list_level1) - min(lat_list_level1)) / (len(lat_list_level1) - 1)
+    
+    # meshgrid and flatten
+    lon_list_level1_2D, lat_list_level1_2D = np.meshgrid(lon_list_level1, lat_list_level1)
+    lon_list_level1_2D_flatten = lon_list_level1_2D.flatten()
+    lat_list_level1_2D_flatten = lat_list_level1_2D.flatten()
+    
+    # search grids
+    if searched_grids_index is None:
+        searched_grids_index = scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1)
     
     # ======================= scaling (resample) =======================
     scaling_operator = Scaling_operator()
@@ -1052,6 +1084,6 @@ def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1):
     params_dataset_level1.variables["rough"][:, :] = rough_resampled_grids_2D
     params_dataset_level1.variables["snow_rough"][:, :] = snow_rough_resampled_grids_2D
 
-    return params_dataset_level1
+    return params_dataset_level1, searched_grids_index
 
 

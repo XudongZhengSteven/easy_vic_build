@@ -80,6 +80,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_layer=1, save_original=False,
     bulk_density_clip = bulk_density[:, yindex_start: yindex_end+1, xindex_start: xindex_end+1]
 
     # search grids
+    print("========== search grids for CONUS Soil ==========")
     searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,
                                                              src_lat=soil_lat_clip, src_lon=soil_lon_clip,
                                                              search_num=1)
@@ -110,7 +111,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_layer=1, save_original=False,
             original_lat = []
             original_lon = []
 
-        for i in tqdm(grid_shp.index, colour="green", desc="loop for each grid to extract soil data"):
+        for i in tqdm(grid_shp.index, colour="green", desc=f"loop for each grid to extract soil{l} data", leave=False):
             # lon/lat
             searched_grid_index = searched_grids_index[i]
             searched_grid_lat = [soil_lat_clip[searched_grid_index[0][j]] for j in range(len(searched_grid_index[0]))]

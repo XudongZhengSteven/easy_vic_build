@@ -10,7 +10,7 @@ from .tools.utilities import check_and_mkdir
 
 
 class Evb_dir:
-    __package_dir__ = "../easy_vic_build" # os.path.abspath(os.path.dirname(__file__))
+    __package_dir__ = "./easy_vic_build" # os.path.abspath(os.path.dirname(__file__))
     __data_dir__ = os.path.join(__package_dir__, "data")
     
     def __init__(self, cases_home=None):
