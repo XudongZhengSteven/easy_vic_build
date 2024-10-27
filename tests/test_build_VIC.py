@@ -12,7 +12,7 @@ from easy_vic_build.build_GlobalParam import buildGlobalParam
 from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import get_default_g_list, scaling_level0_to_level1
-from easy_vic_build.build_RVIC_Param import buildRVICParam
+from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
 
 """
 general information:
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     build_dpc_bool = False
     build_domain_bool = False
     build_param_bool = False
-    build_meteforcing_bool = 2
-    build_rvic_param_bool = False
+    build_meteforcing_bool = False
+    build_rvic_param_bool = True
     # ============================ build dir ============================
     if build_dir_bool:
         evb_dir = Evb_dir()
@@ -55,6 +55,7 @@ if __name__ == "__main__":
         
         # set linux_share_temp_dir
         evb_dir.linux_share_temp_dir = "F:\\Linux\\C_VirtualBox_Share\\temp"
+    
     # ============================ build dpc ============================
     if build_dpc_bool:
         dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = builddpc(evb_dir, basin_index, date_period,
@@ -107,8 +108,30 @@ if __name__ == "__main__":
     
     # ============================ build RVIC_Param ============================
     if build_rvic_param_bool:
+        # cp domain
+        copy_domain(evb_dir)
+        
+        # buildFlowDirectionFile
+        buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0)
+        
+        # buildPourPointFile
+        buildPourPointFile(dpc_VIC_level1, evb_dir)
+    
+        # buildUHBOXFile
+        uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
+        buildUHBOXFile(evb_dir, **uh_params, plot_bool=True)
+        
+        # buildParamCFGFile
+        cfg_params = cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}
+        buildParamCFGFile(evb_dir, **cfg_params)
+    
         # build RVIC_Param
-        buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
-                    ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=True,
-                    cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "RVIC_input_name": "fluxes.nc"})
+        # buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
+        #             ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=True,
+        #             cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "RVIC_input_name": "fluxes.nc"})
+    
+    # ============================ close ============================
+    domain_dataset.close()
+    params_dataset_level0.close()
+    params_dataset_level1.close()
     

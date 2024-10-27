@@ -239,15 +239,15 @@ def readDomain(evb_dir):
     return domain_dataset
 
 
-def readParam(evb_dir):
+def readParam(evb_dir, mode="r"):
     # ====================== read ======================
     # set path
     params_dataset_level0_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level0.nc")
     params_dataset_level1_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level1.nc")
     
     # read
-    params_dataset_level0 = Dataset(params_dataset_level0_path, "r", format="NETCDF4")
-    params_dataset_level1 = Dataset(params_dataset_level1_path, "r", format="NETCDF4")
+    params_dataset_level0 = Dataset(params_dataset_level0_path, mode, format="NETCDF4")
+    params_dataset_level1 = Dataset(params_dataset_level1_path, mode, format="NETCDF4")
     
     return params_dataset_level0, params_dataset_level1
 
