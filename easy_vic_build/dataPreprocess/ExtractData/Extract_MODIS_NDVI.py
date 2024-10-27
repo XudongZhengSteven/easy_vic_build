@@ -12,6 +12,7 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 from netCDF4 import Dataset
 from pyproj import CRS
 import re
+import matplotlib.pyplot as plt
 from ...tools.geo_func import search_grids, resample
 from ...tools.geo_func.create_gdf import CreateGDF
 
@@ -348,6 +349,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_month=False, save_original=Fa
     umd_lat_clip = umd_lat[yindex_start: yindex_end+1]
     
     # search grids
+    print("========== search grids for NDVI ==========")
     searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat=grids_lat, dst_lon=grids_lon,
                                                                       src_lat=umd_lat_clip, src_lon=umd_lon_clip,
                                                                       lat_radius=grid_shp_res/2, lon_radius=grid_shp_res/2)
@@ -363,7 +365,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_month=False, save_original=Fa
         original_lat = []
         original_lon = []
     
-    for i in tqdm(grid_shp.index, colour="green", desc="loop for each grid to extract LC"):
+    for i in tqdm(grid_shp.index, colour="green", desc="loop for each grid to extract MODIS NDVI"):
         # umd grids
         searched_grid_index = searched_grids_index[i]
         searched_grids_lat_umd = [umd_lat_clip[searched_grid_index[0][j]] for j in range(len(searched_grid_index[0]))]

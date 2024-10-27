@@ -43,6 +43,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_layer=False, check_search=Fal
     grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
     
     # search grids
+    print("========== search grids for ERA5 ST ==========")
     searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(dst_lat=grids_lat, dst_lon=grids_lon,
                                                                               src_lat=stl_lat, src_lon=stl_lon,
                                                                               lat_radius=stl_lat_res/2, lon_radius=stl_lon_res/2)

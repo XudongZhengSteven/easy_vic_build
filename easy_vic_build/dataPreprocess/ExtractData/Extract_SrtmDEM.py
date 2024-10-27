@@ -65,6 +65,7 @@ def ExtractData(grid_shp, grid_shp_res=0.25, plot=True, save_original=False, che
     SrtmDEM.close()
     
     # search SrtmDEM grids for each grid in grid_shp
+    print("========== search grids for SrtmDEM ==========")
     searched_grids_index = search_grids.search_grids_radius_rectangle(
         dst_lat=grids_lat, dst_lon=grids_lon, src_lat=SrtmDEM_lat_clip, src_lon=SrtmDEM_lon_clip,
         lat_radius=grid_shp_res/2, lon_radius=grid_shp_res/2)
@@ -78,7 +79,7 @@ def ExtractData(grid_shp, grid_shp_res=0.25, plot=True, save_original=False, che
         original_lat = []
         original_lon = []
         
-    for i in tqdm(range(len(searched_grids_index)), desc="loop for grids resample mean", colour="g"):
+    for i in tqdm(range(len(searched_grids_index)), desc="loop for grids extract SrtmDEM", colour="g"):
         searched_grid_index = searched_grids_index[i]
         searched_grid_lat = [SrtmDEM_lat_clip[searched_grid_index[0][j]] for j in range(len(searched_grid_index[0]))]
         searched_grid_lon = [SrtmDEM_lon_clip[searched_grid_index[1][j]] for j in range(len(searched_grid_index[0]))]
