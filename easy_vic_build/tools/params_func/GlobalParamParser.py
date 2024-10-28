@@ -25,7 +25,7 @@ class GlobalParamSection:
         for name, values in section_dict.items():
             for value in values if isinstance(values, list) else [values]:
                 self.add(name, value)
-
+    
     def __getitem__(self, name):
         """ Get parameter values by name """
         return self.parameters.get(name)
@@ -57,16 +57,16 @@ class GlobalParamParser:
         """
         self.sections.setdefault(section_name, GlobalParamSection()).set_section(section_dict)
 
-    def get(self, section, name):
+    def get(self, section_name, param_name):
         """ Get a parameter value from a section """
-        return self.sections.get(section, {}).get(name)
+        return self.sections.get(section_name, {})[param_name]
     
-    def load(self, filepath, header_lines=4):
+    def load(self, filepath, header_lines=5):
         """ Load the configuration from a file """
         # read and parse
         with open(filepath, 'r') as file:
             for _ in range(header_lines):
-                self.header.extend(file.readline().strip() for _ in range(header_lines))
+                self.header.append(file.readline().strip())
             
             current_section = None
             for line in file:
@@ -111,9 +111,8 @@ class GlobalParamParser:
     def remove_section(self, section_name):
         """ Remove a section """
         self.sections.pop(section_name, None)
-        self.section_names.remove(section_name) if section_name in self.section_names else None
+        self.section_names.remove(section_name)
             
-        
     def __getitem__(self, section):
         """ Get a section """
         return self.sections.get(section)

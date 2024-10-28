@@ -40,7 +40,8 @@ if __name__ == "__main__":
     build_domain_bool = False
     build_param_bool = False
     build_meteforcing_bool = False
-    build_rvic_param_bool = True
+    build_rvic_param_bool = False
+    build_global_param_bool = True
     # ============================ build dir ============================
     if build_dir_bool:
         evb_dir = Evb_dir()
@@ -84,6 +85,9 @@ if __name__ == "__main__":
         
         # scaling_level0_to_level1
         params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1)
+        
+        params_dataset_level0.close()
+        params_dataset_level1.close()
     
     # read param
     params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
@@ -129,6 +133,25 @@ if __name__ == "__main__":
         # buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
         #             ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=True,
         #             cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "RVIC_input_name": "fluxes.nc"})
+    
+    # ============================ build GlobalParam ============================
+    if build_global_param_bool:
+        # set GlobalParam_dict
+        GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
+                                        "SNOW_STEPS_PER_DAY": "24",
+                                        "RUNOFF_STEPS_PER_DAY": "24",
+                                        "STARTYEAR": str(date_period[0][:4]),
+                                        "STARTMONTH": str(int(date_period[0][4:6])),
+                                        "STARTDAY": str(int(date_period[0][4:6])),
+                                        "ENDYEAR": str(date_period[1][:4]),
+                                        "ENDMONTH": str(int(date_period[1][4:6])),
+                                        "ENDDAY": str(int(date_period[1][4:6])),
+                                        "OUT_TIME_UNITS": "DAYS"},
+                            "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_PET", "OUT_DISCHARGE"]}
+                            }
+        
+        # buildGlobalParam
+        buildGlobalParam(evb_dir, GlobalParam_dict)
     
     # ============================ close ============================
     domain_dataset.close()

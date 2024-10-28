@@ -111,6 +111,26 @@ def formationForcing(dpc_VIC_level1, evb_dir, date_period,
     # grids_map_array
     lon_list, lat_list, lon_map_index, lat_map_index = grids_array_coord_map(grid_shp, reverse_lat=reverse_lat)  #* all lat set as reverse
     
+    ## ====================== search grids for match ======================
+    # src grids
+    with Dataset(os.path.join(src_home, src_names[0]), "r") as src_dataset:
+        src_lat_ = src_dataset.variables["lat"][:]
+        src_lon_ = src_dataset.variables["lon"][:]
+        src_lat_res_ = (max(src_lat_) - min(src_lat_)) / (len(src_lat_) - 1)
+        src_lon_res_ = (max(src_lon_) - min(src_lon_)) / (len(src_lon_) - 1)
+    
+    # dst grids
+    grid_array_lons_, grid_array_lats_ = np.meshgrid(np.array(lon_list), np.array(lat_list))  # 2D array
+    
+    lats_flatten_ = grid_array_lats_.flatten()
+    lons_flatten_ = grid_array_lons_.flatten()
+    
+    # search
+    print("========== search grids for match src and dst data ==========")
+    searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(dst_lat=lats_flatten_, dst_lon=lons_flatten_,
+                                                                              src_lat=src_lat_, src_lon=src_lon_,
+                                                                              lat_radius=src_lat_res_/2, lon_radius=src_lon_res_/2)
+    
     ## ====================== loop for forcing formation ======================
     for i in tqdm(range(len(src_names)), desc="loop for forcing formation", colour="green"):
         # general
@@ -228,11 +248,6 @@ def formationForcing(dpc_VIC_level1, evb_dir, date_period,
                 lons_flatten = lons[:, :].flatten()
                 dst_lat_res = (max(lat_v) - min(lat_v)) / (len(lat_v) - 1)
                 dst_lon_res = (max(lon_v) - min(lon_v)) / (len(lon_v) - 1)
-
-                searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(dst_lat=lats_flatten, dst_lon=lons_flatten,
-                                                                                      src_lat=src_lat, src_lon=src_lon,
-                                                                                      lat_radius=src_lat_res/2, lon_radius=src_lon_res/2,
-                                                                                      leave=False)
                 
                 # search data
                 tas_array_3D = np.empty((len(src_time_datetime_in_dst_dataset_index), *lats.shape), dtype=float)
@@ -244,7 +259,7 @@ def formationForcing(dpc_VIC_level1, evb_dir, date_period,
                 wind_u_array_3D = np.empty((len(src_time_datetime_in_dst_dataset_index), *lats.shape), dtype=float)
                 wind_v_array_3D = np.empty((len(src_time_datetime_in_dst_dataset_index), *lats.shape), dtype=float)
                 
-                for j in tqdm(range(len(lats_flatten)), desc="loop for search and read grids"):
+                for j in tqdm(range(len(lats_flatten)), desc="loop for read variables"):
                     # src_lat/lon
                     src_lat_j = lats_flatten[j]
                     src_lon_j = lons_flatten[j]

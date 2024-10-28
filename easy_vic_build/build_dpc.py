@@ -31,6 +31,7 @@ def builddpc(evb_dir, basin_index, date_period,
     grid_shp_lon_level0, grid_shp_lat_level0, grid_shp_level0 = createGridForBasin(basin_shp, grid_res_level0)
     
     # build dpc_level0
+    print("========== build dpc_level0 ==========")
     dpc_VIC_level0 = dataProcess_VIC_level0(basin_shp, grid_shp_level0, grid_res_level0, date_period)
     
     # read data
@@ -40,6 +41,7 @@ def builddpc(evb_dir, basin_index, date_period,
     
     # ====================== build dpc level1 ======================
     # build grid_shp
+    print("========== build dpc_level1 ==========")
     grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1)
     
     # build dpc_level1
@@ -52,6 +54,7 @@ def builddpc(evb_dir, basin_index, date_period,
     
     # ====================== build dpc level2 ======================
     # build grid_shp
+    print("========== build dpc_level2 ==========")
     grid_shp_lon_level2, grid_shp_lat_level2, grid_shp_level2 = createGridForBasin(basin_shp, grid_res_level2)
     
     # build dpc_level2
