@@ -164,6 +164,7 @@ cython_debug/
 # vscode
 __pycache__/
 *.pyc
+.vscode/
 
 # cases
 cases/*
