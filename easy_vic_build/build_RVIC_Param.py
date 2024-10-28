@@ -39,7 +39,7 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     
     # build rvic parameters
     from rvic.parameters import parameters
-    parameters.parameters(param_cfg_file_path, np=1)
+    parameters(param_cfg_file_path, np=1)
 
 
 def copy_domain(evb_dir):
@@ -279,7 +279,7 @@ def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None
         x, y = dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]
         pourpoint_file.lons = [x]
         pourpoint_file.lats = [y]
-        pourpoint_file.names = [dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_id"].values[0]]
+        pourpoint_file.names = [f"gauge_id:{dpc_VIC_level1.basin_shp.loc[:, 'camels_topo:gauge_id'].values[0]}"]
     else:
         pourpoint_file.lons = lons
         pourpoint_file.lats = lats
@@ -363,6 +363,7 @@ def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86
     # ====================== build CFGFile ======================
     # read reference cfg
     param_cfg_file = ConfigParser()
+    param_cfg_file.optionxform = str
     param_cfg_file.read(param_cfg_file_reference_path)
     
     # set cfg

@@ -11,7 +11,9 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
     GlobalParam_dir = evb_dir.GlobalParam_dir
     globalParam_path = os.path.join(GlobalParam_dir, "global_param.txt")
     GlobalParam_reference_path = os.path.join(evb_dir.__data_dir__, "global_param_reference.txt")
-
+    rout_param_dir = os.path.join(evb_dir.RVICParam_dir, "params")
+    rout_param_path = os.path.join(rout_param_dir, os.listdir(rout_param_dir)[0])
+    
     ## ====================== build GlobalParam ======================
     # read GlobalParam_reference parser
     globalParam = GlobalParamParser()
@@ -20,9 +22,10 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
     # set default param (dir and path)
     globalParam.set("Forcing", "FORCING1", os.path.join(evb_dir.MeteForcing_dir, "forcings."))
     globalParam.set("Domain", "DOMAIN", os.path.join(evb_dir.DomainFile_dir, "domain.nc"))
-    globalParam.set("Param", "PAREMETERS", os.path.join(evb_dir.ParamFile_dir, "params_dataset_level1.nc"))
-    globalParam.set("Output", "LOG_DIR", evb_dir.VICLog_dir)
+    globalParam.set("Param", "PARAMETERS", os.path.join(evb_dir.ParamFile_dir, "params_dataset_level1.nc"))
+    globalParam.set("Output", "LOG_DIR", evb_dir.VICLog_dir + "/")
     globalParam.set("Output", "RESULT_DIR", evb_dir.VICResults_dir)
+    globalParam.set("Routing", "ROUT_PARAM", rout_param_path)
     
     # set based on GlobalParam_dict (override the default param)
     for section_name in GlobalParam_dict.keys():

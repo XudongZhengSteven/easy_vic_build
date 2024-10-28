@@ -13,6 +13,9 @@ from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import get_default_g_list, scaling_level0_to_level1
 from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
+from rvic.parameters import parameters
+import os
+from configparser import ConfigParser
 
 """
 general information:
@@ -30,7 +33,7 @@ grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
 
 if __name__ == "__main__":
     basin_index = 397
-    date_period = ["19980101", "20101231"]
+    date_period = ["19980101", "19981231"]
     case_name = "397_3km"
     grid_res_level1 = 0.025
     
@@ -44,7 +47,7 @@ if __name__ == "__main__":
     build_global_param_bool = True
     # ============================ build dir ============================
     if build_dir_bool:
-        evb_dir = Evb_dir()
+        evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
         evb_dir.builddir(case_name)
         
         # set arcpy_python_path
@@ -112,23 +115,36 @@ if __name__ == "__main__":
     
     # ============================ build RVIC_Param ============================
     if build_rvic_param_bool:
-        # cp domain
-        copy_domain(evb_dir)
+        # step 1
+        if build_rvic_param_bool == 1:
+            # cp domain
+            copy_domain(evb_dir)
+            
+            # buildFlowDirectionFile
+            buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0)
+            
+            # buildPourPointFile
+            buildPourPointFile(dpc_VIC_level1, evb_dir)
         
-        # buildFlowDirectionFile
-        buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0)
+            # buildUHBOXFile
+            uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
+            buildUHBOXFile(evb_dir, **uh_params, plot_bool=True)
+            
+            # buildParamCFGFile
+            cfg_params = {"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}
+            buildParamCFGFile(evb_dir, **cfg_params)
         
-        # buildPourPointFile
-        buildPourPointFile(dpc_VIC_level1, evb_dir)
-    
-        # buildUHBOXFile
-        uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
-        buildUHBOXFile(evb_dir, **uh_params, plot_bool=True)
+        # step 2
+        elif build_rvic_param_bool == 2:
+            RVICParam_dir = evb_dir.RVICParam_dir
+            param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
+            param_cfg_file = ConfigParser()
+            param_cfg_file.optionxform = str
+            param_cfg_file.read(param_cfg_file_path)
+            
+            param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
+            parameters(param_cfg_file_dict, numofproc=1)
         
-        # buildParamCFGFile
-        cfg_params = cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}
-        buildParamCFGFile(evb_dir, **cfg_params)
-    
         # build RVIC_Param
         # buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
         #             ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=True,
@@ -142,10 +158,10 @@ if __name__ == "__main__":
                                         "RUNOFF_STEPS_PER_DAY": "24",
                                         "STARTYEAR": str(date_period[0][:4]),
                                         "STARTMONTH": str(int(date_period[0][4:6])),
-                                        "STARTDAY": str(int(date_period[0][4:6])),
+                                        "STARTDAY": str(int(date_period[0][6:])),
                                         "ENDYEAR": str(date_period[1][:4]),
                                         "ENDMONTH": str(int(date_period[1][4:6])),
-                                        "ENDDAY": str(int(date_period[1][4:6])),
+                                        "ENDDAY": str(int(date_period[1][6:])),
                                         "OUT_TIME_UNITS": "DAYS"},
                             "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_PET", "OUT_DISCHARGE"]}
                             }

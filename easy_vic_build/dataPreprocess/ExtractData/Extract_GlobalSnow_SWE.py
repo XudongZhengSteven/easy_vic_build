@@ -14,7 +14,7 @@ from tqdm import *
 from pyproj import CRS, Transformer
 import rasterio
 from rasterio.warp import calculate_default_transform, reproject, Resampling
-from Decorators.decoractors import apply_along_axis_decorator
+from ...tools.decoractors import apply_along_axis_decorator
 import xarray as xr
 
 def combineGlobalSnow_SWE():

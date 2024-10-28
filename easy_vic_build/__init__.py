@@ -14,8 +14,7 @@ class Evb_dir:
     __data_dir__ = os.path.join(__package_dir__, "data")
     
     def __init__(self, cases_home=None):
-        cases_home = cases_home if cases_home is not None else Evb_dir.__package_dir__
-        self._cases_dir = os.path.join(cases_home, "cases")
+        self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
         self._MeteForcing_src_dir = ""
         self._MeteForcing_src_suffix = ".nc4"
         self._linux_share_temp_dir = ""
