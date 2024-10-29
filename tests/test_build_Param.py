@@ -6,7 +6,8 @@ sys.path.append("../easy_vic_build")
 from easy_vic_build.tools.utilities import readdpc
 from easy_vic_build import Evb_dir
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
-from easy_vic_build.bulid_Param import get_default_g_list, scaling_level0_to_level1
+from easy_vic_build.bulid_Param import scaling_level0_to_level1
+from easy_vic_build.tools.calibrate_func.params_set import default_g_list, g_boundary
 
 """
 general information:

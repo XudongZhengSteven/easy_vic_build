@@ -54,6 +54,9 @@ class Evb_dir:
         
         self.RVICParam_dir = os.path.join(self._case_dir, "RVICParam")
         check_and_mkdir(self.RVICParam_dir)
+        
+        self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
+        check_and_mkdir(self.CalibrateVIC_dir)
     
     @property
     def MeteForcing_src_dir(self):

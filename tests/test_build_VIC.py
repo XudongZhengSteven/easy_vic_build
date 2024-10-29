@@ -11,9 +11,10 @@ from easy_vic_build.build_dpc import builddpc
 from easy_vic_build.build_GlobalParam import buildGlobalParam
 from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
-from easy_vic_build.bulid_Param import get_default_g_list, scaling_level0_to_level1
+from easy_vic_build.bulid_Param import scaling_level0_to_level1
 from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
 from rvic.parameters import parameters
+from easy_vic_build.tools.calibrate_func.params_set import default_g_list, g_boundary
 import os
 from configparser import ConfigParser
 
@@ -80,7 +81,6 @@ if __name__ == "__main__":
     # ============================ build Param ============================
     if build_param_bool:
         # build params_level0 with default params
-        default_g_list, g_boundary =  get_default_g_list()
         params_dataset_level0 = buildParam_level0(default_g_list, dpc_VIC_level0, evb_dir, reverse_lat=True)
         
         # build params_level1
