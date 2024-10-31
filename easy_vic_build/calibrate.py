@@ -10,16 +10,22 @@ import os
 from deap import creator, base, tools, algorithms
 from copy import deepcopy
 from .bulid_Param import buildParam_level0, scaling_level0_to_level1
-
+from netCDF4 import Dataset, num2date
+import pandas as pd
+from .tools.geo_func.search_grids import search_grids_nearest
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
-    def __init__(self, dpc_VIC_level1, evb_dir,
+    def __init__(self, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl"):
         super().__init__(algParams, save_path)
         self.evb_dir = evb_dir
         self.dpc_VIC_level1 = dpc_VIC_level1
+        
+        # period
+        self.date_period = date_period
+        self.calibrate_date_period = calibrate_date_period
         
         # params boundary
         self.g_boundary = g_boundary
@@ -30,13 +36,43 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.get_obs()
     
     def get_obs(self):
-        self.obs_streamflow = self.dpc_VIC_level1
+        self.obs = self.dpc_VIC_level1.basin_shp.streamflow.iloc[0]
+        date = self.obs.loc[:, "date"]
+        self.obs.index = pd.to_datetime(date)
     
     def get_sim(self):
-        os.path.join(self.VICResults_dir, "")
+        # sim_df
+        sim_df = pd.Dataframe(columns=["time", "OUT_DISCHARGE"])
+        
+        # outlet lat, lon
+        x, y = self.dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], self.dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]      
+        
+        # read VIC OUTPUT file
+        sim_path = os.path.join(self.VICResults_dir, os.listdir(self.evb_dir.VICResults_dir)[0])
+        with Dataset(sim_path, "r") as dataset:
+            # get time, lat, lon
+            time = dataset.variables["time"]
+            lat = dataset.variables["lat"][:]
+            lon = dataset.variables["lon"][:]
+            
+            # transfer time_num into date
+            time_date = num2date(time[:], units=time.units, calendar=time.calendar)
+            
+            # get outlet index
+            searched_grids_index = search_grids_nearest([y], [x], lat, lon, search_num=1)
+            searched_grid_index = searched_grids_index[0]
+            
+            # read data
+            out_discharge = dataset.variables["OUT_DISCHARGE"][:, searched_grid_index[0][0], searched_grid_index[1][0]]
+            
+            sim_df.loc[:, "time"] = time_date
+            sim_df.loc[:, "OUT_DISCHARGE"] = out_discharge
+            sim_df.index = pd.to_datetime(time_date)
+        
+        return sim_df
     
     def createFitness(self):
-        creator.create("Fitness", base.Fitness, weights=(-1.0, ))
+        creator.create("Fitness", base.Fitness, weights=(1.0, ))
 
     def samplingInd(self):
         # n_samples
@@ -75,7 +111,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
     def evaluate(self, ind):
         # get ind
-        
+        params_g = ind[:-5]
+        uh_params = ind[-5:-2]
+        routing_params = ind[-2:]
         
         # type params
         
@@ -93,17 +131,20 @@ class NSGAII_VIC_SO(NSGAII_Base):
         globalParam_path = os.path.join(self.evb_dir.GlobalParam_dir, "global_param.txt")
         os.system("./vic.exe -g ")
         
-        # get sims
+        # get obs: alreay got
         
+        # get sim
+        sim = self.get_sim()
         
-        # get obs
-        # self.obs_streamflow()
+        # clip sim and obs during the calibrate_date_period
+        sim_cali = sim.loc[self.calibrate_date_period[0], self.calibrate_date_period[1]]
+        obs_cali = self.obs.loc[self.calibrate_date_period[0], self.calibrate_date_period[1]]
         
         # evaluate
-        evaluation_metric = EvaluationMetric()
+        evaluation_metric = EvaluationMetric(sim_cali, obs_cali)
+        fitness = evaluation_metric.KGE()
         
-        
-        return super().evaluate(ind)
+        return (fitness, )
     
     def evaluatePop(self, population):
         return super().evaluatePop(population)

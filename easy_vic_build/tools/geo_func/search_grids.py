@@ -7,6 +7,17 @@ Two basic idea:
 (1) index search, and x[index]
 (2) mask array [0, 1], and use matrix multiplication
 
+usage:
+searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,
+                                                        src_lat=soil_lat_clip, src_lon=soil_lon_clip,
+                                                        search_num=1)
+                                                        
+for i in tqdm(grid_shp.index, colour="green", desc=f"loop for each grid to extract soil{l} data", leave=False):
+        # lon/lat
+        searched_grid_index = searched_grids_index[i]
+        sand_searched_grid_data = [sand_clip[l, searched_grid_index[0][j], searched_grid_index[1][j]]
+                                    for j in range(len(searched_grid_index[0]))]  # index: (lat, lon), namely (row, col)
+
 """
 
 import numpy as np
