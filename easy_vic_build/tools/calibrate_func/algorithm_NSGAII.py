@@ -191,5 +191,5 @@ class NSGAII_Base:
             
             # update population: select next generation
             self.population[:] = self.select_next_generation(combined)
-
+        
         self.print_results(self.population)

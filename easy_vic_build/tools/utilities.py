@@ -210,19 +210,14 @@ def readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS"):
 
 def readdpc(evb_dir):
     # ====================== read ======================
-    # set path
-    dpc_VIC_level0_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_level0.pkl")
-    dpc_VIC_level1_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_level1.pkl")
-    dpc_VIC_level2_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_level2.pkl")
-    
     # read
-    with open(dpc_VIC_level0_path, "rb") as f:
+    with open(evb_dir.dpc_VIC_level0_path, "rb") as f:
         dpc_VIC_level0 = pickle.load(f)
     
-    with open(dpc_VIC_level1_path, "rb") as f:
+    with open(evb_dir.dpc_VIC_level1_path, "rb") as f:
         dpc_VIC_level1 = pickle.load(f)
     
-    with open(dpc_VIC_level2_path, "rb") as f:
+    with open(evb_dir.dpc_VIC_level2_path, "rb") as f:
         dpc_VIC_level2 = pickle.load(f)
     
     return dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2
@@ -230,54 +225,37 @@ def readdpc(evb_dir):
 
 def readDomain(evb_dir):
     # ====================== read ======================
-    # set path
-    domainFile_path = os.path.join(evb_dir.DomainFile_dir, "domain.nc")
-    
     # read
-    domain_dataset = Dataset(domainFile_path, "r", format="NETCDF4")
+    domain_dataset = Dataset(evb_dir.domainFile_path, "r", format="NETCDF4")
     
     return domain_dataset
 
 
 def readParam(evb_dir, mode="r"):
     # ====================== read ======================
-    # set path
-    params_dataset_level0_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level0.nc")
-    params_dataset_level1_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level1.nc")
-    
     # read
-    params_dataset_level0 = Dataset(params_dataset_level0_path, mode, format="NETCDF4")
-    params_dataset_level1 = Dataset(params_dataset_level1_path, mode, format="NETCDF4")
+    params_dataset_level0 = Dataset(evb_dir.params_dataset_level0_path, mode, format="NETCDF4")
+    params_dataset_level1 = Dataset(evb_dir.params_dataset_level1_path, mode, format="NETCDF4")
     
     return params_dataset_level0, params_dataset_level1
 
 
 def readRVICParam(evb_dir):
     # ====================== read ======================
-    # set path
-    flow_direction_file_path = os.path.join(evb_dir.RVICParam_dir, "flow_direction_file.nc")
-    pourpoint_file_path = os.path.join(evb_dir.RVICParam_dir, "pour_points.csv")
-    uhbox_file_path = os.path.join(evb_dir.RVICParam_dir, "UHBOX.csv")
-    cfg_file_path = os.path.join(evb_dir.RVICParam_dir, "rvic.parameters.cfg")
-    
     # read
-    flow_direction_dataset = Dataset(flow_direction_file_path, "r", "NETCDF4")
-    pourpoint_file = pd.read_csv(pourpoint_file_path)
-    uhbox_file = pd.read_csv(uhbox_file_path)
+    flow_direction_dataset = Dataset(evb_dir.flow_direction_file_path, "r", "NETCDF4")
+    pourpoint_file = pd.read_csv(evb_dir.pourpoint_file_path)
+    uhbox_file = pd.read_csv(evb_dir.uhbox_file_path)
     cfg_file = ConfigParser()
-    cfg_file.read(cfg_file_path)
+    cfg_file.read(evb_dir.cfg_file_path)
     
     return flow_direction_dataset, pourpoint_file, uhbox_file, cfg_file
 
 
 def readGlobalParam(evb_dir):
     # ====================== read ======================
-    # set path
-    GlobalParam_dir = evb_dir.GlobalParam_dir
-    globalParam_path = os.path.join(GlobalParam_dir, "global_param.txt")
-    
     globalParam = GlobalParamParser()
-    globalParam.load(globalParam_path)
+    globalParam.load(evb_dir.globalParam_path)
     
     return globalParam
     

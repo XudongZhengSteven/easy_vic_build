@@ -52,7 +52,7 @@ def buildMeteForcing(dpc_VIC_level1, evb_dir, date_period,
         time_datetime = [datetime.strptime(t, "%Y%m%d.%H00") for t in time_str]
         
         # create nc
-        dst_path_year = os.path.join(MeteForcing_dir, f"forcings.{year}.nc")
+        dst_path_year = os.path.join(MeteForcing_dir, f"{evb_dir.forcing_prefix}.{year}.nc")
         with Dataset(dst_path_year, "w") as dst_dataset:
             # define dimension
             time_dim = dst_dataset.createDimension("time", len(src_names_year))

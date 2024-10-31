@@ -15,14 +15,6 @@ def builddpc(evb_dir, basin_index, date_period,
              plot_columns_level0=["SrtmDEM_mean_Value", "soil_l1_sand_nearest_Value"],
              plot_columns_level1=["annual_P_in_src_grid_Value", "umd_lc_major_Value"]):
     
-    # ====================== set dir and path ======================
-    # set path
-    dpc_VIC_level0_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_level0.pkl")
-    dpc_VIC_level1_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_level1.pkl")
-    dpc_VIC_level2_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_level2.pkl")
-    dpc_VIC_plot_grid_basin_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_plot_grid_basin.tiff")
-    dpc_VIC_plot_columns_path = os.path.join(evb_dir.dpcFile_dir, "dpc_VIC_plot_columns.tiff")
-    
     # ====================== get basin_shp ======================
     basin_shp_all, basin_shp = read_one_basin_shp(basin_index)
     
@@ -86,17 +78,17 @@ def builddpc(evb_dir, basin_index, date_period,
         axes_columns[1, 1].set_title(plot_columns_level1[1])
     
     # ====================== save ======================
-    with open(dpc_VIC_level0_path, "wb") as f:
+    with open(evb_dir.dpc_VIC_level0_path, "wb") as f:
         pickle.dump(dpc_VIC_level0, f)
     
-    with open(dpc_VIC_level1_path, "wb") as f:
+    with open(evb_dir.dpc_VIC_level1_path, "wb") as f:
         pickle.dump(dpc_VIC_level1, f)
     
-    with open(dpc_VIC_level2_path, "wb") as f:
+    with open(evb_dir.dpc_VIC_level2_path, "wb") as f:
         pickle.dump(dpc_VIC_level2, f)
 
-    fig_grid_basin.savefig(dpc_VIC_plot_grid_basin_path)
+    fig_grid_basin.savefig(evb_dir.dpc_VIC_plot_grid_basin_path)
     if plot_columns_level0 is not None:
-        fig_columns.savefig(dpc_VIC_plot_columns_path)
+        fig_columns.savefig(evb_dir.dpc_VIC_plot_columns_path)
     
     return dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2

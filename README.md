@@ -21,3 +21,7 @@
 ## build_GlobalParam.py
 
 1. check the params
+
+## python pkgs workflow
+
+1. test github workflow

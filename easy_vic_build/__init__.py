@@ -10,6 +10,7 @@ from .tools.utilities import check_and_mkdir
 
 
 class Evb_dir:
+    # easy_vic_build dir
     __package_dir__ = "./easy_vic_build" # os.path.abspath(os.path.dirname(__file__))
     __data_dir__ = os.path.join(__package_dir__, "data")
     
@@ -17,9 +18,35 @@ class Evb_dir:
         self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
         self._MeteForcing_src_dir = ""
         self._MeteForcing_src_suffix = ".nc4"
+        self._forcing_prefix = "forcings"
         self._linux_share_temp_dir = ""
         self._arcpy_python_path = ""
+        self._vic_exe_path = ""
         
+        self._dpc_VIC_level0_path = ""
+        self._dpc_VIC_level1_path = ""
+        self._dpc_VIC_level2_path = ""
+        self._dpc_VIC_plot_grid_basin_path = ""
+        self._dpc_VIC_plot_columns_path = ""
+        
+        self._domainFile_path = ""
+        
+        self._veg_param_json_path = ""
+        self._params_dataset_level0_path = ""
+        self._params_dataset_level1_path = ""
+        
+        self._flow_direction_file_path = ""
+        self._pourpoint_file_path = ""
+        self._uhbox_file_path = ""
+        self._cfg_file_path = ""
+        
+        self._globalParam_path = ""
+        self._globalParam_reference_path = ""
+        
+        self._rout_param_dir = ""
+        
+        self._calibrate_cp_path = ""
+         
     def builddir(self, case_name):
         # case_name
         self._case_name = case_name
@@ -57,6 +84,30 @@ class Evb_dir:
         
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
         check_and_mkdir(self.CalibrateVIC_dir)
+        
+        # set path
+        self._dpc_VIC_level0_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level0.pkl")
+        self._dpc_VIC_level1_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level1.pkl")
+        self._dpc_VIC_level2_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level2.pkl")
+        self._dpc_VIC_plot_grid_basin_path = os.path.join(self.dpcFile_dir, "dpc_VIC_plot_grid_basin.tiff")
+        self._dpc_VIC_plot_columns_path = os.path.join(self.dpcFile_dir, "dpc_VIC_plot_columns.tiff")
+        
+        self._domainFile_path = os.path.join(self.DomainFile_dir, "domain.nc")
+        
+        self._veg_param_json_path = os.path.join(self.__data_dir__, "veg_type_attributes_umd_updated.json")
+        self._params_dataset_level0_path = os.path.join(self.ParamFile_dir, "params_dataset_level0.nc")
+        self._params_dataset_level1_path = os.path.join(self.ParamFile_dir, "params_dataset_level1.nc")
+        
+        self._flow_direction_file_path = os.path.join(self.RVICParam_dir, "flow_direction_file.nc")
+        self._pourpoint_file_path = os.path.join(self.RVICParam_dir, "pour_points.csv")
+        self._uhbox_file_path = os.path.join(self.RVICParam_dir, "UHBOX.csv")
+        self._cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.parameters.cfg")
+        self._rout_param_dir = os.path.join(self.RVICParam_dir, "params")
+        
+        self._globalParam_path = os.path.join(self.GlobalParam_dir, "global_param.txt")
+        self._globalParam_reference_path = os.path.join(self.__data_dir__, "global_param_reference.txt")
+        
+        self._calibrate_cp_path = os.path.join(self.CalibrateVIC_dir, "calibrate_cp.pkl")
     
     @property
     def MeteForcing_src_dir(self):
@@ -75,6 +126,14 @@ class Evb_dir:
         self._MeteForcing_src_suffix = MeteForcing_src_suffix
     
     @property
+    def forcing_prefix(self):
+        return self._forcing_prefix
+
+    @forcing_prefix.setter
+    def forcing_prefix(self, forcing_prefix):
+        self._forcing_prefix = forcing_prefix
+    
+    @property
     def linux_share_temp_dir(self):
         return self._linux_share_temp_dir
 
@@ -89,4 +148,150 @@ class Evb_dir:
     @arcpy_python_path.setter
     def arcpy_python_path(self, arcpy_python_path):
         self._arcpy_python_path = arcpy_python_path
+    
+    @property
+    def vic_exe_path(self):
+        return self._vic_exe_path
+    
+    @vic_exe_path.setter
+    def vic_exe_path(self, vic_exe_path):
+        self._vic_exe_path = vic_exe_path
+    
+    # ------------ general path set ------------
+    
+    @property
+    def dpc_VIC_level0_path(self):
+        return self._dpc_VIC_level0_path
+
+    @dpc_VIC_level0_path.setter
+    def dpc_VIC_level0_path(self, dpc_VIC_level0_path):
+        self._dpc_VIC_level0_path = dpc_VIC_level0_path
+    
+    @property
+    def dpc_VIC_level1_path(self):
+        return self._dpc_VIC_level1_path
+
+    @dpc_VIC_level1_path.setter
+    def dpc_VIC_level1_path(self, dpc_VIC_level1_path):
+        self._dpc_VIC_level1_path = dpc_VIC_level1_path
+        
+    @property
+    def dpc_VIC_level2_path(self):
+        return self._dpc_VIC_level2_path
+
+    @dpc_VIC_level2_path.setter
+    def dpc_VIC_level2_path(self, dpc_VIC_level2_path):
+        self._dpc_VIC_level2_path = dpc_VIC_level2_path
+        
+    @property
+    def dpc_VIC_plot_grid_basin_path(self):
+        return self._dpc_VIC_plot_grid_basin_path
+
+    @dpc_VIC_plot_grid_basin_path.setter
+    def dpc_VIC_plot_grid_basin_path(self, dpc_VIC_plot_grid_basin_path):
+        self._dpc_VIC_plot_grid_basin_path = dpc_VIC_plot_grid_basin_path
+    
+    @property
+    def dpc_VIC_plot_columns_path(self):
+        return self._dpc_VIC_plot_columns_path
+
+    @dpc_VIC_plot_columns_path.setter
+    def dpc_VIC_plot_columns_path(self, dpc_VIC_plot_columns_path):
+        self._dpc_VIC_plot_columns_path = dpc_VIC_plot_columns_path
+        
+    @property
+    def domainFile_path(self):
+        return self._domainFile_path
+
+    @domainFile_path.setter
+    def domainFile_path(self, domainFile_path):
+        self._domainFile_path = domainFile_path
+    
+    @property
+    def veg_param_json_path(self):
+        return self._veg_param_json_path
+
+    @veg_param_json_path.setter
+    def veg_param_json_path(self, veg_param_json_path):
+        self._veg_param_json_path = veg_param_json_path
+    
+    @property
+    def params_dataset_level0_path(self):
+        return self._params_dataset_level0_path
+
+    @params_dataset_level0_path.setter
+    def params_dataset_level0_path(self, params_dataset_level0_path):
+        self._params_dataset_level0_path = params_dataset_level0_path
+        
+    @property
+    def params_dataset_level1_path(self):
+        return self._params_dataset_level1_path
+
+    @params_dataset_level1_path.setter
+    def params_dataset_level1_path(self, params_dataset_level1_path):
+        self._params_dataset_level1_path = params_dataset_level1_path
+        
+    @property
+    def flow_direction_file_path(self):
+        return self._flow_direction_file_path
+
+    @flow_direction_file_path.setter
+    def flow_direction_file_path(self, flow_direction_file_path):
+        self._flow_direction_file_path = flow_direction_file_path
+        
+    @property
+    def pourpoint_file_path(self):
+        return self._pourpoint_file_path
+
+    @pourpoint_file_path.setter
+    def pourpoint_file_path(self, pourpoint_file_path):
+        self._pourpoint_file_path = pourpoint_file_path
+    
+    @property
+    def uhbox_file_path(self):
+        return self._uhbox_file_path
+
+    @uhbox_file_path.setter
+    def uhbox_file_path(self, uhbox_file_path):
+        self._uhbox_file_path = uhbox_file_path
+        
+    @property
+    def cfg_file_path(self):
+        return self._cfg_file_path
+
+    @cfg_file_path.setter
+    def cfg_file_path(self, cfg_file_path):
+        self._cfg_file_path = cfg_file_path
+    
+    @property
+    def rout_param_dir(self):
+        return self._rout_param_dir
+
+    @rout_param_dir.setter
+    def rout_param_dir(self, rout_param_dir):
+        self._rout_param_dir = rout_param_dir
+    
+    @property
+    def globalParam_path(self):
+        return self._globalParam_path
+
+    @globalParam_path.setter
+    def globalParam_path(self, globalParam_path):
+        self._globalParam_path = globalParam_path
+        
+    @property
+    def globalParam_reference_path(self):
+        return self._globalParam_reference_path
+
+    @globalParam_reference_path.setter
+    def globalParam_reference_path(self, globalParam_reference_path):
+        self._globalParam_reference_path = globalParam_reference_path
+        
+    @property
+    def calibrate_cp_path(self):
+        return self._calibrate_cp_path
+
+    @calibrate_cp_path.setter
+    def calibrate_cp_path(self, calibrate_cp_path):
+        self._calibrate_cp_path = calibrate_cp_path
         

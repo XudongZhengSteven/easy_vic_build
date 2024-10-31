@@ -39,7 +39,12 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     
     # build rvic parameters
     from rvic.parameters import parameters
-    parameters(param_cfg_file_path, np=1)
+    param_cfg_file = ConfigParser()
+    param_cfg_file.optionxform = str
+    param_cfg_file.read(param_cfg_file_path)
+    
+    param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
+    parameters(param_cfg_file_dict, numofproc=1)
 
 
 def copy_domain(evb_dir):
@@ -363,7 +368,7 @@ def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86
     # ====================== build CFGFile ======================
     # read reference cfg
     param_cfg_file = ConfigParser()
-    param_cfg_file.optionxform = str
+    param_cfg_file.optionxform = str  # import to keep case
     param_cfg_file.read(param_cfg_file_reference_path)
     
     # set cfg

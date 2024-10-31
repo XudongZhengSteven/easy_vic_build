@@ -110,13 +110,9 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
 
 
 def buildDomain(dpc_VIC, evb_dir, reverse_lat=True):
-    # ====================== set dir and path ======================
-    # set path
-    domainFile_path = os.path.join(evb_dir.DomainFile_dir, "domain.nc")
-    
     # ====================== build Domain ======================
     # create domain file
-    with Dataset(domainFile_path, "w", format="NETCDF4") as dst_dataset:
+    with Dataset(evb_dir.domainFile_path, "w", format="NETCDF4") as dst_dataset:
         # get lon/lat
         lon_list, lat_list, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(dpc_VIC.grid_shp, reverse_lat=reverse_lat)
         

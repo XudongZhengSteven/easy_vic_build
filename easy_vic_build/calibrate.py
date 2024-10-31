@@ -14,7 +14,9 @@ from .bulid_Param import buildParam_level0, scaling_level0_to_level1
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
-    def __init__(self, dpc_VIC_level1, evb_dir, algParams=..., save_path="checkpoint.pkl"):
+    def __init__(self, dpc_VIC_level1, evb_dir,
+                 algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
+                 save_path="checkpoint.pkl"):
         super().__init__(algParams, save_path)
         self.evb_dir = evb_dir
         self.dpc_VIC_level1 = dpc_VIC_level1
@@ -74,11 +76,16 @@ class NSGAII_VIC_SO(NSGAII_Base):
     def evaluate(self, ind):
         # get ind
         
+        
         # type params
         
-        # build params
         
-        # build RVIC params
+        
+        # adjust params
+        
+        
+        
+        # adjust RVIC params
         buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True)
         
         # run VIC

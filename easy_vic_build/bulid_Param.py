@@ -45,10 +45,6 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     # TODO Q1: different layer have different global params? Ksat: 3 or 9?
     """
     print("building Param_level0... ...")
-    ## ====================== set dir and path ======================
-    # set path
-    params_dataset_level0_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level0.nc")
-    
     ## ====================== get grid_shp and basin_shp ======================
     grid_shp_level0 = dpc_VIC_level0.grid_shp
     basin_shp = dpc_VIC_level0.basin_shp
@@ -57,7 +53,7 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     lon_list_level0, lat_list_level0, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(grid_shp_level0, reverse_lat=reverse_lat)  #* all lat set as reverse if True
     
     ## ====================== create parameter ======================
-    params_dataset_level0 = createParametersDataset(params_dataset_level0_path, lat_list_level0, lon_list_level0)
+    params_dataset_level0 = createParametersDataset(evb_dir.params_dataset_level0_path, lat_list_level0, lon_list_level0)
     tf_VIC = TF_VIC()
     
     ## ===================== level0: assign values for general variables  ======================
@@ -324,11 +320,6 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
 
 def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=None):
     print("building Param_level1... ...")
-    ## ====================== set dir and path ======================
-    # set path
-    params_dataset_level1_path = os.path.join(evb_dir.ParamFile_dir, "params_dataset_level1.nc")
-    veg_param_json_path = os.path.join(evb_dir.__data_dir__, "veg_type_attributes_umd_updated.json")
-    
     ## ====================== get grid_shp and basin_shp ======================
     grid_shp_level1 = dpc_VIC_level1.grid_shp
     basin_shp = dpc_VIC_level1.basin_shp
@@ -337,7 +328,7 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
     lon_list_level1, lat_list_level1, lon_map_index_level1, lat_map_index_level1 = grids_array_coord_map(grid_shp_level1, reverse_lat=reverse_lat)  #* all lat set as reverse
 
     ## ====================== create parameter ======================
-    params_dataset_level1 = createParametersDataset(params_dataset_level1_path, lat_list_level1, lon_list_level1)
+    params_dataset_level1 = createParametersDataset(evb_dir.params_dataset_level1_path, lat_list_level1, lon_list_level1)
     tf_VIC = TF_VIC()
     
     ## ===================== level1: assign values for general variables  ======================
@@ -406,7 +397,7 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
         params_dataset_level1.variables["Cv"][i, :, :] = grid_array_i_veg_Cv
     
     # read veg params, veg_params_json is a lookup_table
-    with open(veg_param_json_path, 'r') as f:
+    with open(evb_dir.veg_param_json_path, 'r') as f:
         veg_params_json = json.load(f)
         # veg_params_json = veg_params_json["classAttributes"]
         # veg_keys = [v["class"] for v in veg_params_json]

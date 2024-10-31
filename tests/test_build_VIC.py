@@ -152,6 +152,7 @@ if __name__ == "__main__":
     
     # ============================ build GlobalParam ============================
     if build_global_param_bool:
+        # modify on default globalparam file
         # set GlobalParam_dict
         GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
                                         "SNOW_STEPS_PER_DAY": "24",
