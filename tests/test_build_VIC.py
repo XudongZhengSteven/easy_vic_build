@@ -14,7 +14,7 @@ from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import scaling_level0_to_level1
 from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
 from rvic.parameters import parameters
-from easy_vic_build.tools.calibrate_func.params_set import default_g_list, g_boundary
+from easy_vic_build.tools.params_func.params_set import default_g_list, g_boundary
 import os
 from configparser import ConfigParser
 

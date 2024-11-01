@@ -4,7 +4,7 @@
 
 from .tools.calibrate_func.algorithm_NSGAII import NSGAII_Base
 from .tools.calibrate_func.sampling import *
-from .tools.calibrate_func.params_set import *
+from .tools.params_func.params_set import *
 from .tools.calibrate_func.evaluate_metrics import EvaluationMetric
 import os
 from deap import creator, base, tools, algorithms
@@ -14,7 +14,6 @@ from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile
 from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
-
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
@@ -87,7 +86,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         # sampling for depths g
         depths_indexes = [1, 2]
-        depths_g_bounds = [params_g_bounds.pop(di) for di in depths_indexes]  # [(0, 3), (3, 8), (8, 11)]
+        depths_g_bounds = [params_g_bounds.pop(di) for di in depths_indexes]  # such as [(1, 5), (3, 8), (6, 11)], this is num, start from 1 (1~11)
         
         ## ----------------------- RVIC params bounds -----------------------
         # uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}
@@ -98,7 +97,12 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         ## ----------------------- mixsampling -----------------------
         # discrete sampling
-        depths_g_samples = sampling_COUNU_Soil(n_samples, layer_ranges=depths_g_bounds)
+        depth_num_samples = sampling_CONUS_depth_num(n_samples, layer_ranges=depths_g_bounds)
+        
+        # transfer into g (percentile)
+        num1, num2 = depth_num_samples
+        depth_layer1, depth_layer2 = CONUS_depth_num_to_depth_layer(num1, num2)
+        percentile_layer1, percentile_layer2 = depth_layer_to_percentile(depth_layer1, depth_layer2)
         
         # continuous sampling
         params_g_bounds.extend(uh_params_bounds)
@@ -107,8 +111,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         params_samples = sampling_Sobol(n_samples, len(params_g_bounds), params_g_bounds)
         
         # combine samples
-        params_samples.insert(depths_indexes[0], depths_g_samples[0]["Layer1 percentile"])
-        params_samples.insert(depths_indexes[1], depths_g_samples[0]["Layer2 percentile"])
+        params_samples.insert(depths_indexes[0], percentile_layer1)
+        params_samples.insert(depths_indexes[1], percentile_layer2)
         
         return creator.Individual(params_samples)
 
@@ -131,6 +135,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # scaling
         self.params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, self.params_dataset_level1)
         
+        # close
+        params_dataset_level0.close()
         # =============== adjust rvic params based on ind ===============       
         # adjust UHBOXFile
         uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2]}
@@ -160,13 +166,17 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return (fitness, )
     
     def operatorMate(self, parent1, parent2):
-        return tools.cxSimulatedBinaryBounded(parent1, parent2, )
+        return tools.cxSimulatedBinaryBounded(parent1, parent2, )  # eta = 20.0, self.low, self.up
     
     def operatorMutate(self, ind):
-        return tools.
+        return tools.mutPolynomialBounded(ind, ) # eta=20.0, self.low, self.up, indpb=1/self.NDim
     
     def operatorSelect(self, population):
         return tools.selNSGA2(population, self.popSize)
+    
+    def run(self):
+        super().run()
+        self.params_dataset_level1.close()
 
 
 class NSGAII_VIC_MO(NSGAII_Base):

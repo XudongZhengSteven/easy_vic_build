@@ -7,7 +7,7 @@ from easy_vic_build.tools.utilities import readdpc
 from easy_vic_build import Evb_dir
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import scaling_level0_to_level1
-from easy_vic_build.tools.calibrate_func.params_set import default_g_list, g_boundary
+from easy_vic_build.tools.params_func.params_set import default_g_list, g_boundary
 
 """
 general information:
@@ -36,7 +36,6 @@ if __name__ == "__main__":
 
     # build parameters
     # build params_level0 with default params
-    default_g_list, g_boundary =  get_default_g_list()
     params_dataset_level0 = buildParam_level0(default_g_list, dpc_VIC_level0, evb_dir, reverse_lat=True)
     
     # build params_level1

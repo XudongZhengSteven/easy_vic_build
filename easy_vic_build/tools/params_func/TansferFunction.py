@@ -35,7 +35,7 @@ class TF_VIC:
     def depth(total_depth, g1, g2):
         # total_depth, m
         # depth, m
-        # g1, g2, g3: depend on the percentile of total depths
+        # g1, g2, g3: the percentile of total depths
         # Arithmetic mean
         ret = [total_depth * g1, total_depth * g2, total_depth * (1.0 - g1 - g2)]
         return ret

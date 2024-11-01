@@ -9,6 +9,7 @@ from .tools.utilities import cal_ssc_percentile_grid_array, cal_bd_grid_array
 from .tools.params_func.createParametersDataset import createParametersDataset
 from .tools.params_func.TansferFunction import TF_VIC
 from .tools.params_func.Scaling_operator import Scaling_operator
+from .tools.params_func.params_set import *
 from .bulid_Domain import cal_mask_frac_area_length
 from tqdm import *
 from .tools.geo_func import resample, search_grids
@@ -76,12 +77,7 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     ## ======================= level0: Transfer function =======================
     # only set the params which should be scaling (aggregation), other params such as run_cell, grid_cell, off_gmt..., will not be set here
     # depth, m
-    CONUS_layers_depths = np.array([0.05, 0.05, 0.10, 0.10, 0.10, 0.20, 0.20, 0.20, 0.50, 0.50, 0.50])  # 11 layers, m
-    CONUS_layers_total_depth = sum(CONUS_layers_depths)  # 2.50 m
-    CONUS_layers_depths_percentile = CONUS_layers_depths / CONUS_layers_total_depth
-    
     total_depth = tf_VIC.total_depth(CONUS_layers_total_depth, g_list[0])
-    CONUS_layers_depths = CONUS_layers_depths * g_list[0]
     
     depths = tf_VIC.depth(total_depth, g_list[1], g_list[2])
     grid_shp_level0["depth_layer1"] = np.full((len(grid_shp_level0.index), ), fill_value=depths[0])
@@ -96,19 +92,17 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     params_dataset_level0.variables["depth"][1, :, :] = grid_array_depth_layer2
     params_dataset_level0.variables["depth"][2, :, :] = grid_array_depth_layer3
     
-    # VIC_depth(1, 2, 3) -> CONUS_layers_depth(0, ..., 10), index, #*vertical aggregation for three soil layers
-    CONUS_layers_depths_cumsum = np.cumsum(CONUS_layers_depths)
+    # get num for vertical aggregation, VIC_depth(1, 2, 3) -> CONUS_layers_depth(0, ..., 10), index, #*vertical aggregation for three soil layers
+    percentile_layer1, percentile_layer2 = g_list[1], g_list[2]  # real_depth_to_percentile(total_depth, depths[0], depths[1])
+    depth_layer1, depth_layer2 = percentile_to_depth_layer(percentile_layer1, percentile_layer2)  # this is not the real depth, real depth is the depths[0], depths[1], depths[2]
+    num1, num2 = depth_layer_to_CONUS_depth_num(depth_layer1, depth_layer2)
     
     depth_layer1_start = 0
-    depth_layer1_end = np.where(abs(CONUS_layers_depths_cumsum - depths[0]) <= 0.001)[0][0]
-    
-    depth_layer2_start = depth_layer1_end + 1
-    CONUS_layers_depths_cumsum -= CONUS_layers_depths_cumsum[depth_layer1_end]
-    depth_layer2_end = np.where(abs(CONUS_layers_depths_cumsum - depths[1]) <= 0.001)[0][0]
-
-    depth_layer3_start = depth_layer2_end + 1
-    CONUS_layers_depths_cumsum -= CONUS_layers_depths_cumsum[depth_layer2_end]
-    depth_layer3_end = np.where(abs(CONUS_layers_depths_cumsum - depths[2]) <= 0.001)[0][0]
+    depth_layer1_end = num1
+    depth_layer2_start = num1
+    depth_layer2_end = num2
+    depth_layer3_start = num2
+    depth_layer3_end = CONUS_layers_num
     
     # ele_std, m (same as StrmDem)
     grid_array_SrtmDEM_std_Value, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="SrtmDEM_std_Value", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)

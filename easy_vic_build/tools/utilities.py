@@ -164,9 +164,9 @@ def grids_array_coord_map(grid_shp, reverse_lat=True):
 
 def cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer_start, depth_layer_end):
     #  vertical aggregation for sand, silt, clay percentile
-    grid_array_sand = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_sand_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end + 1)]
-    grid_array_silt = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_silt_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end + 1)]
-    grid_array_clay = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_clay_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end + 1)]
+    grid_array_sand = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_sand_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end)]
+    grid_array_silt = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_silt_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end)]
+    grid_array_clay = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_clay_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end)]
     
     grid_array_sand = np.mean(grid_array_sand, axis=0)
     grid_array_silt = np.mean(grid_array_silt, axis=0)
@@ -177,7 +177,7 @@ def cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer_start, depth_laye
 
 def cal_bd_grid_array(grid_shp_level0, depth_layer_start, depth_layer_end):
     #  vertical aggregation for bulk_density
-    grid_array_bd = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_bulk_density_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end + 1)]
+    grid_array_bd = [createArray_from_gridshp(grid_shp_level0, value_column=f"soil_l{i+1}_bulk_density_nearest_Value")[0] for i in range(depth_layer_start, depth_layer_end)]
     grid_array_bd = np.mean(grid_array_bd, axis=0)
     grid_array_bd /= 100 # 100 * kg/m3 -> kg/m3
     

@@ -49,8 +49,5 @@ if __name__ == "__main__":
     nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level1, evb_dir, algParams, evb_dir.calibrate_cp_path)
     nsgaII_VIC_SO.run()
     
-    # close
-    domain_dataset.close()
-    params_dataset_level0.close()
-    params_dataset_level1.close()
+    
     
