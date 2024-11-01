@@ -78,23 +78,26 @@ class NSGAII_Base:
     def registerEvaluate(self):
         self.toolbox.register("evaluate", self.evaluate)
     
-    #* Design for your own situation
     def evaluatePop(self, population):
         fitnesses = list(map(self.toolbox.evaluate, population))
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
     
     #* Design for your own situation
-    def operatorMate(self):
-        return tools.cxTwoPoint
+    def operatorMate(self, parent1, parent2):
+        # parent is ind
+        kwargs = {}
+        return tools.cxTwoPoint(parent1, parent2, **kwargs)
     
     #* Design for your own situation
-    def operatorMutate(self):
-        return tools.mutFlipBit
+    def operatorMutate(self, ind):
+        kwargs = {}
+        return tools.mutFlipBit(ind, kwargs)
 
     #* Design for your own situation
-    def operatorSelect(self):
-        return tools.selTournament
+    def operatorSelect(self, population):
+        kwargs = {}
+        return tools.selTournament(population, **kwargs)
     
     def registerOperators(self):
         self.toolbox.register("mate", self.operatorMate)

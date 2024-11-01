@@ -27,12 +27,6 @@ if __name__ == "__main__":
     # read dpc_VIC
     dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
     
-    # read domain
-    domain_dataset = readDomain(evb_dir)
-    
-    # read param
-    params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
-    
     # set GlobalParam_dict
     GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
                                     "SNOW_STEPS_PER_DAY": "24",
@@ -44,7 +38,7 @@ if __name__ == "__main__":
                                     "ENDMONTH": str(int(date_period[1][4:6])),
                                     "ENDDAY": str(int(date_period[1][6:])),
                                     "OUT_TIME_UNITS": "DAYS"},
-                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_PET", "OUT_DISCHARGE"]}
+                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
     
     # buildGlobalParam
@@ -58,6 +52,5 @@ if __name__ == "__main__":
     # close
     domain_dataset.close()
     params_dataset_level0.close()
-    params_dataset_level1.close()   
-    
+    params_dataset_level1.close()
     

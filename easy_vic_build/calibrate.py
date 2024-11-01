@@ -10,17 +10,20 @@ import os
 from deap import creator, base, tools, algorithms
 from copy import deepcopy
 from .bulid_Param import buildParam_level0, scaling_level0_to_level1
+from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile
 from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
 
+
 class NSGAII_VIC_SO(NSGAII_Base):
     
-    def __init__(self, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
+    def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl"):
         super().__init__(algParams, save_path)
         self.evb_dir = evb_dir
+        self.dpc_VIC_level0 = dpc_VIC_level0
         self.dpc_VIC_level1 = dpc_VIC_level1
         
         # period
@@ -110,29 +113,39 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return creator.Individual(params_samples)
 
     def evaluate(self, ind):
-        # get ind
+        # =============== get ind ===============
         params_g = ind[:-5]
         uh_params = ind[-5:-2]
         routing_params = ind[-2:]
         
-        # type params
+        # type params: not need now      
         
+        # =============== adjust vic params based on ind ===============
+        # adjust params_dataset_level0
+        params_dataset_level0 = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, reverse_lat=True)
         
+        # read params_dataset_level1
+        if not hasattr(self, "params_dataset_level1"):
+            self.params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
         
-        # adjust params
+        # scaling
+        self.params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, self.params_dataset_level1)
         
+        # =============== adjust rvic params based on ind ===============       
+        # adjust UHBOXFile
+        uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2]}
+        buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=False)
         
+        # adjust ParamCFGFile
+        cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1], "OUTPUT_INTERVAL": 86400}
+        buildParamCFGFile(self.evb_dir, **cfg_params)
         
-        # adjust RVIC params
-        buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True)
+        # =============== run vic ===============
+        command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
+        os.system(command_run_vic)
         
-        # run VIC
-        vic_path = os.path.join()
-        globalParam_path = os.path.join(self.evb_dir.GlobalParam_dir, "global_param.txt")
-        os.system("./vic.exe -g ")
-        
+        # =============== evaluate ===============
         # get obs: alreay got
-        
         # get sim
         sim = self.get_sim()
         
@@ -146,17 +159,14 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         return (fitness, )
     
-    def evaluatePop(self, population):
-        return super().evaluatePop(population)
+    def operatorMate(self, parent1, parent2):
+        return tools.cxSimulatedBinaryBounded(parent1, parent2, )
     
-    def operatorMate(self):
-        return super().operatorMate()
+    def operatorMutate(self, ind):
+        return tools.
     
-    def operatorMutate(self):
-        return super().operatorMutate()
-    
-    def operatorSelect(self):
-        return super().operatorSelect()
+    def operatorSelect(self, population):
+        return tools.selNSGA2(population, self.popSize)
 
 
 class NSGAII_VIC_MO(NSGAII_Base):

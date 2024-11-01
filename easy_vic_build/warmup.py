@@ -8,16 +8,11 @@ from .tools.params_func.GlobalParamParser import GlobalParamParser
 def warmup_VIC(evb_dir, warmup_period):
     # this is only useful is you just warm up the model and not to run it
     # in generl, you can run the mode across the total date_period, and ignore the warm-up period when you calibrate and evaluate
-    ## ====================== set dir and path ======================
-    # set path
-    GlobalParam_dir = evb_dir.GlobalParam_dir
-    globalParam_path = os.path.join(GlobalParam_dir, "global_param.txt")
-    
     ## ====================== set Global param ======================
     #* note: make sure you have already a globalparam file, modify on built globalparam file
     # read global param
     globalParam = GlobalParamParser()
-    globalParam.load(globalParam_path)
+    globalParam.load(evb_dir.globalParam_path)
     
     # update date period
     globalParam.set("Simulation", "STARTYEAR", str(warmup_period[0][:4]))
@@ -36,9 +31,9 @@ def warmup_VIC(evb_dir, warmup_period):
     globalParam.set("State Files", "STATE_FORMAT", "NETCDF4")
     
     # write
-    with open(globalParam_path, "w") as f:
+    with open(evb_dir.globalParam_path, "w") as f:
         globalParam.write(f)
     
     ## ====================== run vic and save state ======================
-    command_run_vic = " ".join([evb_dir.vic_exe_path, "-g", globalParam_path])
+    command_run_vic = " ".join([evb_dir.vic_exe_path, "-g", evb_dir.globalParam_path])
     os.system(command_run_vic)
