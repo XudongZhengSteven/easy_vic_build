@@ -40,13 +40,16 @@ if __name__ == "__main__":
                                     "OUT_TIME_UNITS": "DAYS"},
                         "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
-    
+        
     # buildGlobalParam
-    buildGlobalParam(evb_dir, GlobalParam_dict)
+    buildGlobalParam_bool = False
+    if buildGlobalParam_bool:
+        buildGlobalParam(evb_dir, GlobalParam_dict)
     
     # calibrate
     algParams = {"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
-    nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level1, evb_dir, algParams, evb_dir.calibrate_cp_path)
+    nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
+                                  algParams, evb_dir.calibrate_cp_path)
     nsgaII_VIC_SO.run()
     
     

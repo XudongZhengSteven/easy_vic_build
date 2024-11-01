@@ -14,13 +14,18 @@ from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile
 from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
+from copy import deepcopy
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+# plt.show(block=True)
+
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl"):
-        super().__init__(algParams, save_path)
         self.evb_dir = evb_dir
         self.dpc_VIC_level0 = dpc_VIC_level0
         self.dpc_VIC_level1 = dpc_VIC_level1
@@ -33,13 +38,29 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.g_boundary = g_boundary
         self.uh_params_boundary = uh_params_boundary
         self.routing_params_boundary = routing_params_boundary
+        self.depths_indexes = depths_index
+        self.total_boundary = [item for lst in [g_boundary, uh_params_boundary, routing_params_boundary] for item in lst]
+        self.low = [b[0] for b in self.total_boundary]
+        self.up = [b[1] for b in self.total_boundary]
         
+        # params dimension
+        self.NDim = len(self.total_boundary)
+        
+        # params type
+        self.g_types = g_types
+        self.uh_params_types = uh_params_types
+        self.routing_params_types = routing_params_types
+        self.total_types = [item for lst in [g_types, uh_params_types, uh_params_types] for item in lst]
+
         # get obs
         self.get_obs()
+        
+        super().__init__(algParams, save_path)
     
     def get_obs(self):
         self.obs = self.dpc_VIC_level1.basin_shp.streamflow.iloc[0]
         date = self.obs.loc[:, "date"]
+        self.obs.loc[:, "discharge(m3/s)"] = self.obs.loc[:, 4] * 0.283168
         self.obs.index = pd.to_datetime(date)
     
     def get_sim(self):
@@ -85,8 +106,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         params_g_bounds = deepcopy(self.g_boundary)
         
         # sampling for depths g
-        depths_indexes = [1, 2]
-        depths_g_bounds = [params_g_bounds.pop(di) for di in depths_indexes]  # such as [(1, 5), (3, 8), (6, 11)], this is num, start from 1 (1~11)
+        depths_g_bounds = [params_g_bounds[di] for di in self.depths_indexes]  # such as [(1, 5), (3, 8), (6, 11)], this is num, start from 1 (1~11)
+        for di in sorted(self.depths_indexes, reverse=True):
+            params_g_bounds.pop(di)
         
         ## ----------------------- RVIC params bounds -----------------------
         # uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}
@@ -98,11 +120,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ## ----------------------- mixsampling -----------------------
         # discrete sampling
         depth_num_samples = sampling_CONUS_depth_num(n_samples, layer_ranges=depths_g_bounds)
-        
-        # transfer into g (percentile)
         num1, num2 = depth_num_samples
-        depth_layer1, depth_layer2 = CONUS_depth_num_to_depth_layer(num1, num2)
-        percentile_layer1, percentile_layer2 = depth_layer_to_percentile(depth_layer1, depth_layer2)
+        insertions = zip(self.depths_indexes, [num1, num2])  # TODO check it
         
         # continuous sampling
         params_g_bounds.extend(uh_params_bounds)
@@ -111,8 +130,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         params_samples = sampling_Sobol(n_samples, len(params_g_bounds), params_g_bounds)
         
         # combine samples
-        params_samples.insert(depths_indexes[0], percentile_layer1)
-        params_samples.insert(depths_indexes[1], percentile_layer2)
+        for index, value in sorted(insertions, key=lambda x: x[0], reverse=True):
+            params_samples.insert(index, value)
         
         return creator.Individual(params_samples)
 
@@ -122,7 +141,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
         uh_params = ind[-5:-2]
         routing_params = ind[-2:]
         
-        # type params: not need now      
+        # type params
+        params_g = [self.g_types[i](params_g[i]) for i in range(len(params_g))]
+        uh_params = [self.uh_params_types[i](uh_params[i]) for i in range(len(uh_params))]
+        routing_params = [self.routing_params_types[i](routing_params[i]) for i in range(len(routing_params))]
         
         # =============== adjust vic params based on ind ===============
         # adjust params_dataset_level0
@@ -137,6 +159,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         # close
         params_dataset_level0.close()
+        
         # =============== adjust rvic params based on ind ===============       
         # adjust UHBOXFile
         uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2]}
@@ -166,10 +189,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return (fitness, )
     
     def operatorMate(self, parent1, parent2):
-        return tools.cxSimulatedBinaryBounded(parent1, parent2, )  # eta = 20.0, self.low, self.up
+        return tools.cxSimulatedBinaryBounded(parent1, parent2, eta=20.0, low=self.low, up=self.up)
     
     def operatorMutate(self, ind):
-        return tools.mutPolynomialBounded(ind, ) # eta=20.0, self.low, self.up, indpb=1/self.NDim
+        return tools.mutPolynomialBounded(ind, eta=20.0, low=self.low, up=self.up, indpb=1/self.NDim)
     
     def operatorSelect(self, population):
         return tools.selNSGA2(population, self.popSize)
@@ -179,7 +202,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.params_dataset_level1.close()
 
 
-class NSGAII_VIC_MO(NSGAII_Base):
+class NSGAII_VIC_MO(NSGAII_VIC_SO):
     
     def createFitness(self):
         creator.create("Fitness", base.Fitness, weights=(-1.0, ))

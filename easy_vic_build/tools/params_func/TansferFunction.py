@@ -2,6 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 import numpy as np
+from .params_set import *
 
 class TF_VIC:
     
@@ -35,9 +36,14 @@ class TF_VIC:
     def depth(total_depth, g1, g2):
         # total_depth, m
         # depth, m
-        # g1, g2, g3: the percentile of total depths
+        # g1, g2: num1, num2, int
+        # set num1 as the num of end CONUS layer num of the first layer
+        # set num2 as the num of end CONUS layer num of the second layer
         # Arithmetic mean
-        ret = [total_depth * g1, total_depth * g2, total_depth * (1.0 - g1 - g2)]
+        
+        # transfer g1, g2 into percentile
+        percentile_layer1, percentile_layer2 = CONUS_depth_num_to_percentile(g1, g2)
+        ret = [total_depth * percentile_layer1, total_depth * percentile_layer2, total_depth * (1.0 - percentile_layer1 - percentile_layer2)]
         return ret
     
     @staticmethod

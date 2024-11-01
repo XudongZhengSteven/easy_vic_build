@@ -20,7 +20,7 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     # calibrate: MPR: PTF + Scaling (calibrate for scaling coefficient)
     g_list: global parameters
         [0]             total_depth (g)
-        [1, 2]          depth (g1, g2, 1-g1-g2)
+        [1, 2]          depth (g1, g2)
         [3, 4]          b_infilt (g1, g2)
         [5, 6, 7]       ksat (g1, g2, g3)
         [8, 9, 10]      phi_s (g1, g2, g3)
@@ -92,10 +92,8 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     params_dataset_level0.variables["depth"][1, :, :] = grid_array_depth_layer2
     params_dataset_level0.variables["depth"][2, :, :] = grid_array_depth_layer3
     
-    # get num for vertical aggregation, VIC_depth(1, 2, 3) -> CONUS_layers_depth(0, ..., 10), index, #*vertical aggregation for three soil layers
-    percentile_layer1, percentile_layer2 = g_list[1], g_list[2]  # real_depth_to_percentile(total_depth, depths[0], depths[1])
-    depth_layer1, depth_layer2 = percentile_to_depth_layer(percentile_layer1, percentile_layer2)  # this is not the real depth, real depth is the depths[0], depths[1], depths[2]
-    num1, num2 = depth_layer_to_CONUS_depth_num(depth_layer1, depth_layer2)
+    #*vertical aggregation for three soil layers
+    num1, num2 = g_list[1], g_list[2] # g1, g2 is the num1, num2
     
     depth_layer1_start = 0
     depth_layer1_end = num1
