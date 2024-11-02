@@ -55,6 +55,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # get obs
         self.get_obs()
         
+        # initial searched_grids_index for scaling
+        self.searched_grids_index = None
+        
         super().__init__(algParams, save_path)
     
     def get_obs(self):
@@ -120,17 +123,18 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ## ----------------------- mixsampling -----------------------
         # discrete sampling
         depth_num_samples = sampling_CONUS_depth_num(n_samples, layer_ranges=depths_g_bounds)
-        num1, num2 = depth_num_samples
-        insertions = zip(self.depths_indexes, [num1, num2])  # TODO check it
+        num1, num2 = depth_num_samples[0]
+        insertions = list(zip(self.depths_indexes, [num1, num2]))
         
         # continuous sampling
         params_g_bounds.extend(uh_params_bounds)
         params_g_bounds.extend(routing_params_bounds)
         
-        params_samples = sampling_Sobol(n_samples, len(params_g_bounds), params_g_bounds)
+        params_samples = sampling_Sobol(n_samples, len(params_g_bounds), params_g_bounds)[0]
+        params_samples = params_samples.tolist()
         
         # combine samples
-        for index, value in sorted(insertions, key=lambda x: x[0], reverse=True):
+        for index, value in sorted(insertions, key=lambda x: x[0]):
             params_samples.insert(index, value)
         
         return creator.Individual(params_samples)
@@ -151,14 +155,15 @@ class NSGAII_VIC_SO(NSGAII_Base):
         params_dataset_level0 = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, reverse_lat=True)
         
         # read params_dataset_level1
-        if not hasattr(self, "params_dataset_level1"):
-            self.params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
+        params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
         
         # scaling
-        self.params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, self.params_dataset_level1)
+        params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.searched_grids_index)
+        self.searched_grids_index = searched_grids_index
         
         # close
         params_dataset_level0.close()
+        params_dataset_level1.close()
         
         # =============== adjust rvic params based on ind ===============       
         # adjust UHBOXFile

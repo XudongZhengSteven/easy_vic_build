@@ -347,7 +347,7 @@ class TF_VIC:
         # g: 1.0 (0.8, 1.2)
         # Arithmetic mean
         psi_wp = -1500
-        ret = g * phi_s * (psi_wp/psis) ** (-1 / b_retcurve)
+        ret = g * phi_s * (psi_wp / psis) ** (-1 / b_retcurve)
         return ret
     
     @staticmethod
