@@ -11,17 +11,17 @@ class TF_VIC:
     
     @staticmethod
     def b_infilt(ele_std, g1, g2):
+        # Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.
+        # Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.
         # b_infilt, N/A
-        # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)
+        # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)  # TODO recheck (ele_std - g1) / (ele_std + g2*10)
         # Arithmetic mean
-        b_infilt_min = 0.03
+        b_infilt_min = 0.01
         b_infilt_max = 0.50
         ret = (np.log(ele_std) - g1) / (np.log(ele_std) + g2*10)
         
         ret[ret > b_infilt_max] = b_infilt_max
         ret[ret < b_infilt_min] = b_infilt_min
-        # ret = ret if ret < b_infilt_max else b_infilt_max
-        # ret = ret if ret > b_infilt_min else b_infilt_min
         return ret
     
     @staticmethod
@@ -48,7 +48,7 @@ class TF_VIC:
     
     @staticmethod
     def ksat(sand, clay, g1, g2, g3):
-        # Cosby et al. WRR 1984
+        # Cosby et al. WRR 1984, log Ks = 0.0126x1 (- 0.0064x3) -0.6
         # sand/clay: %
         # inches/hour -> 25.4 -> mm/hour -> /3600 -> mm/s
         # g1, g2, g3: -0.6 (-0.66, -0.54), 0.0126 (0.0113, 0.0139), -0.0064 (-0.0058, -0.0070)
@@ -67,8 +67,9 @@ class TF_VIC:
     
     @staticmethod
     def phi_s(sand, clay, g1, g2, g3):
-        # Qs, saturated water content, Cosby et al. WRR 1984, namely, the porosity, namely the phi_s, m3/m3 or mm/mm
-        # g1, g2, g3: 50.05 (45.5, 55.5), -0.142 (-0.8, -0.4), -0.037 (-0.8, -0.4)
+        # Cosby et al. WRR 1984, Qs (φs) = -0.142x1 (- 0.037x3) + 50.5
+        # Qs, saturated water content, namely, the porosity, namely the phi_s, m3/m3 or mm/mm
+        # g1, g2, g3: 50.05 (45.5, 55.5), -0.142 (-0.3, -0.01), -0.037 (-0.1, -0.01)
         # Arithmetic mean
         ret = (g1 + g2 * sand + g3 * clay) / 100
         
@@ -97,38 +98,42 @@ class TF_VIC:
     
     @staticmethod
     def psis(sand, silt, g1, g2, g3):
-        # saturation matric potential, Cosby et al. WRR 1984, kPa/cm-H2O
-        # g1, g2, g3: 1.54 (0.8, 0.4), -0.0095 (-0.8, -0.4), 0.0063 (0.8, 0.4)
+        # saturation matric potential, ψs, Cosby et al. WRR 1984, logψs = -0.0095x1 (+ 0.0063x2) + 1.54
+        # kPa/cm-H2O
+        # g1, g2, g3: 1.54 (1.0, 2.0), -0.0095 (-0.01, -0.009), 0.0063 (0.006, 0.0066)
         # Arithmetic mean
         ret = g1 + g2 * sand + g3 * silt
         unit_factor1 = 0.0980665  # 0.0980665 kPa/cm-H2O. Cosby give psi_sat in cm of water (cm-H2O), 1cm H₂O=0.0980665 kPa
-        ret = -1 * (10 ** (ret)) * unit_factor1
+        ret = -1 * (10 ** (ret)) * unit_factor1  # TODO recheck -1
         return ret
 
     @staticmethod
     def b_retcurve(sand, clay, g1, g2, g3):
-        # b (slope of cambell retention curve in log space), N/A
-        # g1, g2, g3: 3.1 (-0.8, -0.4), 0.157 (-0.8, -0.4), -0.003 (-0.8, -0.4)
+        # b (slope of cambell retention curve in log space), N/A, ψ = ψc(θ/θs)-b
+        # Cosby et al. WRR 1984, b = 0.157x3 (- 0.003x1) + 3.10, b~=0~20
+        # g1, g2, g3: 3.1 (2.5, 3.6), 0.157 (0.1, 0.2), -0.003 (-0.005, -0.001)
         # Arithmetic mean
-        ret = g1 + g2 * sand+ g3 * clay
+        ret = g1 + g2 * sand + g3 * clay
         return ret
     
     @staticmethod
     def expt(b_retcurve, g1, g2):
-        # the exponent in Campbell’s equation for hydraulic conductivity
-        # g1, g2: 3.0 (0.8, 1.2), 2.0 (0.8, 1.2)
+        # the exponent in Campbell’s equation for hydraulic conductivity, k = ks (θ/θs)2b+3
+        # expt = 2b+3 should be > 3
+        # g1, g2: 3.0 (2.8, 3.2), 2.0 (1.5, 2.5)
         # Arithmetic mean
         ret = g1 + g2 * b_retcurve
         return ret
     
     @staticmethod
     def fc(phi_s, b_retcurve, psis, sand, g):
-        # campbell 1974, m3/m3 or %
+        # campbell 1974, ψ = ψc(θ/θs)^-b, saturation condition
+        # ψ = ψc(θ/θs)^-b -> ψ/ψc = (θ/θs)^-b -> θ/θs = (ψ/ψc)^(-1/b) -> θ = θs * ψ/ψc^(-1/b)
+        # m3/m3 or %
         # g: 1.0 (0.8, 1.2)
         # Arithmetic mean
-        psi_fc = np.full_like(phi_s, fill_value=-10)
-        psi_fc[sand <= 69] = -20
-        # psi_fc = -20 if sand <= 69 else -10
+        psi_fc = np.full_like(phi_s, fill_value=-10)  # ψfc kPa/cm-H2O, -30~-10kPa
+        psi_fc[sand <= 69] = -20  # TODO recheck -20, sand
         
         ret = g * phi_s * (psi_fc / psis) ** (-1 / b_retcurve)
         return ret
@@ -148,8 +153,6 @@ class TF_VIC:
         
         ret[ret > D1_max] = D1_max
         ret[ret < D1_min] = D1_min
-        # ret = ret if ret < D1_max else D1_max
-        # ret = ret if ret > D1_min else D1_min
         return ret
         
     @staticmethod
@@ -167,8 +170,6 @@ class TF_VIC:
         
         ret[ret > D2_max] = D2_max
         ret[ret < D2_min] = D2_min
-        # ret = ret if ret < D2_max else D2_max
-        # ret = ret if ret > D2_min else D2_min
         
         return ret
     
@@ -185,8 +186,6 @@ class TF_VIC:
         
         ret[ret > D3_max] = D3_max
         ret[ret < D3_min] = D3_min
-        # ret = ret if ret < D3_max else D3_max
-        # ret = ret if ret > D3_min else D3_min
         return ret
     
     @staticmethod
@@ -275,7 +274,8 @@ class TF_VIC:
     
     @staticmethod
     def bubble(expt, g1, g2):
-        # g1, g2: 0.32 (0.8, 1.2), 4.2 (0.8, 1.2)
+        # Schaperow, J., Li, D., Margulis, S., and Lettenmaier, D.: A near-global, high resolution land surface parameter dataset for the variable infiltration capacity model, Scientific Data, 8, 216, 10.1038/s41597-021-00999-4, 2021. 
+        # g1, g2: 0.32 (0.1, 0.8), 4.3 (0.0, 10.0)
         # Arithmetic mean
         ret = g1 * expt + g2
         return ret
@@ -301,7 +301,7 @@ class TF_VIC:
         # read from file
         # g: 1.0 (0.9, 1.1)
         # Arithmetic mean
-        bd_min = 0.0
+        bd_min = 805.0
         bd_max = 1880.0
         
         bd_temp = bulk_density * g
@@ -309,12 +309,7 @@ class TF_VIC:
         bd_slope[bd_slope > 1.0] = 1.0
         bd_slope[bd_slope < 0.0] = 0.0
         ret = bd_slope * (bd_max - bd_min) + bd_min
-        
-        # ret[ret > bd_max] = bd_max
-        # ret[ret < bd_min] = bd_min
-        
-        # ret = ret if ret < bulk_density_max else bulk_density_max
-        # ret = ret if ret > bulk_density_min else bulk_density_min
+
         return ret
         
     # def bulk_density(bd_in, g):
@@ -343,10 +338,11 @@ class TF_VIC:
     
     @staticmethod
     def wp(phi_s, b_retcurve, psis, g):
-        # Campbell 1974, computed field capacity [frac]
+        # campbell 1974, ψ = ψc(θ/θs)^-b, saturation condition
+        # ψ = ψc(θ/θs)^-b -> ψ/ψc = (θ/θs)^-b -> θ/θs = (ψ/ψc)^(-1/b) -> θ = θs * ψ/ψc^(-1/b)
         # g: 1.0 (0.8, 1.2)
         # Arithmetic mean
-        psi_wp = -1500
+        psi_wp = -1500  # -1500~-2000kPa
         ret = g * phi_s * (psi_wp / psis) ** (-1 / b_retcurve)
         return ret
     

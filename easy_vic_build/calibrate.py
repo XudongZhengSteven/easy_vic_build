@@ -176,7 +176,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         # =============== run vic ===============
         command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
-        os.system(command_run_vic)
+        out = os.system(command_run_vic)
         
         # =============== evaluate ===============
         # get obs: alreay got
