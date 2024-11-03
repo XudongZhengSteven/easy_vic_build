@@ -116,6 +116,15 @@ def sampling_CONUS_depth_num(n_samples, layer_ranges):
         # second layer: sample for num2
         num2 = np.random.choice(range(num1 + 1, layer_ranges[1][1] + 1))
         
+        # constraint: depth_layer2 > depth_layer1
+        depth_layer1, depth_layer2 = CONUS_depth_num_to_depth_layer(num1, num2)
+        while True:
+            if depth_layer1 < depth_layer2:
+                break
+            else:
+                num2 = np.random.choice(range(num1 + 1, layer_ranges[1][1] + 1))
+                depth_layer1, depth_layer2 = CONUS_depth_num_to_depth_layer(num1, num2)
+        
         samples.append((num1, num2))
     
     return samples

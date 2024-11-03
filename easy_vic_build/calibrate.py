@@ -15,6 +15,8 @@ from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
 from copy import deepcopy
+from .tools.utilities import remove_and_mkdir
+from datetime import datetime
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
@@ -63,18 +65,19 @@ class NSGAII_VIC_SO(NSGAII_Base):
     def get_obs(self):
         self.obs = self.dpc_VIC_level1.basin_shp.streamflow.iloc[0]
         date = self.obs.loc[:, "date"]
-        self.obs.loc[:, "discharge(m3/s)"] = self.obs.loc[:, 4] * 0.283168
+        factor_unit_feet2meter = 0.0283168
+        self.obs.loc[:, "discharge(m3/s)"] = self.obs.loc[:, 4] * factor_unit_feet2meter
         self.obs.index = pd.to_datetime(date)
     
     def get_sim(self):
         # sim_df
-        sim_df = pd.Dataframe(columns=["time", "OUT_DISCHARGE"])
+        sim_df = pd.DataFrame(columns=["time", "OUT_DISCHARGE"])
         
         # outlet lat, lon
         x, y = self.dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], self.dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]      
         
         # read VIC OUTPUT file
-        sim_path = os.path.join(self.VICResults_dir, os.listdir(self.evb_dir.VICResults_dir)[0])
+        sim_path = os.path.join(self.evb_dir.VICResults_dir, os.listdir(self.evb_dir.VICResults_dir)[0])
         with Dataset(sim_path, "r") as dataset:
             # get time, lat, lon
             time = dataset.variables["time"]
@@ -83,7 +86,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             
             # transfer time_num into date
             time_date = num2date(time[:], units=time.units, calendar=time.calendar)
-            
+            time_date = [datetime(t.year, t.month, t.day, t.hour, t.second) for t in time_date]
             # get outlet index
             searched_grids_index = search_grids_nearest([y], [x], lat, lon, search_num=1)
             searched_grid_index = searched_grids_index[0]
@@ -92,7 +95,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             out_discharge = dataset.variables["OUT_DISCHARGE"][:, searched_grid_index[0][0], searched_grid_index[1][0]]
             
             sim_df.loc[:, "time"] = time_date
-            sim_df.loc[:, "OUT_DISCHARGE"] = out_discharge
+            sim_df.loc[:, "discharge(m3/s)"] = out_discharge
             sim_df.index = pd.to_datetime(time_date)
         
         return sim_df
@@ -174,6 +177,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1], "OUTPUT_INTERVAL": 86400}
         buildParamCFGFile(self.evb_dir, **cfg_params)
         
+        # =============== clear VICResults_dir ===============
+        remove_and_mkdir(self.evb_dir.VICResults_dir)
+        
         # =============== run vic ===============
         command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
         out = os.system(command_run_vic)
@@ -184,8 +190,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         sim = self.get_sim()
         
         # clip sim and obs during the calibrate_date_period
-        sim_cali = sim.loc[self.calibrate_date_period[0], self.calibrate_date_period[1]]
-        obs_cali = self.obs.loc[self.calibrate_date_period[0], self.calibrate_date_period[1]]
+        sim_cali = sim.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
+        obs_cali = self.obs.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
         
         # evaluate
         evaluation_metric = EvaluationMetric(sim_cali, obs_cali)
@@ -232,13 +238,8 @@ class NSGAII_VIC_MO(NSGAII_VIC_SO):
 
 
 def calibrate_VIC_SO(evb_dir):
-    
-    
     # calibrate
     algParams = algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
     save_path = os.path.join(evb_dir.CalibrateVIC_dir, "checkpoint.pkl")
     nsgaII_VIC = NSGAII_VIC_SO(algParams, save_path)
-    
-    
-    
     pass

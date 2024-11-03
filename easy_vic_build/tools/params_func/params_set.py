@@ -34,7 +34,7 @@ g_list: global parameters
 
 # g
 default_g_list = [1.0,
-                    3, 8,  # num1, num2
+                    2, 8,  # num1, num2
                     0.0, 1.0,
                     -0.6, 0.0126, -0.0064,
                     50.05, -0.142, -0.037,
@@ -59,12 +59,12 @@ default_g_list = [1.0,
                     ]
 
 g_boundary = [[0.1, 4.0],
-                [1, 5], [3, 8],  # special samples for depths, here is the boundary of num1 and num2
+                [1, 3], [3, 8],  # special samples for depths, here is the boundary of num1 and num2
                 [-2.0, 1.0], [0.8, 1.2],
                 [-0.66, -0.54], [0.0113, 0.0139], [-0.0070, -0.0058],
                 [45.5, 55.5], [-0.3, -0.01], [-0.1, -0.01],
                 [1.0, 2.0], [-0.01, -0.009], [0.006, 0.0066],
-                [2.5, 3.6], [-0.8, -0.4], [-0.005, -0.001],
+                [2.5, 3.6], [0.1, 0.2], [-0.005, -0.001],
                 [2.8, 3.2], [1.5, 2.5],
                 [0.8, 1.2],
                 [1.2, 2.5],
@@ -109,6 +109,8 @@ g_types = [float,
 ## ========================= param g for depths transformation =========================
 # *special samples for depths
 depths_index = [1, 2]  # index for depths
+
+# *constraint: depth_layer2 > depth_layer1
 
 # CONUS layers
 CONUS_layers_depths = np.array([0.05, 0.05, 0.10, 0.10, 0.10, 0.20, 0.20, 0.20, 0.50, 0.50, 0.50])

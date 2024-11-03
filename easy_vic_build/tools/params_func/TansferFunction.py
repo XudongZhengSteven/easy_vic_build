@@ -13,7 +13,7 @@ class TF_VIC:
     def b_infilt(ele_std, g1, g2):
         # Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.
         # Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.
-        # b_infilt, N/A
+        # b_infilt, N/A, 0.01~0.5
         # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)  # TODO recheck (ele_std - g1) / (ele_std + g2*10)
         # Arithmetic mean
         b_infilt_min = 0.01
@@ -36,9 +36,10 @@ class TF_VIC:
     def depth(total_depth, g1, g2):
         # total_depth, m
         # depth, m
-        # g1, g2: num1, num2, int
+        # g1, g2: num1 (1, 3), num2 (3, 8), int  
         # set num1 as the num of end CONUS layer num of the first layer
         # set num2 as the num of end CONUS layer num of the second layer
+        # d1 0~0.15, d2 0.2~0.5, d3 0.7~1.5, d2 > d1, default d1 (0.1), d2 (0.5), d3 (3.0)
         # Arithmetic mean
         
         # transfer g1, g2 into percentile
@@ -51,7 +52,7 @@ class TF_VIC:
         # Cosby et al. WRR 1984, log Ks = 0.0126x1 (- 0.0064x3) -0.6
         # sand/clay: %
         # inches/hour -> 25.4 -> mm/hour -> /3600 -> mm/s
-        # g1, g2, g3: -0.6 (-0.66, -0.54), 0.0126 (0.0113, 0.0139), -0.0064 (-0.0058, -0.0070)
+        # g1, g2, g3: -0.6 (-0.66, -0.54), 0.0126 (0.0113, 0.0139), -0.0064 (-0.0070, -0.0058)
         # Harmonic mean
         unit_factor1 = 25.4
         unit_factor2 = 1/3600
@@ -205,7 +206,7 @@ class TF_VIC:
     @staticmethod
     def Dsmax(D1, D2, D3, cexpt, phi_s, depth):
         # ceta_s (maximum soil moisture, mm) = phi_s * (depth * unit_factor1), phi_s (Saturated soil water content, m3/m3)
-        # Dsmax, mm or mm/day
+        # Dsmax, mm or mm/day, 0.1~30.0, 10 is a common value
         # layer3
         # Harmonic mean
         Dsmax_min = 0.1
@@ -221,7 +222,7 @@ class TF_VIC:
 
     @staticmethod
     def Ds(D1, D3, Dsmax):
-        # [day^-D4] or fraction
+        # [day^-D4] or fraction, 0.0001~1, 0.02 is a common value
         # Harmonic mean
         Ds_min = 0.0001
         Ds_max = 1.0
@@ -235,9 +236,9 @@ class TF_VIC:
 
     @staticmethod
     def Ws(D3, phi_s, depth):
-        # fraction
+        # fraction, 0.0001~1, 0.8 is a common value
         # Arithmetic mean
-        Ws_min = 0.05
+        Ws_min = 0.0001
         Ws_max = 1.0
         unit_factor1 = 1000
         ret = D3 / phi_s / (depth * unit_factor1)
@@ -362,6 +363,7 @@ class TF_VIC:
     
     @staticmethod
     def snow_rough(g):
+        # snow roughness of snowpack, 0.001~0.03
         # g: 1.0 (0.9, 1.1)
         ret = 0.0005 * g
         return ret

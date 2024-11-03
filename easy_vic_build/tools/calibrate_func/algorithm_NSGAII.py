@@ -6,7 +6,7 @@ from deap import creator, base, tools, algorithms
 import random
 import pickle
 import os
-
+from tqdm import *
 
 class NSGAII_Base:
 
@@ -164,10 +164,12 @@ class NSGAII_Base:
         
     def run(self):
         # evaluate population
+        print("============== evaluating initial pop ==============")
         self.evaluatePop(self.population)
 
         # loop for generations
-        for gen in range(self.current_generation, self.maxGen):
+        print("============== NSGAII generating ==============")
+        for gen in tqdm(range(self.current_generation, self.maxGen), desc="loop for NSGAII generation", colour="green"):
             # generate offspring
             offspring = self.toolbox.select(self.population, len(self.population))
             offspring = list(map(self.toolbox.clone, offspring))
@@ -195,4 +197,5 @@ class NSGAII_Base:
             # update population: select next generation
             self.population[:] = self.select_next_generation(combined)
         
+        print("============== Results ==============")
         self.print_results(self.population)
