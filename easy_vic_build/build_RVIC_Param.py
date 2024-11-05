@@ -179,6 +179,9 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     flow_direction_dataset.variables["Source_Area"][:, :] = np.array(flow_acc_array)
     
     flow_direction_dataset.close()
+    
+    # remove arcpy_workspace_dir
+    remove_and_mkdir(arcpy_workspace_dir)
 
 
 def buildFlowDirection_arcpy(workspace_path, dem_tiff_path, arcpy_python_path, arcpy_python_script_path, stream_acc_threshold):

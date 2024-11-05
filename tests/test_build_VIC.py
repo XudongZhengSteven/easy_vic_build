@@ -10,10 +10,10 @@ from easy_vic_build.build_dpc import readdpc, readParam, readDomain
 from easy_vic_build.build_dpc import builddpc
 from easy_vic_build.build_GlobalParam import buildGlobalParam
 from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
+from easy_vic_build.build_MeteForcing import buildMeteForcing
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import scaling_level0_to_level1
 from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
-from rvic.parameters import parameters
 from easy_vic_build.tools.params_func.params_set import default_g_list, g_boundary
 import os
 from configparser import ConfigParser
@@ -34,21 +34,23 @@ grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
 
 if __name__ == "__main__":
     basin_index = 397
-    date_period = ["19980101", "19981231"]
-    case_name = "397_3km"
-    grid_res_level1 = 0.025
+    date_period = ["19980101", "20101231"]
+    case_name = "397_12km"
+    grid_res_level1 = 0.11
     
     # ============================ set bool ============================
     build_dir_bool = True
-    build_dpc_bool = False
-    build_domain_bool = False
-    build_param_bool = False
+    build_dpc_bool = True
+    build_domain_bool = True
+    build_param_bool = True
     build_meteforcing_bool = False
     build_rvic_param_bool = False
-    build_global_param_bool = True
+    build_global_param_bool = False
+    
     # ============================ build dir ============================
     if build_dir_bool:
-        evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
+        # evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
+        evb_dir = Evb_dir()
         evb_dir.builddir(case_name)
         
         # set arcpy_python_path
@@ -112,7 +114,12 @@ if __name__ == "__main__":
         # buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
         #                     step=3, reverse_lat=True, check_search=False,
         #                     year_re_exp=r"\d{4}.nc4")
-    
+        
+        # or you can use buildMeteForcing
+        # build MeteForcing
+        # buildMeteForcing(dpc_VIC_level1, evb_dir, date_period,
+        #                  reverse_lat=True, check_search=False,
+        #                  time_re_exp=r"\d{8}.\d{4}")
     # ============================ build RVIC_Param ============================
     if build_rvic_param_bool:
         # step 1
@@ -136,6 +143,8 @@ if __name__ == "__main__":
         
         # step 2
         elif build_rvic_param_bool == 2:
+            from rvic.parameters import parameters
+            
             RVICParam_dir = evb_dir.RVICParam_dir
             param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
             param_cfg_file = ConfigParser()
