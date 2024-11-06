@@ -9,17 +9,18 @@ from .tools.calibrate_func.evaluate_metrics import EvaluationMetric
 import os
 from deap import creator, base, tools, algorithms
 from copy import deepcopy
-from .bulid_Param import buildParam_level0, scaling_level0_to_level1
+from .bulid_Param import buildParam_level0, buildParam_level1, scaling_level0_to_level1, buildParam_level0_by_g
 from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile
 from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
+from .tools.utilities import *
 from copy import deepcopy
-from .tools.utilities import remove_and_mkdir
 from datetime import datetime
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+from rvic.parameters import parameters
 # plt.show(block=True)
 
 
@@ -27,10 +28,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
-                 save_path="checkpoint.pkl"):
+                 save_path="checkpoint.pkl", reverse_lat=True):
         self.evb_dir = evb_dir
         self.dpc_VIC_level0 = dpc_VIC_level0
         self.dpc_VIC_level1 = dpc_VIC_level1
+        self.reverse_lat = reverse_lat
         
         # period
         self.date_period = date_period
@@ -154,63 +156,130 @@ class NSGAII_VIC_SO(NSGAII_Base):
         routing_params = [self.routing_params_types[i](routing_params[i]) for i in range(len(routing_params))]
         
         # =============== adjust vic params based on ind ===============
-        # adjust params_dataset_level0
-        params_dataset_level0 = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, reverse_lat=True)
+        # adjust params_dataset_level0 based on params_g
+        print("============= building params_level0 =============")
+        if os.path.exists(self.evb_dir.params_dataset_level0_path):
+            # read and adjust by g
+            params_dataset_level0 = Dataset(self.evb_dir.params_dataset_level0_path, "a", format="NETCDF4")
+            params_dataset_level0 = buildParam_level0_by_g(params_dataset_level0, params_g, self.dpc_VIC_level0)
+        else:
+            # build
+            params_dataset_level0 = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, self.reverse_lat)
         
-        # read params_dataset_level1
-        params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
+        #  =============== constraint to make sure the params are all valid ===============
+        # wp < fc
+        # Wpwp_FRACT < Wcr_FRACT
+        constraint_wp_fc_destroy = np.max(np.array(params_dataset_level0.variables["wp"][:, :, :] > params_dataset_level0.variables["fc"][:, :, :]))
+        constraint_Wpwp_Wcr_FRACT_destroy = np.max(np.array(params_dataset_level0.variables["Wpwp_FRACT"][:, :, :] > params_dataset_level0.variables["Wcr_FRACT"][:, :, :]))
+        constraint_destroy = any([constraint_wp_fc_destroy, constraint_Wpwp_Wcr_FRACT_destroy])
         
-        # scaling
-        params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.searched_grids_index)
-        self.searched_grids_index = searched_grids_index
+        # if constraint_destroy, the params is not valid, vic will report mistake, we dont run it and return -9999.0
+        if constraint_destroy:
+            fitness = -9999.0
+        else:
+            print("============= building params_level1 =============")
+            if os.path.exists(self.evb_dir.params_dataset_level1_path):
+                # read
+                params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
+            else:
+                # build
+                params_dataset_level1 = buildParam_level1(self.dpc_VIC_level1, self.evb_dir, self.reverse_lat)
+            
+            # scaling
+            params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.searched_grids_index)
+            self.searched_grids_index = searched_grids_index
+            
+            # close
+            params_dataset_level0.close()
+            params_dataset_level1.close()
+            
+            # =============== adjust rvic params based on ind ===============
+            print("============= building rvic params =============")
+            # domain, FlowDirectionFile, PourPointFile should be already created
+            # adjust UHBOXFile
+            uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2]}
+            buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=False)
+            
+            # adjust ParamCFGFile
+            cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1], "OUTPUT_INTERVAL": 86400}
+            buildParamCFGFile(self.evb_dir, **cfg_params)
+            
+            # build rvic_params
+            param_cfg_file = ConfigParser()
+            param_cfg_file.optionxform = str
+            param_cfg_file.read(self.evb_dir.cfg_file_path)
+            param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
+            
+            remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "params"))
+            remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "plots"))
+            remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "logs"))
+            [os.remove(os.path.join(self.evb_dir.RVICParam_dir, inputs_f)) for inputs_f in os.listdir(self.evb_dir.RVICParam_dir) if inputs_f.startswith("inputs")]
+            
+            parameters(param_cfg_file_dict, numofproc=1)
+            
+            # modify fname in GlobalParam
+            globalParam = GlobalParamParser()
+            globalParam.load(self.evb_dir.globalParam_path)
+            rout_param_path = os.path.join(self.evb_dir.rout_param_dir, os.listdir(self.evb_dir.rout_param_dir)[0])
+            globalParam.set("Routing", "ROUT_PARAM", rout_param_path)
+            
+            # write
+            with open(self.evb_dir.globalParam_path, "w") as f:
+                globalParam.write(f)
+            
+            # =============== clear VICResults_dir and VICLog_dir ===============
+            remove_and_mkdir(self.evb_dir.VICResults_dir)
+            remove_and_mkdir(self.evb_dir.VICLog_dir)
+            
+            # =============== run vic ===============
+            command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
+            print("============= running VIC =============")
+            out = os.system(command_run_vic)
+            
+            # =============== evaluate ===============
+            print("============= evaluating =============")
+            # get obs: alreay got
+            # get sim
+            sim = self.get_sim()
+            
+            # clip sim and obs during the calibrate_date_period
+            sim_cali = sim.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
+            obs_cali = self.obs.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
+            
+            # evaluate
+            evaluation_metric = EvaluationMetric(sim_cali, obs_cali)
+            fitness = evaluation_metric.KGE()
         
-        # close
-        params_dataset_level0.close()
-        params_dataset_level1.close()
-        
-        # =============== adjust rvic params based on ind ===============       
-        # adjust UHBOXFile
-        uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2]}
-        buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=False)
-        
-        # adjust ParamCFGFile
-        cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1], "OUTPUT_INTERVAL": 86400}
-        buildParamCFGFile(self.evb_dir, **cfg_params)
-        
-        # =============== clear VICResults_dir ===============
-        remove_and_mkdir(self.evb_dir.VICResults_dir)
-        
-        # =============== run vic ===============
-        command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
-        out = os.system(command_run_vic)
-        
-        # =============== evaluate ===============
-        # get obs: alreay got
-        # get sim
-        sim = self.get_sim()
-        
-        # clip sim and obs during the calibrate_date_period
-        sim_cali = sim.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
-        obs_cali = self.obs.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
-        
-        # evaluate
-        evaluation_metric = EvaluationMetric(sim_cali, obs_cali)
-        fitness = evaluation_metric.KGE()
+        print("fitness:", fitness)
         
         return (fitness, )
     
-    def operatorMate(self, parent1, parent2):
-        return tools.cxSimulatedBinaryBounded(parent1, parent2, eta=20.0, low=self.low, up=self.up)
+    @staticmethod
+    def operatorMate(parent1, parent2, low, up):
+        return tools.cxSimulatedBinaryBounded(parent1, parent2, eta=20.0, low=low, up=up)
     
-    def operatorMutate(self, ind):
-        return tools.mutPolynomialBounded(ind, eta=20.0, low=self.low, up=self.up, indpb=1/self.NDim)
+    @staticmethod
+    def operatorMutate(ind, low, up, NDim):
+        return tools.mutPolynomialBounded(ind, eta=20.0, low=low, up=up, indpb=1/NDim)
     
-    def operatorSelect(self, population):
-        return tools.selNSGA2(population, self.popSize)
+    @staticmethod
+    def operatorSelect(population, popSize):
+        return tools.selNSGA2(population, popSize)
     
-    def run(self):
-        super().run()
-        self.params_dataset_level1.close()
+    def apply_genetic_operators(self, offspring):
+        # it can be implemented by algorithms.varAnd
+        # crossover
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() < self.toolbox.cxProb:
+                self.toolbox.mate(child1, child2, self.low, self.up)
+                del child1.fitness.values
+                del child2.fitness.values
+        
+        # mutate
+        for mutant in offspring:
+            if random.random() < self.toolbox.mutateProb:
+                self.toolbox.mutate(mutant, self.low, self.up, self.NDim)
+                del mutant.fitness.values
 
 
 class NSGAII_VIC_MO(NSGAII_VIC_SO):

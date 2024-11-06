@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from .tools.utilities import grids_array_coord_map
 from tqdm import *
+from .tools.decoractors import clock_decorator
 
 UTM_proj_map = {"UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "EPSG:32610"},
                 "UTM Zone 11N": {"lon_min": -120, "lon_max": -114, "crs_code": "EPSG:32611"},
@@ -109,6 +110,7 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
     return mask, frac, area, x_length, y_length
 
 
+@clock_decorator
 def buildDomain(dpc_VIC, evb_dir, reverse_lat=True):
     # ====================== build Domain ======================
     # create domain file
@@ -126,7 +128,7 @@ def buildDomain(dpc_VIC, evb_dir, reverse_lat=True):
         lats = dst_dataset.createVariable("lats", "f8", ("lat", "lon",))  # 2D array
         lons = dst_dataset.createVariable("lons", "f8", ("lat", "lon",))  # 2D array
     
-        mask = dst_dataset.createVariable("mask", int, ("lat", "lon",))
+        mask = dst_dataset.createVariable("mask", "i4", ("lat", "lon",))
         area = dst_dataset.createVariable("area", "f8", ("lat", "lon",))
         frac = dst_dataset.createVariable("frac", "f8", ("lat", "lon",))
         x_length = dst_dataset.createVariable("x_length", "f8", ("lat", "lon",))

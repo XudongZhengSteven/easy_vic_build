@@ -16,6 +16,7 @@ from netCDF4 import Dataset
 from .tools.geo_func.create_gdf import CreateGDF
 from .tools.geo_func import search_grids
 from .tools.utilities import grids_array_coord_map, check_and_mkdir
+from .tools.decoractors import clock_decorator
 import cftime
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -341,6 +342,7 @@ def formationForcing(dpc_VIC_level1, evb_dir, date_period,
                 dst_dataset.Conventions = "CF-1.6"
 
 
+@clock_decorator
 def buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
                         step=1,
                         reverse_lat=True, check_search=False,

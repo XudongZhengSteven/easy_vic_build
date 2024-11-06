@@ -21,14 +21,14 @@ def createParametersDataset(dst_path, lat_list, lon_list):
     #* variables: dimension variables
     lat_v = params_dataset.createVariable("lat", "f8", ("lat",))  # 1D array
     lon_v = params_dataset.createVariable("lon", "f8", ("lon",))   # 1D array
-    nlayer_v = params_dataset.createVariable("nlayer", int, ("nlayer",))
-    root_zone_v = params_dataset.createVariable("root_zone", int, ("root_zone",))
-    veg_class_v = params_dataset.createVariable("veg_class", int, ("veg_class",))
-    month_v = params_dataset.createVariable("month", int, ("month",))
+    nlayer_v = params_dataset.createVariable("nlayer", 'i4', ("nlayer",))
+    root_zone_v = params_dataset.createVariable("root_zone", 'i4', ("root_zone",))
+    veg_class_v = params_dataset.createVariable("veg_class", 'i4', ("veg_class",))
+    month_v = params_dataset.createVariable("month", 'i4', ("month",))
     
     #* variables: Soil parameters
-    run_cell = params_dataset.createVariable("run_cell", int, ("lat", "lon",))
-    grid_cell = params_dataset.createVariable("grid_cell", int, ("lat", "lon",))
+    run_cell = params_dataset.createVariable("run_cell", 'i4', ("lat", "lon",))
+    grid_cell = params_dataset.createVariable("grid_cell", 'i4', ("lat", "lon",))
     lats = params_dataset.createVariable("lats", "f8", ("lat", "lon",))  # 2D array
     lons = params_dataset.createVariable("lons", "f8", ("lat", "lon",))  # 2D array
     
@@ -81,7 +81,7 @@ def createParametersDataset(dst_path, lat_list, lon_list):
     # soil_dens_org = dst_dataset.createVariable("soil_dens_org", "f8", ("nlayer", "lat", "lon",))
     
     #* variables: Veg parameters
-    Nveg = params_dataset.createVariable("Nveg", int, ("lat", "lon",))
+    Nveg = params_dataset.createVariable("Nveg", 'i4', ("lat", "lon",))
     Cv = params_dataset.createVariable("Cv", "f8", ("veg_class", "lat", "lon",))
     root_depth = params_dataset.createVariable("root_depth", "f8", ("veg_class", "root_zone", "lat", "lon",))
     root_fract = params_dataset.createVariable("root_fract", "f8", ("veg_class", "root_zone", "lat", "lon",))
@@ -101,7 +101,7 @@ def createParametersDataset(dst_path, lat_list, lon_list):
     albedo = params_dataset.createVariable("albedo", "f8", ("veg_class", "month", "lat", "lon",))
 
     # variables: Veg Library parameters
-    overstory = params_dataset.createVariable("overstory", int, ("veg_class", "lat", "lon",))
+    overstory = params_dataset.createVariable("overstory", 'i4', ("veg_class", "lat", "lon",))
     rarc = params_dataset.createVariable("rarc", "f8", ("veg_class", "lat", "lon",))
     rmin = params_dataset.createVariable("rmin", "f8", ("veg_class", "lat", "lon",))
     veg_rough = params_dataset.createVariable("veg_rough", "f8", ("veg_class", "month", "lat", "lon",))
@@ -382,8 +382,8 @@ def createFlowDirectionFile(dst_path, lat_list, lon_list):
     lon_v = flow_direction_dataset.createVariable("lon", "f8", ("lon",))   # 1D array
 
     #* variables: 
-    Basin_ID = flow_direction_dataset.createVariable("Basin_ID", int, ("lat", "lon",), fill_value=-9999)
-    Flow_Direction = flow_direction_dataset.createVariable("Flow_Direction", int, ("lat", "lon",), fill_value=-9999)
+    Basin_ID = flow_direction_dataset.createVariable("Basin_ID", 'i4', ("lat", "lon",), fill_value=-9999)
+    Flow_Direction = flow_direction_dataset.createVariable("Flow_Direction", 'i4', ("lat", "lon",), fill_value=-9999)
     Flow_Distance = flow_direction_dataset.createVariable("Flow_Distance", "f8", ("lat", "lon",), fill_value=-9999.0)
     Source_Area = flow_direction_dataset.createVariable("Source_Area", "f8", ("lat", "lon",), fill_value=-9999.0)
 

@@ -39,6 +39,7 @@ class Evb_dir:
         self._pourpoint_file_path = ""
         self._uhbox_file_path = ""
         self._cfg_file_path = ""
+        self._cfg_file_reference_path = ""
         
         self._globalParam_path = ""
         self._globalParam_reference_path = ""
@@ -82,6 +83,9 @@ class Evb_dir:
         self.RVICParam_dir = os.path.join(self._case_dir, "RVICParam")
         check_and_mkdir(self.RVICParam_dir)
         
+        self.RVICTemp_dir = os.path.join(self.RVICParam_dir, "temp")
+        check_and_mkdir(self.RVICTemp_dir)
+        
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
         check_and_mkdir(self.CalibrateVIC_dir)
         
@@ -102,6 +106,7 @@ class Evb_dir:
         self._pourpoint_file_path = os.path.join(self.RVICParam_dir, "pour_points.csv")
         self._uhbox_file_path = os.path.join(self.RVICParam_dir, "UHBOX.csv")
         self._cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.parameters.cfg")
+        self._cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.parameters.reference.cfg")
         self._rout_param_dir = os.path.join(self.RVICParam_dir, "params")
         
         self._globalParam_path = os.path.join(self.GlobalParam_dir, "global_param.txt")
@@ -262,6 +267,14 @@ class Evb_dir:
     @cfg_file_path.setter
     def cfg_file_path(self, cfg_file_path):
         self._cfg_file_path = cfg_file_path
+    
+    @property
+    def cfg_file_reference_path(self):
+        return self._cfg_file_reference_path
+
+    @cfg_file_reference_path.setter
+    def cfg_file_reference_path(self, cfg_file_reference_path):
+        self._cfg_file_reference_path = cfg_file_reference_path
     
     @property
     def rout_param_dir(self):

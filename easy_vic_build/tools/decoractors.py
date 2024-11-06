@@ -7,24 +7,31 @@ import numpy as np
 
 
 # ---------------------------------------- clock_decorator
-def clock_decorator(func):
-    """ decorator, print the time elapsed (and results) for func running """
-    @functools.wraps(func)
-    def clocked(*args, **kwargs):
-        t0 = time.time()
-        result = func(*args, **kwargs)
-        elapsed = time.time() - t0
-        name = func.__name__
-        arg_lst = []
-        if args:
-            arg_lst.append(','.join(repr(arg) for arg in args))
-        if kwargs:
-            pairs = ['%s=%r' % (k, w) for k, w in sorted(kwargs.items())]
-            arg_lst.append(','.join(pairs))
-        arg_str = ','.join(arg_lst)
-        print('[%0.8fs] %s(%s) -> %r' % (elapsed, name, arg_str, result))
-        return result
-    return clocked
+def clock_decorator(print_arg_ret=True):
+    def clock_decorator_real(func):
+        """ decorator, print the time elapsed (and results) for func running """
+        @functools.wraps(func)
+        def clocked(*args, **kwargs):
+            t0 = time.time()
+            result = func(*args, **kwargs)
+            elapsed = time.time() - t0
+            name = func.__name__
+            arg_lst = []
+            if args:
+                arg_lst.append(','.join(repr(arg) for arg in args))
+            if kwargs:
+                pairs = ['%s=%r' % (k, w) for k, w in sorted(kwargs.items())]
+                arg_lst.append(','.join(pairs))
+            arg_str = ','.join(arg_lst)
+            
+            if print_arg_ret:
+                print('[%0.8fs] %s(%s) -> %r' % (elapsed, name, arg_str, result))
+            else:
+                print('[%0.8fs] %s' % (elapsed, name))
+                
+            return result
+        return clocked
+    return clock_decorator_real
 
 
 @clock_decorator

@@ -7,6 +7,7 @@ import random
 import pickle
 import os
 from tqdm import *
+from ..decoractors import clock_decorator
 
 class NSGAII_Base:
 
@@ -84,18 +85,21 @@ class NSGAII_Base:
             ind.fitness.values = fit
     
     #* Design for your own situation
-    def operatorMate(self, parent1, parent2):
+    @staticmethod
+    def operatorMate(parent1, parent2):
         # parent is ind
         kwargs = {}
         return tools.cxTwoPoint(parent1, parent2, **kwargs)
     
     #* Design for your own situation
-    def operatorMutate(self, ind):
+    @staticmethod
+    def operatorMutate(ind):
         kwargs = {}
         return tools.mutFlipBit(ind, kwargs)
 
     #* Design for your own situation
-    def operatorSelect(self, population):
+    @staticmethod
+    def operatorSelect(population):
         kwargs = {}
         return tools.selTournament(population, **kwargs)
     
@@ -161,7 +165,8 @@ class NSGAII_Base:
         
         with open(self.save_path, 'wb') as f:
             pickle.dump(state, f)
-        
+    
+    @clock_decorator(print_arg_ret=False)
     def run(self):
         # evaluate population
         print("============== evaluating initial pop ==============")
@@ -171,7 +176,7 @@ class NSGAII_Base:
         print("============== NSGAII generating ==============")
         for gen in tqdm(range(self.current_generation, self.maxGen), desc="loop for NSGAII generation", colour="green"):
             # generate offspring
-            offspring = self.toolbox.select(self.population, len(self.population))
+            offspring = self.toolbox.select(self.population, self.popSize)
             offspring = list(map(self.toolbox.clone, offspring))
 
             # apply_genetic_operators and evaluate it

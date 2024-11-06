@@ -13,15 +13,12 @@ from .tools.params_func.createParametersDataset import createFlowDirectionFile
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
 import matplotlib.pyplot as plt
 from configparser import ConfigParser
+from .tools.decoractors import clock_decorator
 
-
+@clock_decorator
 def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
                    ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=False,
-                   cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):
-    # set dir
-    RVICParam_dir = evb_dir.RVICParam_dir
-    param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
-    
+                   cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):    
     # cp domain.nc to RVICParam_dir
     copy_domain(evb_dir)
     
@@ -41,7 +38,7 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     from rvic.parameters import parameters
     param_cfg_file = ConfigParser()
     param_cfg_file.optionxform = str
-    param_cfg_file.read(param_cfg_file_path)
+    param_cfg_file.read(evb_dir.cfg_file_path)
     
     param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
     parameters(param_cfg_file_dict, numofproc=1)
@@ -56,18 +53,10 @@ def copy_domain(evb_dir):
     shutil.copy(domainFile_path, os.path.join(RVICParam_dir, "domain.nc"))
 
 
-def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0):
+def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0, flow_direction_pkg="wbw"):
     # ====================== set dir and path ======================
     # set dir
     RVICParam_dir = evb_dir.RVICParam_dir
-    
-    # arcpy related path
-    arcpy_python_path = evb_dir.arcpy_python_path
-    arcpy_python_script_path = os.path.join(evb_dir.__package_dir__, "arcpy_scripts\\build_flowdirection_arcpy.py")
-    
-    arcpy_workspace_dir = os.path.join(RVICParam_dir, "arcpy_workspace")
-    remove_and_mkdir(arcpy_workspace_dir)
-    workspace_dir = arcpy_workspace_dir
     
     # set path
     flow_direction_file_path = os.path.join(RVICParam_dir, "flow_direction_file.nc")
@@ -105,15 +94,40 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
                            ) as dst:
             dst.write(params_elev, 1)
     
-    # ====================== build flow drection based on arcpy ======================
-    out = buildFlowDirection_arcpy(arcpy_workspace_dir, dem_level1_tif_path, arcpy_python_path, arcpy_python_script_path, stream_acc_threshold)
-    # TODO implement Whitebox Workflows to build Flowdirection File
+    # ====================== build flow drection ======================
+    if flow_direction_pkg == "arcpy":
+        # arcpy related path
+        arcpy_python_path = evb_dir.arcpy_python_path
+        arcpy_python_script_path = os.path.join(evb_dir.__package_dir__, "arcpy_scripts\\build_flowdirection_arcpy.py")
+        
+        arcpy_workspace_dir = os.path.join(RVICParam_dir, "arcpy_workspace")
+        remove_and_mkdir(arcpy_workspace_dir)
+        workspace_dir = arcpy_workspace_dir
+        
+        # build flow direction based on arcpy
+        out = buildFlowDirection_arcpy(workspace_dir, dem_level1_tif_path, arcpy_python_path, arcpy_python_script_path, stream_acc_threshold)
 
-    # cp data from workspace to RVICParam_dir
-    shutil.copy(os.path.join(workspace_dir, "flow_direction.tif"), flow_direction_path)
-    shutil.copy(os.path.join(workspace_dir, "flow_acc.tif"), flow_acc_path)
+        # cp data from workspace to RVICParam_dir
+        shutil.copy(os.path.join(workspace_dir, "flow_direction.tif"), flow_direction_path)
+        shutil.copy(os.path.join(workspace_dir, "flow_acc.tif"), flow_acc_path)
     
-    # read
+    elif flow_direction_pkg == "wbw":
+        # wbw related path
+        wbw_workspace_dir = os.path.join(RVICParam_dir, "wbw_workspace")
+        remove_and_mkdir(wbw_workspace_dir)
+        workspace_dir = wbw_workspace_dir
+        
+        # build flow direction based on wbw
+        out = buildFlowDirection_wbw(workspace_dir, dem_level1_tif_path)
+        
+        # cp data from workspace to RVICParam_dir
+        shutil.copy(os.path.join(workspace_dir, "flow_direction.tif"), flow_direction_path)
+        shutil.copy(os.path.join(workspace_dir, "flow_acc.tif"), flow_acc_path)
+    
+    else:
+        print("please input correct flow_direction_pkg")
+     
+    # ====================== read flow_direction and flow_acc ======================
     with rasterio.open(flow_direction_path, 'r', driver='GTiff') as dataset:
         flow_direction_array = dataset.read(1)
         
@@ -180,8 +194,8 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     
     flow_direction_dataset.close()
     
-    # remove arcpy_workspace_dir
-    remove_and_mkdir(arcpy_workspace_dir)
+    # remove workspace_dir
+    remove_and_mkdir(workspace_dir)
 
 
 def buildFlowDirection_arcpy(workspace_path, dem_tiff_path, arcpy_python_path, arcpy_python_script_path, stream_acc_threshold):
@@ -201,64 +215,38 @@ def buildFlowDirection_arcpy(workspace_path, dem_tiff_path, arcpy_python_path, a
     out = os.system(f'{arcpy_python_path} {command_arcpy}')
     return out
 
-def buildFlowDirection_wbw(params_lat, params_lon, params_mask, params_elev,
-                           x_length_array, y_length_array, dem_tiff_path, domain_area, transform,
-                           dst_home, dpc_VIC_level1, reverse_lat=True,
-                           stream_acc_threshold=100.0):
-    # not yet implemented
+def buildFlowDirection_wbw(workspace_dir, dem_level1_tif_path):
     # build flow direction based on wbw
-    # read and save weights (area ** 0.5) file
-    weights = domain_area ** 0.5
-    weights_tiff_path = os.path.join(dst_home, "weights.tif")
-    if not os.path.exists(weights_tiff_path):
-        with rasterio.open(weights_tiff_path, 'w', driver='GTiff',
-                        height=params_elev.shape[0],
-                        width=params_elev.shape[1],
-                        count=1,
-                        dtype=params_elev.dtype,
-                        crs=CRS.from_string("EPSG:4326"),
-                        transform=transform,
-                        ) as dst:
-            dst.write(weights, 1)
     
     # env set
     from whitebox_workflows import WbEnvironment, show
     wbe = WbEnvironment()
-    workspace_path = os.path.join(dst_home, "buildFlowDirectionFile_wbw")
-    if os.path.exists(workspace_path):
-        shutil.rmtree(workspace_path)
-    os.mkdir(workspace_path)
-    
-    wbe.working_directory = workspace_path
+    wbe.working_directory = workspace_dir
     
     # read dem
-    dem = wbe.read_raster(dem_tiff_path)
+    dem = wbe.read_raster(dem_level1_tif_path)
     # show(dem, colorbar_kwargs={'label': 'Elevation (m)'})
-    
-    # read weights
-    weights = wbe.read_raster(weights_tiff_path)
-    # show(weights, colorbar_kwargs={'label': 'Weights (m)'})
     
     # fill depressions
     filled_dem = wbe.breach_depressions_least_cost(dem)
-    filled_dem = wbe.fill_depressions(filled_dem)
+    # filled_dem = wbe.fill_depressions(filled_dem)
     wbe.write_raster(filled_dem, 'filled_dem.tif')
     # show(filled_dem, colorbar_kwargs={'label': 'Elevation (m)'})
     # show(filled_dem - dem, colorbar_kwargs={'label': 'fill (m)'})
 
-    # flow direction #! it different with ArcGIS
-    flow_direction = wbe.d8_pointer(filled_dem)
+    # flow direction
+    flow_direction = wbe.d8_pointer(filled_dem, esri_pointer=True)
     wbe.write_raster(flow_direction, 'flow_direction.tif')
     # show(flow_direction, colorbar_kwargs={'label': 'flow direction (D8)'})
     
     # flow accumulation
-    flow_acc = wbe.fd8_flow_accum(filled_dem, "cells", convergence_threshold= float('inf'), log_transform=False)
+    flow_acc = wbe.d8_flow_accum(flow_direction, out_type="cells", log_transform=False, input_is_pointer=True, esri_pntr=True)
     wbe.write_raster(flow_acc, 'flow_acc.tif')
     # show(flow_acc, colorbar_kwargs={'label': 'flow acc (number)'}, vmin=200)
     
     # stream raster
-    stream_raster = wbe.extract_streams(flow_acc, threshold=100.0)
-    wbe.write_raster(stream_raster, 'stream_raster.tif')
+    # stream_raster = wbe.extract_streams(flow_acc, threshold=100.0)
+    # wbe.write_raster(stream_raster, 'stream_raster.tif')
     # show(stream_raster, colorbar_kwargs={'label': 'stream raster (1, bool)'})
     
     # # stream vector
@@ -266,11 +254,7 @@ def buildFlowDirection_wbw(params_lat, params_lon, params_mask, params_elev,
     # stream_vector, tmp1, tmp2, tmp3 = wbe.vector_stream_network_analysis(stream_vector, filled_dem) # We only want the streams output
     # wbe.write_vector(stream_vector, 'stream_vector.shp')
     # show(stream_vector, colorbar_kwargs={'label': 'stream vector(1, bool)'})
-    
-    # flow distance
-    flow_distance = wbe.downslope_flowpath_length(flow_direction, weights=weights)
-    # show(flow_distance, colorbar_kwargs={'label': 'flow distance'})
-    wbe.write_raster(flow_distance, 'flow_distance.tif')
+    return True
 
 
 def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None):
@@ -354,40 +338,26 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
 
 
 def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86400):
-    # ====================== set dir and path ======================
-    case_name = evb_dir._case_name
-    RVICParam_dir = evb_dir.RVICParam_dir
-    param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
-    param_cfg_file_reference_path = os.path.join(evb_dir.__data_dir__, "rvic.parameters.reference.cfg")
-    rvic_temp_dir = os.path.join(RVICParam_dir, "temp")
-    check_and_mkdir(rvic_temp_dir)
-    
-    pourpoint_file_path = os.path.join(RVICParam_dir, "pour_points.csv")
-    uhbox_file_path = os.path.join(RVICParam_dir, "UHBOX.csv")
-    
-    flow_direction_file_path = os.path.join(RVICParam_dir, "flow_direction_file.nc")
-    domainFile_path = os.path.join(RVICParam_dir, "domain.nc")
-    
     # ====================== build CFGFile ======================
     # read reference cfg
     param_cfg_file = ConfigParser()
     param_cfg_file.optionxform = str  # import to keep case
-    param_cfg_file.read(param_cfg_file_reference_path)
+    param_cfg_file.read(evb_dir.cfg_file_reference_path)
     
     # set cfg
-    param_cfg_file.set("OPTIONS", 'CASEID', case_name)
-    param_cfg_file.set("OPTIONS", 'CASE_DIR', RVICParam_dir)
-    param_cfg_file.set("OPTIONS", 'TEMP_DIR', rvic_temp_dir)
-    param_cfg_file.set("POUR_POINTS", 'FILE_NAME', pourpoint_file_path)
-    param_cfg_file.set("UH_BOX", 'FILE_NAME', uhbox_file_path)
-    param_cfg_file.set("ROUTING", 'FILE_NAME', flow_direction_file_path)
+    param_cfg_file.set("OPTIONS", 'CASEID', evb_dir._case_name)
+    param_cfg_file.set("OPTIONS", 'CASE_DIR', evb_dir.RVICParam_dir)
+    param_cfg_file.set("OPTIONS", 'TEMP_DIR', evb_dir.RVICTemp_dir)
+    param_cfg_file.set("POUR_POINTS", 'FILE_NAME', evb_dir.pourpoint_file_path)
+    param_cfg_file.set("UH_BOX", 'FILE_NAME', evb_dir.uhbox_file_path)
+    param_cfg_file.set("ROUTING", 'FILE_NAME', evb_dir.flow_direction_file_path)
     param_cfg_file.set("ROUTING", 'VELOCITY', str(VELOCITY))
     param_cfg_file.set("ROUTING", 'DIFFUSION', str(DIFFUSION))
     param_cfg_file.set("ROUTING", 'OUTPUT_INTERVAL', str(OUTPUT_INTERVAL))
-    param_cfg_file.set("DOMAIN", 'FILE_NAME', domainFile_path)
+    param_cfg_file.set("DOMAIN", 'FILE_NAME', evb_dir.domainFile_path)
     
     # write cfg
-    with open(param_cfg_file_path, 'w') as configfile:
+    with open(evb_dir.cfg_file_path, 'w') as configfile:
         param_cfg_file.write(configfile)
         
 def buildConvCFGFile():

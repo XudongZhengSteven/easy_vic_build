@@ -13,9 +13,55 @@ from .tools.params_func.params_set import *
 from .bulid_Domain import cal_mask_frac_area_length
 from tqdm import *
 from .tools.geo_func import resample, search_grids
+from .tools.decoractors import clock_decorator
 
 
+@clock_decorator(print_arg_ret=False)
 def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
+    print("building Param_level0... ...")
+    ## ======================= buildParam_level0_basic =======================
+    params_dataset_level0 = buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat)
+    
+    ## ======================= buildParam_level0_by_g =======================
+    params_dataset_level0 = buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0)
+
+    return params_dataset_level0
+
+
+@clock_decorator(print_arg_ret=False)
+def buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat=True):
+    ## ====================== get grid_shp and basin_shp ======================
+    grid_shp_level0 = dpc_VIC_level0.grid_shp
+    
+    # grids_map_array
+    lon_list_level0, lat_list_level0, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(grid_shp_level0, reverse_lat=reverse_lat)  #* all lat set as reverse if True
+    
+    ## ====================== create parameter ======================
+    params_dataset_level0 = createParametersDataset(evb_dir.params_dataset_level0_path, lat_list_level0, lon_list_level0)
+    tf_VIC = TF_VIC()
+    
+    ## ===================== level0: assign values for general variables  ======================
+    # dimension variables: lat, lon, nlayer, root_zone, veg_class, month
+    params_dataset_level0.variables["lat"][:] = np.array(lat_list_level0)  # 1D array
+    params_dataset_level0.variables["lon"][:] = np.array(lon_list_level0)  # 1D array
+    params_dataset_level0.variables["nlayer"][:] = [1, 2, 3]
+    root_zone_list = [1, 2, 3]
+    params_dataset_level0.variables["root_zone"][:] = root_zone_list
+    veg_class_list = list(range(14))
+    params_dataset_level0.variables["veg_class"][:] = veg_class_list
+    month_list = list(range(1, 13))
+    params_dataset_level0.variables["month"][:] = month_list
+    
+    # lons, lats, 2D array
+    grid_array_lons, grid_array_lats = np.meshgrid(params_dataset_level0.variables["lon"][:], params_dataset_level0.variables["lat"][:])  # 2D array
+    params_dataset_level0.variables["lons"][:, :] = grid_array_lons
+    params_dataset_level0.variables["lats"][:, :] = grid_array_lats
+    
+    return params_dataset_level0
+
+
+@clock_decorator(print_arg_ret=False)
+def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     """ 
     # calibrate: MPR: PTF + Scaling (calibrate for scaling coefficient)
     g_list: global parameters
@@ -45,36 +91,13 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
         
     # TODO Q1: different layer have different global params? Ksat: 3 or 9?
     """
-    print("building Param_level0... ...")
     ## ====================== get grid_shp and basin_shp ======================
     grid_shp_level0 = dpc_VIC_level0.grid_shp
-    basin_shp = dpc_VIC_level0.basin_shp
-    
-    # grids_map_array
-    lon_list_level0, lat_list_level0, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(grid_shp_level0, reverse_lat=reverse_lat)  #* all lat set as reverse if True
-    
-    ## ====================== create parameter ======================
-    params_dataset_level0 = createParametersDataset(evb_dir.params_dataset_level0_path, lat_list_level0, lon_list_level0)
-    tf_VIC = TF_VIC()
-    
-    ## ===================== level0: assign values for general variables  ======================
-    # dimension variables: lat, lon, nlayer, root_zone, veg_class, month
-    params_dataset_level0.variables["lat"][:] = np.array(lat_list_level0)  # 1D array
-    params_dataset_level0.variables["lon"][:] = np.array(lon_list_level0)  # 1D array
-    params_dataset_level0.variables["nlayer"][:] = [1, 2, 3]
-    root_zone_list = [1, 2, 3]
-    params_dataset_level0.variables["root_zone"][:] = root_zone_list
-    veg_class_list = list(range(14))
-    params_dataset_level0.variables["veg_class"][:] = veg_class_list
-    month_list = list(range(1, 13))
-    params_dataset_level0.variables["month"][:] = month_list
-    
-    # lons, lats, 2D array
-    grid_array_lons, grid_array_lats = np.meshgrid(params_dataset_level0.variables["lon"][:], params_dataset_level0.variables["lat"][:])  # 2D array
-    params_dataset_level0.variables["lons"][:, :] = grid_array_lons
-    params_dataset_level0.variables["lats"][:, :] = grid_array_lats
     
     ## ======================= level0: Transfer function =======================
+    # TF
+    tf_VIC = TF_VIC()
+    
     # only set the params which should be scaling (aggregation), other params such as run_cell, grid_cell, off_gmt..., will not be set here
     # depth, m
     total_depth = tf_VIC.total_depth(CONUS_layers_total_depth, g_list[0])
@@ -306,10 +329,11 @@ def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
     grid_shp_level0["snow_rough"] = np.full((len(grid_shp_level0.index), ), fill_value=snow_rough)
     grid_array_snow_rough, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="snow_rough", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
     params_dataset_level0.variables["snow_rough"][:, :] = grid_array_snow_rough
-
+    
     return params_dataset_level0
 
 
+@clock_decorator(print_arg_ret=False)
 def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=None):
     print("building Param_level1... ...")
     ## ====================== get grid_shp and basin_shp ======================
@@ -345,6 +369,8 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
         mask, frac, area, x_length, y_length = cal_mask_frac_area_length(dpc_VIC_level1, reverse_lat=reverse_lat, plot=False)  #* all lat set as reverse
     else:
         mask = domain_dataset.variables["mask"][:, :]  #* note the reverse_lat should be same
+    
+    mask = mask.astype(int)
     params_dataset_level1.variables["run_cell"][:, :] = mask
     
     # grid_cell
@@ -509,8 +535,8 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
             
             params_dataset_level1.variables["fcanopy"][i, j-1, :, :] = grid_array_i_veg_j_month_fcanopy   # j-1: month_list start from 1
             
-    return params_dataset_level1
-
+    return params_dataset_level1 
+    
 
 def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1):
     # read lon, lat from params, cal res
@@ -539,6 +565,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
     return searched_grids_index
 
 
+@clock_decorator(print_arg_ret=False)
 def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_index=None):
     print("scaling Param_level0 to Param_level1... ...")
     # ======================= get grids match (search grids) ======================= 

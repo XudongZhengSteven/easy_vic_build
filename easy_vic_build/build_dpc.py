@@ -7,8 +7,11 @@ from .dataPreprocess.basin_grid import read_one_basin_shp, createGridForBasin
 from .dataPreprocess.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 from .tools.utilities import *
 import pickle
+from .tools.decoractors import clock_decorator
 # you can set your own dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 
+
+@clock_decorator(print_arg_ret=False)
 def builddpc(evb_dir, basin_index, date_period,
              grid_res_level0=0.00833, grid_res_level1=0.025, grid_res_level2=0.125,
              dpc_VIC_level0_call_kwargs=dict(), dpc_VIC_level1_call_kwargs=dict(),
