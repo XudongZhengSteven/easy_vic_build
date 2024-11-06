@@ -259,6 +259,7 @@ def buildFlowDirection_wbw(workspace_dir, dem_level1_tif_path):
 
 def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None):
     #* dpc_VIC_level1.basin_shp should contain "camels_topo" attributes
+    #! you should check it with FlowAcc (source area)
     # ====================== set dir and path ======================
     RVICParam_dir = evb_dir.RVICParam_dir
     pourpoint_file_path = os.path.join(RVICParam_dir, "pour_points.csv")

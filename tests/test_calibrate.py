@@ -49,6 +49,8 @@ if __name__ == "__main__":
     buildRVIC_Param_bool = False
     buildGlobalParam_bool = False
     
+    modify_PourPointFile_bool = True
+    
     # read
     if read_dpc_bool:
         dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
@@ -88,7 +90,11 @@ if __name__ == "__main__":
         
         # buildPourPointFile
         buildPourPointFile(dpc_VIC_level1, evb_dir)
-
+        
+        # modify PourPoint File to match FlowAcc
+        if modify_PourPointFile_bool:
+            buildPourPointFile(None, evb_dir, names=["pourpoint"], lons=[-91.795], lats=[38.335])
+        
         # buildUHBOXFile
         uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
         buildUHBOXFile(evb_dir, **uh_params, plot_bool=True)
@@ -142,5 +148,4 @@ if __name__ == "__main__":
         params_dataset_level0.close()
         params_dataset_level1.close()
     
-    # TODO check WCR < WP_frac
-    
+    # TODO modify the rvic.params, find why there are no streamflow be simulated
