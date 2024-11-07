@@ -93,7 +93,7 @@ if __name__ == "__main__":
         
         # modify PourPoint File to match FlowAcc
         if modify_PourPointFile_bool:
-            buildPourPointFile(None, evb_dir, names=["pourpoint"], lons=[-91.795], lats=[38.335])
+            buildPourPointFile(None, evb_dir, names=["pourpoint"], lons=[-91.905], lats=[38.335])
         
         # buildUHBOXFile
         uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     # calibrate
     calibrate_bool = True
     if calibrate_bool:
-        algParams = {"popSize": 20, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
+        algParams = {"popSize": 10, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                                       algParams, evb_dir.calibrate_cp_path, reverse_lat=True)
         nsgaII_VIC_SO.run()

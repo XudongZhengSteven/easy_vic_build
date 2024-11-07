@@ -227,5 +227,11 @@ def print_ret(searched_grids_index, src_lat, src_lon):
         print(searched_grids_index[0][i], searched_grids_index[1][i])
         print(src_lat[searched_grids_index[0][i]], src_lon[searched_grids_index[1][i]])
 
+
+def searched_grids_index_to_rows_cols_index(searched_grids_index):
+    # usage: grids_array[rows_index, cols_index] = list_values (transfer the data into a 1D array, coord (lat, lon): value)
+    searched_grids_index_trans = np.array(list(map(lambda index_: [index_[0][0], index_[1][0]], searched_grids_index)))
+    rows_index, cols_index = searched_grids_index_trans[:, 0], searched_grids_index_trans[:, 1]
     
+    return rows_index, cols_index
     

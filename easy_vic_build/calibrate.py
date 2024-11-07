@@ -59,8 +59,19 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # get obs
         self.get_obs()
         
-        # initial searched_grids_index for scaling
-        self.searched_grids_index = None
+        # initial several variable to save
+        self.get_sim_searched_grids_index = None
+        
+        self.scaling_searched_grids_index = None
+        self.stand_grids_lat_level0 = None
+        self.stand_grids_lon_level0 = None
+        self.rows_index_level0 = None
+        self.cols_index_level0 = None
+        
+        self.stand_grids_lat_level1 = None
+        self.stand_grids_lon_level1 = None
+        self.rows_index_level1 = None
+        self.cols_index_level1 = None
         
         super().__init__(algParams, save_path)
     
@@ -76,7 +87,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         sim_df = pd.DataFrame(columns=["time", "OUT_DISCHARGE"])
         
         # outlet lat, lon
-        x, y = self.dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], self.dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]      
+        pourpoint_file = pd.read_csv(self.evb_dir.pourpoint_file_path)
+        x, y = pourpoint_file.lons[0], pourpoint_file.lats[0]
         
         # read VIC OUTPUT file
         sim_path = os.path.join(self.evb_dir.VICResults_dir, os.listdir(self.evb_dir.VICResults_dir)[0])
@@ -89,12 +101,15 @@ class NSGAII_VIC_SO(NSGAII_Base):
             # transfer time_num into date
             time_date = num2date(time[:], units=time.units, calendar=time.calendar)
             time_date = [datetime(t.year, t.month, t.day, t.hour, t.second) for t in time_date]
+            
             # get outlet index
-            searched_grids_index = search_grids_nearest([y], [x], lat, lon, search_num=1)
-            searched_grid_index = searched_grids_index[0]
+            if self.get_sim_searched_grids_index is None:
+                searched_grids_index = search_grids_nearest([y], [x], lat, lon, search_num=1)
+                searched_grid_index = searched_grids_index[0]
+                self.get_sim_searched_grids_index = searched_grid_index
             
             # read data
-            out_discharge = dataset.variables["OUT_DISCHARGE"][:, searched_grid_index[0][0], searched_grid_index[1][0]]
+            out_discharge = dataset.variables["OUT_DISCHARGE"][:, self.get_sim_searched_grids_index[0][0], self.get_sim_searched_grids_index[1][0]]
             
             sim_df.loc[:, "time"] = time_date
             sim_df.loc[:, "discharge(m3/s)"] = out_discharge
@@ -161,11 +176,16 @@ class NSGAII_VIC_SO(NSGAII_Base):
         if os.path.exists(self.evb_dir.params_dataset_level0_path):
             # read and adjust by g
             params_dataset_level0 = Dataset(self.evb_dir.params_dataset_level0_path, "a", format="NETCDF4")
-            params_dataset_level0 = buildParam_level0_by_g(params_dataset_level0, params_g, self.dpc_VIC_level0)
+            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0_by_g(params_dataset_level0, params_g, self.dpc_VIC_level0, self.reverse_lat,
+                                                                                                                     self.stand_grids_lat_level0, self.stand_grids_lon_level0,
+                                                                                                                     self.rows_index_level0, self.cols_index_level0)
         else:
             # build
-            params_dataset_level0 = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, self.reverse_lat)
+            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, self.reverse_lat,
+                                                                                                                self.stand_grids_lat_level0, self.stand_grids_lon_level0,
+                                                                                                                self.rows_index_level0, self.cols_index_level0)
         
+        self.stand_grids_lat_level0, self.stand_grids_lon_level0, self.rows_index_level0, self.cols_index_level0 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
         #  =============== constraint to make sure the params are all valid ===============
         # wp < fc
         # Wpwp_FRACT < Wcr_FRACT
@@ -183,11 +203,16 @@ class NSGAII_VIC_SO(NSGAII_Base):
                 params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
             else:
                 # build
-                params_dataset_level1 = buildParam_level1(self.dpc_VIC_level1, self.evb_dir, self.reverse_lat)
+                domain_dataset = readDomain(self.evb_dir)
+                params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(self.dpc_VIC_level1, self.evb_dir, self.reverse_lat, domain_dataset,
+                                                                                                                    self.stand_grids_lat_level1, self.stand_grids_lon_level1,
+                                                                                                                    self.rows_index_level1, self.cols_index_level1)
+                domain_dataset.close()
+                self.stand_grids_lat_level1, self.stand_grids_lon_level1, self.rows_index_level1, self.cols_index_level1 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
             
             # scaling
-            params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.searched_grids_index)
-            self.searched_grids_index = searched_grids_index
+            params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.scaling_searched_grids_index)
+            self.scaling_searched_grids_index = searched_grids_index
             
             # close
             params_dataset_level0.close()
@@ -213,8 +238,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
             remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "params"))
             remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "plots"))
             remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "logs"))
-            [os.remove(os.path.join(self.evb_dir.RVICParam_dir, inputs_f)) for inputs_f in os.listdir(self.evb_dir.RVICParam_dir) if inputs_f.startswith("inputs")]
-            
+            inputs_fpath = [os.path.join(self.evb_dir.RVICParam_dir, inputs_f) for inputs_f in os.listdir(self.evb_dir.RVICParam_dir) if inputs_f.startswith("inputs") and inputs_f.endswith("tar")]
+            if len(inputs_fpath) > 0:
+                [os.remove(fp) for fp in inputs_fpath]
+
             parameters(param_cfg_file_dict, numofproc=1)
             
             # modify fname in GlobalParam
@@ -251,6 +278,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
             fitness = evaluation_metric.KGE()
         
         print("fitness:", fitness)
+        
+        fitness = -9999.0 if np.isnan(fitness) else fitness
+        # TODO process nan inf values
         
         return (fitness, )
     

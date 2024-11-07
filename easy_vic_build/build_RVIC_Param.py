@@ -334,6 +334,7 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
     UHBOX_file = pd.DataFrame(columns=["time", "UHBOX"])
     UHBOX_file.time = t * 3600  # Convert to s
     UHBOX_file.UHBOX = gUH_iuh_ret
+    UHBOX_file["UHBOX"] = UHBOX_file["UHBOX"].fillna(0)
     
     UHBOX_file.to_csv(uhbox_file_path, header=True, index=False)
 

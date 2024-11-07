@@ -4,8 +4,7 @@
 import os
 import numpy as np
 import json
-from .tools.utilities import createArray_from_gridshp, grids_array_coord_map
-from .tools.utilities import cal_ssc_percentile_grid_array, cal_bd_grid_array
+from .tools.utilities import *
 from .tools.params_func.createParametersDataset import createParametersDataset
 from .tools.params_func.TansferFunction import TF_VIC
 from .tools.params_func.Scaling_operator import Scaling_operator
@@ -14,31 +13,31 @@ from .bulid_Domain import cal_mask_frac_area_length
 from tqdm import *
 from .tools.geo_func import resample, search_grids
 from .tools.decoractors import clock_decorator
-
+from copy import deepcopy
 
 @clock_decorator(print_arg_ret=False)
-def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True):
+def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True,
+                      stand_grids_lat=None, stand_grids_lon=None,
+                      rows_index=None, cols_index=None):
     print("building Param_level0... ...")
     ## ======================= buildParam_level0_basic =======================
     params_dataset_level0 = buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat)
     
     ## ======================= buildParam_level0_by_g =======================
-    params_dataset_level0 = buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0)
+    params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0, reverse_lat,
+                                                                                                             stand_grids_lat, stand_grids_lon,
+                                                                                                             rows_index, cols_index)
 
-    return params_dataset_level0
+    return params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index
 
 
 @clock_decorator(print_arg_ret=False)
 def buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat=True):
-    ## ====================== get grid_shp and basin_shp ======================
-    grid_shp_level0 = dpc_VIC_level0.grid_shp
-    
     # grids_map_array
-    lon_list_level0, lat_list_level0, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(grid_shp_level0, reverse_lat=reverse_lat)  #* all lat set as reverse if True
+    lon_list_level0, lat_list_level0, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(dpc_VIC_level0.grid_shp, reverse_lat=reverse_lat)  #* all lat set as reverse if True
     
     ## ====================== create parameter ======================
     params_dataset_level0 = createParametersDataset(evb_dir.params_dataset_level0_path, lat_list_level0, lon_list_level0)
-    tf_VIC = TF_VIC()
     
     ## ===================== level0: assign values for general variables  ======================
     # dimension variables: lat, lon, nlayer, root_zone, veg_class, month
@@ -61,7 +60,9 @@ def buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat=True):
 
 
 @clock_decorator(print_arg_ret=False)
-def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
+def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0, reverse_lat=True,
+                           stand_grids_lat=None, stand_grids_lon=None,
+                           rows_index=None, cols_index=None):
     """ 
     # calibrate: MPR: PTF + Scaling (calibrate for scaling coefficient)
     g_list: global parameters
@@ -92,7 +93,15 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     # TODO Q1: different layer have different global params? Ksat: 3 or 9?
     """
     ## ====================== get grid_shp and basin_shp ======================
-    grid_shp_level0 = dpc_VIC_level0.grid_shp
+    grid_shp_level0 = deepcopy(dpc_VIC_level0.grid_shp)
+    grids_num = len(grid_shp_level0.index)
+    
+    # these variables can be input outside
+    if stand_grids_lat is None:
+        stand_grids_lat, stand_grids_lon = createStand_grids_lat_lon_from_gridshp(grid_shp_level0, grid_res=None, reverse_lat=reverse_lat)
+    
+    if rows_index is None:
+        rows_index, cols_index = gridshp_index_to_grid_array_index(grid_shp_level0, stand_grids_lat, stand_grids_lon)
     
     ## ======================= level0: Transfer function =======================
     # TF
@@ -101,16 +110,16 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     # only set the params which should be scaling (aggregation), other params such as run_cell, grid_cell, off_gmt..., will not be set here
     # depth, m
     total_depth = tf_VIC.total_depth(CONUS_layers_total_depth, g_list[0])
-    
     depths = tf_VIC.depth(total_depth, g_list[1], g_list[2])
-    grid_shp_level0["depth_layer1"] = np.full((len(grid_shp_level0.index), ), fill_value=depths[0])
-    grid_shp_level0["depth_layer2"] = np.full((len(grid_shp_level0.index), ), fill_value=depths[1])
-    grid_shp_level0["depth_layer3"] = np.full((len(grid_shp_level0.index), ), fill_value=depths[2])
     
-    grid_array_depth_layer1, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="depth_layer1", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-    grid_array_depth_layer2, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="depth_layer2", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-    grid_array_depth_layer3, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="depth_layer3", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_depth_layer1 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_depth_layer2 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_depth_layer3 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
     
+    grid_array_depth_layer1 =  assignValue_for_grid_array(grid_array_depth_layer1, np.full((grids_num, ), fill_value=depths[0]), rows_index, cols_index)
+    grid_array_depth_layer2 =  assignValue_for_grid_array(grid_array_depth_layer2, np.full((grids_num, ), fill_value=depths[1]), rows_index, cols_index)
+    grid_array_depth_layer3 =  assignValue_for_grid_array(grid_array_depth_layer3, np.full((grids_num, ), fill_value=depths[2]), rows_index, cols_index)
+
     params_dataset_level0.variables["depth"][0, :, :] = grid_array_depth_layer1
     params_dataset_level0.variables["depth"][1, :, :] = grid_array_depth_layer2
     params_dataset_level0.variables["depth"][2, :, :] = grid_array_depth_layer3
@@ -126,16 +135,16 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     depth_layer3_end = CONUS_layers_num
     
     # ele_std, m (same as StrmDem)
-    grid_array_SrtmDEM_std_Value, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="SrtmDEM_std_Value", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-    grid_array_SrtmDEM_std_Value, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="SrtmDEM_std_Value", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_SrtmDEM_std_Value = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_SrtmDEM_std_Value = assignValue_for_grid_array(grid_array_SrtmDEM_std_Value, grid_shp_level0.loc[:, "SrtmDEM_std_Value"], rows_index, cols_index)
     
     # b_infilt, N/A
     params_dataset_level0.variables["infilt"][:, :] = tf_VIC.b_infilt(grid_array_SrtmDEM_std_Value, g_list[3], g_list[4])
     
     # sand, clay, silt, %
-    grid_array_sand_layer1, grid_array_silt_layer1, grid_array_clay_layer1 = cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer1_start, depth_layer1_end)
-    grid_array_sand_layer2, grid_array_silt_layer2, grid_array_clay_layer2 = cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer2_start, depth_layer2_end)
-    grid_array_sand_layer3, grid_array_silt_layer3, grid_array_clay_layer3 = cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer3_start, depth_layer3_end)
+    grid_array_sand_layer1, grid_array_silt_layer1, grid_array_clay_layer1 = cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer1_start, depth_layer1_end, stand_grids_lat, stand_grids_lon, rows_index, cols_index)
+    grid_array_sand_layer2, grid_array_silt_layer2, grid_array_clay_layer2 = cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer2_start, depth_layer2_end, stand_grids_lat, stand_grids_lon, rows_index, cols_index)
+    grid_array_sand_layer3, grid_array_silt_layer3, grid_array_clay_layer3 = cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer3_start, depth_layer3_end, stand_grids_lat, stand_grids_lon, rows_index, cols_index)
     
     # ksat, mm/s -> mm/day (VIC requirement)
     grid_array_ksat_layer1 = tf_VIC.ksat(grid_array_sand_layer1, grid_array_clay_layer1, g_list[5], g_list[6], g_list[7])
@@ -149,7 +158,8 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     params_dataset_level0.variables["Ksat"][2, :, :] = grid_array_ksat_layer3 * unit_factor_ksat
     
     # mean slope, % (m/m)
-    grid_array_mean_slope, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="SrtmDEM_mean_slope_Value%", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_mean_slope = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_mean_slope = assignValue_for_grid_array(grid_array_mean_slope, grid_shp_level0.loc[:, "SrtmDEM_mean_slope_Value%"], rows_index, cols_index)
     
     # phi_s, m3/m3 or mm/mm
     grid_array_phi_s_layer1 = tf_VIC.phi_s(grid_array_sand_layer1, grid_array_clay_layer1, g_list[8], g_list[9], g_list[10])
@@ -197,8 +207,8 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     params_dataset_level0.variables["fc"][2, :, :] = grid_array_fc_layer3
     
     # D4, N/A, same as c, typically is 2
-    grid_shp_level0["D4"] = np.full((len(grid_shp_level0.index), ), fill_value=tf_VIC.D4(g_list[20]))
-    grid_array_D4, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="D4", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_D4 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_D4 =  assignValue_for_grid_array(grid_array_D4, np.full((grids_num, ), fill_value=tf_VIC.D4(g_list[20])), rows_index, cols_index)
     params_dataset_level0.variables["D4"][:, :] = grid_array_D4
     
     # cexpt
@@ -235,12 +245,15 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     params_dataset_level0.variables["init_moist"][2, :, :] = grid_array_init_moist_layer3
     
     # elev, m, Arithmetic mean
-    grid_array_SrtmDEM_mean_Value, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="SrtmDEM_mean_Value", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_SrtmDEM_mean_Value = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_SrtmDEM_mean_Value =  assignValue_for_grid_array(grid_array_SrtmDEM_mean_Value, grid_shp_level0.loc[:, "SrtmDEM_mean_Value"], rows_index, cols_index)
+    
     params_dataset_level0.variables["elev"][:, :] = grid_array_SrtmDEM_mean_Value
     
     # dp, m, typically is 4m
-    grid_shp_level0["dp"] = np.full((len(grid_shp_level0.index), ), fill_value=tf_VIC.dp(g_list[24]))
-    grid_array_dp, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="dp", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_dp = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_dp = assignValue_for_grid_array(grid_array_dp, np.full((grids_num, ), fill_value=tf_VIC.dp(g_list[24])), rows_index, cols_index)
+    
     params_dataset_level0.variables["dp"][:, :] = grid_array_dp
     
     # bubble, cm
@@ -262,9 +275,9 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     params_dataset_level0.variables["quartz"][2, :, :] = grid_array_quartz_layer3
     
     # bulk_density, kg/m3 or mm
-    grid_array_bd_layer1 = cal_bd_grid_array(grid_shp_level0, depth_layer1_start, depth_layer1_end)
-    grid_array_bd_layer2 = cal_bd_grid_array(grid_shp_level0, depth_layer2_start, depth_layer2_end)
-    grid_array_bd_layer3 = cal_bd_grid_array(grid_shp_level0, depth_layer3_start, depth_layer3_end)
+    grid_array_bd_layer1 = cal_bd_grid_array(grid_shp_level0, depth_layer1_start, depth_layer1_end, stand_grids_lat, stand_grids_lon, rows_index, cols_index)
+    grid_array_bd_layer2 = cal_bd_grid_array(grid_shp_level0, depth_layer2_start, depth_layer2_end, stand_grids_lat, stand_grids_lon, rows_index, cols_index)
+    grid_array_bd_layer3 = cal_bd_grid_array(grid_shp_level0, depth_layer3_start, depth_layer3_end, stand_grids_lat, stand_grids_lon, rows_index, cols_index)
     
     grid_array_bd_layer1 = tf_VIC.bulk_density(grid_array_bd_layer1, g_list[28])
     grid_array_bd_layer2 = tf_VIC.bulk_density(grid_array_bd_layer2, g_list[28])
@@ -279,13 +292,13 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     soil_density_layer2 = tf_VIC.soil_density(g_list[30])
     soil_density_layer3 = tf_VIC.soil_density(g_list[31])
     
-    grid_shp_level0["soil_density_layer1"] = np.full((len(grid_shp_level0.index), ), fill_value=soil_density_layer1)
-    grid_shp_level0["soil_density_layer2"] = np.full((len(grid_shp_level0.index), ), fill_value=soil_density_layer2)
-    grid_shp_level0["soil_density_layer3"] = np.full((len(grid_shp_level0.index), ), fill_value=soil_density_layer3)
+    grid_array_soil_density_layer1 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_soil_density_layer2 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_soil_density_layer3 = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
     
-    grid_array_soil_density_layer1, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="soil_density_layer1", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-    grid_array_soil_density_layer2, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="soil_density_layer2", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-    grid_array_soil_density_layer3, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="soil_density_layer3", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_soil_density_layer1 =  assignValue_for_grid_array(grid_array_soil_density_layer1, np.full((grids_num, ), fill_value=soil_density_layer1), rows_index, cols_index)
+    grid_array_soil_density_layer2 =  assignValue_for_grid_array(grid_array_soil_density_layer2, np.full((grids_num, ), fill_value=soil_density_layer2), rows_index, cols_index)
+    grid_array_soil_density_layer3 =  assignValue_for_grid_array(grid_array_soil_density_layer3, np.full((grids_num, ), fill_value=soil_density_layer3), rows_index, cols_index)
     
     params_dataset_level0.variables["soil_density"][0, :, :] = grid_array_soil_density_layer1
     params_dataset_level0.variables["soil_density"][1, :, :] = grid_array_soil_density_layer2
@@ -319,30 +332,40 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0):
     params_dataset_level0.variables["Wpwp_FRACT"][2, :, :] = grid_array_Wpwp_FRACT_layer3
     
     # rough, m, Surface roughness of bare soil
-    rough = tf_VIC.rough(g_list[35])
-    grid_shp_level0["rough"] = np.full((len(grid_shp_level0.index), ), fill_value=rough)
-    grid_array_rough, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="rough", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_rough = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_rough = assignValue_for_grid_array(grid_array_rough, np.full((grids_num, ), fill_value=tf_VIC.rough(g_list[35])), rows_index, cols_index)
+    
     params_dataset_level0.variables["rough"][:, :] = grid_array_rough
     
     # snow rough, m
-    snow_rough = tf_VIC.snow_rough(g_list[36])
-    grid_shp_level0["snow_rough"] = np.full((len(grid_shp_level0.index), ), fill_value=snow_rough)
-    grid_array_snow_rough, _, _ = createArray_from_gridshp(grid_shp_level0, value_column="snow_rough", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_snow_rough = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_snow_rough = assignValue_for_grid_array(grid_array_snow_rough, np.full((grids_num, ), fill_value=tf_VIC.snow_rough(g_list[36])), rows_index, cols_index)
+    
     params_dataset_level0.variables["snow_rough"][:, :] = grid_array_snow_rough
     
-    return params_dataset_level0
+    return params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index
 
 
 @clock_decorator(print_arg_ret=False)
-def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=None):
+def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=None,
+                      stand_grids_lat=None, stand_grids_lon=None,
+                      rows_index=None, cols_index=None):
+    
     print("building Param_level1... ...")
     ## ====================== get grid_shp and basin_shp ======================
-    grid_shp_level1 = dpc_VIC_level1.grid_shp
-    basin_shp = dpc_VIC_level1.basin_shp
+    grid_shp_level1 = deepcopy(dpc_VIC_level1.grid_shp)
+    grids_num = len(grid_shp_level1.index)
     
     # grids_map_array
     lon_list_level1, lat_list_level1, lon_map_index_level1, lat_map_index_level1 = grids_array_coord_map(grid_shp_level1, reverse_lat=reverse_lat)  #* all lat set as reverse
 
+    # these variables can be input outside
+    if stand_grids_lat is None:
+        stand_grids_lat, stand_grids_lon = createStand_grids_lat_lon_from_gridshp(grid_shp_level1, grid_res=None, reverse_lat=reverse_lat)
+    
+    if rows_index is None:
+        rows_index, cols_index = gridshp_index_to_grid_array_index(grid_shp_level1, stand_grids_lat, stand_grids_lon)
+    
     ## ====================== create parameter ======================
     params_dataset_level1 = createParametersDataset(evb_dir.params_dataset_level1_path, lat_list_level1, lon_list_level1)
     tf_VIC = TF_VIC()
@@ -374,8 +397,8 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
     params_dataset_level1.variables["run_cell"][:, :] = mask
     
     # grid_cell
-    grid_shp_level1["grid_cell"] = np.arange(1, len(grid_shp_level1.index) + 1)
-    grid_array_grid_cell, _, _ = createArray_from_gridshp(grid_shp_level1, value_column="grid_cell", grid_res=None, dtype=int, missing_value=0, plot=False)
+    grid_array_grid_cell = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=int, missing_value=-9999)
+    grid_array_grid_cell =  assignValue_for_grid_array(grid_array_grid_cell, np.arange(1, len(grid_shp_level1.index) + 1), rows_index, cols_index)
     params_dataset_level1.variables["grid_cell"][:, :] = grid_array_grid_cell
 
     # off_gmt, hours
@@ -383,35 +406,40 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
     params_dataset_level1.variables["off_gmt"][:, :] = grid_array_off_gmt
     
     # avg_T, C
-    grid_array_avg_T, _, _ = createArray_from_gridshp(grid_shp_level1, value_column="stl_all_layers_mean_Value", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_avg_T = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_avg_T =  assignValue_for_grid_array(grid_array_avg_T, grid_shp_level1.loc[:, "stl_all_layers_mean_Value"], rows_index, cols_index)
     params_dataset_level1.variables["avg_T"][:, :] = grid_array_avg_T
 
     # annual_prec, mm
-    grid_array_annual_P, _, _ = createArray_from_gridshp(grid_shp_level1, value_column="annual_P_in_src_grid_Value", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_annual_P = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_annual_P =  assignValue_for_grid_array(grid_array_annual_P, grid_shp_level1.loc[:, "annual_P_in_src_grid_Value"], rows_index, cols_index)
     params_dataset_level1.variables["annual_prec"][:, :] = grid_array_annual_P
     
     # resid_moist, fraction, set as 0
-    grid_shp_level1["resid_moist"] = np.full((len(grid_shp_level1.index), ), fill_value=0)
-    grid_array_resid_moist, _, _ = createArray_from_gridshp(grid_shp_level1, value_column="resid_moist", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+    grid_array_resid_moist = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+    grid_array_resid_moist =  assignValue_for_grid_array(grid_array_resid_moist, np.full((grids_num, ), fill_value=0), rows_index, cols_index)
     params_dataset_level1.variables["resid_moist"][0, :, :] = grid_array_resid_moist
     params_dataset_level1.variables["resid_moist"][1, :, :] = grid_array_resid_moist
     params_dataset_level1.variables["resid_moist"][2, :, :] = grid_array_resid_moist
     
     # fs_active, bool, whether the frozen soil algorithm is activated
-    grid_shp_level1["fs_active"] = np.full((len(grid_shp_level1.index), ), fill_value=0)
-    grid_array_fs_active, _, _ = createArray_from_gridshp(grid_shp_level1, value_column="fs_active", grid_res=None, dtype=int, missing_value=np.NAN, plot=False)
+    grid_array_fs_active = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=int, missing_value=-9999)
+    grid_array_fs_active =  assignValue_for_grid_array(grid_array_fs_active, np.full((grids_num, ), fill_value=0), rows_index, cols_index)
     params_dataset_level1.variables["fs_active"][:, :] = grid_array_fs_active
     
     # Nveg, int
-    grid_shp_level1["Nveg"] = grid_shp_level1["umd_lc_original_Value"].apply(lambda row: len(list(set(row))))
-    grid_array_Nveg, _, _ = createArray_from_gridshp(grid_shp_level1, value_column="Nveg", grid_res=None, dtype=int, missing_value=np.NAN, plot=False)
+    grid_array_Nveg = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=int, missing_value=-9999)
+    grid_array_Nveg =  assignValue_for_grid_array(grid_array_Nveg, grid_shp_level1["umd_lc_original_Value"].apply(lambda row: len(list(set(row)))), rows_index, cols_index)
     params_dataset_level1.variables["Nveg"][:, :] = grid_array_Nveg
     
     # Cv, fraction
     for i in veg_class_list:
-        grid_shp_level1[f"umd_lc_{i}_veg_index"] = grid_shp_level1.loc[:, "umd_lc_original_Value"].apply(lambda row: np.where(np.array(row)==i)[0])
-        grid_shp_level1[f"umd_lc_{i}_veg_Cv"] = grid_shp_level1.apply(lambda row: sum(np.array(row["umd_lc_original_Cv"])[row[f"umd_lc_{i}_veg_index"]]), axis=1)
-        grid_array_i_veg_Cv, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_lc_{i}_veg_Cv", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_shp_level1_ = deepcopy(grid_shp_level1)
+        grid_shp_level1_[f"umd_lc_{i}_veg_index"] = grid_shp_level1_.loc[:, "umd_lc_original_Value"].apply(lambda row: np.where(np.array(row)==i)[0])
+        
+        grid_array_i_veg_Cv = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_Cv =  assignValue_for_grid_array(grid_array_i_veg_Cv, grid_shp_level1_.apply(lambda row: sum(np.array(row["umd_lc_original_Cv"])[row[f"umd_lc_{i}_veg_index"]]), axis=1), rows_index, cols_index)
+        
         params_dataset_level1.variables["Cv"][i, :, :] = grid_array_i_veg_Cv
     
     # read veg params, veg_params_json is a lookup_table
@@ -425,33 +453,33 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
     # root_depth, m; root_fract, fraction
     for i in veg_class_list:
         for j in root_zone_list:
-            grid_shp_level1[f"umd_{i}_veg_{j}_zone_root_depth"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"rootd{j}"]))
-            grid_array_i_veg_j_zone_root_depth, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_{j}_zone_root_depth", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+            grid_array_i_veg_j_zone_root_depth = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_zone_root_depth =  assignValue_for_grid_array(grid_array_i_veg_j_zone_root_depth, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"rootd{j}"])), rows_index, cols_index)
             params_dataset_level1.variables["root_depth"][i, j-1, :, :] = grid_array_i_veg_j_zone_root_depth  # j-1: root_zone_list start from 1
             
-            grid_shp_level1[f"umd_{i}_veg_{j}_zone_root_fract"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"rootfr{j}"]))
-            grid_array_i_veg_j_zone_root_fract, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_{j}_zone_root_fract", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+            grid_array_i_veg_j_zone_root_fract = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_zone_root_fract =  assignValue_for_grid_array(grid_array_i_veg_j_zone_root_fract, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"rootfr{j}"])), rows_index, cols_index)
             params_dataset_level1.variables["root_fract"][i, j-1, :, :] = grid_array_i_veg_j_zone_root_fract
 
     # rarc, s/m; rmin, s/m
     for i in veg_class_list:
-        grid_shp_level1[f"umd_{i}_veg_rarc"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"rarc"]))
-        grid_array_i_veg_rarc, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_rarc", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_rarc = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_rarc =  assignValue_for_grid_array(grid_array_i_veg_rarc, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"rarc"])), rows_index, cols_index)
         params_dataset_level1.variables["rarc"][i, :, :] = grid_array_i_veg_rarc
         
-        grid_shp_level1[f"umd_{i}_veg_rmin"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"rmin"]))
-        grid_array_i_veg_rmin, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_rmin", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_rmin = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_rmin =  assignValue_for_grid_array(grid_array_i_veg_rmin, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"rmin"])), rows_index, cols_index)
         params_dataset_level1.variables["rmin"][i, :, :] = grid_array_i_veg_rmin
     
     # overstory, N/A, bool
     # wind_h, m, adjust wind height value if overstory is true (overstory == 1, wind_h=vegHeight+10, else wind_h=vegHeight+2)
     for i in veg_class_list:
-        grid_shp_level1[f"umd_{i}_veg_height"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"h"]))
-        grid_array_i_veg_height, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_height", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_height = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_height =  assignValue_for_grid_array(grid_array_i_veg_height, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"h"])), rows_index, cols_index)
         
-        grid_shp_level1[f"umd_{i}_veg_overstory"] = np.full((len(grid_shp_level1.index), ), fill_value=int(veg_params_json[f"{i}"][f"overstory"]))
-        grid_array_i_veg_overstory, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_overstory", grid_res=None, dtype=int, missing_value=np.NAN, plot=False)
-
+        grid_array_i_veg_overstory = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=int, missing_value=-9999)
+        grid_array_i_veg_overstory =  assignValue_for_grid_array(grid_array_i_veg_overstory, np.full((grids_num, ), fill_value=int(veg_params_json[f"{i}"][f"overstory"])), rows_index, cols_index)
+        
         grid_array_wind_h_add_factor = np.full_like(grid_array_i_veg_overstory, fill_value=10)
         grid_array_wind_h_add_factor[grid_array_i_veg_overstory == 0] = 2
         
@@ -468,74 +496,77 @@ def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=
     # veg_rough, m, Vegetation roughness length (typically 0.123 * vegetation height), or read from veg_param_json_updated
     for i in veg_class_list:
         for j in month_list:
-            grid_shp_level1[f"umd_{i}_veg_{j}_month_displacement"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"veg_displacement_month_{j}"]))
-            grid_array_i_veg_j_month_displacement, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_{j}_month_displacement", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-            
-            grid_shp_level1[f"umd_{i}_veg_{j}_month_veg_rough"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"veg_rough_month_{j}"]))
-            grid_array_i_veg_j_month_veg_rough, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_{j}_month_veg_rough", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
-            
+            grid_array_i_veg_j_month_displacement = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_month_displacement =  assignValue_for_grid_array(grid_array_i_veg_j_month_displacement, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"veg_displacement_month_{j}"])), rows_index, cols_index)
             params_dataset_level1.variables["displacement"][i, j-1, :, :] = grid_array_i_veg_j_month_displacement   # j-1: month_list start from 1
+            
+            grid_array_i_veg_j_month_veg_rough = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_month_veg_rough =  assignValue_for_grid_array(grid_array_i_veg_j_month_veg_rough, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"veg_rough_month_{j}"])), rows_index, cols_index)
             params_dataset_level1.variables["veg_rough"][i, j-1, :, :] = grid_array_i_veg_j_month_veg_rough
     
     # RGL, W/m2; rad_atten, fract; wind_atten, fract; trunk_ratio, fract
     for i in veg_class_list:
-        grid_shp_level1[f"umd_{i}_veg_RGL"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"rgl"]))
-        grid_array_i_veg_RGL, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_RGL", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_RGL = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_RGL =  assignValue_for_grid_array(grid_array_i_veg_RGL, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"rgl"])), rows_index, cols_index)
         params_dataset_level1.variables["RGL"][i, :, :] = grid_array_i_veg_RGL
 
-        grid_shp_level1[f"umd_{i}_veg_rad_atten"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"rad_atn"]))
-        grid_array_i_veg_rad_atten, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_rad_atten", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_rad_atten = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_rad_atten =  assignValue_for_grid_array(grid_array_i_veg_rad_atten, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"rad_atn"])), rows_index, cols_index)
         params_dataset_level1.variables["rad_atten"][i, :, :] = grid_array_i_veg_rad_atten
     
-        grid_shp_level1[f"umd_{i}_veg_wind_atten"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"wnd_atn"]))
-        grid_array_i_veg_wind_atten, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_wind_atten", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_wind_atten = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_wind_atten =  assignValue_for_grid_array(grid_array_i_veg_wind_atten, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"wnd_atn"])), rows_index, cols_index)
         params_dataset_level1.variables["wind_atten"][i, :, :] = grid_array_i_veg_wind_atten
 
-        grid_shp_level1[f"umd_{i}_veg_trunk_ratio"] = np.full((len(grid_shp_level1.index), ), fill_value=float(veg_params_json[f"{i}"][f"trnk_r"]))
-        grid_array_i_veg_trunk_ratio, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"umd_{i}_veg_trunk_ratio", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+        grid_array_i_veg_trunk_ratio = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+        grid_array_i_veg_trunk_ratio =  assignValue_for_grid_array(grid_array_i_veg_trunk_ratio, np.full((grids_num, ), fill_value=float(veg_params_json[f"{i}"][f"trnk_r"])), rows_index, cols_index)
         params_dataset_level1.variables["trunk_ratio"][i, :, :] = grid_array_i_veg_trunk_ratio
     
     # LAI, fraction or m2/m2; albedo, fraction; fcanopy, fraction
     for i in veg_class_list:
         for j in month_list:
-            # LAI
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_LAI"] = grid_shp_level1.apply(lambda row: np.array(row[f"MODIS_LAI_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_LAI"] = grid_shp_level1.loc[:, f"MODIS_{i}_veg_{j}_month_LAI"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
+            grid_shp_level1_ = deepcopy(grid_shp_level1)
             
-            grid_array_i_veg_j_month_LAI, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"MODIS_{i}_veg_{j}_month_LAI", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+            # LAI
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_LAI"] = grid_shp_level1_.apply(lambda row: np.array(row[f"MODIS_LAI_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_LAI"] = grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_LAI"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
+            
+            grid_array_i_veg_j_month_LAI = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_month_LAI =  assignValue_for_grid_array(grid_array_i_veg_j_month_LAI, grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_LAI"], rows_index, cols_index)
             params_dataset_level1.variables["LAI"][i, j-1, :, :] = grid_array_i_veg_j_month_LAI   # j-1: month_list start from 1
             
             # BSA, albedo
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_BSA"] = grid_shp_level1.apply(lambda row: np.array(row[f"MODIS_BSA_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_BSA"] = grid_shp_level1.loc[:, f"MODIS_{i}_veg_{j}_month_BSA"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_BSA"] = grid_shp_level1_.apply(lambda row: np.array(row[f"MODIS_BSA_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_BSA"] = grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_BSA"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
             
-            grid_array_i_veg_j_month_BSA, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"MODIS_{i}_veg_{j}_month_BSA", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
+            grid_array_i_veg_j_month_BSA = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_month_BSA =  assignValue_for_grid_array(grid_array_i_veg_j_month_BSA, grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_BSA"], rows_index, cols_index)
             params_dataset_level1.variables["albedo"][i, j-1, :, :] = grid_array_i_veg_j_month_BSA   # j-1: month_list start from 1
             
             # fcanopy, ((NDVI-NDVI_min)/(NDVI_max-NDVI_min))**2
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI"] = grid_shp_level1.apply(lambda row: np.array(row[f"MODIS_NDVI_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI"] = grid_shp_level1.loc[:, f"MODIS_{i}_veg_{j}_month_NDVI"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI"] = grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI"] * 0.0001
-            NDVI = grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI"]
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI"] = grid_shp_level1_.apply(lambda row: np.array(row[f"MODIS_NDVI_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI"] = grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_NDVI"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI"] = grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI"] * 0.0001
+            NDVI = grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI"]
             
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_max"] = grid_shp_level1.apply(lambda row: np.array(row[f"MODIS_NDVI_max_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_max"] = grid_shp_level1.loc[:, f"MODIS_{i}_veg_{j}_month_NDVI_max"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_max"] = grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_max"] * 0.0001
-            NDVI_max = grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_max"]
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_max"] = grid_shp_level1_.apply(lambda row: np.array(row[f"MODIS_NDVI_max_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_max"] = grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_NDVI_max"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_max"] = grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_max"] * 0.0001
+            NDVI_max = grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_max"]
             
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_min"] = grid_shp_level1.apply(lambda row: np.array(row[f"MODIS_NDVI_min_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_min"] = grid_shp_level1.loc[:, f"MODIS_{i}_veg_{j}_month_NDVI_min"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_min"] = grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_min"] * 0.0001
-            NDVI_min = grid_shp_level1[f"MODIS_{i}_veg_{j}_month_NDVI_min"]
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_min"] = grid_shp_level1_.apply(lambda row: np.array(row[f"MODIS_NDVI_min_original_Value_month{j}"])[np.where(np.array(row.umd_lc_original_Value)==i)[0]], axis=1)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_min"] = grid_shp_level1_.loc[:, f"MODIS_{i}_veg_{j}_month_NDVI_min"].apply(lambda row: np.mean(row) if len(row) != 0 else 0)
+            grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_min"] = grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_min"] * 0.0001
+            NDVI_min = grid_shp_level1_[f"MODIS_{i}_veg_{j}_month_NDVI_min"]
             
             fcanopy = ((NDVI-NDVI_min)/(NDVI_max-NDVI_min)) ** 2
             fcanopy[np.isnan(fcanopy)] = 0
-            grid_shp_level1[f"MODIS_{i}_veg_{j}_month_fcanopy"] = fcanopy
-            grid_array_i_veg_j_month_fcanopy, _, _ = createArray_from_gridshp(grid_shp_level1, value_column=f"MODIS_{i}_veg_{j}_month_fcanopy", grid_res=None, dtype=float, missing_value=np.NAN, plot=False)
             
+            grid_array_i_veg_j_month_fcanopy = createEmptyArray_from_gridshp(stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan)
+            grid_array_i_veg_j_month_fcanopy =  assignValue_for_grid_array(grid_array_i_veg_j_month_fcanopy, fcanopy, rows_index, cols_index)
             params_dataset_level1.variables["fcanopy"][i, j-1, :, :] = grid_array_i_veg_j_month_fcanopy   # j-1: month_list start from 1
             
-    return params_dataset_level1 
+    return params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index
     
 
 def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1):
@@ -567,6 +598,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
 
 @clock_decorator(print_arg_ret=False)
 def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_index=None):
+    # TODO increase speed
     print("scaling Param_level0 to Param_level1... ...")
     # ======================= get grids match (search grids) ======================= 
     # read lon, lat from params, cal res
