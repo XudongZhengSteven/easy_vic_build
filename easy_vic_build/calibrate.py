@@ -62,7 +62,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # initial several variable to save
         self.get_sim_searched_grids_index = None
         
-        self.scaling_searched_grids_index = None
+        self.scaling_searched_grids_bool_index = None
         self.stand_grids_lat_level0 = None
         self.stand_grids_lon_level0 = None
         self.rows_index_level0 = None
@@ -211,8 +211,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
                 self.stand_grids_lat_level1, self.stand_grids_lon_level1, self.rows_index_level1, self.cols_index_level1 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
             
             # scaling
-            params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.scaling_searched_grids_index)
-            self.scaling_searched_grids_index = searched_grids_index
+            params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.scaling_searched_grids_bool_index)
+            self.scaling_searched_grids_bool_index = searched_grids_bool_index
             
             # close
             params_dataset_level0.close()

@@ -148,4 +148,3 @@ if __name__ == "__main__":
         params_dataset_level0.close()
         params_dataset_level1.close()
     
-    # TODO modify the rvic.params, find why there are no streamflow be simulated

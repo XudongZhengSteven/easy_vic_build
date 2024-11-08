@@ -593,456 +593,144 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
                                                                         src_lat=lat_list_level0, src_lon=lon_list_level0,
                                                                         lat_radius=res_lat_level1, lon_radius=res_lon_level1)
     
-    return searched_grids_index
+    # transfer into bool index
+    searched_grids_bool_index = searched_grids_index_to_bool_index(searched_grids_index, lat_list_level0, lon_list_level0)
+    
+    return searched_grids_index, searched_grids_bool_index
 
 
 @clock_decorator(print_arg_ret=False)
-def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_index=None):
+def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_bool_index=None):
     # TODO increase speed
     print("scaling Param_level0 to Param_level1... ...")
-    # ======================= get grids match (search grids) ======================= 
-    # read lon, lat from params, cal res
-    lon_list_level0, lat_list_level0 = params_dataset_level0.variables["lon"][:], params_dataset_level0.variables["lat"][:]
+    
     lon_list_level1, lat_list_level1 = params_dataset_level1.variables["lon"][:], params_dataset_level1.variables["lat"][:]
-    lon_list_level0 = np.ma.filled(lon_list_level0, fill_value=np.NAN)
-    lat_list_level0 = np.ma.filled(lat_list_level0, fill_value=np.NAN)
     lon_list_level1 = np.ma.filled(lon_list_level1, fill_value=np.NAN)
     lat_list_level1 = np.ma.filled(lat_list_level1, fill_value=np.NAN)
     
-    res_lon_level0 = (max(lon_list_level0) - min(lon_list_level0)) / (len(lon_list_level0) - 1)
-    res_lat_level0 = (max(lat_list_level0) - min(lat_list_level0)) / (len(lat_list_level0) - 1)
-    res_lon_level1 = (max(lon_list_level1) - min(lon_list_level1)) / (len(lon_list_level1) - 1)
-    res_lat_level1 = (max(lat_list_level1) - min(lat_list_level1)) / (len(lat_list_level1) - 1)
-    
-    # meshgrid and flatten
-    lon_list_level1_2D, lat_list_level1_2D = np.meshgrid(lon_list_level1, lat_list_level1)
-    lon_list_level1_2D_flatten = lon_list_level1_2D.flatten()
-    lat_list_level1_2D_flatten = lat_list_level1_2D.flatten()
-    
     # search grids
-    if searched_grids_index is None:
-        searched_grids_index = scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1)
+    if searched_grids_bool_index is None:
+        searched_grids_index, searched_grids_bool_index = scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1)
     
     # ======================= scaling (resample) =======================
     scaling_operator = Scaling_operator()
-    for i in tqdm(range(len(lat_list_level1_2D_flatten))):
-        # lon/lat
-        searched_grid_index = searched_grids_index[i]
-        searched_grid_lat = [lat_list_level0[searched_grid_index[0][j]] for j in range(len(searched_grid_index[0]))]
-        searched_grid_lon = [lon_list_level0[searched_grid_index[1][j]] for j in range(len(searched_grid_index[0]))]
-        
-        # search and resampled data func
-        searched_grid_data_func = lambda src_data: [src_data[searched_grid_index[0][j], searched_grid_index[1][j]] for j in range(len(searched_grid_index[0]))]                                            
-        resampled_grid_data_func = lambda searched_data, general_function: resample.resampleMethod_GeneralFunction(searched_data, searched_grid_lat, searched_grid_lon, general_function=general_function, missing_value=None)
-        combined_grid_data_func = lambda src_data, general_function: resampled_grid_data_func(searched_grid_data_func(src_data), general_function)
-        
-        # depth, m
-        resampled_depth_layer1 = combined_grid_data_func(params_dataset_level0.variables["depth"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_depth_layer2 = combined_grid_data_func(params_dataset_level0.variables["depth"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_depth_layer3 = combined_grid_data_func(params_dataset_level0.variables["depth"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # b_infilt, /NA
-        resampled_b_infilt = combined_grid_data_func(params_dataset_level0.variables["infilt"][:, :], scaling_operator.Arithmetic_mean)
-        
-        # ksat, mm/s -> mm/day (VIC requirement)
-        resampled_ksat_layer1 = combined_grid_data_func(params_dataset_level0.variables["Ksat"][0, :, :], scaling_operator.Harmonic_mean)
-        resampled_ksat_layer2 = combined_grid_data_func(params_dataset_level0.variables["Ksat"][1, :, :], scaling_operator.Harmonic_mean)
-        resampled_ksat_layer3 = combined_grid_data_func(params_dataset_level0.variables["Ksat"][2, :, :], scaling_operator.Harmonic_mean)
-        
-        # phi_s, m3/m3 or mm/mm
-        resampled_phi_s_layer1 = combined_grid_data_func(params_dataset_level0.variables["phi_s"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_phi_s_layer2 = combined_grid_data_func(params_dataset_level0.variables["phi_s"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_phi_s_layer3 = combined_grid_data_func(params_dataset_level0.variables["phi_s"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # psis, kPa/cm-H2O
-        resampled_psis_layer1 = combined_grid_data_func(params_dataset_level0.variables["psis"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_psis_layer2 = combined_grid_data_func(params_dataset_level0.variables["psis"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_psis_layer3 = combined_grid_data_func(params_dataset_level0.variables["psis"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # b_retcurve, /NA
-        resampled_b_retcurve_layer1 = combined_grid_data_func(params_dataset_level0.variables["b_retcurve"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_b_retcurve_layer2 = combined_grid_data_func(params_dataset_level0.variables["b_retcurve"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_b_retcurve_layer3 = combined_grid_data_func(params_dataset_level0.variables["b_retcurve"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # expt, /NA
-        resampled_expt_layer1 = combined_grid_data_func(params_dataset_level0.variables["expt"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_expt_layer2 = combined_grid_data_func(params_dataset_level0.variables["expt"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_expt_layer3 = combined_grid_data_func(params_dataset_level0.variables["expt"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # fc, % or m3/m3
-        resampled_fc_layer1 = combined_grid_data_func(params_dataset_level0.variables["fc"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_fc_layer2 = combined_grid_data_func(params_dataset_level0.variables["fc"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_fc_layer3 = combined_grid_data_func(params_dataset_level0.variables["fc"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # D4, /NA, same as c, typically is 2
-        resampled_D4 = combined_grid_data_func(params_dataset_level0.variables["D4"][:, :], scaling_operator.Arithmetic_mean)
-
-        # cexpt
-        resampled_c = combined_grid_data_func(params_dataset_level0.variables["c"][:, :], scaling_operator.Arithmetic_mean)
-
-        # D1 ([day^-1]), D2 ([day^-D4])
-        resampled_D1 = combined_grid_data_func(params_dataset_level0.variables["D1"][:, :], scaling_operator.Harmonic_mean)
-        resampled_D2 = combined_grid_data_func(params_dataset_level0.variables["D2"][:, :], scaling_operator.Harmonic_mean)
-        
-        # D3 ([mm])
-        resampled_D3 = combined_grid_data_func(params_dataset_level0.variables["D3"][:, :], scaling_operator.Arithmetic_mean)
-
-        # Dsmax, mm or mm/day
-        resampled_Dsmax = combined_grid_data_func(params_dataset_level0.variables["Dsmax"][:, :], scaling_operator.Harmonic_mean)
-
-        # Ds, [day^-D4] or fraction
-        resampled_Ds = combined_grid_data_func(params_dataset_level0.variables["Ds"][:, :], scaling_operator.Harmonic_mean)
-
-        # Ws, fraction
-        resampled_Ws = combined_grid_data_func(params_dataset_level0.variables["Ws"][:, :], scaling_operator.Arithmetic_mean)
-        
-        # init_moist, mm
-        resampled_init_moist_layer1 = combined_grid_data_func(params_dataset_level0.variables["init_moist"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_init_moist_layer2 = combined_grid_data_func(params_dataset_level0.variables["init_moist"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_init_moist_layer3 = combined_grid_data_func(params_dataset_level0.variables["init_moist"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # elev, m
-        resampled_elev = combined_grid_data_func(params_dataset_level0.variables["elev"][:, :], scaling_operator.Arithmetic_mean)
-        
-        # dp, m, typically is 4m
-        resampled_dp = combined_grid_data_func(params_dataset_level0.variables["dp"][:, :], scaling_operator.Arithmetic_mean)
-        
-        # bubble, cm
-        resampled_bubble_layer1 = combined_grid_data_func(params_dataset_level0.variables["bubble"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_bubble_layer2 = combined_grid_data_func(params_dataset_level0.variables["bubble"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_bubble_layer3 = combined_grid_data_func(params_dataset_level0.variables["bubble"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # quartz, N/A
-        resampled_quartz_layer1 = combined_grid_data_func(params_dataset_level0.variables["quartz"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_quartz_layer2 = combined_grid_data_func(params_dataset_level0.variables["quartz"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_quartz_layer3 = combined_grid_data_func(params_dataset_level0.variables["quartz"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # bulk_density, kg/m3 or mm
-        resampled_bulk_density_layer1 = combined_grid_data_func(params_dataset_level0.variables["bulk_density"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_bulk_density_layer2 = combined_grid_data_func(params_dataset_level0.variables["bulk_density"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_bulk_density_layer3 = combined_grid_data_func(params_dataset_level0.variables["bulk_density"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # soil_density, kg/m3
-        resampled_soil_density_layer1 = combined_grid_data_func(params_dataset_level0.variables["soil_density"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_soil_density_layer2 = combined_grid_data_func(params_dataset_level0.variables["soil_density"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_soil_density_layer3 = combined_grid_data_func(params_dataset_level0.variables["soil_density"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # Wcr_FRACT, fraction
-        resampled_Wcr_FRACT_layer1 = combined_grid_data_func(params_dataset_level0.variables["Wcr_FRACT"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_Wcr_FRACT_layer2 = combined_grid_data_func(params_dataset_level0.variables["Wcr_FRACT"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_Wcr_FRACT_layer3 = combined_grid_data_func(params_dataset_level0.variables["Wcr_FRACT"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # wp, computed field capacity [frac]
-        resampled_wp_layer1 = combined_grid_data_func(params_dataset_level0.variables["wp"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_wp_layer2 = combined_grid_data_func(params_dataset_level0.variables["wp"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_wp_layer3 = combined_grid_data_func(params_dataset_level0.variables["wp"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # Wpwp_FRACT, fraction
-        resampled_Wpwp_FRACT_layer1 = combined_grid_data_func(params_dataset_level0.variables["Wpwp_FRACT"][0, :, :], scaling_operator.Arithmetic_mean)
-        resampled_Wpwp_FRACT_layer2 = combined_grid_data_func(params_dataset_level0.variables["Wpwp_FRACT"][1, :, :], scaling_operator.Arithmetic_mean)
-        resampled_Wpwp_FRACT_layer3 = combined_grid_data_func(params_dataset_level0.variables["Wpwp_FRACT"][2, :, :], scaling_operator.Arithmetic_mean)
-        
-        # rough, m, Surface roughness of bare soil
-        resampled_rough = combined_grid_data_func(params_dataset_level0.variables["rough"][:, :], scaling_operator.Arithmetic_mean)
-        
-        # snow rough, m
-        resampled_snow_rough = combined_grid_data_func(params_dataset_level0.variables["snow_rough"][:, :], scaling_operator.Arithmetic_mean)
-        
-        # set empty list
-        if i == 0:
-            depth_layer1_resampled_grids = []
-            depth_layer2_resampled_grids = []
-            depth_layer3_resampled_grids = []
-            
-            b_infilt_resampled_grids = []
-            
-            ksat_layer1_resampled_grids = []
-            ksat_layer2_resampled_grids = []
-            ksat_layer3_resampled_grids = []
-            
-            phi_s_layer1_resampled_grids = []
-            phi_s_layer2_resampled_grids = []
-            phi_s_layer3_resampled_grids = []
-        
-            psis_layer1_resampled_grids = []
-            psis_layer2_resampled_grids = []
-            psis_layer3_resampled_grids = []
-            
-            b_retcurve_layer1_resampled_grids = []
-            b_retcurve_layer2_resampled_grids = []
-            b_retcurve_layer3_resampled_grids = []
-        
-            expt_layer1_resampled_grids = []
-            expt_layer2_resampled_grids = []
-            expt_layer3_resampled_grids = []
-            
-            fc_layer1_resampled_grids = []
-            fc_layer2_resampled_grids = []
-            fc_layer3_resampled_grids = []
-            
-            D4_resampled_grids = []
-            
-            c_resampled_grids = []
-            
-            D1_resampled_grids = []
-            D2_resampled_grids = []
-            
-            D3_resampled_grids = []
-            
-            Dsmax_resampled_grids = []
-            
-            Ds_resampled_grids = []
-            
-            Ws_resampled_grids = []
-            
-            init_moist_layer1_resampled_grids = []
-            init_moist_layer2_resampled_grids = []
-            init_moist_layer3_resampled_grids = []
-            
-            elev_resampled_grids = []
-            
-            dp_resampled_grids = []
-            
-            bubble_layer1_resampled_grids = []
-            bubble_layer2_resampled_grids = []
-            bubble_layer3_resampled_grids = []
-            
-            quartz_layer1_resampled_grids = []
-            quartz_layer2_resampled_grids = []
-            quartz_layer3_resampled_grids = []
-            
-            bulk_density_layer1_resampled_grids = []
-            bulk_density_layer2_resampled_grids = []
-            bulk_density_layer3_resampled_grids = []
-            
-            soil_density_layer1_resampled_grids = []
-            soil_density_layer2_resampled_grids = []
-            soil_density_layer3_resampled_grids = []
-            
-            Wcr_FRACT_layer1_resampled_grids = []
-            Wcr_FRACT_layer2_resampled_grids = []
-            Wcr_FRACT_layer3_resampled_grids = []
-            
-            wp_fract_layer1_resampled_grids = []
-            wp_fract_layer2_resampled_grids = []
-            wp_fract_layer3_resampled_grids = []
-            
-            Wpwp_FRACT_layer1_resampled_grids = []
-            Wpwp_FRACT_layer2_resampled_grids = []
-            Wpwp_FRACT_layer3_resampled_grids = []
-            
-            rough_resampled_grids = []
-            
-            snow_rough_resampled_grids = []
-            
-        # append values
-        depth_layer1_resampled_grids.append(resampled_depth_layer1)
-        depth_layer2_resampled_grids.append(resampled_depth_layer2)
-        depth_layer3_resampled_grids.append(resampled_depth_layer3)
-        
-        b_infilt_resampled_grids.append(resampled_b_infilt)
-        
-        ksat_layer1_resampled_grids.append(resampled_ksat_layer1)
-        ksat_layer2_resampled_grids.append(resampled_ksat_layer2)
-        ksat_layer3_resampled_grids.append(resampled_ksat_layer3)
-        
-        phi_s_layer1_resampled_grids.append(resampled_phi_s_layer1)
-        phi_s_layer2_resampled_grids.append(resampled_phi_s_layer2)
-        phi_s_layer3_resampled_grids.append(resampled_phi_s_layer3)
-        
-        psis_layer1_resampled_grids.append(resampled_psis_layer1)
-        psis_layer2_resampled_grids.append(resampled_psis_layer2)
-        psis_layer3_resampled_grids.append(resampled_psis_layer3)
-        
-        b_retcurve_layer1_resampled_grids.append(resampled_b_retcurve_layer1)
-        b_retcurve_layer2_resampled_grids.append(resampled_b_retcurve_layer2)
-        b_retcurve_layer3_resampled_grids.append(resampled_b_retcurve_layer3)
-
-        expt_layer1_resampled_grids.append(resampled_expt_layer1)
-        expt_layer2_resampled_grids.append(resampled_expt_layer2)
-        expt_layer3_resampled_grids.append(resampled_expt_layer3)
-        
-        fc_layer1_resampled_grids.append(resampled_fc_layer1)
-        fc_layer2_resampled_grids.append(resampled_fc_layer2)
-        fc_layer3_resampled_grids.append(resampled_fc_layer3)
-        
-        D4_resampled_grids.append(resampled_D4)
-        
-        c_resampled_grids.append(resampled_c)
-        
-        D1_resampled_grids.append(resampled_D1)
-        D2_resampled_grids.append(resampled_D2)
-        
-        D3_resampled_grids.append(resampled_D3)
-        
-        Dsmax_resampled_grids.append(resampled_Dsmax)
-        
-        Ds_resampled_grids.append(resampled_Ds)
-        
-        Ws_resampled_grids.append(resampled_Ws)
-        
-        init_moist_layer1_resampled_grids.append(resampled_init_moist_layer1)
-        init_moist_layer2_resampled_grids.append(resampled_init_moist_layer2)
-        init_moist_layer3_resampled_grids.append(resampled_init_moist_layer3)
     
-        elev_resampled_grids.append(resampled_elev)
-        
-        dp_resampled_grids.append(resampled_dp)
-        
-        bubble_layer1_resampled_grids.append(resampled_bubble_layer1)
-        bubble_layer2_resampled_grids.append(resampled_bubble_layer2)
-        bubble_layer3_resampled_grids.append(resampled_bubble_layer3)
-        
-        quartz_layer1_resampled_grids.append(resampled_quartz_layer1)
-        quartz_layer2_resampled_grids.append(resampled_quartz_layer2)
-        quartz_layer3_resampled_grids.append(resampled_quartz_layer3)
-        
-        bulk_density_layer1_resampled_grids.append(resampled_bulk_density_layer1)
-        bulk_density_layer2_resampled_grids.append(resampled_bulk_density_layer2)
-        bulk_density_layer3_resampled_grids.append(resampled_bulk_density_layer3)
-        
-        soil_density_layer1_resampled_grids.append(resampled_soil_density_layer1)
-        soil_density_layer2_resampled_grids.append(resampled_soil_density_layer2)
-        soil_density_layer3_resampled_grids.append(resampled_soil_density_layer3)
-        
-        Wcr_FRACT_layer1_resampled_grids.append(resampled_Wcr_FRACT_layer1)
-        Wcr_FRACT_layer2_resampled_grids.append(resampled_Wcr_FRACT_layer2)
-        Wcr_FRACT_layer3_resampled_grids.append(resampled_Wcr_FRACT_layer3)
-        
-        wp_fract_layer1_resampled_grids.append(resampled_wp_layer1)
-        wp_fract_layer2_resampled_grids.append(resampled_wp_layer2)
-        wp_fract_layer3_resampled_grids.append(resampled_wp_layer3)
-        
-        Wpwp_FRACT_layer1_resampled_grids.append(resampled_Wpwp_FRACT_layer1)
-        Wpwp_FRACT_layer2_resampled_grids.append(resampled_Wpwp_FRACT_layer2)
-        Wpwp_FRACT_layer3_resampled_grids.append(resampled_Wpwp_FRACT_layer3)
-        
-        rough_resampled_grids.append(resampled_rough)
-        
-        snow_rough_resampled_grids.append(resampled_snow_rough)
+    # resample func
+    search_and_resample_func_2d = lambda scaling_func, varibale_name: np.array([scaling_func(params_dataset_level0.variables[varibale_name][searched_grid_bool_index[0], searched_grid_bool_index[1]].flatten()) for searched_grid_bool_index in searched_grids_bool_index]).reshape((len(lat_list_level1), len(lon_list_level1)))
+    search_and_resample_func_3d = lambda scaling_func, varibale_name, first_dim: np.array([scaling_func(params_dataset_level0.variables[varibale_name][first_dim, searched_grid_bool_index[0], searched_grid_bool_index[1]].flatten()) for searched_grid_bool_index in searched_grids_bool_index]).reshape((len(lat_list_level1), len(lon_list_level1)))
     
-    # ======================= reshape =======================
-    reshape_func = lambda list_data: np.reshape(list_data, lon_list_level1_2D.shape)
+    # depth, m
+    params_dataset_level1.variables["depth"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "depth", 0)
+    params_dataset_level1.variables["depth"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "depth", 1)
+    params_dataset_level1.variables["depth"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "depth", 2)
     
-    depth_layer1_resampled_grids_2D = reshape_func(depth_layer1_resampled_grids)
-    depth_layer2_resampled_grids_2D = reshape_func(depth_layer2_resampled_grids)
-    depth_layer3_resampled_grids_2D = reshape_func(depth_layer3_resampled_grids)
-    b_infilt_resampled_grids_2D = reshape_func(b_infilt_resampled_grids)
-    ksat_layer1_resampled_grids_2D = reshape_func(ksat_layer1_resampled_grids)
-    ksat_layer2_resampled_grids_2D = reshape_func(ksat_layer2_resampled_grids)
-    ksat_layer3_resampled_grids_2D = reshape_func(ksat_layer3_resampled_grids)
-    phi_s_layer1_resampled_grids_2D = reshape_func(phi_s_layer1_resampled_grids)
-    phi_s_layer2_resampled_grids_2D = reshape_func(phi_s_layer2_resampled_grids)
-    phi_s_layer3_resampled_grids_2D = reshape_func(phi_s_layer3_resampled_grids)
-    psis_layer1_resampled_grids_2D = reshape_func(psis_layer1_resampled_grids)
-    psis_layer2_resampled_grids_2D = reshape_func(psis_layer2_resampled_grids)
-    psis_layer3_resampled_grids_2D = reshape_func(psis_layer3_resampled_grids)
-    b_retcurve_layer1_resampled_grids_2D = reshape_func(b_retcurve_layer1_resampled_grids)
-    b_retcurve_layer2_resampled_grids_2D = reshape_func(b_retcurve_layer2_resampled_grids)
-    b_retcurve_layer3_resampled_grids_2D = reshape_func(b_retcurve_layer3_resampled_grids)
-    expt_layer1_resampled_grids_2D = reshape_func(expt_layer1_resampled_grids)
-    expt_layer2_resampled_grids_2D = reshape_func(expt_layer2_resampled_grids)
-    expt_layer3_resampled_grids_2D = reshape_func(expt_layer3_resampled_grids)
-    fc_layer1_resampled_grids_2D = reshape_func(fc_layer1_resampled_grids)
-    fc_layer2_resampled_grids_2D = reshape_func(fc_layer2_resampled_grids)
-    fc_layer3_resampled_grids_2D = reshape_func(fc_layer3_resampled_grids)
-    D4_resampled_grids_2D = reshape_func(D4_resampled_grids)
-    c_resampled_grids_2D = reshape_func(c_resampled_grids)
-    D1_resampled_grids_2D = reshape_func(D1_resampled_grids)
-    D2_resampled_grids_2D = reshape_func(D2_resampled_grids)
-    D3_resampled_grids_2D = reshape_func(D3_resampled_grids)
-    Dsmax_resampled_grids_2D = reshape_func(Dsmax_resampled_grids)
-    Ds_resampled_grids_2D = reshape_func(Ds_resampled_grids)
-    Ws_resampled_grids_2D = reshape_func(Ws_resampled_grids)
-    init_moist_layer1_resampled_grids_2D = reshape_func(init_moist_layer1_resampled_grids)
-    init_moist_layer2_resampled_grids_2D = reshape_func(init_moist_layer2_resampled_grids)
-    init_moist_layer3_resampled_grids_2D = reshape_func(init_moist_layer3_resampled_grids)
-    elev_resampled_grids_2D = reshape_func(elev_resampled_grids)
-    dp_resampled_grids_2D = reshape_func(dp_resampled_grids)
-    bubble_layer1_resampled_grids_2D = reshape_func(bubble_layer1_resampled_grids)
-    bubble_layer2_resampled_grids_2D = reshape_func(bubble_layer2_resampled_grids)
-    bubble_layer3_resampled_grids_2D = reshape_func(bubble_layer3_resampled_grids)
-    quartz_layer1_resampled_grids_2D = reshape_func(quartz_layer1_resampled_grids)
-    quartz_layer2_resampled_grids_2D = reshape_func(quartz_layer2_resampled_grids)
-    quartz_layer3_resampled_grids_2D = reshape_func(quartz_layer3_resampled_grids)
-    bulk_density_layer1_resampled_grids_2D = reshape_func(bulk_density_layer1_resampled_grids)
-    bulk_density_layer2_resampled_grids_2D = reshape_func(bulk_density_layer2_resampled_grids)
-    bulk_density_layer3_resampled_grids_2D = reshape_func(bulk_density_layer3_resampled_grids)
-    soil_density_layer1_resampled_grids_2D = reshape_func(soil_density_layer1_resampled_grids)
-    soil_density_layer2_resampled_grids_2D = reshape_func(soil_density_layer2_resampled_grids)
-    soil_density_layer3_resampled_grids_2D = reshape_func(soil_density_layer3_resampled_grids)
-    Wcr_FRACT_layer1_resampled_grids_2D = reshape_func(Wcr_FRACT_layer1_resampled_grids)
-    Wcr_FRACT_layer2_resampled_grids_2D = reshape_func(Wcr_FRACT_layer2_resampled_grids)
-    Wcr_FRACT_layer3_resampled_grids_2D = reshape_func(Wcr_FRACT_layer3_resampled_grids)
-    wp_fract_layer1_resampled_grids_2D = reshape_func(wp_fract_layer1_resampled_grids)
-    wp_fract_layer2_resampled_grids_2D = reshape_func(wp_fract_layer2_resampled_grids)
-    wp_fract_layer3_resampled_grids_2D = reshape_func(wp_fract_layer3_resampled_grids)
-    Wpwp_FRACT_layer1_resampled_grids_2D = reshape_func(Wpwp_FRACT_layer1_resampled_grids)
-    Wpwp_FRACT_layer2_resampled_grids_2D = reshape_func(Wpwp_FRACT_layer2_resampled_grids)
-    Wpwp_FRACT_layer3_resampled_grids_2D = reshape_func(Wpwp_FRACT_layer3_resampled_grids)
-    rough_resampled_grids_2D = reshape_func(rough_resampled_grids)
-    snow_rough_resampled_grids_2D = reshape_func(snow_rough_resampled_grids)
+    # b_infilt, /NA
+    params_dataset_level1.variables["infilt"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "infilt")
     
-    # ======================= add data into level1 =======================
-    params_dataset_level1.variables["depth"][0, :, :] = depth_layer1_resampled_grids_2D
-    params_dataset_level1.variables["depth"][1, :, :] = depth_layer2_resampled_grids_2D
-    params_dataset_level1.variables["depth"][2, :, :] = depth_layer3_resampled_grids_2D
-    params_dataset_level1.variables["infilt"][:, :] = b_infilt_resampled_grids_2D
-    params_dataset_level1.variables["Ksat"][0, :, :] = ksat_layer1_resampled_grids_2D
-    params_dataset_level1.variables["Ksat"][1, :, :] = ksat_layer2_resampled_grids_2D
-    params_dataset_level1.variables["Ksat"][2, :, :] = ksat_layer3_resampled_grids_2D
-    params_dataset_level1.variables["phi_s"][0, :, :] = phi_s_layer1_resampled_grids_2D
-    params_dataset_level1.variables["phi_s"][1, :, :] = phi_s_layer2_resampled_grids_2D
-    params_dataset_level1.variables["phi_s"][2, :, :] = phi_s_layer3_resampled_grids_2D
-    params_dataset_level1.variables["psis"][0, :, :] = psis_layer1_resampled_grids_2D
-    params_dataset_level1.variables["psis"][1, :, :] = psis_layer2_resampled_grids_2D
-    params_dataset_level1.variables["psis"][2, :, :] = psis_layer3_resampled_grids_2D
-    params_dataset_level1.variables["b_retcurve"][0, :, :] = b_retcurve_layer1_resampled_grids_2D
-    params_dataset_level1.variables["b_retcurve"][1, :, :] = b_retcurve_layer2_resampled_grids_2D
-    params_dataset_level1.variables["b_retcurve"][2, :, :] = b_retcurve_layer3_resampled_grids_2D
-    params_dataset_level1.variables["expt"][0, :, :] = expt_layer1_resampled_grids_2D
-    params_dataset_level1.variables["expt"][1, :, :] = expt_layer2_resampled_grids_2D
-    params_dataset_level1.variables["expt"][2, :, :] = expt_layer3_resampled_grids_2D
-    params_dataset_level1.variables["fc"][0, :, :] = fc_layer1_resampled_grids_2D
-    params_dataset_level1.variables["fc"][1, :, :] = fc_layer2_resampled_grids_2D
-    params_dataset_level1.variables["fc"][2, :, :] = fc_layer3_resampled_grids_2D
-    params_dataset_level1.variables["D4"][:, :] = D4_resampled_grids_2D
-    params_dataset_level1.variables["c"][:, :] = c_resampled_grids_2D
-    params_dataset_level1.variables["D1"][:, :] = D1_resampled_grids_2D
-    params_dataset_level1.variables["D2"][:, :] = D2_resampled_grids_2D
-    params_dataset_level1.variables["D3"][:, :] = D3_resampled_grids_2D
-    params_dataset_level1.variables["Dsmax"][:, :] = Dsmax_resampled_grids_2D
-    params_dataset_level1.variables["Ds"][:, :] = Ds_resampled_grids_2D
-    params_dataset_level1.variables["Ws"][:, :] = Ws_resampled_grids_2D
-    params_dataset_level1.variables["init_moist"][0, :, :] = init_moist_layer1_resampled_grids_2D
-    params_dataset_level1.variables["init_moist"][1, :, :] = init_moist_layer2_resampled_grids_2D
-    params_dataset_level1.variables["init_moist"][2, :, :] = init_moist_layer3_resampled_grids_2D
-    params_dataset_level1.variables["elev"][:, :] = elev_resampled_grids_2D
-    params_dataset_level1.variables["dp"][:, :] = dp_resampled_grids_2D
-    params_dataset_level1.variables["bubble"][0, :, :] = bubble_layer1_resampled_grids_2D
-    params_dataset_level1.variables["bubble"][1, :, :] = bubble_layer2_resampled_grids_2D
-    params_dataset_level1.variables["bubble"][2, :, :] = bubble_layer3_resampled_grids_2D
-    params_dataset_level1.variables["quartz"][0, :, :] = quartz_layer1_resampled_grids_2D
-    params_dataset_level1.variables["quartz"][1, :, :] = quartz_layer2_resampled_grids_2D
-    params_dataset_level1.variables["quartz"][2, :, :] = quartz_layer3_resampled_grids_2D
-    params_dataset_level1.variables["bulk_density"][0, :, :] = bulk_density_layer1_resampled_grids_2D
-    params_dataset_level1.variables["bulk_density"][1, :, :] = bulk_density_layer2_resampled_grids_2D
-    params_dataset_level1.variables["bulk_density"][2, :, :] = bulk_density_layer3_resampled_grids_2D
-    params_dataset_level1.variables["soil_density"][0,  :, :] = soil_density_layer1_resampled_grids_2D
-    params_dataset_level1.variables["soil_density"][1,  :, :] = soil_density_layer2_resampled_grids_2D
-    params_dataset_level1.variables["soil_density"][2,  :, :] = soil_density_layer3_resampled_grids_2D
-    params_dataset_level1.variables["Wcr_FRACT"][0, :, :] = Wcr_FRACT_layer1_resampled_grids_2D
-    params_dataset_level1.variables["Wcr_FRACT"][1, :, :] = Wcr_FRACT_layer2_resampled_grids_2D
-    params_dataset_level1.variables["Wcr_FRACT"][2, :, :] = Wcr_FRACT_layer3_resampled_grids_2D
-    params_dataset_level1.variables["wp"][0, :, :] = wp_fract_layer1_resampled_grids_2D
-    params_dataset_level1.variables["wp"][1, :, :] = wp_fract_layer2_resampled_grids_2D
-    params_dataset_level1.variables["wp"][2, :, :] = wp_fract_layer3_resampled_grids_2D
-    params_dataset_level1.variables["Wpwp_FRACT"][0, :, :] = Wpwp_FRACT_layer1_resampled_grids_2D
-    params_dataset_level1.variables["Wpwp_FRACT"][1, :, :] = Wpwp_FRACT_layer2_resampled_grids_2D
-    params_dataset_level1.variables["Wpwp_FRACT"][2, :, :] = Wpwp_FRACT_layer3_resampled_grids_2D
-    params_dataset_level1.variables["rough"][:, :] = rough_resampled_grids_2D
-    params_dataset_level1.variables["snow_rough"][:, :] = snow_rough_resampled_grids_2D
+    # ksat, mm/s -> mm/day (VIC requirement)
+    params_dataset_level1.variables["Ksat"][0, :, :] = search_and_resample_func_3d(scaling_operator.Harmonic_mean, "Ksat", 0)
+    params_dataset_level1.variables["Ksat"][1, :, :] = search_and_resample_func_3d(scaling_operator.Harmonic_mean, "Ksat", 1)
+    params_dataset_level1.variables["Ksat"][2, :, :] = search_and_resample_func_3d(scaling_operator.Harmonic_mean, "Ksat", 2)
+    
+    # phi_s, m3/m3 or mm/mm
+    params_dataset_level1.variables["phi_s"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "phi_s", 0)
+    params_dataset_level1.variables["phi_s"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "phi_s", 1)
+    params_dataset_level1.variables["phi_s"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "phi_s", 2)
+    
+    # psis, kPa/cm-H2O
+    params_dataset_level1.variables["psis"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "psis", 0)
+    params_dataset_level1.variables["psis"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "psis", 1)
+    params_dataset_level1.variables["psis"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "psis", 2)
+    
+    # b_retcurve, /NA
+    params_dataset_level1.variables["b_retcurve"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "b_retcurve", 0)
+    params_dataset_level1.variables["b_retcurve"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "b_retcurve", 1)
+    params_dataset_level1.variables["b_retcurve"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "b_retcurve", 2)
+    
+    # expt, /NA
+    params_dataset_level1.variables["expt"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "expt", 0)
+    params_dataset_level1.variables["expt"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "expt", 1)
+    params_dataset_level1.variables["expt"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "expt", 2)
+    
+    # fc, % or m3/m3
+    params_dataset_level1.variables["fc"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "fc", 0)
+    params_dataset_level1.variables["fc"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "fc", 1)
+    params_dataset_level1.variables["fc"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "fc", 2)
+    
+    # D4, /NA, same as c, typically is 2
+    params_dataset_level1.variables["D4"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "D4")
+    
+    # cexpt
+    params_dataset_level1.variables["c"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "c")
+    
+    # D1 ([day^-1]), D2 ([day^-D4])
+    params_dataset_level1.variables["D1"][:, :] = search_and_resample_func_2d(scaling_operator.Harmonic_mean, "D1")
+    params_dataset_level1.variables["D2"][:, :] = search_and_resample_func_2d(scaling_operator.Harmonic_mean, "D2")
+    
+    # D3 ([mm])
+    params_dataset_level1.variables["D3"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "D3")
+    
+    # Dsmax, mm or mm/day
+    params_dataset_level1.variables["Dsmax"][:, :] = search_and_resample_func_2d(scaling_operator.Harmonic_mean, "Dsmax")
+    
+    # Ds, [day^-D4] or fraction
+    params_dataset_level1.variables["Ds"][:, :] = search_and_resample_func_2d(scaling_operator.Harmonic_mean, "Ds")
+    
+    # Ws, fraction
+    params_dataset_level1.variables["Ws"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "Ws")
+    
+    # init_moist, mm
+    params_dataset_level1.variables["init_moist"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "init_moist", 0)
+    params_dataset_level1.variables["init_moist"][1 :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "init_moist", 1)
+    params_dataset_level1.variables["init_moist"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "init_moist", 2)
+    
+    # elev, m
+    params_dataset_level1.variables["elev"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "elev")
+    
+    # dp, m, typically is 4m
+    params_dataset_level1.variables["dp"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "dp")
+    
+    # bubble, cm
+    params_dataset_level1.variables["bubble"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "bubble", 0)
+    params_dataset_level1.variables["bubble"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "bubble", 1)
+    params_dataset_level1.variables["bubble"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "bubble", 2)
+    
+    # quartz, N/A
+    params_dataset_level1.variables["quartz"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "quartz", 0)
+    params_dataset_level1.variables["quartz"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "quartz", 1)
+    params_dataset_level1.variables["quartz"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "quartz", 2)
+    
+    # bulk_density, kg/m3 or mm
+    params_dataset_level1.variables["bulk_density"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "bulk_density", 0)
+    params_dataset_level1.variables["bulk_density"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "bulk_density", 1)
+    params_dataset_level1.variables["bulk_density"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "bulk_density", 2)
+    
+    # soil_density, kg/m3
+    params_dataset_level1.variables["soil_density"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "soil_density", 0)
+    params_dataset_level1.variables["soil_density"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "soil_density", 1)
+    params_dataset_level1.variables["soil_density"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "soil_density", 2)
+    
+    # Wcr_FRACT, fraction
+    params_dataset_level1.variables["Wcr_FRACT"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "Wcr_FRACT", 0)
+    params_dataset_level1.variables["Wcr_FRACT"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "Wcr_FRACT", 1)
+    params_dataset_level1.variables["Wcr_FRACT"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "Wcr_FRACT", 2)
+    
+    # wp, computed field capacity [frac]
+    params_dataset_level1.variables["wp"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "wp", 0)
+    params_dataset_level1.variables["wp"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "wp", 1)
+    params_dataset_level1.variables["wp"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "wp", 2)
+    
+    # Wpwp_FRACT, fraction
+    params_dataset_level1.variables["Wpwp_FRACT"][0, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "Wpwp_FRACT", 0)
+    params_dataset_level1.variables["Wpwp_FRACT"][1, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "Wpwp_FRACT", 1)
+    params_dataset_level1.variables["Wpwp_FRACT"][2, :, :] = search_and_resample_func_3d(scaling_operator.Arithmetic_mean, "Wpwp_FRACT", 2)
+    
+    # rough, m, Surface roughness of bare soil
+    params_dataset_level1.variables["rough"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "rough")
+    
+    # snow rough, m
+    params_dataset_level1.variables["snow_rough"][:, :] = search_and_resample_func_2d(scaling_operator.Arithmetic_mean, "snow_rough")
 
-    return params_dataset_level1, searched_grids_index
+    return params_dataset_level1, searched_grids_bool_index
 
 

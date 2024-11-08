@@ -11,7 +11,7 @@ usage:
 searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,
                                                         src_lat=soil_lat_clip, src_lon=soil_lon_clip,
                                                         search_num=1)
-                                                        
+
 for i in tqdm(grid_shp.index, colour="green", desc=f"loop for each grid to extract soil{l} data", leave=False):
         # lon/lat
         searched_grid_index = searched_grids_index[i]
@@ -230,8 +230,26 @@ def print_ret(searched_grids_index, src_lat, src_lon):
 
 def searched_grids_index_to_rows_cols_index(searched_grids_index):
     # usage: grids_array[rows_index, cols_index] = list_values (transfer the data into a 1D array, coord (lat, lon): value)
+    # note that this fucntion can only used for one to one search, len(searched_grid_index[0]) == 1
     searched_grids_index_trans = np.array(list(map(lambda index_: [index_[0][0], index_[1][0]], searched_grids_index)))
     rows_index, cols_index = searched_grids_index_trans[:, 0], searched_grids_index_trans[:, 1]
     
     return rows_index, cols_index
+
+def searched_grids_index_to_bool_index(searched_grids_index, src_lat, src_lon):
+    # useage: params_dataset_level0.variables["depth"][0, searched_grids_bool_index[0][0], searched_grids_bool_index[0][1]].shape
+    # use integer index will return all corss points: a searched_grids_index with length 143 will return (143 x 143)
+    # use bool index will return one-by-one points: a searched_grids_bool_index with length 143 will return (11 x 13) (size=143)
+    searched_grids_bool_index = []
+    for i in range(len(searched_grids_index)):
+        searched_grid_index = searched_grids_index[i]
+        searched_grid_bool_index_lat = np.full((len(src_lat), ), fill_value=False, dtype=bool)
+        searched_grid_bool_index_lon = np.full((len(src_lon), ), fill_value=False, dtype=bool)
+        
+        searched_grid_bool_index_lat[searched_grid_index[0]] = True
+        searched_grid_bool_index_lon[searched_grid_index[1]] = True
+        
+        searched_grids_bool_index.append((searched_grid_bool_index_lat, searched_grid_bool_index_lon))
+    
+    return searched_grids_bool_index
     
