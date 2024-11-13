@@ -122,7 +122,7 @@ if __name__ == "__main__":
                                     "ENDMONTH": str(int(date_period[1][4:6])),
                                     "ENDDAY": str(int(date_period[1][6:])),
                                     "OUT_TIME_UNITS": "DAYS"},
-                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
+                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW"]}
                         }
     
     # buildGlobalParam

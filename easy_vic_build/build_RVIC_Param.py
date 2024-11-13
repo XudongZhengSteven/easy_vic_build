@@ -42,7 +42,7 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     from rvic.parameters import parameters
     param_cfg_file = ConfigParser()
     param_cfg_file.optionxform = str
-    param_cfg_file.read(evb_dir.cfg_file_path)
+    param_cfg_file.read(evb_dir.rvic_param_cfg_file_path)
     
     param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
     parameters(param_cfg_file_dict, numofproc=1)
@@ -286,6 +286,7 @@ def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None
 
 
 def get_max_day(tp, mu, m, max_day_range=(0, 10), max_day_converged_threshold=0.001):
+    # auto calculate the max_day for the uhbox
     gUH_xt = lambda t, tp, mu: np.exp(mu*(t/tp - 1))
     gUH_iuh = lambda t, m, tp, mu: mu/tp * gUH_xt(t, tp, mu) * (1 + m*gUH_xt(t, tp, mu)) ** (-(1+1/m))
     
@@ -367,7 +368,7 @@ def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86
     # read reference cfg
     param_cfg_file = ConfigParser()
     param_cfg_file.optionxform = str  # import to keep case
-    param_cfg_file.read(evb_dir.cfg_file_reference_path)
+    param_cfg_file.read(evb_dir.rvic_param_cfg_file_reference_path)
     
     # set cfg
     param_cfg_file.set("OPTIONS", 'CASEID', evb_dir._case_name)
@@ -385,8 +386,38 @@ def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86
     param_cfg_file.set("DOMAIN", 'FILE_NAME', evb_dir.domainFile_path)
     
     # write cfg
-    with open(evb_dir.cfg_file_path, 'w') as configfile:
+    with open(evb_dir.rvic_param_cfg_file_path, 'w') as configfile:
         param_cfg_file.write(configfile)
         
-def buildConvCFGFile():
-    pass
+def buildConvCFGFile(evb_dir, RUN_STARTDATE="1979-09-01-00", DATL_FILE="rasm_sample_runoff.nc", PARAM_FILE_PATH="sample_rasm_parameters.nc"):
+    # ====================== build CFGFile ======================
+    # read reference cfg
+    conv_cfg_file = ConfigParser()
+    conv_cfg_file.optionxform = str  # import to keep case
+    conv_cfg_file.read(evb_dir.rvic_conv_cfg_file_reference_path)
+    
+    # set cfg
+    conv_cfg_file.set("OPTIONS", 'CASEID', evb_dir._case_name)
+    conv_cfg_file.set("OPTIONS", 'CASE_DIR', evb_dir.RVICConv_dir)
+    conv_cfg_file.set("OPTIONS", 'RUN_STARTDATE', RUN_STARTDATE)
+
+    conv_cfg_file.set("DOMAIN", 'FILE_NAME', evb_dir.domainFile_path)
+    
+    conv_cfg_file.set("PARAM_FILE", 'FILE_NAME', PARAM_FILE_PATH)
+    
+    conv_cfg_file.set("INPUT_FORCINGS", 'DATL_PATH', evb_dir.VICResults_dir)
+    conv_cfg_file.set("INPUT_FORCINGS", 'DATL_FILE', DATL_FILE)
+    
+    # write cfg
+    with open(evb_dir.rvic_conv_cfg_file_path, 'w') as configfile:
+        conv_cfg_file.write(configfile)
+        
+def read_cfg_to_dict(cfg_file_path):
+    cfg_file = ConfigParser()
+    cfg_file.optionxform = str
+    cfg_file.read(cfg_file_path)
+    cfg_file_dict = {section: dict(cfg_file.items(section)) for section in cfg_file.sections()}
+    
+    return cfg_file_dict
+            
+    

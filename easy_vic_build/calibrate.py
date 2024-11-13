@@ -10,7 +10,7 @@ import os
 from deap import creator, base, tools, algorithms
 from copy import deepcopy
 from .bulid_Param import buildParam_level0, buildParam_level1, scaling_level0_to_level1, buildParam_level0_by_g
-from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile
+from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile, buildConvCFGFile, read_cfg_to_dict
 from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from rvic.parameters import parameters
+from rvic.convolution import convolution
 import math
 # plt.show(block=True)
 
@@ -65,6 +66,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # get obs
         self.get_obs()
         
+        # get sim
+        self.sim_path = ""
+        
         # initial several variable to save
         self.get_sim_searched_grids_index = None
         
@@ -98,8 +102,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # x, y = dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]
 
         # read VIC OUTPUT file
-        sim_path = [os.path.join(self.evb_dir.VICResults_dir, fn) for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
-        with Dataset(sim_path, "r") as dataset:
+        with Dataset(self.sim_path, "r") as dataset:
             # get time, lat, lon
             time = dataset.variables["time"]
             lat = dataset.variables["lat"][:]
@@ -167,11 +170,17 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return creator.Individual(params_samples)
 
     @clock_decorator(print_arg_ret=True)
-    def run_vic(self):
-        command_run_vic = " ".join(["mpiexec -np 2", self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])  # TODO mpiexe -np 2 ./vic_exe -g global_param
+    def run_vic(self, np=2):
+        command_run_vic = " ".join([f"mpiexec -np {np}", self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])  # TODO mpiexe -np 2 ./vic_exe -g global_param
         print("============= running VIC =============")
         out = os.system(command_run_vic)
         return out
+    
+    @clock_decorator(print_arg_ret=True)
+    def run_rvic(self, conv_cfg_file_dict):
+        print("============= running RVIC convolution =============")
+        convolution(conv_cfg_file_dict)
+        pass
         
     def evaluate(self, ind):
         # =============== get ind ===============
@@ -240,19 +249,14 @@ class NSGAII_VIC_SO(NSGAII_Base):
             uhbox_max_day = buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=True)
             
             # adjust ParamCFGFile
-            cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1],
-                          "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
-                          "OUTPUT_INTERVAL": self.rvic_OUTPUT_INTERVAL,
-                          "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS,
-                          "CELL_FLOWDAYS": uhbox_max_day}
-            buildParamCFGFile(self.evb_dir, **cfg_params)
+            rvic_param_cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1],
+                                     "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
+                                     "OUTPUT_INTERVAL": self.rvic_OUTPUT_INTERVAL,
+                                     "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS,
+                                     "CELL_FLOWDAYS": uhbox_max_day}
+            buildParamCFGFile(self.evb_dir, **rvic_param_cfg_params)
             
             # build rvic_params
-            param_cfg_file = ConfigParser()
-            param_cfg_file.optionxform = str
-            param_cfg_file.read(self.evb_dir.cfg_file_path)
-            param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
-            
             remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "params"))
             remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "plots"))
             remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "logs"))
@@ -260,6 +264,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             if len(inputs_fpath) > 0:
                 [os.remove(fp) for fp in inputs_fpath]
 
+            param_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_param_cfg_file_path)
             parameters(param_cfg_file_dict, numofproc=1)
             
             # modify fname in GlobalParam
@@ -277,7 +282,20 @@ class NSGAII_VIC_SO(NSGAII_Base):
             remove_and_mkdir(self.evb_dir.VICLog_dir)
             
             # =============== run vic ===============
-            out = self.run_vic()
+            out_vic = self.run_vic()
+            sim_fn = [fn for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
+            self.sim_path = os.path.join(self.evb_dir.VICResults_dir, sim_fn)
+            
+            # =============== run rvic ===============
+            # RUN_STARTDATE="1979-09-01-00", DATL_FILE="rasm_sample_runoff.nc"
+            remove_and_mkdir(os.path.join(self.evb_dir.RVICConv_dir))
+            
+            RUN_STARTDATE = f"{self.date_period[0][:4]}-{self.date_period[0][4:6]}-{self.date_period[0][6:]}-00"
+            rvic_conv_cfg_params = {"RUN_STARTDATE": RUN_STARTDATE, "DATL_FILE": sim_fn, "PARAM_FILE_PATH": rout_param_path}
+            buildConvCFGFile(self.evb_dir, **rvic_conv_cfg_params)
+            
+            conv_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_conv_cfg_file_path)
+            out_rvic = self.run_rvic(conv_cfg_file_dict)
             
             # =============== evaluate ===============
             print("============= evaluating =============")

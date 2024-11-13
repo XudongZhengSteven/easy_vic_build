@@ -25,3 +25,5 @@
 ## python pkgs workflow
 
 1. test github workflow
+
+!note: not compile RVIC with VIC, otherwise you will not able to use the parallel (mpiexec)

@@ -38,8 +38,10 @@ class Evb_dir:
         self._flow_direction_file_path = ""
         self._pourpoint_file_path = ""
         self._uhbox_file_path = ""
-        self._cfg_file_path = ""
-        self._cfg_file_reference_path = ""
+        self._rvic_param_cfg_file_path = ""
+        self._rvic_param_cfg_file_reference_path = ""
+        self._rvic_conv_cfg_file_path = ""
+        self._rvic_conv_cfg_file_reference_path = ""
         
         self._globalParam_path = ""
         self._globalParam_reference_path = ""
@@ -86,6 +88,9 @@ class Evb_dir:
         self.RVICTemp_dir = os.path.join(self.RVICParam_dir, "temp")
         check_and_mkdir(self.RVICTemp_dir)
         
+        self.RVICConv_dir = os.path.join(self.RVICParam_dir, "convolution")
+        check_and_mkdir(self.RVICConv_dir)
+        
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
         check_and_mkdir(self.CalibrateVIC_dir)
         
@@ -105,8 +110,10 @@ class Evb_dir:
         self._flow_direction_file_path = os.path.join(self.RVICParam_dir, "flow_direction_file.nc")
         self._pourpoint_file_path = os.path.join(self.RVICParam_dir, "pour_points.csv")
         self._uhbox_file_path = os.path.join(self.RVICParam_dir, "UHBOX.csv")
-        self._cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.parameters.cfg")
-        self._cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.parameters.reference.cfg")
+        self._rvic_param_cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.parameters.cfg")
+        self._rvic_param_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.parameters.reference.cfg")
+        self._rvic_conv_cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.convolution.cfg")
+        self._rvic_conv_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.convolution.reference.cfg")
         self._rout_param_dir = os.path.join(self.RVICParam_dir, "params")
         
         self._globalParam_path = os.path.join(self.GlobalParam_dir, "global_param.txt")
@@ -261,21 +268,37 @@ class Evb_dir:
         self._uhbox_file_path = uhbox_file_path
         
     @property
-    def cfg_file_path(self):
-        return self._cfg_file_path
+    def rvic_param_cfg_file_path(self):
+        return self._rvic_param_cfg_file_path
 
-    @cfg_file_path.setter
-    def cfg_file_path(self, cfg_file_path):
-        self._cfg_file_path = cfg_file_path
+    @rvic_param_cfg_file_path.setter
+    def rvic_param_cfg_file_path(self, rvic_param_cfg_file_path):
+        self._rvic_param_cfg_file_path = rvic_param_cfg_file_path
     
     @property
-    def cfg_file_reference_path(self):
-        return self._cfg_file_reference_path
+    def rvic_param_cfg_file_reference_path(self):
+        return self._rvic_param_cfg_file_reference_path
 
-    @cfg_file_reference_path.setter
-    def cfg_file_reference_path(self, cfg_file_reference_path):
-        self._cfg_file_reference_path = cfg_file_reference_path
+    @rvic_param_cfg_file_reference_path.setter
+    def rvic_param_cfg_file_reference_path(self, rvic_param_cfg_file_reference_path):
+        self._rvic_param_cfg_file_reference_path = rvic_param_cfg_file_reference_path
     
+    @property
+    def rvic_conv_cfg_file_path(self):
+        return self._rvic_conv_cfg_file_path
+
+    @rvic_conv_cfg_file_path.setter
+    def rvic_conv_cfg_file_path(self, rvic_conv_cfg_file_path):
+        self._rvic_conv_cfg_file_path = rvic_conv_cfg_file_path
+        
+    @property
+    def rvic_conv_cfg_file_reference_path(self):
+        return self._rvic_conv_cfg_file_reference_path
+
+    @rvic_conv_cfg_file_reference_path.setter
+    def rvic_conv_cfg_file_reference_path(self, rvic_conv_cfg_file_reference_path):
+        self._rvic_conv_cfg_file_reference_path = rvic_conv_cfg_file_reference_path
+        
     @property
     def rout_param_dir(self):
         return self._rout_param_dir
