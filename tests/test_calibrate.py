@@ -82,9 +82,6 @@ if __name__ == "__main__":
     
     # build RVIC_Param
     if buildRVIC_Param_bool:
-        # cp domain
-        copy_domain(evb_dir)
-        
         # buildFlowDirectionFile
         buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0, flow_direction_pkg="wbw")
         
@@ -98,7 +95,7 @@ if __name__ == "__main__":
         # buildUHBOXFile
         uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
         buildUHBOXFile(evb_dir, **uh_params, plot_bool=True)
-            
+        
         # buildParamCFGFile
         cfg_params = {"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}
         buildParamCFGFile(evb_dir, **cfg_params)
@@ -135,9 +132,9 @@ if __name__ == "__main__":
     # calibrate
     calibrate_bool = True
     if calibrate_bool:
-        algParams = {"popSize": 10, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
+        algParams = {"popSize": 20, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
-                                      algParams, evb_dir.calibrate_cp_path, reverse_lat=True)
+                                      algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True)
         nsgaII_VIC_SO.run()
     
     # close

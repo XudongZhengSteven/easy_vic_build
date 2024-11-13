@@ -12,6 +12,11 @@ def sampling_uniform(n_samples, bounds):
     return samples
 
 
+def sampling_uniform_int(n_samples, bounds):
+    samples = [random.randint(bounds[0], bounds[1]) for _ in range(n_samples)]
+    return samples
+
+
 def sampling_gaussian(n_samples, mean, std):
     samples = [random.gauss(mean, std) for _ in range(n_samples)]
     return samples

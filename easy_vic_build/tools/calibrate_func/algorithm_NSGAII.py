@@ -175,6 +175,9 @@ class NSGAII_Base:
         # loop for generations
         print("============== NSGAII generating ==============")
         for gen in tqdm(range(self.current_generation, self.maxGen), desc="loop for NSGAII generation", colour="green"):
+            # current generation
+            self.current_generation = gen
+            
             # generate offspring
             offspring = self.toolbox.select(self.population, self.popSize)
             offspring = list(map(self.toolbox.clone, offspring))

@@ -14,13 +14,17 @@ from .tools.utilities import check_and_mkdir, remove_and_mkdir
 import matplotlib.pyplot as plt
 from configparser import ConfigParser
 from .tools.decoractors import clock_decorator
+from functools import partial
+from scipy.optimize import root_scalar
+import math
+
 
 @clock_decorator
 def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
                    ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=False,
                    cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):    
     # cp domain.nc to RVICParam_dir
-    copy_domain(evb_dir)
+    # copy_domain(evb_dir)
     
     # buildFlowDirectionFile
     buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat, stream_acc_threshold)
@@ -281,7 +285,21 @@ def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None
     pourpoint_file.to_csv(pourpoint_file_path, header=True, index=False)
 
 
-def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
+def get_max_day(tp, mu, m, max_day_range=(0, 10), max_day_converged_threshold=0.001):
+    gUH_xt = lambda t, tp, mu: np.exp(mu*(t/tp - 1))
+    gUH_iuh = lambda t, m, tp, mu: mu/tp * gUH_xt(t, tp, mu) * (1 + m*gUH_xt(t, tp, mu)) ** (-(1+1/m))
+    
+    max_t_range = [tp, max_day_range[1]*24]
+    
+    gUH_iuh_forzen = partial(gUH_iuh, m=m, tp=tp, mu=mu)
+    gUH_iuh_forzen_target = lambda t: gUH_iuh_forzen(t) - max_day_converged_threshold
+    result = root_scalar(gUH_iuh_forzen_target, bracket=max_t_range, method='brentq')
+    max_day = math.ceil(result.root / 24)
+    
+    return max_day
+    
+    
+def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False, max_day=None, max_day_range=(0, 10), max_day_converged_threshold=0.001):
     # ====================== set dir and path ======================
     RVICParam_dir = evb_dir.RVICParam_dir
     uhbox_file_path = os.path.join(RVICParam_dir, "UHBOX.csv")
@@ -298,8 +316,11 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
     gUH_uh = lambda t, m, tp, mu, det_t: (gUH_gt(t, m, tp, mu)[1:] - gUH_gt(t, m, tp, mu)[:-1]) / det_t
     
     # t
-    t = np.arange(0, 48)
-    t_interval = np.arange(0.5, 47.5)
+    if max_day is None:
+        max_day = get_max_day(tp, mu, m, max_day_range, max_day_converged_threshold)
+    
+    t = np.arange(0, 24*max_day)
+    t_interval = np.arange(0.5, 24*max_day-0.5)
     
     # UH
     gUH_gt_ret = gUH_gt(t, m, tp, mu)
@@ -316,7 +337,7 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
         ax[0].set_xlabel("time/hours")
         ax[0].set_ylabel("gUH (dimensionless)")
         ax[0].set_ylim(ymin=0)
-        ax[0].set_xlim(xmin=0, xmax=47)
+        ax[0].set_xlim(xmin=0, xmax=24*max_day-1)
         ax[0].legend()
         
         ax[1].plot(t, gUH_gt_ret, "-r", label="gUH_gt", linewidth=1)
@@ -325,7 +346,7 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
         ax[1].set_xlabel("time/hours")
         ax[1].set_ylabel("st, gt")
         ax[1].set_ylim(ymin=0)
-        ax[1].set_xlim(xmin=0, xmax=47)
+        ax[1].set_xlim(xmin=0, xmax=24*max_day)
         ax[1].legend()
         
         fig.savefig(os.path.join(RVICParam_dir, "UHBOX.tiff"))
@@ -337,9 +358,11 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False):
     UHBOX_file["UHBOX"] = UHBOX_file["UHBOX"].fillna(0)
     
     UHBOX_file.to_csv(uhbox_file_path, header=True, index=False)
+    
+    return max_day
 
 
-def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86400):
+def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86400, SUBSET_DAYS=10, CELL_FLOWDAYS=2, BASIN_FLOWDAYS=50):
     # ====================== build CFGFile ======================
     # read reference cfg
     param_cfg_file = ConfigParser()
@@ -350,12 +373,15 @@ def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86
     param_cfg_file.set("OPTIONS", 'CASEID', evb_dir._case_name)
     param_cfg_file.set("OPTIONS", 'CASE_DIR', evb_dir.RVICParam_dir)
     param_cfg_file.set("OPTIONS", 'TEMP_DIR', evb_dir.RVICTemp_dir)
+    param_cfg_file.set("OPTIONS", 'SUBSET_DAYS', str(SUBSET_DAYS))
     param_cfg_file.set("POUR_POINTS", 'FILE_NAME', evb_dir.pourpoint_file_path)
     param_cfg_file.set("UH_BOX", 'FILE_NAME', evb_dir.uhbox_file_path)
     param_cfg_file.set("ROUTING", 'FILE_NAME', evb_dir.flow_direction_file_path)
     param_cfg_file.set("ROUTING", 'VELOCITY', str(VELOCITY))
     param_cfg_file.set("ROUTING", 'DIFFUSION', str(DIFFUSION))
     param_cfg_file.set("ROUTING", 'OUTPUT_INTERVAL', str(OUTPUT_INTERVAL))
+    param_cfg_file.set("ROUTING", 'CELL_FLOWDAYS', str(CELL_FLOWDAYS))
+    param_cfg_file.set("ROUTING", 'BASIN_FLOWDAYS', str(BASIN_FLOWDAYS))
     param_cfg_file.set("DOMAIN", 'FILE_NAME', evb_dir.domainFile_path)
     
     # write cfg

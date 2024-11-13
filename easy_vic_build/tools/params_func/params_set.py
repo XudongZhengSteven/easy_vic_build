@@ -221,11 +221,11 @@ def percentile_to_CONUS_depth_num(percentile_layer1, percentile_layer2):
 ## ========================= RVIC params =========================
 # uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}
 default_uh_params = [1.4, 5.0, 3.0]
-uh_params_boundary = [(0, 2.5), (3.0, 7.0), (1.0, 5.0)]
-uh_params_types = [float, float, float]
+uh_params_boundary = [(1, 24.0), (3.0, 7.0), (1.0, 5.0)]
+uh_params_types = [float, float, float, float]
 
 # cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0}
 # Lohmann, D., Nolte-Holube, R., and Raschke, E.: A large-scale horizontal routing model to be coupled to land surface parametrization schemes, Tellus A, 48, 10.3402/tellusa.v48i5.12200, 1996.
 default_routing_params = [1.5, 800.0]
-routing_params_boundary = [(1.0, 3.0), (200, 4000)]
+routing_params_boundary = [(0.5, 3.0), (200, 4000)]
 routing_params_types = [float, int]

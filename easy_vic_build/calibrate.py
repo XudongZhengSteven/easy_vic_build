@@ -17,22 +17,28 @@ from .tools.geo_func.search_grids import search_grids_nearest
 from .tools.utilities import *
 from copy import deepcopy
 from datetime import datetime
+from .tools.decoractors import clock_decorator
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from rvic.parameters import parameters
+import math
 # plt.show(block=True)
 
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
+                 rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True):
         self.evb_dir = evb_dir
         self.dpc_VIC_level0 = dpc_VIC_level0
         self.dpc_VIC_level1 = dpc_VIC_level1
         self.reverse_lat = reverse_lat
+        self.rvic_OUTPUT_INTERVAL = rvic_OUTPUT_INTERVAL
+        self.rvic_BASIN_FLOWDAYS = rvic_BASIN_FLOWDAYS
+        self.rvic_SUBSET_DAYS = rvic_SUBSET_DAYS
         
         # period
         self.date_period = date_period
@@ -84,14 +90,15 @@ class NSGAII_VIC_SO(NSGAII_Base):
     
     def get_sim(self):
         # sim_df
-        sim_df = pd.DataFrame(columns=["time", "OUT_DISCHARGE"])
+        sim_df = pd.DataFrame(columns=["time", "discharge(m3/s)"])
         
         # outlet lat, lon
         pourpoint_file = pd.read_csv(self.evb_dir.pourpoint_file_path)
         x, y = pourpoint_file.lons[0], pourpoint_file.lats[0]
-        
+        # x, y = dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]
+
         # read VIC OUTPUT file
-        sim_path = os.path.join(self.evb_dir.VICResults_dir, os.listdir(self.evb_dir.VICResults_dir)[0])
+        sim_path = [os.path.join(self.evb_dir.VICResults_dir, fn) for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
         with Dataset(sim_path, "r") as dataset:
             # get time, lat, lon
             time = dataset.variables["time"]
@@ -159,6 +166,13 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         return creator.Individual(params_samples)
 
+    @clock_decorator(print_arg_ret=True)
+    def run_vic(self):
+        command_run_vic = " ".join(["mpiexec -np 2", self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])  # TODO mpiexe -np 2 ./vic_exe -g global_param
+        print("============= running VIC =============")
+        out = os.system(command_run_vic)
+        return out
+        
     def evaluate(self, ind):
         # =============== get ind ===============
         params_g = ind[:-5]
@@ -221,12 +235,16 @@ class NSGAII_VIC_SO(NSGAII_Base):
             # =============== adjust rvic params based on ind ===============
             print("============= building rvic params =============")
             # domain, FlowDirectionFile, PourPointFile should be already created
-            # adjust UHBOXFile
-            uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2]}
-            buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=False)
+            # # adjust UHBOXFile
+            uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2], "max_day_range": (0, 10), "max_day_converged_threshold": 0.001}
+            uhbox_max_day = buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=True)
             
             # adjust ParamCFGFile
-            cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1], "OUTPUT_INTERVAL": 86400}
+            cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1],
+                          "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
+                          "OUTPUT_INTERVAL": self.rvic_OUTPUT_INTERVAL,
+                          "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS,
+                          "CELL_FLOWDAYS": uhbox_max_day}
             buildParamCFGFile(self.evb_dir, **cfg_params)
             
             # build rvic_params
@@ -259,9 +277,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             remove_and_mkdir(self.evb_dir.VICLog_dir)
             
             # =============== run vic ===============
-            command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
-            print("============= running VIC =============")
-            out = os.system(command_run_vic)
+            out = self.run_vic()
             
             # =============== evaluate ===============
             print("============= evaluating =============")
@@ -280,7 +296,16 @@ class NSGAII_VIC_SO(NSGAII_Base):
         print("fitness:", fitness)
         
         fitness = -9999.0 if np.isnan(fitness) else fitness
-        # TODO process nan inf values
+        
+        # plot discharge
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(sim_cali, "r-", label=f"sim({round(fitness, 2)})", markersize=1)
+        ax.plot(obs_cali, "k-", label="obs")
+        ax.set_xlabel("date")
+        ax.set_ylabel("discharge m3/s")
+        ax.legend()
+        # plt.show(block=True)
+        fig.savefig(os.path.join(self.evb_dir.VICResults_dir, "evaluate_discharge.tiff"))
         
         return (fitness, )
     
@@ -300,14 +325,14 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # it can be implemented by algorithms.varAnd
         # crossover
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
-            if random.random() < self.toolbox.cxProb:
+            if random.random() <= self.toolbox.cxProb:
                 self.toolbox.mate(child1, child2, self.low, self.up)
                 del child1.fitness.values
                 del child2.fitness.values
         
         # mutate
         for mutant in offspring:
-            if random.random() < self.toolbox.mutateProb:
+            if random.random() <= self.toolbox.mutateProb:
                 self.toolbox.mutate(mutant, self.low, self.up, self.NDim)
                 del mutant.fitness.values
 
