@@ -32,14 +32,17 @@ class NSGAII_VIC_SO(NSGAII_Base):
     def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                  rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
-                 save_path="checkpoint.pkl", reverse_lat=True):
+                 save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
+        # *if parallel, uhbox_dt (rvic_OUTPUT_INTERVAL) should be same as VIC output (global param)
+        # *if run with RVIC, you should modify Makefile and turn the rout_rvic, compile it
         self.evb_dir = evb_dir
         self.dpc_VIC_level0 = dpc_VIC_level0
         self.dpc_VIC_level1 = dpc_VIC_level1
         self.reverse_lat = reverse_lat
-        self.rvic_OUTPUT_INTERVAL = rvic_OUTPUT_INTERVAL
+        self.rvic_OUTPUT_INTERVAL = rvic_OUTPUT_INTERVAL  # 3600
         self.rvic_BASIN_FLOWDAYS = rvic_BASIN_FLOWDAYS
         self.rvic_SUBSET_DAYS = rvic_SUBSET_DAYS
+        self.parallel = parallel
         
         # period
         self.date_period = date_period
@@ -101,29 +104,33 @@ class NSGAII_VIC_SO(NSGAII_Base):
         x, y = pourpoint_file.lons[0], pourpoint_file.lats[0]
         # x, y = dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0], dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0]
 
-        # read VIC OUTPUT file
-        with Dataset(self.sim_path, "r") as dataset:
-            # get time, lat, lon
-            time = dataset.variables["time"]
-            lat = dataset.variables["lat"][:]
-            lon = dataset.variables["lon"][:]
+        if self.parallel: # TODO
+            pass
             
-            # transfer time_num into date
-            time_date = num2date(time[:], units=time.units, calendar=time.calendar)
-            time_date = [datetime(t.year, t.month, t.day, t.hour, t.second) for t in time_date]
-            
-            # get outlet index
-            if self.get_sim_searched_grids_index is None:
-                searched_grids_index = search_grids_nearest([y], [x], lat, lon, search_num=1)
-                searched_grid_index = searched_grids_index[0]
-                self.get_sim_searched_grids_index = searched_grid_index
-            
-            # read data
-            out_discharge = dataset.variables["OUT_DISCHARGE"][:, self.get_sim_searched_grids_index[0][0], self.get_sim_searched_grids_index[1][0]]
-            
-            sim_df.loc[:, "time"] = time_date
-            sim_df.loc[:, "discharge(m3/s)"] = out_discharge
-            sim_df.index = pd.to_datetime(time_date)
+        else:
+            # read VIC OUTPUT file
+            with Dataset(self.sim_path, "r") as dataset:
+                # get time, lat, lon
+                time = dataset.variables["time"]
+                lat = dataset.variables["lat"][:]
+                lon = dataset.variables["lon"][:]
+                
+                # transfer time_num into date
+                time_date = num2date(time[:], units=time.units, calendar=time.calendar)
+                time_date = [datetime(t.year, t.month, t.day, t.hour, t.second) for t in time_date]
+                
+                # get outlet index
+                if self.get_sim_searched_grids_index is None:
+                    searched_grids_index = search_grids_nearest([y], [x], lat, lon, search_num=1)
+                    searched_grid_index = searched_grids_index[0]
+                    self.get_sim_searched_grids_index = searched_grid_index
+                
+                # read data
+                out_discharge = dataset.variables["OUT_DISCHARGE"][:, self.get_sim_searched_grids_index[0][0], self.get_sim_searched_grids_index[1][0]]
+                
+                sim_df.loc[:, "time"] = time_date
+                sim_df.loc[:, "discharge(m3/s)"] = out_discharge
+                sim_df.index = pd.to_datetime(time_date)
         
         return sim_df
     
@@ -170,8 +177,12 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return creator.Individual(params_samples)
 
     @clock_decorator(print_arg_ret=True)
-    def run_vic(self, np=2):
-        command_run_vic = " ".join([f"mpiexec -np {np}", self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])  # TODO mpiexe -np 2 ./vic_exe -g global_param
+    def run_vic(self):
+        if self.parallel:
+            command_run_vic = " ".join([f"mpiexec -np {self.parallel}", self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
+        else:
+            command_run_vic = " ".join([self.evb_dir.vic_exe_path, "-g", self.evb_dir.globalParam_path])
+            
         print("============= running VIC =============")
         out = os.system(command_run_vic)
         return out
@@ -180,7 +191,99 @@ class NSGAII_VIC_SO(NSGAII_Base):
     def run_rvic(self, conv_cfg_file_dict):
         print("============= running RVIC convolution =============")
         convolution(conv_cfg_file_dict)
+        # TODO combine RVIC output (if multiple)
         pass
+    
+    def adjust_vic_params_level0(self, params_g):
+        if os.path.exists(self.evb_dir.params_dataset_level0_path):
+            # read and adjust by g
+            params_dataset_level0 = Dataset(self.evb_dir.params_dataset_level0_path, "a", format="NETCDF4")
+            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0_by_g(params_dataset_level0, params_g, self.dpc_VIC_level0, self.reverse_lat,
+                                                                                                                     self.stand_grids_lat_level0, self.stand_grids_lon_level0,
+                                                                                                                     self.rows_index_level0, self.cols_index_level0)
+        else:
+            # build
+            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, self.reverse_lat,
+                                                                                                                self.stand_grids_lat_level0, self.stand_grids_lon_level0,
+                                                                                                                self.rows_index_level0, self.cols_index_level0)
+        
+        self.stand_grids_lat_level0, self.stand_grids_lon_level0, self.rows_index_level0, self.cols_index_level0 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
+        
+        return params_dataset_level0
+
+    def adjust_vic_params_level1(self, params_dataset_level0):
+        if os.path.exists(self.evb_dir.params_dataset_level1_path):
+            # read
+            params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
+        else:
+            # build
+            domain_dataset = readDomain(self.evb_dir)
+            params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(self.dpc_VIC_level1, self.evb_dir, self.reverse_lat, domain_dataset,
+                                                                                                                self.stand_grids_lat_level1, self.stand_grids_lon_level1,
+                                                                                                                self.rows_index_level1, self.cols_index_level1)
+            domain_dataset.close()
+            self.stand_grids_lat_level1, self.stand_grids_lon_level1, self.rows_index_level1, self.cols_index_level1 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
+        
+        # scaling
+        params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.scaling_searched_grids_bool_index)
+        self.scaling_searched_grids_bool_index = searched_grids_bool_index
+        
+        return params_dataset_level1
+        
+    def cal_constraint_destroy(self, params_dataset_level0):
+        # wp < fc
+        # Wpwp_FRACT < Wcr_FRACT
+        constraint_wp_fc_destroy = np.max(np.array(params_dataset_level0.variables["wp"][:, :, :] > params_dataset_level0.variables["fc"][:, :, :]))
+        constraint_Wpwp_Wcr_FRACT_destroy = np.max(np.array(params_dataset_level0.variables["Wpwp_FRACT"][:, :, :] > params_dataset_level0.variables["Wcr_FRACT"][:, :, :]))
+        constraint_destroy = any([constraint_wp_fc_destroy, constraint_Wpwp_Wcr_FRACT_destroy])
+        return constraint_destroy
+    
+    def adjust_rvic_params(self, uh_params, routing_params):
+        # domain, FlowDirectionFile, PourPointFile should be already created
+        
+        # adjust UHBOXFile
+        uh_params_input = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2], "max_day_range": (0, 10), "max_day_converged_threshold": 0.001}
+        uhbox_max_day = buildUHBOXFile(self.evb_dir, **uh_params_input, plot_bool=True)
+        
+        # adjust ParamCFGFile
+        rvic_param_cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1],
+                                 "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
+                                 "OUTPUT_INTERVAL": self.rvic_OUTPUT_INTERVAL,
+                                 "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS,
+                                 "CELL_FLOWDAYS": uhbox_max_day}
+        buildParamCFGFile(self.evb_dir, **rvic_param_cfg_params)
+        
+        # remove files
+        remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "params"))
+        remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "plots"))
+        remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "logs"))
+        inputs_fpath = [os.path.join(self.evb_dir.RVICParam_dir, inputs_f) for inputs_f in os.listdir(self.evb_dir.RVICParam_dir) if inputs_f.startswith("inputs") and inputs_f.endswith("tar")]
+        if len(inputs_fpath) > 0:
+            [os.remove(fp) for fp in inputs_fpath]
+
+        # build rvic_params
+        param_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_param_cfg_file_path)
+        parameters(param_cfg_file_dict, numofproc=1)
+        
+        # modify rout_param_path in GlobalParam
+        globalParam = GlobalParamParser()
+        globalParam.load(self.evb_dir.globalParam_path)
+        self.rout_param_path = os.path.join(self.evb_dir.rout_param_dir, os.listdir(self.evb_dir.rout_param_dir)[0])
+        globalParam.set("Routing", "ROUT_PARAM", self.rout_param_path)
+        
+        # write
+        with open(self.evb_dir.globalParam_path, "w") as f:
+            globalParam.write(f)
+    
+    def adjust_rvic_conv_params(self):
+        # TODO DATL_LIQ_FLDS, OUT_RUNOFF, OUT_BASEFLOW might be run individually
+        # build rvic_conv_cfg_params
+        RUN_STARTDATE = f"{self.date_period[0][:4]}-{self.date_period[0][4:6]}-{self.date_period[0][6:]}-00"
+        rvic_conv_cfg_params = {"RUN_STARTDATE": RUN_STARTDATE, "DATL_FILE": self.sim_fn, "PARAM_FILE_PATH": self.rout_param_path}
+        buildConvCFGFile(self.evb_dir, **rvic_conv_cfg_params)
+        
+        conv_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_conv_cfg_file_path)
+        return conv_cfg_file_dict
         
     def evaluate(self, ind):
         # =============== get ind ===============
@@ -196,46 +299,20 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # =============== adjust vic params based on ind ===============
         # adjust params_dataset_level0 based on params_g
         print("============= building params_level0 =============")
-        if os.path.exists(self.evb_dir.params_dataset_level0_path):
-            # read and adjust by g
-            params_dataset_level0 = Dataset(self.evb_dir.params_dataset_level0_path, "a", format="NETCDF4")
-            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0_by_g(params_dataset_level0, params_g, self.dpc_VIC_level0, self.reverse_lat,
-                                                                                                                     self.stand_grids_lat_level0, self.stand_grids_lon_level0,
-                                                                                                                     self.rows_index_level0, self.cols_index_level0)
-        else:
-            # build
-            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, self.reverse_lat,
-                                                                                                                self.stand_grids_lat_level0, self.stand_grids_lon_level0,
-                                                                                                                self.rows_index_level0, self.cols_index_level0)
-        
-        self.stand_grids_lat_level0, self.stand_grids_lon_level0, self.rows_index_level0, self.cols_index_level0 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
-        #  =============== constraint to make sure the params are all valid ===============
-        # wp < fc
-        # Wpwp_FRACT < Wcr_FRACT
-        constraint_wp_fc_destroy = np.max(np.array(params_dataset_level0.variables["wp"][:, :, :] > params_dataset_level0.variables["fc"][:, :, :]))
-        constraint_Wpwp_Wcr_FRACT_destroy = np.max(np.array(params_dataset_level0.variables["Wpwp_FRACT"][:, :, :] > params_dataset_level0.variables["Wcr_FRACT"][:, :, :]))
-        constraint_destroy = any([constraint_wp_fc_destroy, constraint_Wpwp_Wcr_FRACT_destroy])
+        params_dataset_level0 = self.adjust_vic_params_level0(params_g)
+
+        # constraint to make sure the params are all valid
+        print("============= cal_constraint_destroy =============")
+        constraint_destroy = self.cal_constraint_destroy(params_dataset_level0)
+        print(f"constraint_destroy: {constraint_destroy}, true means invalid params, set fitness = -9999.0")
         
         # if constraint_destroy, the params is not valid, vic will report mistake, we dont run it and return -9999.0
         if constraint_destroy:
             fitness = -9999.0
         else:
+            # adjust params_dataset_level1 based on params_dataset_level0
             print("============= building params_level1 =============")
-            if os.path.exists(self.evb_dir.params_dataset_level1_path):
-                # read
-                params_dataset_level1 = Dataset(self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4")
-            else:
-                # build
-                domain_dataset = readDomain(self.evb_dir)
-                params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(self.dpc_VIC_level1, self.evb_dir, self.reverse_lat, domain_dataset,
-                                                                                                                    self.stand_grids_lat_level1, self.stand_grids_lon_level1,
-                                                                                                                    self.rows_index_level1, self.cols_index_level1)
-                domain_dataset.close()
-                self.stand_grids_lat_level1, self.stand_grids_lon_level1, self.rows_index_level1, self.cols_index_level1 = stand_grids_lat, stand_grids_lon, rows_index, cols_index
-            
-            # scaling
-            params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, self.scaling_searched_grids_bool_index)
-            self.scaling_searched_grids_bool_index = searched_grids_bool_index
+            params_dataset_level1 = self.adjust_vic_params_level1(params_dataset_level0)
             
             # close
             params_dataset_level0.close()
@@ -243,59 +320,28 @@ class NSGAII_VIC_SO(NSGAII_Base):
             
             # =============== adjust rvic params based on ind ===============
             print("============= building rvic params =============")
-            # domain, FlowDirectionFile, PourPointFile should be already created
-            # # adjust UHBOXFile
-            uh_params = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2], "max_day_range": (0, 10), "max_day_converged_threshold": 0.001}
-            uhbox_max_day = buildUHBOXFile(self.evb_dir, **uh_params, plot_bool=True)
-            
-            # adjust ParamCFGFile
-            rvic_param_cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1],
-                                     "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
-                                     "OUTPUT_INTERVAL": self.rvic_OUTPUT_INTERVAL,
-                                     "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS,
-                                     "CELL_FLOWDAYS": uhbox_max_day}
-            buildParamCFGFile(self.evb_dir, **rvic_param_cfg_params)
-            
-            # build rvic_params
-            remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "params"))
-            remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "plots"))
-            remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "logs"))
-            inputs_fpath = [os.path.join(self.evb_dir.RVICParam_dir, inputs_f) for inputs_f in os.listdir(self.evb_dir.RVICParam_dir) if inputs_f.startswith("inputs") and inputs_f.endswith("tar")]
-            if len(inputs_fpath) > 0:
-                [os.remove(fp) for fp in inputs_fpath]
-
-            param_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_param_cfg_file_path)
-            parameters(param_cfg_file_dict, numofproc=1)
-            
-            # modify fname in GlobalParam
-            globalParam = GlobalParamParser()
-            globalParam.load(self.evb_dir.globalParam_path)
-            rout_param_path = os.path.join(self.evb_dir.rout_param_dir, os.listdir(self.evb_dir.rout_param_dir)[0])
-            globalParam.set("Routing", "ROUT_PARAM", rout_param_path)
-            
-            # write
-            with open(self.evb_dir.globalParam_path, "w") as f:
-                globalParam.write(f)
-            
-            # =============== clear VICResults_dir and VICLog_dir ===============
-            remove_and_mkdir(self.evb_dir.VICResults_dir)
-            remove_and_mkdir(self.evb_dir.VICLog_dir)
+            self.adjust_rvic_params(uh_params, routing_params)
             
             # =============== run vic ===============
+            # clear VICResults_dir and VICLog_dir
+            remove_files(self.evb_dir.VICResults_dir)
+            remove_and_mkdir(self.evb_dir.VICLog_dir)
+            
+            # run
             out_vic = self.run_vic()
-            sim_fn = [fn for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
-            self.sim_path = os.path.join(self.evb_dir.VICResults_dir, sim_fn)
+            self.sim_fn = [fn for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
+            self.sim_path = os.path.join(self.evb_dir.VICResults_dir, self.sim_fn)
             
-            # =============== run rvic ===============
-            # RUN_STARTDATE="1979-09-01-00", DATL_FILE="rasm_sample_runoff.nc"
-            remove_and_mkdir(os.path.join(self.evb_dir.RVICConv_dir))
-            
-            RUN_STARTDATE = f"{self.date_period[0][:4]}-{self.date_period[0][4:6]}-{self.date_period[0][6:]}-00"
-            rvic_conv_cfg_params = {"RUN_STARTDATE": RUN_STARTDATE, "DATL_FILE": sim_fn, "PARAM_FILE_PATH": rout_param_path}
-            buildConvCFGFile(self.evb_dir, **rvic_conv_cfg_params)
-            
-            conv_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_conv_cfg_file_path)
-            out_rvic = self.run_rvic(conv_cfg_file_dict)
+            # =============== run rvic offline ===============
+            if self.parallel:
+                # clear RVICConv_dir
+                remove_and_mkdir(os.path.join(self.evb_dir.RVICConv_dir))
+                
+                # build cfg file
+                conv_cfg_file_dict = self.adjust_rvic_conv_params()
+                
+                # run
+                out_rvic = self.run_rvic(conv_cfg_file_dict)
             
             # =============== evaluate ===============
             print("============= evaluating =============")
@@ -310,20 +356,19 @@ class NSGAII_VIC_SO(NSGAII_Base):
             # evaluate
             evaluation_metric = EvaluationMetric(sim_cali, obs_cali)
             fitness = evaluation_metric.KGE()
+
+            # plot discharge
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.plot(sim_cali, "r-", label=f"sim({round(fitness, 2)})", markersize=1)
+            ax.plot(obs_cali, "k-", label="obs")
+            ax.set_xlabel("date")
+            ax.set_ylabel("discharge m3/s")
+            ax.legend()
+            # plt.show(block=True)
+            fig.savefig(os.path.join(self.evb_dir.VICResults_fig_dir, "evaluate_discharge.tiff"))
         
         print("fitness:", fitness)
-        
         fitness = -9999.0 if np.isnan(fitness) else fitness
-        
-        # plot discharge
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.plot(sim_cali, "r-", label=f"sim({round(fitness, 2)})", markersize=1)
-        ax.plot(obs_cali, "k-", label="obs")
-        ax.set_xlabel("date")
-        ax.set_ylabel("discharge m3/s")
-        ax.legend()
-        # plt.show(block=True)
-        fig.savefig(os.path.join(self.evb_dir.VICResults_dir, "evaluate_discharge.tiff"))
         
         return (fitness, )
     
@@ -353,8 +398,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             if random.random() <= self.toolbox.mutateProb:
                 self.toolbox.mutate(mutant, self.low, self.up, self.NDim)
                 del mutant.fitness.values
-
-
+                
 class NSGAII_VIC_MO(NSGAII_VIC_SO):
     
     def createFitness(self):

@@ -6,7 +6,7 @@ __email__ = "zhengxd@sehemodel.club"
 
 from . import tools
 from . import dataPreprocess
-from .tools.utilities import check_and_mkdir
+from .tools.utilities import check_and_mkdir, remove_and_mkdir
 
 
 class Evb_dir:
@@ -79,16 +79,22 @@ class Evb_dir:
         self.VICResults_dir = os.path.join(self._case_dir, "VICResults")
         check_and_mkdir(self.VICResults_dir)
         
+        self.VICResults_fig_dir = os.path.join(self.VICResults_dir, "Figs")
+        remove_and_mkdir(self.VICResults_fig_dir)
+        
         self.VICStates_dir = os.path.join(self._case_dir, "VICStates")
         check_and_mkdir(self.VICStates_dir)
         
-        self.RVICParam_dir = os.path.join(self._case_dir, "RVICParam")
+        self.RVIC_dir = os.path.join(self._case_dir, "RVIC")
+        check_and_mkdir(self.RVIC_dir)
+        
+        self.RVICParam_dir = os.path.join(self.RVIC_dir, "RVICParam")
         check_and_mkdir(self.RVICParam_dir)
         
         self.RVICTemp_dir = os.path.join(self.RVICParam_dir, "temp")
         check_and_mkdir(self.RVICTemp_dir)
         
-        self.RVICConv_dir = os.path.join(self.RVICParam_dir, "convolution")
+        self.RVICConv_dir = os.path.join(self.RVIC_dir, "Convolution")
         check_and_mkdir(self.RVICConv_dir)
         
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
@@ -112,7 +118,7 @@ class Evb_dir:
         self._uhbox_file_path = os.path.join(self.RVICParam_dir, "UHBOX.csv")
         self._rvic_param_cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.parameters.cfg")
         self._rvic_param_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.parameters.reference.cfg")
-        self._rvic_conv_cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.convolution.cfg")
+        self._rvic_conv_cfg_file_path = os.path.join(self.RVICConv_dir, "rvic.convolution.cfg")
         self._rvic_conv_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.convolution.reference.cfg")
         self._rout_param_dir = os.path.join(self.RVICParam_dir, "params")
         

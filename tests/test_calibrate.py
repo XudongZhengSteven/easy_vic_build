@@ -8,7 +8,7 @@ from easy_vic_build import Evb_dir
 from easy_vic_build.build_GlobalParam import buildGlobalParam
 from easy_vic_build.calibrate import *
 from easy_vic_build.tools.utilities import *
-from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
+from easy_vic_build.build_RVIC_Param import buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Domain import buildDomain
 
@@ -28,9 +28,9 @@ grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
 if __name__ == "__main__":
     # make sure you have already prepare the basic params/information for running vic
     basin_index = 397
-    date_period = ["19980101", "20011231"]
+    date_period = ["19980101", "20031231"]
     warmup_date_period = ["19980101", "19981231"]
-    calibrate_date_period = ["19990101", "20011231"]
+    calibrate_date_period = ["19990101", "20031231"]
     case_name = "397_12km"
     grid_res_level1 = 0.11
     
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     build_domain_dataset_bool = False
     build_param_bool = False
     buildRVIC_Param_bool = False
-    buildGlobalParam_bool = False
+    buildGlobalParam_bool = True
     
     modify_PourPointFile_bool = True
     
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                                     "ENDMONTH": str(int(date_period[1][4:6])),
                                     "ENDDAY": str(int(date_period[1][6:])),
                                     "OUT_TIME_UNITS": "DAYS"},
-                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW"]}
+                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
     
     # buildGlobalParam
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     if calibrate_bool:
         algParams = {"popSize": 20, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
-                                      algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True)
+                                      algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
         nsgaII_VIC_SO.run()
     
     # close

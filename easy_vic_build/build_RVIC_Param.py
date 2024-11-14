@@ -40,21 +40,8 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     
     # build rvic parameters
     from rvic.parameters import parameters
-    param_cfg_file = ConfigParser()
-    param_cfg_file.optionxform = str
-    param_cfg_file.read(evb_dir.rvic_param_cfg_file_path)
-    
-    param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
+    param_cfg_file_dict = read_cfg_to_dict(evb_dir.rvic_param_cfg_file_path)
     parameters(param_cfg_file_dict, numofproc=1)
-
-
-def copy_domain(evb_dir):
-    # set dir
-    domainFile_path = os.path.join(evb_dir.DomainFile_dir, "domain.nc")
-    RVICParam_dir = evb_dir.RVICParam_dir
-    
-    # cp domain.nc to RVICParam_dir
-    shutil.copy(domainFile_path, os.path.join(RVICParam_dir, "domain.nc"))
 
 
 def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0, flow_direction_pkg="wbw"):
@@ -198,7 +185,7 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     
     flow_direction_dataset.close()
     
-    # remove workspace_dir
+    # clean workspace_dir
     remove_and_mkdir(workspace_dir)
 
 
@@ -286,7 +273,7 @@ def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None
 
 
 def get_max_day(tp, mu, m, max_day_range=(0, 10), max_day_converged_threshold=0.001):
-    # auto calculate the max_day for the uhbox
+    # auto-calculate the max_day for the uhbox
     gUH_xt = lambda t, tp, mu: np.exp(mu*(t/tp - 1))
     gUH_iuh = lambda t, m, tp, mu: mu/tp * gUH_xt(t, tp, mu) * (1 + m*gUH_xt(t, tp, mu)) ** (-(1+1/m))
     

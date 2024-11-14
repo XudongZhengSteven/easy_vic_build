@@ -26,12 +26,17 @@ def check_and_mkdir(dir):
     if not os.path.exists(dir):
         os.mkdir(os.path.abspath(dir))
 
-
 def remove_and_mkdir(dir):
     if os.path.exists(dir):
         shutil.rmtree(dir)
     os.mkdir(os.path.abspath(dir))
-
+    
+def remove_files(dir):
+    # do not remove subdir
+    for f in os.listdir(dir):
+        fp = os.path.join(dir, f)
+        if os.path.isfile(fp):
+            os.remove(fp)
 
 def setHomePath(root="E:"):
     home = f"{root}/data/hydrometeorology/CAMELS"
