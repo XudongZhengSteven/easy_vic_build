@@ -305,11 +305,15 @@ class TF_VIC:
         bd_min = 805.0
         bd_max = 1880.0
         
-        bd_temp = bulk_density * g
-        bd_slope = (bd_temp - bd_min) / (bd_max - bd_min)
-        bd_slope[bd_slope > 1.0] = 1.0
-        bd_slope[bd_slope < 0.0] = 0.0
-        ret = bd_slope * (bd_max - bd_min) + bd_min
+        ret = bulk_density * g
+        
+        ret[ret > bd_max] = bd_max
+        ret[ret < bd_min] = bd_min
+        
+        # bd_slope = (bd_temp - bd_min) / (bd_max - bd_min)
+        # bd_slope[bd_slope > 1.0] = 1.0
+        # bd_slope[bd_slope < 0.0] = 0.0
+        # ret = bd_slope * (bd_max - bd_min) + bd_min
 
         return ret
         

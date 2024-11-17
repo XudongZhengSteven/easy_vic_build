@@ -243,7 +243,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         constraint_wp_fc_destroy = np.max(np.array(params_dataset_level0.variables["wp"][:, :, :] > params_dataset_level0.variables["fc"][:, :, :]))
         constraint_Wpwp_Wcr_FRACT_destroy = np.max(np.array(params_dataset_level0.variables["Wpwp_FRACT"][:, :, :] > params_dataset_level0.variables["Wcr_FRACT"][:, :, :]))
         constraint_depth_destroy = np.max(np.array(params_dataset_level0.variables["depth"][0, :, :] > params_dataset_level0.variables["depth"][1, :, :]))
-        #constraint_infilt_nan_destroy = np.sum(np.isnan(np.array(params_dataset_level0.variables["infilt"][:, :]))) > 0
+        # constraint_infilt_nan_destroy = np.sum(np.isnan(np.array(params_dataset_level0.variables["infilt"][:, :]))) > 0
         
         constraint_destroy = any([constraint_wp_fc_destroy, constraint_Wpwp_Wcr_FRACT_destroy, constraint_depth_destroy])
         return constraint_destroy

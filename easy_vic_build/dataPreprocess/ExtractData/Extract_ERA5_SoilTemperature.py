@@ -25,6 +25,10 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_layer=False, check_search=Fal
         with xr.open_dataset(fn, engine="cfgrib") as dataset:
             stl_data_ = dataset.variables[f"stl{i}"]
             stl_data_ = np.nanmean(stl_data_, axis=0)
+            
+            # unit: K->C
+            stl_data_ -= 273.15
+            
             stls_data.append(stl_data_)
             if i == 1:
                 stl_lat = dataset.variables["latitude"].values  # large -> small
