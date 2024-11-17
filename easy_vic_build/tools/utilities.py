@@ -18,6 +18,7 @@ import shutil
 from .geo_func.search_grids import *
 from .geo_func.create_gdf import CreateGDF
 from .params_func.GlobalParamParser import GlobalParamParser
+from .params_func.params_set import *
 from configparser import ConfigParser
 
 
@@ -215,9 +216,13 @@ def cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer_start, depth_laye
     grid_array_silt = [createEmptyArray_and_assignValue_from_gridshp(stand_grids_lat, stand_grids_lon, grid_shp_level0.loc[:, f"soil_l{i+1}_silt_nearest_Value"], rows_index, cols_index, dtype=float, missing_value=np.nan) for i in range(depth_layer_start, depth_layer_end)]
     grid_array_clay = [createEmptyArray_and_assignValue_from_gridshp(stand_grids_lat, stand_grids_lon, grid_shp_level0.loc[:, f"soil_l{i+1}_clay_nearest_Value"], rows_index, cols_index, dtype=float, missing_value=np.nan) for i in range(depth_layer_start, depth_layer_end)]
     
-    grid_array_sand = np.mean(grid_array_sand, axis=0)
-    grid_array_silt = np.mean(grid_array_silt, axis=0)
-    grid_array_clay = np.mean(grid_array_clay, axis=0)
+    # weight mean
+    weights = [CONUS_layers_depths[i] for i in range(depth_layer_start, depth_layer_end)]
+    weights /= sum(weights)
+    
+    grid_array_sand = np.average(grid_array_sand, axis=0, weights=weights)
+    grid_array_silt = np.average(grid_array_silt, axis=0, weights=weights)
+    grid_array_clay = np.average(grid_array_clay, axis=0, weights=weights)
     
     # keep sum = 100
     grid_array_sum = grid_array_sand + grid_array_silt + grid_array_clay
@@ -232,9 +237,15 @@ def cal_ssc_percentile_grid_array(grid_shp_level0, depth_layer_start, depth_laye
 
 def cal_bd_grid_array(grid_shp_level0, depth_layer_start, depth_layer_end,
                       stand_grids_lat, stand_grids_lon, rows_index, cols_index):
-    #  vertical aggregation for bulk_density
+    # vertical aggregation for bulk_density
     grid_array_bd = [createEmptyArray_and_assignValue_from_gridshp(stand_grids_lat, stand_grids_lon, grid_shp_level0.loc[:, f"soil_l{i+1}_bulk_density_nearest_Value"], rows_index, cols_index, dtype=float, missing_value=np.nan) for i in range(depth_layer_start, depth_layer_end)]
-    grid_array_bd = np.mean(grid_array_bd, axis=0)
+    
+    # weight mean
+    weights = [CONUS_layers_depths[i] for i in range(depth_layer_start, depth_layer_end)]
+    weights /= sum(weights)
+    
+    grid_array_bd = np.average(grid_array_bd, axis=0, weights=weights)
+    
     grid_array_bd /= 100 # 100 * kg/m3 -> kg/m3
     
     return grid_array_bd
