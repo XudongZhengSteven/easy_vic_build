@@ -246,7 +246,7 @@ def cal_bd_grid_array(grid_shp_level0, depth_layer_start, depth_layer_end,
     
     grid_array_bd = np.average(grid_array_bd, axis=0, weights=weights)
     
-    grid_array_bd /= 100 # 100 * kg/m3 -> kg/m3
+    grid_array_bd *= 10 # / 100 (multiple) * 1000 (g/cm3 -> kg/m3)
     
     return grid_array_bd
 
@@ -305,6 +305,14 @@ def readParam(evb_dir, mode="r"):
     params_dataset_level1 = Dataset(evb_dir.params_dataset_level1_path, mode, format="NETCDF4")
     
     return params_dataset_level0, params_dataset_level1
+
+
+def clearParam(evb_dir):
+    if os.path.isfile(evb_dir.params_dataset_level0_path):
+        os.remove(evb_dir.params_dataset_level0_path)
+
+    if os.path.isfile(evb_dir.params_dataset_level1_path):
+        os.remove(evb_dir.params_dataset_level1_path)
 
 
 def readRVICParam(evb_dir):
