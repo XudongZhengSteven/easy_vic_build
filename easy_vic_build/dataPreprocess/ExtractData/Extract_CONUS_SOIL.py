@@ -33,7 +33,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_layer=1, save_original=False,
     width=6936
     
     dtype_particle = 'uint8'
-    dtype_bulk_density = '<u2'
+    dtype_bulk_density = '>u2'
     
     with open(sand_path, "rb") as f: # %
         sand = np.fromfile(f, dtype=dtype_particle).reshape((layers, height, width))
@@ -44,7 +44,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_layer=1, save_original=False,
     with open(clay_path, "rb") as f: # %
         clay = np.fromfile(f, dtype=dtype_particle).reshape((layers, height, width))
     
-    with open(bulk_density_path, "rb") as f: # kg/m3 * 100 
+    with open(bulk_density_path, "rb") as f: # g/cm3 * 100, it should be / 100
         bulk_density = np.fromfile(f, dtype=dtype_bulk_density).reshape((layers, height, width))
     
     # set grids_lat, lon
