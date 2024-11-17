@@ -8,7 +8,10 @@ import re
 def buildGlobalParam(evb_dir, GlobalParam_dict):
     ## ====================== set dir and path ======================
     # get rout_param
-    rout_param_path = os.path.join(evb_dir.rout_param_dir, os.listdir(evb_dir.rout_param_dir)[0])
+    try:
+        rout_param_path = os.path.join(evb_dir.rout_param_dir, os.listdir(evb_dir.rout_param_dir)[0])
+    except:
+        rout_param_path = ""
     
     ## ====================== build GlobalParam ======================
     # read GlobalParam_reference parser

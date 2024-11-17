@@ -173,8 +173,9 @@ class NSGAII_Base:
         self.evaluatePop(self.population)
 
         # loop for generations
+        start_gen = self.current_generation
         print("============== NSGAII generating ==============")
-        for gen in tqdm(range(self.current_generation, self.maxGen), desc="loop for NSGAII generation", colour="green"):
+        for gen in tqdm(range(start_gen, self.maxGen), desc="loop for NSGAII generation", colour="green"):
             # current generation
             self.current_generation = gen
             

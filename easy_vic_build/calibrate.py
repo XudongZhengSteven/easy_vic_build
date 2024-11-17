@@ -11,6 +11,7 @@ from deap import creator, base, tools, algorithms
 from copy import deepcopy
 from .bulid_Param import buildParam_level0, buildParam_level1, scaling_level0_to_level1, buildParam_level0_by_g
 from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile, buildConvCFGFile, read_cfg_to_dict
+from .build_GlobalParam import buildGlobalParam
 from netCDF4 import Dataset, num2date
 import pandas as pd
 from .tools.geo_func.search_grids import search_grids_nearest
@@ -30,7 +31,7 @@ import math
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
-                 rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10,
+                 rvic_OUTPUT_INTERVAL=86400, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
         # *if parallel, uhbox_dt (rvic_OUTPUT_INTERVAL) should be same as VIC output (global param)
@@ -39,7 +40,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.dpc_VIC_level0 = dpc_VIC_level0
         self.dpc_VIC_level1 = dpc_VIC_level1
         self.reverse_lat = reverse_lat
-        self.rvic_OUTPUT_INTERVAL = rvic_OUTPUT_INTERVAL  # 3600
+        self.rvic_OUTPUT_INTERVAL = rvic_OUTPUT_INTERVAL  # 3600, 86400
         self.rvic_BASIN_FLOWDAYS = rvic_BASIN_FLOWDAYS
         self.rvic_SUBSET_DAYS = rvic_SUBSET_DAYS
         self.parallel = parallel
@@ -131,6 +132,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
                 sim_df.loc[:, "time"] = time_date
                 sim_df.loc[:, "discharge(m3/s)"] = out_discharge
                 sim_df.index = pd.to_datetime(time_date)
+        
+        # aggregate
+        sim_df = sim_df.resample("D").mean()
         
         return sim_df
     
@@ -233,9 +237,15 @@ class NSGAII_VIC_SO(NSGAII_Base):
     def cal_constraint_destroy(self, params_dataset_level0):
         # wp < fc
         # Wpwp_FRACT < Wcr_FRACT
+        # depth_layer0 < depth_layer1
+        # no nan in infilt
+        # TODO check variables
         constraint_wp_fc_destroy = np.max(np.array(params_dataset_level0.variables["wp"][:, :, :] > params_dataset_level0.variables["fc"][:, :, :]))
         constraint_Wpwp_Wcr_FRACT_destroy = np.max(np.array(params_dataset_level0.variables["Wpwp_FRACT"][:, :, :] > params_dataset_level0.variables["Wcr_FRACT"][:, :, :]))
-        constraint_destroy = any([constraint_wp_fc_destroy, constraint_Wpwp_Wcr_FRACT_destroy])
+        constraint_depth_destroy = np.max(np.array(params_dataset_level0.variables["depth"][0, :, :] > params_dataset_level0.variables["depth"][1, :, :]))
+        #constraint_infilt_nan_destroy = np.sum(np.isnan(np.array(params_dataset_level0.variables["infilt"][:, :]))) > 0
+        
+        constraint_destroy = any([constraint_wp_fc_destroy, constraint_Wpwp_Wcr_FRACT_destroy, constraint_depth_destroy])
         return constraint_destroy
     
     def adjust_rvic_params(self, uh_params, routing_params):
@@ -359,8 +369,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
             # plot discharge
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(sim_cali, "r-", label=f"sim({round(fitness, 2)})", markersize=1)
-            ax.plot(obs_cali, "k-", label="obs")
+            ax.plot(sim_cali, "r-", label=f"sim({round(fitness, 2)})", linewidth=0.5)
+            ax.plot(obs_cali, "k-", label="obs", linewidth=1)
             ax.set_xlabel("date")
             ax.set_ylabel("discharge m3/s")
             ax.legend()

@@ -112,7 +112,7 @@ def mixed_sampling(n_samples):
 
 
 def sampling_CONUS_depth_num(n_samples, layer_ranges):
-    # layer_ranges = [(1, 5), (3, 8), (6, 11)], this is num, start from 1 (1~11)
+    # layer_ranges = [(1, 3), (3, 8)], this is num, start from 1 (1~11)
     samples = []
     for _ in range(n_samples):
         # first layer: sample for num1

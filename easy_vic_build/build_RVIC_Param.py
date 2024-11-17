@@ -286,8 +286,10 @@ def get_max_day(tp, mu, m, max_day_range=(0, 10), max_day_converged_threshold=0.
     
     return max_day
     
-    
-def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False, max_day=None, max_day_range=(0, 10), max_day_converged_threshold=0.001):
+
+
+def buildGUH(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False, max_day=None, max_day_range=(0, 10), max_day_converged_threshold=0.001):
+    # general UH
     # ====================== set dir and path ======================
     RVICParam_dir = evb_dir.RVICParam_dir
     uhbox_file_path = os.path.join(RVICParam_dir, "UHBOX.csv")
@@ -348,6 +350,11 @@ def buildUHBOXFile(evb_dir, tp=1.4, mu=5.0, m=3.0, plot_bool=False, max_day=None
     UHBOX_file.to_csv(uhbox_file_path, header=True, index=False)
     
     return max_day
+
+
+def buildUHBOXFile(evb_dir, **kwargs):
+    out = buildGUH(evb_dir, **kwargs)
+    return out
 
 
 def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86400, SUBSET_DAYS=10, CELL_FLOWDAYS=2, BASIN_FLOWDAYS=50):

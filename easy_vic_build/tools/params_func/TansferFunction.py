@@ -17,7 +17,7 @@ class TF_VIC:
         # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)  # TODO recheck (ele_std - g1) / (ele_std + g2*10)
         # Arithmetic mean
         b_infilt_min = 0.01
-        b_infilt_max = 0.50
+        b_infilt_max = 1.0  # 0.50  # check
         ret = (np.log(ele_std) - g1) / (np.log(ele_std) + g2*10)
         
         ret[ret > b_infilt_max] = b_infilt_max

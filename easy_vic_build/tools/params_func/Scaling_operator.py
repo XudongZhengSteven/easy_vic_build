@@ -16,12 +16,12 @@ class Scaling_operator:
     @staticmethod
     def Harmonic_mean(data):
         data = np.array(data)
-        return len(data) / np.sum(1/data)
+        return len(data) / np.nansum(1/data)
     
     @staticmethod
     def Arithmetic_mean(data):
         data = np.array(data)
-        return np.mean(data)
+        return np.nanmean(data)
 
     @staticmethod
     def Geometric_mean(data):
@@ -31,7 +31,7 @@ class Scaling_operator:
     @staticmethod
     def Maximum_difference(data):
         data = np.array(data)
-        return max(data) - min(data)
+        return np.nanmax(data) - np.nanmin(data)
     
     @staticmethod
     def Majority(data):

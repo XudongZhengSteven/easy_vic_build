@@ -112,7 +112,7 @@ if __name__ == "__main__":
         parameters(param_cfg_file_dict, numofproc=1)
     
     # set GlobalParam_dict
-    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
+    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",
                                     "SNOW_STEPS_PER_DAY": "24",
                                     "RUNOFF_STEPS_PER_DAY": "24",
                                     "STARTYEAR": str(date_period[0][:4]),
@@ -122,6 +122,7 @@ if __name__ == "__main__":
                                     "ENDMONTH": str(int(date_period[1][4:6])),
                                     "ENDDAY": str(int(date_period[1][6:])),
                                     "OUT_TIME_UNITS": "DAYS"},
+                        "Output": {"AGGFREQ": "NDAYS   1"},
                         "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
     
