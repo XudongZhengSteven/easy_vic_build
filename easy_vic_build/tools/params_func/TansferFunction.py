@@ -105,7 +105,7 @@ class TF_VIC:
         # Arithmetic mean
         ret = g1 + g2 * sand + g3 * silt
         unit_factor1 = 0.0980665  # 0.0980665 kPa/cm-H2O. Cosby give psi_sat in cm of water (cm-H2O), 1cm H₂O=0.0980665 kPa
-        ret = -1 * (10 ** (ret)) * unit_factor1  # TODO recheck -1
+        ret = -1 * (10 ** (ret)) * unit_factor1
         return ret
 
     @staticmethod
@@ -134,7 +134,11 @@ class TF_VIC:
         # g: 1.0 (0.8, 1.2)
         # Arithmetic mean
         psi_fc = np.full_like(phi_s, fill_value=-10)  # ψfc kPa/cm-H2O, -30~-10kPa
-        psi_fc[sand <= 69] = -20  # TODO recheck -20, sand
+        psi_fc[sand < 70] = -20
+        psi_fc[sand < 50] = -33
+        
+        # psi_fc = np.full_like(phi_s, fill_value=-10)  # ψfc kPa/cm-H2O, -30~-10kPa or -33kPa？
+        # psi_fc[sand <= 69] = -20
         
         ret = g * phi_s * (psi_fc / psis) ** (-1 / b_retcurve)
         return ret
@@ -212,7 +216,8 @@ class TF_VIC:
         Dsmax_min = 0.1
         Dsmax_max = 30.0
         unit_factor1 = 1000
-        ret = D2 * (phi_s * (depth * unit_factor1) - D3) ** cexpt + D1*(phi_s * (depth * unit_factor1))
+        ret = D2 + D1*(phi_s * (depth * unit_factor1))
+        # ret = D2 * (phi_s * (depth * unit_factor1) - D3) ** cexpt + D1*(phi_s * (depth * unit_factor1))
         
         ret[ret > Dsmax_max] = Dsmax_max
         ret[ret < Dsmax_min] = Dsmax_min
@@ -241,7 +246,7 @@ class TF_VIC:
         Ws_min = 0.0001
         Ws_max = 1.0
         unit_factor1 = 1000
-        ret = D3 / phi_s / (depth * unit_factor1)
+        ret = D3 / (phi_s * depth * unit_factor1)
         
         ret[ret > Ws_max] = Ws_max
         ret[ret < Ws_min] = Ws_min
@@ -336,9 +341,10 @@ class TF_VIC:
     
     @staticmethod
     def Wcr_FRACT(fc, phi_s, g):
-        # g: 1.0 (0.8, 1.2)
+        # g: 1.0 (0.6, 0.8), ~=70%*fc
         # Arithmetic mean
-        ret = g * fc / phi_s
+        ret = g * fc
+        # ret = g * fc / phi_s
         return ret
     
     @staticmethod
@@ -352,10 +358,11 @@ class TF_VIC:
         return ret
     
     @staticmethod
-    def Wpwp_FRACT(wp, phi_s, g): # wp: wilting point
+    def Wpwp_FRACT(wp, fc, phi_s, g): # wp: wilting point
         # g: 1.0 (0.8, 1.2)
         # Arithmetic mean
-        ret = g * wp / phi_s
+        ret = g * wp / fc
+        # ret = g * wp / phi_s
         return ret
     
     @staticmethod
