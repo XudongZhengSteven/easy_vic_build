@@ -341,10 +341,16 @@ class TF_VIC:
     
     @staticmethod
     def Wcr_FRACT(fc, phi_s, g):
-        # g: 1.0 (0.6, 0.8), ~=70%*fc
+        # g: 1.0 (0.8, 1.2), ~=70%*fc
         # Arithmetic mean
-        ret = g * fc
-        # ret = g * fc / phi_s
+        fract_min = 0.0001
+        fract_max = 1.0
+        
+        ret = g * fc / phi_s
+        
+        ret[ret > fract_max] = fract_max
+        ret[ret < fract_min] = fract_min
+        
         return ret
     
     @staticmethod
@@ -358,11 +364,16 @@ class TF_VIC:
         return ret
     
     @staticmethod
-    def Wpwp_FRACT(wp, fc, phi_s, g): # wp: wilting point
+    def Wpwp_FRACT(wp, phi_s, g): # wp: wilting point
         # g: 1.0 (0.8, 1.2)
         # Arithmetic mean
-        ret = g * wp / fc
-        # ret = g * wp / phi_s
+        fract_min = 0.0001
+        fract_max = 1.0
+        
+        ret = g * wp / phi_s
+        
+        ret[ret > fract_max] = fract_max
+        ret[ret < fract_min] = fract_min
         return ret
     
     @staticmethod

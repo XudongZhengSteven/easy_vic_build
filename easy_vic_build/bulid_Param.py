@@ -323,9 +323,9 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0, revers
     params_dataset_level0.variables["wp"][2, :, :] = grid_array_wp_layer3
     
     # Wpwp_FRACT, fraction
-    grid_array_Wpwp_FRACT_layer1 = tf_VIC.Wpwp_FRACT(grid_array_wp_layer1, grid_array_fc_layer1, grid_array_phi_s_layer1, g_list[34])
-    grid_array_Wpwp_FRACT_layer2 = tf_VIC.Wpwp_FRACT(grid_array_wp_layer2, grid_array_fc_layer2, grid_array_phi_s_layer2, g_list[34])
-    grid_array_Wpwp_FRACT_layer3 = tf_VIC.Wpwp_FRACT(grid_array_wp_layer3, grid_array_fc_layer3, grid_array_phi_s_layer3, g_list[34])
+    grid_array_Wpwp_FRACT_layer1 = tf_VIC.Wpwp_FRACT(grid_array_wp_layer1, grid_array_phi_s_layer1, g_list[34])
+    grid_array_Wpwp_FRACT_layer2 = tf_VIC.Wpwp_FRACT(grid_array_wp_layer2, grid_array_phi_s_layer2, g_list[34])
+    grid_array_Wpwp_FRACT_layer3 = tf_VIC.Wpwp_FRACT(grid_array_wp_layer3, grid_array_phi_s_layer3, g_list[34])
     
     params_dataset_level0.variables["Wpwp_FRACT"][0, :, :] = grid_array_Wpwp_FRACT_layer1
     params_dataset_level0.variables["Wpwp_FRACT"][1, :, :] = grid_array_Wpwp_FRACT_layer2

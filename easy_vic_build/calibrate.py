@@ -49,6 +49,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.date_period = date_period
         self.calibrate_date_period = calibrate_date_period
         
+        # clear Param
+        clearParam(self.evb_dir)
+        
         # params boundary
         self.g_boundary = g_boundary
         self.uh_params_boundary = uh_params_boundary
