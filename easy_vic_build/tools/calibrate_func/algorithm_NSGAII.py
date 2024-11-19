@@ -168,6 +168,9 @@ class NSGAII_Base:
     
     @clock_decorator(print_arg_ret=False)
     def run(self):
+        # print gen
+        print(f"current generation: {self.current_generation}")
+        
         # evaluate population
         print("============== evaluating initial pop ==============")
         self.evaluatePop(self.population)
