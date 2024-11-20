@@ -133,7 +133,7 @@ if __name__ == "__main__":
     # calibrate
     calibrate_bool = True
     if calibrate_bool:
-        algParams = {"popSize": 20, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
+        algParams = {"popSize": 20, "maxGen": 400, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
                                       algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
         nsgaII_VIC_SO.run()
