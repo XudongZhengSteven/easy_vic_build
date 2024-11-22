@@ -10,7 +10,7 @@ import os
 from deap import creator, base, tools, algorithms
 from copy import deepcopy
 from .bulid_Param import buildParam_level0, buildParam_level1, scaling_level0_to_level1, buildParam_level0_by_g
-from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile, buildConvCFGFile, read_cfg_to_dict
+from .build_RVIC_Param import buildUHBOXFile, buildParamCFGFile, buildConvCFGFile
 from .build_GlobalParam import buildGlobalParam
 from netCDF4 import Dataset, num2date
 import pandas as pd
@@ -31,7 +31,7 @@ import math
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
-                 rvic_OUTPUT_INTERVAL=86400, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10,
+                 rvic_OUTPUT_INTERVAL=86400, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=3600,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
         # *if parallel, uhbox_dt (rvic_OUTPUT_INTERVAL) should be same as VIC output (global param)
@@ -43,6 +43,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.rvic_OUTPUT_INTERVAL = rvic_OUTPUT_INTERVAL  # 3600, 86400
         self.rvic_BASIN_FLOWDAYS = rvic_BASIN_FLOWDAYS
         self.rvic_SUBSET_DAYS = rvic_SUBSET_DAYS
+        self.rvic_uhbox_dt = rvic_uhbox_dt
         self.parallel = parallel
         
         # period
@@ -255,7 +256,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # domain, FlowDirectionFile, PourPointFile should be already created
         
         # adjust UHBOXFile
-        uh_params_input = {"tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2], "max_day_range": (0, 10), "max_day_converged_threshold": 0.001}
+        uh_params_input = {"uh_dt": self.rvic_uhbox_dt, "tp": uh_params[0], "mu": uh_params[1], "m": uh_params[2], "max_day_range": (0, 10), "max_day_converged_threshold": 0.001}
         uhbox_max_day = buildUHBOXFile(self.evb_dir, **uh_params_input, plot_bool=True)
         
         # adjust ParamCFGFile

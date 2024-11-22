@@ -3,6 +3,7 @@
 # email: z786909151@163.com
 
 import os
+import matplotlib.pyplot as plt
 from .dataPreprocess.basin_grid import read_one_basin_shp, createGridForBasin
 from .dataPreprocess.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 from .tools.utilities import *

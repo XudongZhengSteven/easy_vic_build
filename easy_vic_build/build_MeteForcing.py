@@ -1,7 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-# TODO parallel
+# TODO parallel, aggregrate to any time unit (3 hour, daily, monthly)
 import os
 import numpy as np
 import re

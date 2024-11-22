@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 #* use nco to increase speed (you need a Linux system, as the ncrcat has not been implemented in pynco)
 #* This is particularly useful for large domain
-# TODO parallel
+# TODO parallel, aggregrate to any time unit (3 hour, daily, monthly)
 
 from nco import Nco
 from nco.custom import Limit, LimitSingle

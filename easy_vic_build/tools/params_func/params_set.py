@@ -5,7 +5,7 @@ import numpy as np
 
 
 ## ========================= param g =========================
-""" 
+"""
 g_list: global parameters
     [0]             total_depth (g)
     [1, 2]          depth (g1, g2)
