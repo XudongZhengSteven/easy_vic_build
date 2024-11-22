@@ -8,6 +8,7 @@ from matplotlib import cm
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
+from ..params_func.params_set import *
 
 ## ------------------------ plot utilities ------------------------
 def plotBackground(basin_shp, grid_shp, fig=None, ax=None):
@@ -240,3 +241,20 @@ def plotStrmDEM(basinShp_original, basinShp, grid_shp, intersects_grids,
     ax.set_ylim([boundary_y_min, boundary_y_max])
 
     return fig, ax
+
+
+def plot_Calibrate_cp_SO(cp_state):
+    # get value
+    populations = [h[0] for h in cp_state["history"]]
+    fronts = [h[1][0][0] for h in cp_state["history"]]
+    fronts_fitness = [f.fitness.values[0] for f in fronts]
+    fronts_params = lambda param_index: [all_params_types[param_index](f[param_index]) for f in fronts]
+    
+    # plot fitness
+    plt.plot(fronts_fitness)
+    
+    # plot params
+    plt.plot(fronts_params(1))
+    plt.show()
+    
+    

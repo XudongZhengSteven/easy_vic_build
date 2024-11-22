@@ -111,7 +111,6 @@ def readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS"):
 
 
 def readdpc(evb_dir):
-    # ====================== read ======================
     # read
     with open(evb_dir.dpc_VIC_level0_path, "rb") as f:
         dpc_VIC_level0 = pickle.load(f)
@@ -126,7 +125,6 @@ def readdpc(evb_dir):
 
 
 def readDomain(evb_dir):
-    # ====================== read ======================
     # read
     domain_dataset = Dataset(evb_dir.domainFile_path, "r", format="NETCDF4")
     
@@ -134,7 +132,6 @@ def readDomain(evb_dir):
 
 
 def readParam(evb_dir, mode="r"):
-    # ====================== read ======================
     # read
     params_dataset_level0 = Dataset(evb_dir.params_dataset_level0_path, mode, format="NETCDF4")
     params_dataset_level1 = Dataset(evb_dir.params_dataset_level1_path, mode, format="NETCDF4")
@@ -151,7 +148,6 @@ def clearParam(evb_dir):
 
 
 def readRVICParam(evb_dir):
-    # ====================== read ======================
     # read
     flow_direction_dataset = Dataset(evb_dir.flow_direction_file_path, "r", "NETCDF4")
     pourpoint_file = pd.read_csv(evb_dir.pourpoint_file_path)
@@ -172,11 +168,17 @@ def read_cfg_to_dict(cfg_file_path):
 
 
 def readGlobalParam(evb_dir):
-    # ====================== read ======================
     globalParam = GlobalParamParser()
     globalParam.load(evb_dir.globalParam_path)
     
     return globalParam
     
 
-
+def readCalibrateCp(evb_dir):
+    with open(evb_dir.calibrate_cp_path, "rb") as f:
+        state = pickle.load(f)
+        # current_generation = state["current_generation"]
+        # initial_population = state["initial_population"]
+        # population = state["population"]
+        # history = state["history"]
+    return state

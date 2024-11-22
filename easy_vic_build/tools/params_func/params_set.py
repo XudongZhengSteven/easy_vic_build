@@ -2,6 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 import numpy as np
+from copy import deepcopy
 
 
 ## ========================= param g =========================
@@ -229,3 +230,6 @@ uh_params_types = [float, float, float]
 default_routing_params = [1.5, 800.0]
 routing_params_boundary = [(0.5, 5.0), (200, 4000)]  # 2.34 344 make many spikys
 routing_params_types = [float, int]
+
+# all param types
+all_params_types = g_types + uh_params_types + routing_params_types

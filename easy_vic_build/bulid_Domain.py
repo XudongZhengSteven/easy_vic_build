@@ -7,7 +7,7 @@ from netCDF4 import Dataset
 from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
-from .tools.utilities import grids_array_coord_map
+from .tools.dpc_func.dpc_func import grids_array_coord_map
 from tqdm import *
 from .tools.decoractors import clock_decorator
 
