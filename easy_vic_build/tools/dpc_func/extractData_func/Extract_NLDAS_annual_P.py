@@ -10,7 +10,7 @@ from rasterio.plot import show
 from ...geo_func import search_grids, resample
 from ...geo_func.create_gdf import CreateGDF
 import os
-from ... import Evb_dir
+from .... import Evb_dir
 
 def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
     # general

@@ -5,7 +5,6 @@ __author__ = "Xudong Zheng"
 __email__ = "zhengxd@sehemodel.club"
 
 from . import tools
-from . import dataPreprocess
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
 
 

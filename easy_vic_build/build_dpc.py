@@ -4,7 +4,7 @@
 
 import os
 import matplotlib.pyplot as plt
-from .tools.dpc_func.basin_grid_class import read_one_basin_shp, createGridForBasin
+from .tools.dpc_func.basin_grid_func import createGridForBasin
 from .tools.dpc_func.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 from .tools.utilities import *
 import pickle
@@ -20,7 +20,7 @@ def builddpc(evb_dir, basin_index, date_period,
              plot_columns_level1=["annual_P_in_src_grid_Value", "umd_lc_major_Value"]):
     
     # ====================== get basin_shp ======================
-    basin_shp_all, basin_shp = read_one_basin_shp(basin_index)
+    basin_shp_all, basin_shp = read_one_HCDN_basin_shp(basin_index)
     
     # ====================== build dpc level0 ======================
     # build grid_shp
