@@ -4,35 +4,18 @@
 
 from matplotlib import pyplot as plt
 import numpy as np
-from ..geo_func.create_gdf import CreateGDF
 from ..geo_func.search_grids import *
 from ..params_func.params_set import *
+from .basin_grid_class import *
 
-## ------------------------ grid_shp, basin_shp utilities ------------------------
-def createBoundaryShp(grid_shp):
-    # boundary: point center
-    cgdf_point = CreateGDF()
-    boundary_x_min = min(grid_shp["point_geometry"].x)
-    boundary_x_max = max(grid_shp["point_geometry"].x)
-    boundary_y_min = min(grid_shp["point_geometry"].y)
-    boundary_y_max = max(grid_shp["point_geometry"].y)
-    boundary_point_center_shp = cgdf_point.createGDF_polygons(lon=[[boundary_x_min, boundary_x_max, boundary_x_max, boundary_x_min]],
-                                           lat=[[boundary_y_max, boundary_y_max, boundary_y_min, boundary_y_min]],
-                                           crs=grid_shp.crs)
-    boundary_point_center_x_y = [boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max]
+
+def createGridForBasin(basin_shp, grid_res):
+    grid_shp = Grids_for_shp(basin_shp, res=grid_res, adjust_boundary=True)
     
-    # boundary: grids edge
-    boundary_x_min = min(grid_shp["geometry"].get_coordinates().x)
-    boundary_x_max = max(grid_shp["geometry"].get_coordinates().x)
-    boundary_y_min = min(grid_shp["geometry"].get_coordinates().y)
-    boundary_y_max = max(grid_shp["geometry"].get_coordinates().y)
+    grid_shp_lon = grid_shp.point_geometry.x.to_list()
+    grid_shp_lat = grid_shp.point_geometry.y.to_list()
     
-    boundary_grids_edge_shp = cgdf_point.createGDF_polygons(lon=[[boundary_x_min, boundary_x_max, boundary_x_max, boundary_x_min]],
-                                           lat=[[boundary_y_max, boundary_y_max, boundary_y_min, boundary_y_min]],
-                                           crs=grid_shp.crs)
-    boundary_grids_edge_x_y = [boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max]
-    
-    return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y
+    return grid_shp_lon, grid_shp_lat, grid_shp
 
 
 def createStand_grids_lat_lon_from_gridshp(grid_shp, grid_res=None, reverse_lat=True):
@@ -165,3 +148,21 @@ def cal_bd_grid_array(grid_shp_level0, depth_layer_start, depth_layer_end,
     grid_array_bd *= 10 # / 100 (multiple) * 1000 (g/cm3 -> kg/m3)
     
     return grid_array_bd
+
+
+def intersectGridsWithBasins(grids: Grids, basins: Basins):
+    intersects_grids_list = []
+    intersects_grids = Grids()
+    for i in basins.index:
+        basin = basins.loc[i, "geometry"]
+        intersects_grids_ = grids[grids.intersects(basin)]
+        intersects_grids = pd.concat([intersects_grids, intersects_grids_], axis=0)
+        intersects_grids_list.append(intersects_grids_)
+
+    intersects_grids["grids_index"] = intersects_grids.index
+    intersects_grids.index = list(range(len(intersects_grids)))
+    droped_index = intersects_grids["grids_index"].drop_duplicates().index
+    intersects_grids = intersects_grids.loc[droped_index, :]
+
+    basins["intersects_grids"] = intersects_grids_list
+    return basins, intersects_grids

@@ -1,7 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-from .ExtractData import *
+from .extractData_func import *
 
 # ------------------------ read data into grids ------------------------
 def readSrtmDEMIntoGrids(grid_shp, grid_shp_res=0.25, plot=False, save_original=False, check_search=False):

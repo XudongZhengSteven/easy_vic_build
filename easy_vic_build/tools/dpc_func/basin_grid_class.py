@@ -7,7 +7,7 @@ import pandas as pd
 import os
 import shapely
 import math
-from ..tools.utilities import createBoundaryShp
+from ..geo_func.create_gdf import CreateGDF
 
 
 class Basins(gpd.GeoDataFrame):
@@ -34,24 +34,6 @@ class Grids(gpd.GeoDataFrame):
         pass
 
 
-def intersectGridsWithBasins(grids: Grids, basins: Basins):
-    intersects_grids_list = []
-    intersects_grids = Grids()
-    for i in basins.index:
-        basin = basins.loc[i, "geometry"]
-        intersects_grids_ = grids[grids.intersects(basin)]
-        intersects_grids = pd.concat([intersects_grids, intersects_grids_], axis=0)
-        intersects_grids_list.append(intersects_grids_)
-
-    intersects_grids["grids_index"] = intersects_grids.index
-    intersects_grids.index = list(range(len(intersects_grids)))
-    droped_index = intersects_grids["grids_index"].drop_duplicates().index
-    intersects_grids = intersects_grids.loc[droped_index, :]
-
-    basins["intersects_grids"] = intersects_grids_list
-    return basins, intersects_grids
-
-
 class HCDNBasins(Basins):
     def __init__(self, home="E:\\data\\hydrometeorology\\CAMELS", data=None, *args, geometry=None, crs=None, **kwargs):
         HCDN_shp_path = os.path.join(home, "basin_set_full_res", "HCDN_nhru_final_671.shp")
@@ -73,6 +55,32 @@ class HCDNGrids(Grids):
     def createBoundaryShp(self):
         boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y = createBoundaryShp(self)
         return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y
+
+
+def createBoundaryShp(grid_shp):
+    # boundary: point center
+    cgdf_point = CreateGDF()
+    boundary_x_min = min(grid_shp["point_geometry"].x)
+    boundary_x_max = max(grid_shp["point_geometry"].x)
+    boundary_y_min = min(grid_shp["point_geometry"].y)
+    boundary_y_max = max(grid_shp["point_geometry"].y)
+    boundary_point_center_shp = cgdf_point.createGDF_polygons(lon=[[boundary_x_min, boundary_x_max, boundary_x_max, boundary_x_min]],
+                                           lat=[[boundary_y_max, boundary_y_max, boundary_y_min, boundary_y_min]],
+                                           crs=grid_shp.crs)
+    boundary_point_center_x_y = [boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max]
+    
+    # boundary: grids edge
+    boundary_x_min = min(grid_shp["geometry"].get_coordinates().x)
+    boundary_x_max = max(grid_shp["geometry"].get_coordinates().x)
+    boundary_y_min = min(grid_shp["geometry"].get_coordinates().y)
+    boundary_y_max = max(grid_shp["geometry"].get_coordinates().y)
+    
+    boundary_grids_edge_shp = cgdf_point.createGDF_polygons(lon=[[boundary_x_min, boundary_x_max, boundary_x_max, boundary_x_min]],
+                                           lat=[[boundary_y_max, boundary_y_max, boundary_y_min, boundary_y_min]],
+                                           crs=grid_shp.crs)
+    boundary_grids_edge_x_y = [boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max]
+    
+    return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y
 
 
 class Grids_for_shp(Grids):
@@ -159,18 +167,3 @@ class Grids_for_shp(Grids):
     def createBoundaryShp(self):
         boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y = createBoundaryShp(self)
         return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y
-
-
-def createGridForBasin(basin_shp, grid_res):
-    grid_shp = Grids_for_shp(basin_shp, res=grid_res, adjust_boundary=True)
-    
-    grid_shp_lon = grid_shp.point_geometry.x.to_list()
-    grid_shp_lat = grid_shp.point_geometry.y.to_list()
-    
-    return grid_shp_lon, grid_shp_lat, grid_shp
-
-
-def read_one_basin_shp(basin_index, home="E:\\data\\hydrometeorology\\CAMELS"):
-    basin_shp_all = HCDNBasins(home)
-    basin_shp = basin_shp_all.loc[basin_index: basin_index, :]
-    return basin_shp_all, basin_shp

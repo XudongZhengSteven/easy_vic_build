@@ -110,8 +110,8 @@ class Evb_dir:
         self._domainFile_path = os.path.join(self.DomainFile_dir, "domain.nc")
         
         self._veg_param_json_path = os.path.join(self.__data_dir__, "veg_type_attributes_umd_updated.json")
-        self._params_dataset_level0_path = os.path.join(self.ParamFile_dir, "params_dataset_level0.nc")
-        self._params_dataset_level1_path = os.path.join(self.ParamFile_dir, "params_dataset_level1.nc")
+        self._params_dataset_level0_path = os.path.join(self.ParamFile_dir, "params_level0.nc")
+        self._params_dataset_level1_path = os.path.join(self.ParamFile_dir, "params_level1.nc")
         
         self._flow_direction_file_path = os.path.join(self.RVICParam_dir, "flow_direction_file.nc")
         self._pourpoint_file_path = os.path.join(self.RVICParam_dir, "pour_points.csv")

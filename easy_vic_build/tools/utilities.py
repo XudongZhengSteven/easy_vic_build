@@ -13,6 +13,7 @@ import shutil
 from .geo_func.search_grids import *
 from .params_func.GlobalParamParser import GlobalParamParser
 from .params_func.params_set import *
+from .dpc_func.basin_grid_class import HCDNBasins
 from configparser import ConfigParser
 
 
@@ -108,6 +109,12 @@ def readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS"):
     HCDN_shp["AREA_km2"] = HCDN_shp.AREA / 1000000  # m2 -> km2
     print(HCDN_shp)
     return HCDN_shp
+
+
+def read_one_HCDN_basin_shp(basin_index, home="E:\\data\\hydrometeorology\\CAMELS"):
+    basin_shp_all = HCDNBasins(home)
+    basin_shp = basin_shp_all.loc[basin_index: basin_index, :]
+    return basin_shp_all, basin_shp
 
 
 def readdpc(evb_dir):

@@ -8,8 +8,8 @@ from rasterio.enums import Resampling
 from tqdm import *
 import numpy as np
 import matplotlib.pyplot as plt
-from ...tools.geo_func import search_grids, resample
-from ...tools.geo_func.create_gdf import CreateGDF
+from ...geo_func import search_grids, resample
+from ...geo_func.create_gdf import CreateGDF
 
 
 def ExtractData(grid_shp, grid_shp_res=0.25, plot=True, save_original=False, check_search=False):

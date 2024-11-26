@@ -6,8 +6,8 @@ import numpy as np
 from tqdm import *
 from matplotlib import pyplot as plt
 from rasterio.plot import show
-from ...tools.geo_func import search_grids, resample
-from ...tools.geo_func.create_gdf import CreateGDF
+from ...geo_func import search_grids, resample
+from ...geo_func.create_gdf import CreateGDF
 
 """ 
 potential issues: NOTE that geographic coordinates are NOT a projection -- scales vary with latitude and are substantially different in the x and y directions, and the 30-arcsec

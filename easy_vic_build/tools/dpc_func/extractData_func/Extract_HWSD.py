@@ -12,7 +12,7 @@ import geopandas as gpd
 import rasterio
 from rasterio.plot import show
 #import pyodbc
-from ...tools.geo_func import search_grids, resample
+from ...geo_func import search_grids, resample
 from rasterio import mask
 from copy import copy
 

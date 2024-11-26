@@ -8,8 +8,8 @@ from tqdm import *
 import rasterio
 from rasterio.plot import show
 import geopandas as gpd
-from ...tools.geo_func import search_grids, resample
-from ...tools.geo_func.create_gdf import CreateGDF
+from ...geo_func import search_grids, resample
+from ...geo_func.create_gdf import CreateGDF
 
 """     
         0.0	water

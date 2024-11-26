@@ -11,8 +11,8 @@ from tqdm import *
 import rasterio
 from rasterio.plot import show
 from netCDF4 import Dataset
-from ...tools.geo_func import search_grids, resample
-from ...tools.geo_func.create_gdf import CreateGDF
+from ...geo_func import search_grids, resample
+from ...geo_func.create_gdf import CreateGDF
 
 
 def combine_MODIS_BSA_data():

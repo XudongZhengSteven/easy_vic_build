@@ -1,7 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-from .ExtractData import *
+from .extractData_func import *
 
 def selectBasinremovingStreamflowMissing(basin_shp, date_period=["19980101", "20101231"]):
     # get remove streamflow missing

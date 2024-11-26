@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from functools import partial
 import tqdm
-from ..tools.decoractors import *
+from ..decoractors import *
 
 
 def aggregate_GLEAMEDaily(basin_shp):

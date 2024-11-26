@@ -5,7 +5,7 @@
 import os
 import numpy as np
 from tqdm import *
-from ...tools.geo_func.search_grids import search_grids_equal
+from ...geo_func.search_grids import search_grids_equal
 
 
 def ExtractData(grid_shp):
