@@ -40,14 +40,14 @@ if __name__ == "__main__":
     evb_dir.vic_exe_path = "/home/xdz/code/VIC_xdz/vic_image.exe"
     
     # read and build bool
-    read_dpc_bool = False
-    read_domain_dataset_bool = False
+    read_dpc_bool = True
+    read_domain_dataset_bool = True
     read_params_bool = False
     
     build_domain_dataset_bool = False
     build_param_bool = False
     buildRVIC_Param_bool = False
-    buildGlobalParam_bool = False
+    buildGlobalParam_bool = True
     
     modify_PourPointFile_bool = False
     
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         buildGlobalParam(evb_dir, GlobalParam_dict)
     
     # calibrate
-    calibrate_bool = False
+    calibrate_bool = True
     if calibrate_bool:
         algParams = {"popSize": 20, "maxGen": 500, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
@@ -147,5 +147,5 @@ if __name__ == "__main__":
         params_dataset_level1.close()
     
     # read cp
-    state = readCalibrateCp(evb_dir)
+    # state = readCalibrateCp(evb_dir)
     
