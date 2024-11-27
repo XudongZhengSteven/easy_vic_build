@@ -39,19 +39,13 @@ def createGUH(evb_dir, uh_dt=3600, tp=1.4, mu=5.0, m=3.0, plot_bool=False, max_d
     # tp (hourly, 0~2.5h), mu (default 5.0, based on SCS UH), m (should > 1, default 3.0, based on SCS UH)
     # general UH function
     # Guo, J. (2022), General and Analytic Unit Hydrograph and Its Applications, Journal of Hydrologic Engineering, 27.
-    gUH_xt = lambda t, tp, mu: np.exp(mu*(t/tp - 1))
-    gUH_gt = lambda t, m, tp, mu: 1 - (1 + m*gUH_xt(t, tp, mu)) ** (-1/m)
-    gUH_st = lambda t, m, tp, mu: 1 - gUH_gt(t, m, tp, mu)
+    gUH_xt = lambda t: np.exp(mu*(t/tp - 1))
+    gUH_gt = lambda t: 1 - (1 + m*gUH_xt(t)) ** (-1/m)
+    gUH_st = lambda t: 1 - gUH_gt(t)
     
-    gUH_iuh = lambda t, m, tp, mu: mu/tp * gUH_xt(t, tp, mu) * (1 + m*gUH_xt(t, tp, mu)) ** (-(1+1/m))
-    gUH_uh = lambda t, m, tp, mu, det_t: (gUH_gt(t, m, tp, mu)[1:] - gUH_gt(t, m, tp, mu)[:-1]) / det_t
-    
-    # frozen param, only receive t
-    gUH_xt = partial(gUH_xt, tp=tp, mu=mu)
-    gUH_gt = partial(gUH_gt, m=m, tp=tp, mu=mu)
-    gUH_st = partial(gUH_st, m=m, tp=tp, mu=mu)
-    gUH_iuh = partial(gUH_iuh, m=m, tp=tp, mu=mu)
-    gUH_uh = partial(gUH_uh, m=m, tp=tp, mu=mu, det_t=1)
+    gUH_iuh = lambda t: mu/tp * gUH_xt(t) * (1 + m*gUH_xt(t)) ** (-(1+1/m))
+    det_t = 1
+    gUH_uh = lambda t: (gUH_gt(t)[1:] - gUH_gt(t)[:-1]) / det_t
     
     # t
     if max_day is None:
