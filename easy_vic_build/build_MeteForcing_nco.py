@@ -15,14 +15,15 @@ import shutil
 from netCDF4 import Dataset
 from .tools.geo_func.create_gdf import CreateGDF
 from .tools.geo_func import search_grids
-from .tools.utilities import grids_array_coord_map, check_and_mkdir
+from .tools.dpc_func.basin_grid_func import grids_array_coord_map
+from .tools.utilities import check_and_mkdir
 from .tools.decoractors import clock_decorator
 import cftime
 from datetime import datetime
 import matplotlib.pyplot as plt
 
 
-def clip_src_data_for_basin(dpc_VIC_level1, evb_dir, date_period, reverse_lat=True):
+def clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat=True):
     # ====================== set dir and path ======================
     # set path
     src_home = evb_dir.MeteForcing_src_dir
@@ -90,7 +91,7 @@ def clip_src_data_for_basin(dpc_VIC_level1, evb_dir, date_period, reverse_lat=Tr
         year += 1
 
 
-def formationForcing(dpc_VIC_level1, evb_dir, date_period,
+def formationForcing(evb_dir, dpc_VIC_level1, date_period,
                      reverse_lat=True, check_search=False,
                      year_re_exp=r"\d{4}.nc4"):
     # ====================== set dir and path ======================
@@ -342,8 +343,8 @@ def formationForcing(dpc_VIC_level1, evb_dir, date_period,
                 dst_dataset.Conventions = "CF-1.6"
 
 
-@clock_decorator
-def buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
+@clock_decorator(print_arg_ret=False)
+def buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
                         step=1,
                         reverse_lat=True, check_search=False,
                         year_re_exp=r"A\d{4}.nc4"):
@@ -361,7 +362,7 @@ def buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
     linux_share_temp_combineYearly_dir = os.path.join(linux_share_temp_dir, "combineYearly")
     ## ====================== step1: clip for basin ======================
     if step == 1:
-        clip_src_data_for_basin(dpc_VIC_level1, evb_dir, date_period, reverse_lat)
+        clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat)
         
         #* mv MeteForcing_clip_dir to linux_share_temp_dir/clip, this is used for window users
         if os.path.exists(linux_share_temp_clip_dir):
@@ -387,7 +388,7 @@ def buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
             print("already moved")
         
         # formationForcing
-        formationForcing(dpc_VIC_level1, evb_dir, date_period, reverse_lat, check_search, year_re_exp)
+        formationForcing(evb_dir, dpc_VIC_level1, date_period, reverse_lat, check_search, year_re_exp)
     
     elif step == 3:
     # -------------------- clean temp data --------------------

@@ -21,10 +21,11 @@ grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
 
 """ 
 
-if __name__ == "__main__":
-    basin_index = 106
+def test():
+    # general set
+    basin_index = 397
     date_period = ["19980101", "20101231"]
-    case_name = "106_3km"
+    case_name = "397_12km"
     
     # build dir
     evb_dir = Evb_dir()
@@ -34,5 +35,7 @@ if __name__ == "__main__":
     dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
 
     # build domain
-    buildDomain(dpc_VIC_level1, evb_dir, reverse_lat=True)
-    
+    buildDomain(evb_dir, dpc_VIC_level1, reverse_lat=True)
+
+if __name__ == "__main__":
+    test()

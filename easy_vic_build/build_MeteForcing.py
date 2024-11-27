@@ -12,11 +12,12 @@ from tqdm import *
 import matplotlib.pyplot as plt
 from .tools.geo_func import search_grids
 from .tools.geo_func.create_gdf import CreateGDF
-from .tools.utilities import grids_array_coord_map
+from .tools.dpc_func.basin_grid_func import grids_array_coord_map
 from .tools.decoractors import clock_decorator
 
-@clock_decorator
-def buildMeteForcing(dpc_VIC_level1, evb_dir, date_period,
+
+@clock_decorator(print_arg_ret=False)
+def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
                      reverse_lat=True, check_search=False,
                      time_re_exp=r"\d{8}.\d{4}",
                      search_func=search_grids.search_grids_radius_rectangle_reverse):
