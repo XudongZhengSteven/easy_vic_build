@@ -4,8 +4,6 @@
 
 import os
 import matplotlib.pyplot as plt
-from .tools.dpc_func.basin_grid_func import createGridForBasin
-from .tools.dpc_func.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 from .tools.utilities import *
 import pickle
 from .tools.decoractors import clock_decorator
@@ -13,51 +11,25 @@ from .tools.decoractors import clock_decorator
 
 
 @clock_decorator(print_arg_ret=False)
-def builddpc(evb_dir, basin_index, date_period,
-             grid_res_level0=0.00833, grid_res_level1=0.025, grid_res_level2=0.125,
-             dpc_VIC_level0_call_kwargs=dict(), dpc_VIC_level1_call_kwargs=dict(),
+def builddpc(evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2,
+             dpc_VIC_level0_call_kwargs=dict(), dpc_VIC_level1_call_kwargs=dict(), dpc_VIC_level2_call_kwargs=dict(),
              plot_columns_level0=["SrtmDEM_mean_Value", "soil_l1_sand_nearest_Value"],
              plot_columns_level1=["annual_P_in_src_grid_Value", "umd_lc_major_Value"]):
     
-    # ====================== get basin_shp ======================
-    basin_shp_all, basin_shp = read_one_HCDN_basin_shp(basin_index)
-    
     # ====================== build dpc level0 ======================
-    # build grid_shp
-    grid_shp_lon_level0, grid_shp_lat_level0, grid_shp_level0 = createGridForBasin(basin_shp, grid_res_level0)
-    
     # build dpc_level0
     print("========== build dpc_level0 ==========")
-    dpc_VIC_level0 = dataProcess_VIC_level0(basin_shp, grid_shp_level0, grid_res_level0, date_period)
-    
-    # read data
-    dpc_VIC_level0_call_kwargs_ = {"readBasindata": False, "readGriddata": True, "readBasinAttribute": False}
-    dpc_VIC_level0_call_kwargs_.update(dpc_VIC_level0_call_kwargs)
-    dpc_VIC_level0(**dpc_VIC_level0_call_kwargs_)
+    dpc_VIC_level0(**dpc_VIC_level0_call_kwargs)
     
     # ====================== build dpc level1 ======================
-    # build grid_shp
-    print("========== build dpc_level1 ==========")
-    grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1)
-    
     # build dpc_level1
-    dpc_VIC_level1 = dataProcess_VIC_level1(basin_shp, grid_shp_level1, grid_res_level1, date_period)
-    
-    # read data
-    dpc_VIC_level1_call_kwargs_ = {"readBasindata": True, "readGriddata": True, "readBasinAttribute": True}
-    dpc_VIC_level1_call_kwargs_.update(dpc_VIC_level1_call_kwargs)
-    dpc_VIC_level1(**dpc_VIC_level1_call_kwargs_)
+    print("========== build dpc_level1 ==========")
+    dpc_VIC_level1(**dpc_VIC_level1_call_kwargs)
     
     # ====================== build dpc level2 ======================
-    # build grid_shp
-    print("========== build dpc_level2 ==========")
-    grid_shp_lon_level2, grid_shp_lat_level2, grid_shp_level2 = createGridForBasin(basin_shp, grid_res_level2)
-    
     # build dpc_level2
-    dpc_VIC_level2 = dataProcess_VIC_level2(basin_shp, grid_shp_level2, grid_res_level2, date_period)
-    
-    # read data, not read
-    dpc_VIC_level2()
+    print("========== build dpc_level2 ==========")
+    dpc_VIC_level2(**dpc_VIC_level2_call_kwargs)  # read data, not read
     
     # ====================== plot ======================
     fig_grid_basin, axes_grid_basin = plt.subplots(1, 3, figsize=(12, 4), gridspec_kw={"wspace": 0.4})
@@ -94,5 +66,3 @@ def builddpc(evb_dir, basin_index, date_period,
     fig_grid_basin.savefig(evb_dir.dpc_VIC_plot_grid_basin_path)
     if plot_columns_level0 is not None:
         fig_columns.savefig(evb_dir.dpc_VIC_plot_columns_path)
-    
-    return dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2

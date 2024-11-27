@@ -110,8 +110,8 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
     return mask, frac, area, x_length, y_length
 
 
-@clock_decorator
-def buildDomain(dpc_VIC, evb_dir, reverse_lat=True):
+@clock_decorator(print_arg_ret=False)
+def buildDomain(evb_dir, dpc_VIC, reverse_lat=True):
     # ====================== build Domain ======================
     # create domain file
     with Dataset(evb_dir.domainFile_path, "w", format="NETCDF4") as dst_dataset:

@@ -34,6 +34,12 @@ class Grids(gpd.GeoDataFrame):
         pass
 
 
+class Basins_from_shapefile(Basins):
+    def __init__(self, shapefile_path, data=None, *args, geometry=None, crs=None, **kwargs):
+        shp_gdf = gpd.read_file(shapefile_path)
+        super().__init__(shp_gdf, *args, geometry=geometry, crs=crs, **kwargs)
+
+
 class HCDNBasins(Basins):
     def __init__(self, home="E:\\data\\hydrometeorology\\CAMELS", data=None, *args, geometry=None, crs=None, **kwargs):
         HCDN_shp_path = os.path.join(home, "basin_set_full_res", "HCDN_nhru_final_671.shp")
