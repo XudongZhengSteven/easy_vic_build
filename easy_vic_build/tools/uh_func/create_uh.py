@@ -1,10 +1,9 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-from scipy.optimize import root_scalar, minimize_scalar
+from scipy.optimize import minimize
 from scipy.stats import gamma
 import math
-from functools import partial
 import numpy as np
 import pandas as  pd
 import matplotlib.pyplot as plt
@@ -18,15 +17,37 @@ def get_max_day(UH_func_frozen_param, max_day_range=(0, 10), max_day_converged_t
     # get top_t
     max_t_range_top_t = [0, max_day_range[1]*24]
     neg_func = lambda t: -1 * UH_func_frozen_param(t)
-    result_top_t = minimize_scalar(neg_func, bounds=max_t_range_top_t, method='bounded')
-    top_t = result_top_t.x
+    result_top_t = minimize(neg_func, [1])
+    top_t = result_top_t.x[0]
     
     # get max_day
     max_t_range = [top_t, max_day_range[1]*24]
     
-    UH_func_target = lambda t: UH_func_frozen_param(t) - max_day_converged_threshold
-    result = root_scalar(UH_func_target, bracket=max_t_range, method='brentq')
-    max_day = math.ceil(result.root / 24)
+    def UH_func_target(t):
+        ret = 0 if UH_func_frozen_param(t) < max_day_converged_threshold else UH_func_frozen_param(t) - max_day_converged_threshold
+        ret = ret if not np.isnan(ret) else np.inf
+        return ret
+    
+    def find_first_below_threshold(func, max_t_range, max_day_converged_threshold, tol=1e-5):
+        left = max_t_range[0]
+        right = max_t_range[1]
+        
+        while right - left > tol:
+            mid = (left + right) / 2
+            mid_value = func(mid)
+            
+            if np.isnan(mid_value):
+                right = mid
+            elif mid_value <= max_day_converged_threshold:
+                right = mid
+            else:
+                left = mid
+        
+        return (left + right) / 2
+    
+    result = find_first_below_threshold(UH_func_frozen_param, max_t_range, max_day_converged_threshold, tol=1e-5)
+    
+    max_day = math.ceil(result / 24)
     
     return max_day
 
