@@ -30,7 +30,7 @@ import math
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
-    def __init__(self, dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
+    def __init__(self, evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
                  rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=60,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
@@ -211,7 +211,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
                                                                                                                      self.rows_index_level0, self.cols_index_level0)
         else:
             # build
-            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(params_g, self.dpc_VIC_level0, self.evb_dir, self.reverse_lat,
+            params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(self.evb_dir, params_g, self.dpc_VIC_level0, self.reverse_lat,
                                                                                                                 self.stand_grids_lat_level0, self.stand_grids_lon_level0,
                                                                                                                 self.rows_index_level0, self.cols_index_level0)
         
@@ -226,7 +226,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         else:
             # build
             domain_dataset = readDomain(self.evb_dir)
-            params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(self.dpc_VIC_level1, self.evb_dir, self.reverse_lat, domain_dataset,
+            params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(self.evb_dir, self.dpc_VIC_level1, self.reverse_lat, domain_dataset,
                                                                                                                 self.stand_grids_lat_level1, self.stand_grids_lon_level1,
                                                                                                                 self.rows_index_level1, self.cols_index_level1)
             domain_dataset.close()

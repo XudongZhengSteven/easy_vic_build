@@ -16,9 +16,8 @@ from .tools.uh_func import create_uh
 from configparser import ConfigParser
 
 
-
 @clock_decorator
-def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
+def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
                    ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=False,
                    cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):    
     # cp domain.nc to RVICParam_dir
@@ -28,7 +27,7 @@ def buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_datase
     buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat, stream_acc_threshold)
     
     # buildPourPointFile
-    buildPourPointFile(dpc_VIC_level1, evb_dir, **ppf_kwargs)
+    buildPourPointFile(evb_dir, dpc_VIC_level1, **ppf_kwargs)
     
     # buildUHBOXFile
     buildUHBOXFile(evb_dir, **uh_params, plot_bool=uh_plot_bool)
@@ -142,7 +141,7 @@ def buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, rever
     remove_and_mkdir(workspace_dir)
 
 
-def buildPourPointFile(dpc_VIC_level1, evb_dir, names=None, lons=None, lats=None):
+def buildPourPointFile(evb_dir, dpc_VIC_level1, names=None, lons=None, lats=None):
     #* dpc_VIC_level1.basin_shp should contain "camels_topo" attributes
     #! you should check it with FlowAcc (source area)
     # ====================== set dir and path ======================

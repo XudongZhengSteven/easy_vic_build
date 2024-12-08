@@ -217,7 +217,6 @@ def search_grids_nearest(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lo
     return searched_grids_index
     
     
-    
 def print_ret(searched_grids_index, src_lat, src_lon):
     # print result
     searched_grids_index = searched_grids_index[0]
@@ -235,6 +234,7 @@ def searched_grids_index_to_rows_cols_index(searched_grids_index):
     rows_index, cols_index = searched_grids_index_trans[:, 0], searched_grids_index_trans[:, 1]
     
     return rows_index, cols_index
+
 
 def searched_grids_index_to_bool_index(searched_grids_index, src_lat, src_lon):
     # useage: params_dataset_level0.variables["depth"][0, searched_grids_bool_index[0][0], searched_grids_bool_index[0][1]].shape

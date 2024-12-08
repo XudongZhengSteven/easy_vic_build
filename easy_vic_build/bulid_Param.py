@@ -17,7 +17,7 @@ from .tools.decoractors import clock_decorator
 from copy import deepcopy
 
 @clock_decorator(print_arg_ret=False)
-def buildParam_level0(g_list, dpc_VIC_level0, evb_dir, reverse_lat=True,
+def buildParam_level0(evb_dir, g_list, dpc_VIC_level0, reverse_lat=True,
                       stand_grids_lat=None, stand_grids_lon=None,
                       rows_index=None, cols_index=None):
     print("building Param_level0... ...")
@@ -348,7 +348,7 @@ def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0, revers
 
 
 @clock_decorator(print_arg_ret=False)
-def buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=None,
+def buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=None,
                       stand_grids_lat=None, stand_grids_lon=None,
                       rows_index=None, cols_index=None):
     

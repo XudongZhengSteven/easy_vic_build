@@ -60,15 +60,15 @@ if __name__ == "__main__":
     
     # build domain
     if build_domain_dataset_bool:
-        buildDomain(dpc_VIC_level1, evb_dir, reverse_lat=True)
+        buildDomain(evb_dir, dpc_VIC_level1, reverse_lat=True)
     
     # build params
     if build_param_bool:
         # build params_level0 with default params
-        params_dataset_level0 = buildParam_level0(default_g_list, dpc_VIC_level0, evb_dir, reverse_lat=True)
+        params_dataset_level0 = buildParam_level0(evb_dir, default_g_list, dpc_VIC_level0, reverse_lat=True)
         
         # build params_level1
-        params_dataset_level1 = buildParam_level1(dpc_VIC_level1, evb_dir, reverse_lat=True, domain_dataset=domain_dataset)
+        params_dataset_level1 = buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=domain_dataset)
         
         # scaling_level0_to_level1
         params_dataset_level1, searched_grids_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1)
@@ -86,11 +86,11 @@ if __name__ == "__main__":
         buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0, flow_direction_pkg="wbw")
         
         # buildPourPointFile
-        buildPourPointFile(dpc_VIC_level1, evb_dir)
+        buildPourPointFile(evb_dir, dpc_VIC_level1)
         
         # modify PourPoint File to match FlowAcc
         if modify_PourPointFile_bool:
-            buildPourPointFile(None, evb_dir, names=["pourpoint"], lons=[-91.905], lats=[38.335])
+            buildPourPointFile(evb_dir, None, names=["pourpoint"], lons=[-91.905], lats=[38.335])
         
         # buildUHBOXFile
         uh_params = {"tp": 1.4, "mu": 5.0, "m": 3.0}
