@@ -112,7 +112,7 @@ if __name__ == "__main__":
         parameters(param_cfg_file_dict, numofproc=1)
     
     # set GlobalParam_dict
-    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
+    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",
                                     "SNOW_STEPS_PER_DAY": "24",
                                     "RUNOFF_STEPS_PER_DAY": "24",
                                     "STARTYEAR": str(date_period[0][:4]),
@@ -126,6 +126,20 @@ if __name__ == "__main__":
                         "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
     
+    # GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
+    #                                 "SNOW_STEPS_PER_DAY": "24",
+    #                                 "RUNOFF_STEPS_PER_DAY": "24",
+    #                                 "STARTYEAR": str(date_period[0][:4]),
+    #                                 "STARTMONTH": str(int(date_period[0][4:6])),
+    #                                 "STARTDAY": str(int(date_period[0][6:])),
+    #                                 "ENDYEAR": str(date_period[1][:4]),
+    #                                 "ENDMONTH": str(int(date_period[1][4:6])),
+    #                                 "ENDDAY": str(int(date_period[1][6:])),
+    #                                 "OUT_TIME_UNITS": "HOURS"},
+    #                     "Output": {"AGGFREQ": "NHOURS   1"},
+    #                     "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
+    #                     }
+    
     # buildGlobalParam
     if buildGlobalParam_bool:
         buildGlobalParam(evb_dir, GlobalParam_dict)
@@ -134,7 +148,7 @@ if __name__ == "__main__":
     calibrate_bool = True
     if calibrate_bool:
         algParams = {"popSize": 20, "maxGen": 1000, "cxProb": 0.7, "mutateProb": 0.2}
-        nsgaII_VIC_SO = NSGAII_VIC_SO(dpc_VIC_level0, dpc_VIC_level1, evb_dir, date_period, calibrate_date_period,
+        nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
                                       algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
         nsgaII_VIC_SO.run()
     
