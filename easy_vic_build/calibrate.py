@@ -31,7 +31,7 @@ import math
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
-                 rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=60,
+                 rvic_OUTPUT_INTERVAL=86400, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=3600,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
         # *if parallel, uhbox_dt (rvic_OUTPUT_INTERVAL) should be same as VIC output (global param)
@@ -370,6 +370,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             # evaluate
             evaluation_metric = EvaluationMetric(sim_cali, obs_cali)
             fitness = evaluation_metric.KGE()
+            # fitness = evaluation_metric.NSE()
 
             # plot discharge
             fig, ax = plt.subplots(figsize=(10, 6))
