@@ -14,13 +14,16 @@ from .tools.geo_func import search_grids
 from .tools.geo_func.create_gdf import CreateGDF
 from .tools.dpc_func.basin_grid_func import grids_array_coord_map
 from .tools.decoractors import clock_decorator
+from .tools.utilities import remove_and_mkdir
+import xarray as xr
 
 
 @clock_decorator(print_arg_ret=False)
 def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
                      reverse_lat=True, check_search=False,
                      time_re_exp=r"\d{8}.\d{4}",
-                     search_func=search_grids.search_grids_radius_rectangle_reverse):
+                     search_func=search_grids.search_grids_radius_rectangle_reverse,
+                     dst_time_hours=None):
     # ====================== set dir and path ======================
     # set path
     src_home = evb_dir.MeteForcing_src_dir
@@ -259,3 +262,48 @@ def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
         
         # next year
         year += 1
+    
+    ## ====================== loop for read year and resample time forcing ======================
+    if dst_time_hours is not None:
+        resampleTimeForcing(evb_dir, dst_time_hours)
+        
+
+def resampleTimeForcing(evb_dir, dst_time_hours=24):
+    suffix = ".nc"
+    MeteForcing_dir = evb_dir.MeteForcing_dir
+    resample_dir = os.path.join(MeteForcing_dir, "resample_forcing")
+    remove_and_mkdir(resample_dir)
+    
+    dst_home = resample_dir
+    src_home = MeteForcing_dir
+    src_names = [n for n in os.listdir(src_home) if n.endswith(suffix)]
+    
+    # resample_factor = int(dst_time_hours / src_time_hours)
+    
+    ## ====================== loop for forcing resample time ======================
+    for i in tqdm(range(len(src_names)), desc="loop for forcing resample time", colour="green"):
+        # general
+        src_name = src_names[i]
+        src_path = os.path.join(src_home, src_name)
+        dst_path = os.path.join(dst_home, src_name)
+        
+        # resample time
+        src_dataset = xr.open_dataset(src_path)
+        dst_dataset = xr.Dataset({
+            "dlwrf": src_dataset["dlwrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            "dswrf": src_dataset["dswrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            "prcp": src_dataset["prcp"].resample(time=f"{dst_time_hours}H").sum(skipna=True),
+            "pres": src_dataset["pres"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            "tas": src_dataset["tas"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            "vp": src_dataset["vp"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            "wind": src_dataset["wind"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+        })
+        
+        dst_dataset["lats"] = src_dataset["lats"]
+        dst_dataset["lons"] = src_dataset["lons"]
+        
+        dst_dataset.to_netcdf(dst_path)
+        
+        # close
+        src_dataset.close()
+        dst_dataset.close()

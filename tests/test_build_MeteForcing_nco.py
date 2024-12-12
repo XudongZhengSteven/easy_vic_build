@@ -29,22 +29,27 @@ def test():
     evb_dir.linux_share_temp_dir = "F:\\Linux\\C_VirtualBox_Share\\temp"
     
     # build MeteForcingnco: step=1
-    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-                        step=1, reverse_lat=True, check_search=False,
-                        year_re_exp=r"\d{4}.nc4")
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+    #                     step=1, reverse_lat=True, check_search=False,
+    #                     year_re_exp=r"\d{4}.nc4")
     
     # go to linux, run combineYearly.py
     
     # build MeteForcingnco: step=2
-    # buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
     #                     step=2, reverse_lat=True, check_search=False,
     #                     year_re_exp=r"\d{4}.nc4")
     
     # build MeteForcingnco: step=3
-    # buildMeteForcingnco(dpc_VIC_level1, evb_dir, date_period,
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
     #                     step=3, reverse_lat=True, check_search=False,
     #                     year_re_exp=r"\d{4}.nc4")
     
+    # build MeteForcingnco: step=4, resample
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=4, reverse_lat=True, check_search=False,
+                        year_re_exp=r"\d{4}.nc4",
+                        dst_time_hours=24)
 
 if __name__ == "__main__":
-    test()    
+    test()
