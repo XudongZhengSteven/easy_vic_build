@@ -28,9 +28,9 @@ grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
 if __name__ == "__main__":
     # make sure you have already prepare the basic params/information for running vic
     basin_index = 397
-    date_period = ["19980101", "20031231"]
-    warmup_date_period = ["19980101", "19981231"]
-    calibrate_date_period = ["19990101", "20031231"]
+    date_period = ["19980101", "20071231"]
+    warmup_date_period = ["19980101", "19991231"]
+    calibrate_date_period = ["20000101", "20071231"]
     case_name = "397_12km"
     grid_res_level1 = 0.11
     
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     # calibrate
     calibrate_bool = True
     if calibrate_bool:
-        algParams = {"popSize": 20, "maxGen": 1000, "cxProb": 0.7, "mutateProb": 0.2}
+        algParams = {"popSize": 40, "maxGen": 300, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
                                       algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
         nsgaII_VIC_SO.run()
