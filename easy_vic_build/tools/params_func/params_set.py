@@ -222,7 +222,7 @@ def percentile_to_CONUS_depth_num(percentile_layer1, percentile_layer2):
 ## ========================= RVIC params =========================
 # uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}
 default_uh_params = [1.4, 5.0, 3.0]
-uh_params_boundary = [(1, 24.0), (2.0, 10.0), (0.5, 6.0)]
+uh_params_boundary = [(1.0, 24.0), (2.0, 10.0), (0.5, 6.0)]
 uh_params_types = [float, float, float]
 
 # cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0}
