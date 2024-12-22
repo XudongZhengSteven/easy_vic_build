@@ -188,4 +188,6 @@ def readCalibrateCp(evb_dir):
         # initial_population = state["initial_population"]
         # population = state["population"]
         # history = state["history"]
+        # front_fitness = [history[i][1][0][0].fitness.values for i in range(len(history))]
+        # plt.plot(front_fitness)
     return state

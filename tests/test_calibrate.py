@@ -145,7 +145,7 @@ if __name__ == "__main__":
         buildGlobalParam(evb_dir, GlobalParam_dict)
     
     # calibrate
-    calibrate_bool = True
+    calibrate_bool = False
     if calibrate_bool:
         algParams = {"popSize": 40, "maxGen": 300, "cxProb": 0.7, "mutateProb": 0.2}
         nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
@@ -161,5 +161,13 @@ if __name__ == "__main__":
         params_dataset_level1.close()
     
     # read cp
-    # state = readCalibrateCp(evb_dir)
+    state = readCalibrateCp(evb_dir)
+    # state2 = {'current_generation': 247,
+    #     'population': state["history"][247][0],
+    #     'initial_population': state["initial_population"],
+    #     'history': state["history"][:247]
+    #     }
+    
+    # with open(path, 'wb') as f:
+    #     pickle.dump(state2, f)
     
