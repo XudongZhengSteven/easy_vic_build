@@ -126,6 +126,7 @@ if __name__ == "__main__":
                         "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
     
+    # perhaps it can be run at hourly scale
     # GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
     #                                 "SNOW_STEPS_PER_DAY": "24",
     #                                 "RUNOFF_STEPS_PER_DAY": "24",
@@ -144,13 +145,20 @@ if __name__ == "__main__":
     if buildGlobalParam_bool:
         buildGlobalParam(evb_dir, GlobalParam_dict)
     
+    # nsgaII set
+    algParams = {"popSize": 40, "maxGen": 300, "cxProb": 0.7, "mutateProb": 0.2}
+    nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
+                                    algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
+    
     # calibrate
     calibrate_bool = False
     if calibrate_bool:
-        algParams = {"popSize": 40, "maxGen": 300, "cxProb": 0.7, "mutateProb": 0.2}
-        nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
-                                      algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
         nsgaII_VIC_SO.run()
+    
+    # get best results
+    get_best_results_bool = True
+    if get_best_results_bool:
+        nsgaII_VIC_SO.get_best_results()
     
     # close
     if read_domain_dataset_bool:
