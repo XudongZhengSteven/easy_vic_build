@@ -28,6 +28,7 @@ def combineYearly(linux_share_temp_dir, suffix=".clip.nc4", year_re_exp=r"\d{8}"
 
 
 if __name__ == "__main__":
+    # usage: python ./combineYearly.py ./
     # default args
     suffix = ".clip.nc4"
     year_re_exp = r"\d{8}"

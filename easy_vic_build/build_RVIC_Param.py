@@ -16,24 +16,34 @@ from .tools.uh_func import create_uh
 from configparser import ConfigParser
 
 
-@clock_decorator
-def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,
-                   ppf_kwargs=dict(), uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}, uh_plot_bool=False,
-                   cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400}):    
+def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset,
+                           flowdirection_kwargs={"reverse_lat": True, "stream_acc_threshold": 100.0, "flow_direction_pkg": "wbw", "crs_str": "EPSG:4326"},
+                           ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
+                           cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50}):
     # cp domain.nc to RVICParam_dir
     # copy_domain(evb_dir)
     
     # buildFlowDirectionFile
-    buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat, stream_acc_threshold)
+    buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, **flowdirection_kwargs)
     
     # buildPourPointFile
     buildPourPointFile(evb_dir, dpc_VIC_level1, **ppf_kwargs)
     
     # buildUHBOXFile
-    buildUHBOXFile(evb_dir, **uh_params, plot_bool=uh_plot_bool)
+    buildUHBOXFile(evb_dir, **uh_params)
     
     # buildParamCFGFile
     buildParamCFGFile(evb_dir, **cfg_params)
+    
+    
+@clock_decorator
+def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset,
+                   flowdirection_kwargs={"reverse_lat": True, "stream_acc_threshold": 100.0, "flow_direction_pkg": "wbw", "crs_str": "EPSG:4326"},
+                   ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
+                   cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50}):    
+
+    # buildRVICParam_general
+    buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset, flowdirection_kwargs, ppf_kwargs, uh_params, cfg_params)
     
     # build rvic parameters
     from rvic.parameters import parameters

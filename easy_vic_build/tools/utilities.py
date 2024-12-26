@@ -191,3 +191,8 @@ def readCalibrateCp(evb_dir):
         # front_fitness = [history[i][1][0][0].fitness.values for i in range(len(history))]
         # plt.plot(front_fitness)
     return state
+
+
+def readBasinMap(evb_dir):
+    stream_gdf = gpd.read_file(os.path.join(evb_dir.BasinMap_dir, "stream_raster_shp_clip.shp"))
+    return stream_gdf

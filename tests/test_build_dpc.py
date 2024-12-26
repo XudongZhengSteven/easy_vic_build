@@ -19,18 +19,18 @@ basin set
 397(1000_larger_km_humid); 636(1000_larger_km_semi_humid); 580(1000_larger_km_semi_arid) 
 
 grid_res_level0=1km(0.00833)
-grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
+grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 """ 
 
 
 def test():
     # general set
-    basin_index = 397
+    basin_index = 670
     date_period = ["19980101", "20101231"]
-    case_name = "397_12km"
+    case_name = "670_6km"
     grid_res_level0=0.00833
-    grid_res_level1=0.025
+    grid_res_level1=0.055
     grid_res_level2=0.125
     
     # build dir
@@ -47,8 +47,8 @@ def test():
     
     # build dpc
     dpc_VIC_level0 = dataProcess_VIC_level0(basin_shp, grid_shp_level0, grid_res_level0, date_period)
-    dpc_VIC_level1 = dataProcess_VIC_level1(basin_shp, grid_shp_level0, grid_res_level0, date_period)
-    dpc_VIC_level2 = dataProcess_VIC_level2(basin_shp, grid_shp_level0, grid_res_level0, date_period)
+    dpc_VIC_level1 = dataProcess_VIC_level1(basin_shp, grid_shp_level1, grid_res_level1, date_period)
+    dpc_VIC_level2 = dataProcess_VIC_level2(basin_shp, grid_shp_level2, grid_res_level2, date_period)
     
     dpc_VIC_level0_call_kwargs={"readBasindata": False, "readGriddata": True, "readBasinAttribute": False}
     dpc_VIC_level1_call_kwargs={"readBasindata": True, "readGriddata": True, "readBasinAttribute": True}
@@ -56,9 +56,9 @@ def test():
     plot_columns_level0 = ["SrtmDEM_mean_Value", "soil_l1_sand_nearest_Value"]
     plot_columns_level1 = ["annual_P_in_src_grid_Value", "umd_lc_major_Value"]
     
-    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = builddpc(evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2,
-                                                              dpc_VIC_level0_call_kwargs, dpc_VIC_level1_call_kwargs, dpc_VIC_level2_call_kwargs,
-                                                              plot_columns_level0, plot_columns_level1)
+    builddpc(evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2,
+             dpc_VIC_level0_call_kwargs, dpc_VIC_level1_call_kwargs, dpc_VIC_level2_call_kwargs,
+             plot_columns_level0, plot_columns_level1)
 
 if __name__ == "__main__":
     test()

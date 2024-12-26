@@ -43,10 +43,10 @@ def builddpc(evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2,
     
     if plot_columns_level0 is not None:
         fig_columns, axes_columns = plt.subplots(2, 2, figsize=(12, 8))
-        dpc_VIC_level0.plot_grid(column=plot_columns_level0[0], fig=fig_columns, ax=axes_columns[0, 0])
-        dpc_VIC_level0.plot_grid(column=plot_columns_level0[1], fig=fig_columns, ax=axes_columns[0, 1])
-        dpc_VIC_level1.plot_grid(column=plot_columns_level1[0], fig=fig_columns, ax=axes_columns[1, 0])
-        dpc_VIC_level1.plot_grid(column=plot_columns_level1[1], fig=fig_columns, ax=axes_columns[1, 1])
+        dpc_VIC_level0.plot_grid_column(column=plot_columns_level0[0], fig=fig_columns, ax=axes_columns[0, 0])
+        dpc_VIC_level0.plot_grid_column(column=plot_columns_level0[1], fig=fig_columns, ax=axes_columns[0, 1])
+        dpc_VIC_level1.plot_grid_column(column=plot_columns_level1[0], fig=fig_columns, ax=axes_columns[1, 0])
+        dpc_VIC_level1.plot_grid_column(column=plot_columns_level1[1], fig=fig_columns, ax=axes_columns[1, 1])
         
         axes_columns[0, 0].set_title(plot_columns_level0[0])
         axes_columns[0, 1].set_title(plot_columns_level0[1])

@@ -57,6 +57,9 @@ class Evb_dir:
         self._case_dir = os.path.join(self._cases_dir, case_name)
         check_and_mkdir(self._case_dir)
         
+        self.BasinMap_dir = os.path.join(self._case_dir, "BasinMap")
+        check_and_mkdir(self.BasinMap_dir)
+        
         self.dpcFile_dir = os.path.join(self._case_dir, "dpcFile")
         check_and_mkdir(self.dpcFile_dir)
         
