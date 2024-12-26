@@ -7,10 +7,11 @@ import numpy as np
 
 
 def create_flow_distance(flow_distance_path, flow_direction_array, x_length_array, y_length_array, transform, crs_str="EPSG:4326"):
-    flow_direction_distance_map = {"zonal": [64, 4], "meridional": [1, 16], "diagonal": [32, 128, 8, 2]}
+    flow_direction_distance_map = {"zonal": [64, 4], "meridional": [1, 16], "diagonal": [32, 128, 8, 2], "noflow": [0]}
     flow_distance_func_map = {"zonal": lambda x_length, y_length: y_length,
                             "meridional": lambda x_length, y_length: x_length,
-                            "diagonal": lambda x_length, y_length: (x_length**2 + y_length**2)**0.5}
+                            "diagonal": lambda x_length, y_length: (x_length**2 + y_length**2)**0.5,
+                            "noflow": lambda x_length, y_length: 0}
     
     def flow_distance_funcion(flow_direction, x_length, y_length):
         for k in flow_direction_distance_map:

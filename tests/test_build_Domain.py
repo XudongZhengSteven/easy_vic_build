@@ -17,15 +17,15 @@ basin set
 397(1000_larger_km_humid); 636(1000_larger_km_semi_humid); 580(1000_larger_km_semi_arid) 
 
 grid_res_level0=1km(0.00833)
-grid_res_level1=3km(0.025), 6km(0.055), 12km(0.11)
+grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 """ 
 
 def test():
     # general set
-    basin_index = 397
+    basin_index = 670
     date_period = ["19980101", "20101231"]
-    case_name = "397_12km"
+    case_name = "670_6km"
     
     # build dir
     evb_dir = Evb_dir()

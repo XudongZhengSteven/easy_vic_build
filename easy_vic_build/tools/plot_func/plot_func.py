@@ -9,8 +9,27 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
 from ..params_func.params_set import *
+from matplotlib.ticker import FuncFormatter, MultipleLocator, MaxNLocator
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter, LatitudeLocator
+plt.rcParams['font.family'] = 'Arial'
 
 ## ------------------------ plot utilities ------------------------
+def set_xyticks(ax, x_locator_interval, y_locator_interval):
+    # set xy ticks
+    ax.xaxis.set_major_locator(MultipleLocator(x_locator_interval))
+    ax.yaxis.set_major_locator(MultipleLocator(y_locator_interval))
+    
+    format_lon = lambda lon, pos: f"{abs(lon):.1f}°W" if lon < 0 else f"{abs(lon):.1f}°E"
+    format_lat = lambda lat, pos: f"{abs(lat):.1f}°S" if lat < 0 else f"{abs(lat):.1f}°N"
+    ax.xaxis.set_major_formatter(FuncFormatter(format_lon))
+    ax.yaxis.set_major_formatter(FuncFormatter(format_lat))
+
+
+def set_boundary(ax, boundary_x_y):
+    ax.set_xlim(boundary_x_y[0], boundary_x_y[1])
+    ax.set_ylim(boundary_x_y[2], boundary_x_y[3])
+    
+    
 def plotBackground(basin_shp, grid_shp, fig=None, ax=None):
     if not ax:
         fig, ax = plt.subplots()
@@ -54,12 +73,53 @@ def setBoundary(ax, boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_m
     return ax
 
 
-def plot_selected_map(basin_index, dpc_base, text_name="basin_index", plot_solely=True, column=None, plot_kwgs_set=dict(), fig=None, ax=None):
+def plot_US_basemap(fig=None, ax=None, set_xyticks=True, x_locator_interval=15, y_locator_interval=10):
+    proj = ccrs.PlateCarree()
+    extent = [-125, -66.5, 24.5, 50.5]
+    
+    # get fig, ax
+    if not ax:
+        fig = plt.figure()
+        ax = fig.add_axes([0.1, 0, 0.85, 1], projection=proj)
+
+    # add background
+    alpha=0.3
+    ax.add_feature(cfeature.COASTLINE.with_scale('50m'), linewidth=0.6, zorder=10)
+    ax.add_feature(cfeature.LAND, alpha=alpha)
+    ax.add_feature(cfeature.OCEAN)
+    ax.add_feature(cfeature.RIVERS.with_scale('50m'), linewidth=0.5, zorder=10, alpha=alpha)
+    ax.add_feature(cfeature.LAKES.with_scale('50m'), linewidth=0.2, edgecolor="k", zorder=10, alpha=alpha)
+    ax.add_feature(cfeature.STATES, linewidth=0.3, edgecolor="gray", zorder=10)
+
+    # set ticks
+    if set_xyticks:
+        ax.set_xticks([-180, -90, 0, 90, 180])
+        ax.set_yticks([-90, -45, 0, 45, 90])
+        set_xyticks(ax, x_locator_interval=x_locator_interval, y_locator_interval=y_locator_interval)
+
+    # set boundary
+    set_boundary(ax, extent)  # or ax.set_extent(extent, crs=proj)
+    
+    # # set gridliner, use this may lead to different sizes between xticks and yticks
+    # gridliner = ax.gridlines(crs=proj, draw_labels=True)  # , linewidth=2, color='gray', alpha=0.5, linestyle='--'
+    # gridliner.top_labels = False
+    # gridliner.right_labels = False
+    # gridliner.xlines = False
+    # gridliner.ylines = False
+    # gridliner.xformatter = LongitudeFormatter()
+    # gridliner.yformatter = LatitudeFormatter()
+    # gridliner.xlabel_style = {'size': 12, 'color': 'k'}
+    # gridliner.xlabel_style = {'size': 12, 'color': 'k'}
+
+    return fig, ax
+
+
+def plot_selected_map(basin_index, dpc, text_name="basin_index", plot_solely=True, column=None, plot_kwgs_set=dict(), fig=None, ax=None):
     """_summary_
 
     Args:
         basin_index (_type_): _description_
-        dpc_base (_type_): _description_
+        dpc (_type_): _description_
         text_name (str, optional): _description_. Defaults to "basin_index".
         plot_solely (bool, optional): _description_. Defaults to True.
         column (_type_, optional): _description_. Defaults to None.
@@ -70,7 +130,7 @@ def plot_selected_map(basin_index, dpc_base, text_name="basin_index", plot_solel
     
     usages:
     fig, ax, fig_solely = plot_selected_map(basin_shp_area_excluding.index.to_list(), # [0, 1, 2]
-                                        dpc_base,
+                                        dpc,
                                         text_name="basin_index",  # "basin_index", None,
                                         plot_solely=False, 
                                         column=None,  # "camels_clim:aridity",  # None
@@ -96,23 +156,23 @@ def plot_selected_map(basin_index, dpc_base, text_name="basin_index", plot_solel
     plot_kwgs = {"facecolor": "r", "alpha": 0.7, "edgecolor": "k", "linewidth": 0.2}
     plot_kwgs.update(plot_kwgs_set)
     if len(basin_index) > 1:
-        fig, ax = plotBasins(dpc_base.basin_shp.loc[basin_index, :].to_crs(proj), fig=fig, ax=ax, plot_kwgs=plot_kwgs, column=column)
+        fig, ax = plotBasins(dpc.basin_shp.loc[basin_index, :].to_crs(proj), fig=fig, ax=ax, plot_kwgs=plot_kwgs, column=column)
     elif len(basin_index) == 1:
-        fig, ax = plotBasins(dpc_base.basin_shp.loc[[basin_index[0], basin_index[0]], :].to_crs(proj), fig=fig, ax=ax, plot_kwgs=plot_kwgs, column=column)
+        fig, ax = plotBasins(dpc.basin_shp.loc[[basin_index[0], basin_index[0]], :].to_crs(proj), fig=fig, ax=ax, plot_kwgs=plot_kwgs, column=column)
     else:
         return fig, ax, None
     
     # annotation
     if text_name:  # None means not to plot text
-        basinLatCens = np.array([dpc_base.basin_shp.loc[key, "lat_cen"] for key in basin_index])
-        basinLonCens = np.array([dpc_base.basin_shp.loc[key, "lon_cen"] for key in basin_index])
+        basinLatCens = np.array([dpc.basin_shp.loc[key, "lat_cen"] for key in basin_index])
+        basinLonCens = np.array([dpc.basin_shp.loc[key, "lon_cen"] for key in basin_index])
         
         for i in range(len(basinLatCens)):
             basinLatCen = basinLatCens[i]
             basinLonCen = basinLonCens[i]
             text_names_dict = {"basin_index": basin_index[i],
-                            "hru_id": dpc_base.basin_shp.loc[basin_index[i], "hru_id"],
-                            "gauge_id": dpc_base.basin_shp.loc[basin_index[i], "camels_hydro:gauge_id"]}
+                            "hru_id": dpc.basin_shp.loc[basin_index[i], "hru_id"],
+                            "gauge_id": dpc.basin_shp.loc[basin_index[i], "camels_hydro:gauge_id"]}
             
             text_name_plot = text_names_dict[text_name]
             
@@ -125,12 +185,12 @@ def plot_selected_map(basin_index, dpc_base, text_name="basin_index", plot_solel
     fig_solely = {}
     if plot_solely:
         for i in range(len(basin_index)):
-            fig_, ax_ = plotBasins(dpc_base.basin_shp.loc[[basin_index[i], basin_index[i]], :].to_crs(proj), fig=None, ax=None, plot_kwgs=None)
+            fig_, ax_ = plotBasins(dpc.basin_shp.loc[[basin_index[i], basin_index[i]], :].to_crs(proj), fig=None, ax=None, plot_kwgs=None)
             fig_solely[i] = {"fig": fig_, "ax": ax_}
             
             text_names_dict = {"basin_index": basin_index[i],
-                               "hru_id": dpc_base.basin_shp.loc[basin_index[i], "hru_id"],
-                               "gauge_id": dpc_base.basin_shp.loc[basin_index[i], "camels_hydro:gauge_id"]}
+                               "hru_id": dpc.basin_shp.loc[basin_index[i], "hru_id"],
+                               "gauge_id": dpc.basin_shp.loc[basin_index[i], "camels_hydro:gauge_id"]}
             text_name_plot = text_names_dict[text_name]
             
             ax_.set_title(text_name_plot)
@@ -256,5 +316,56 @@ def plot_Calibrate_cp_SO(cp_state):
     # plot params
     plt.plot(fronts_params(1))
     plt.show()
+      
     
+def plot_Basin_map(dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, stream_gdf, x_locator_interval=0.3, y_locator_interval=0.2, fig=None, ax=None):
+    # =========== plot Basin_map ===========
+    # get fig, ax
+    if not ax:
+        fig_Basin_map, ax_Basin_map = plt.subplots()
+        
+    # plot dem at level0
+    dpc_VIC_level0.grid_shp.plot(ax=ax_Basin_map, column="SrtmDEM_mean_Value", alpha=1, legend=True, colormap="terrain", zorder=1,
+                                 legend_kwds={"label": "Elevation (m)"})  # terrain gray
     
+    # plot basin boundary
+    dpc_VIC_level0.basin_shp.plot(ax=ax_Basin_map, facecolor="none", linewidth=2, alpha=1, edgecolor="k", zorder=2)
+    dpc_VIC_level0.basin_shp.plot(ax=ax_Basin_map, facecolor="k", alpha=0.2, zorder=3)
+    
+    # plot river
+    stream_gdf.plot(ax=ax_Basin_map, color="b", zorder=4)
+    
+    # plot gauge
+    gauge_lon = dpc_VIC_level1.basin_shp["camels_topo:gauge_lon"].values[0]
+    gauge_lat = dpc_VIC_level1.basin_shp["camels_topo:gauge_lat"].values[0]
+    ax_Basin_map.plot(gauge_lon, gauge_lat, "r*", markersize=10, mec="k", mew=1, zorder=5)
+    
+    # set plot boundary and ticks
+    set_boundary(ax_Basin_map, dpc_VIC_level0.boundary_grids_edge_x_y)
+    set_xyticks(ax_Basin_map, x_locator_interval, y_locator_interval)
+    
+    # =========== plot grid basin ===========
+    fig_grid_basin_level0, ax_grid_basin_level0 = dpc_VIC_level0.plot()
+    fig_grid_basin_level1, ax_grid_basin_level1 = dpc_VIC_level1.plot()
+    fig_grid_basin_level2, ax_grid_basin_level2 = dpc_VIC_level2.plot()
+    
+    set_boundary(ax_grid_basin_level0, dpc_VIC_level0.boundary_grids_edge_x_y)
+    set_boundary(ax_grid_basin_level1, dpc_VIC_level1.boundary_grids_edge_x_y)
+    set_boundary(ax_grid_basin_level2, dpc_VIC_level2.boundary_grids_edge_x_y)
+    
+    set_xyticks(ax_grid_basin_level0, x_locator_interval, y_locator_interval)
+    set_xyticks(ax_grid_basin_level1, x_locator_interval, y_locator_interval)
+    set_xyticks(ax_grid_basin_level2, x_locator_interval, y_locator_interval)
+    
+    # =========== store ===========
+    fig_dict = {"fig_Basin_map": fig_Basin_map,
+                "fig_grid_basin_level0": fig_grid_basin_level0,
+                "fig_grid_basin_level1": fig_grid_basin_level1,
+                "fig_grid_basin_level2": fig_grid_basin_level2}
+
+    ax_dict = {"ax_Basin_map": ax_Basin_map,
+                "ax_grid_basin_level0": ax_grid_basin_level0,
+                "ax_grid_basin_level1": ax_grid_basin_level1,
+                "ax_grid_basin_level2": ax_grid_basin_level2}
+    
+    return fig_dict, ax_dict

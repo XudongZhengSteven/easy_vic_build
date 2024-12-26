@@ -64,7 +64,7 @@ class dataProcess_VIC_level0(dataProcess_base):
         
         return fig, ax
     
-    def plot_grid(self, column, fig=None, ax=None, grid_shp_kwargs=dict(), column_kwargs=dict(), basin_shp_kwargs=dict()):
+    def plot_grid_column(self, column, fig=None, ax=None, grid_shp_kwargs=dict(), column_kwargs=dict(), basin_shp_kwargs=dict()):
         # plot grid_shp column
         if fig is None:
             fig, ax = plt.subplots()
