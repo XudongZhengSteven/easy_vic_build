@@ -387,6 +387,16 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         return (fitness, )
     
+    def get_best_results(self):
+        # get front
+        front = self.history[-1][1][0][0]
+        
+        # get fitness
+        print(f"current fitness: {front.fitness.values}")
+        
+        # sim
+        fitness_cal_again = self.evaluate(front)
+    
     @staticmethod
     def operatorMate(parent1, parent2, low, up):
         return tools.cxSimulatedBinaryBounded(parent1, parent2, eta=20.0, low=low, up=up)

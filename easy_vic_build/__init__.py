@@ -75,17 +75,8 @@ class Evb_dir:
         self.ParamFile_dir = os.path.join(self._case_dir, "ParamFile")
         check_and_mkdir(self.ParamFile_dir)
         
-        self.VICLog_dir = os.path.join(self._case_dir, "VICLog")
-        check_and_mkdir(self.VICLog_dir)
-        
-        self.VICResults_dir = os.path.join(self._case_dir, "VICResults")
-        check_and_mkdir(self.VICResults_dir)
-        
-        self.VICResults_fig_dir = os.path.join(self.VICResults_dir, "Figs")
-        remove_and_mkdir(self.VICResults_fig_dir)
-        
-        self.VICStates_dir = os.path.join(self._case_dir, "VICStates")
-        check_and_mkdir(self.VICStates_dir)
+        self.Hydroanalysis_dir = os.path.join(self._case_dir, "Hydroanalysis")
+        check_and_mkdir(self.Hydroanalysis_dir)
         
         self.RVIC_dir = os.path.join(self._case_dir, "RVIC")
         check_and_mkdir(self.RVIC_dir)
@@ -98,6 +89,18 @@ class Evb_dir:
         
         self.RVICConv_dir = os.path.join(self.RVIC_dir, "Convolution")
         check_and_mkdir(self.RVICConv_dir)
+        
+        self.VICLog_dir = os.path.join(self._case_dir, "VICLog")
+        check_and_mkdir(self.VICLog_dir)
+        
+        self.VICResults_dir = os.path.join(self._case_dir, "VICResults")
+        check_and_mkdir(self.VICResults_dir)
+        
+        self.VICResults_fig_dir = os.path.join(self.VICResults_dir, "Figs")
+        remove_and_mkdir(self.VICResults_fig_dir)
+        
+        self.VICStates_dir = os.path.join(self._case_dir, "VICStates")
+        check_and_mkdir(self.VICStates_dir)
         
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
         check_and_mkdir(self.CalibrateVIC_dir)

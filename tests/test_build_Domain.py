@@ -23,10 +23,12 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 def test():
     # general set
-    case_name = "580_6km"
+    basin_index = 670
+    date_period = ["19980101", "20101231"]
+    case_name = "670_6km"
     
     # build dir
-    evb_dir = Evb_dir()
+    evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
     evb_dir.builddir(case_name)
     
     # read dpc

@@ -357,10 +357,11 @@ def buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=
     grid_shp_level1 = deepcopy(dpc_VIC_level1.grid_shp)
     grids_num = len(grid_shp_level1.index)
     
-    # grids_map_array
+    # grids_map_array, lon/lat_list is from dpc.grid_shp, corresponding to these data
     lon_list_level1, lat_list_level1, lon_map_index_level1, lat_map_index_level1 = grids_array_coord_map(grid_shp_level1, reverse_lat=reverse_lat)  #* all lat set as reverse
 
     # these variables can be input outside
+    # stand grids must be complete rectengle, so, it may be the superset of the lon/lat_list (potentially contains grids with no data)
     if stand_grids_lat is None:
         stand_grids_lat, stand_grids_lon = createStand_grids_lat_lon_from_gridshp(grid_shp_level1, grid_res=None, reverse_lat=reverse_lat)
     
@@ -602,7 +603,6 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
 
 @clock_decorator(print_arg_ret=False)
 def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_bool_index=None):
-    # TODO increase speed
     print("scaling Param_level0 to Param_level1... ...")
     
     lon_list_level1, lat_list_level1 = params_dataset_level1.variables["lon"][:], params_dataset_level1.variables["lat"][:]

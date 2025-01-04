@@ -92,21 +92,23 @@ def createBoundaryShp(grid_shp):
 class Grids_for_shp(Grids):
     def __init__(self, gshp, *args,
                  cen_lons=None, cen_lats=None, stand_lons=None, stand_lats=None,
-                 res=None, adjust_boundary=True, geometry=None, crs=None, **kwargs):
+                 res=None, adjust_boundary=True, geometry=None, crs=None, expand_grids_num=0, boundary=None, **kwargs):
         """
         Grids (grid_shp) for a given gshp, it can be any gpd (basins, grids...)
         
         res=None, one grid for this shp (boundary grid)
-        
         cen_lons: directly construct grids based on given cen_lons (do not consider gshp boundary)
-        
         stand_lons: a series of stand_lons, larger than gshp's boundary, construct grids based on standard grids (clip based on gshp boundary)
-        
         adjust_boundary: adjust boundary by res (res/2)
+        expand_grids_num: int, expand n grid outward
         
         """
         # get bound
-        shp_bounds = gshp.loc[:, "geometry"].iloc[0].bounds
+        if boundary is None:
+            shp_bounds = gshp.loc[:, "geometry"].iloc[0].bounds
+        else:
+            shp_bounds = boundary
+        
         boundary_x_min = shp_bounds[0]
         boundary_x_max = shp_bounds[2]
         boundary_y_min = shp_bounds[1]
@@ -128,8 +130,8 @@ class Grids_for_shp(Grids):
             # construct grids based on standard grids: clip based on gshp boundary
             elif stand_lons is not None:
                 
-                cen_lons = stand_lons[np.where(stand_lons - res/2 <= boundary_x_min)[0][-1]: np.where(stand_lons + res/2 >= boundary_x_max)[0][0] + 1]
-                cen_lats = stand_lats[np.where(stand_lats - res/2 <= boundary_y_min)[0][-1]: np.where(stand_lats + res/2 >= boundary_y_max)[0][0] + 1]
+                cen_lons = stand_lons[np.where(stand_lons - res/2 <= boundary_x_min - res*expand_grids_num)[0][-1]: np.where(stand_lons + res/2 >= boundary_x_max + res*expand_grids_num)[0][0] + 1]
+                cen_lats = stand_lats[np.where(stand_lats - res/2 <= boundary_y_min - res*expand_grids_num)[0][-1]: np.where(stand_lats + res/2 >= boundary_y_max + res*expand_grids_num)[0][0] + 1]
                 
                 cen_lons, cen_lats = np.meshgrid(cen_lons, cen_lats)
                 cen_lons = cen_lons.flatten()
@@ -146,8 +148,8 @@ class Grids_for_shp(Grids):
                     boundary_y_min = math.floor(boundary_y_min / res) * res
                     boundary_y_max = math.ceil(boundary_y_max / res) * res
                 
-                cen_lons = np.arange((boundary_x_min + res/2), (boundary_x_max), res)
-                cen_lats = np.arange((boundary_y_min + res/2), (boundary_y_max), res)
+                cen_lons = np.arange((boundary_x_min + res/2 - res*expand_grids_num), (boundary_x_max + res*expand_grids_num), res)
+                cen_lats = np.arange((boundary_y_min + res/2 - res*expand_grids_num), (boundary_y_max + res*expand_grids_num), res)
 
                 # cen_lons = np.arange(math.floor((boundary_x_min + res/2) / (res/2)) * (res/2), math.ceil((boundary_x_max + res/2) / (res/2)) * (res/2), res)
                 # cen_lats = np.arange(math.floor((boundary_y_min + res/2) / (res/2)) * (res/2), math.ceil((boundary_y_max + res/2) / (res/2)) * (res/2), res)

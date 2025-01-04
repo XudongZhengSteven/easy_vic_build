@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 #* use nco to increase speed (you need a Linux system, as the ncrcat has not been implemented in pynco)
 #* This is particularly useful for large domain
-# TODO parallel, aggregrate to any time unit (3 hour, daily, monthly)
+# TODO parallel
 
 from nco import Nco
 from nco.custom import Limit, LimitSingle
@@ -399,7 +399,7 @@ def buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
     
     linux_share_temp_clip_dir = os.path.join(linux_share_temp_dir, "clip")
     linux_share_temp_combineYearly_dir = os.path.join(linux_share_temp_dir, "combineYearly")
-    ## ====================== step1: clip for basin ====================== #TODO 时间重采样
+    ## ====================== step1: clip for basin ======================
     if step == 1:
         clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat)
         

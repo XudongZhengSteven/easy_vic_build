@@ -27,10 +27,10 @@ def test():
     # general set
     basin_index = 636
     date_period = ["19980101", "20101231"]
-    case_name = "636_6km"
+    case_name = "670_12km"
     
     # build dir
-    evb_dir = Evb_dir()
+    evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
     evb_dir.builddir(case_name)
     
     # read dpc
