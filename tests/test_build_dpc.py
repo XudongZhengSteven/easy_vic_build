@@ -40,7 +40,13 @@ def test():
     # read shpfile and get basin_shp (Basins)
     basin_shp_all, basin_shp = read_one_HCDN_basin_shp(basin_index)
     
-    # build grid_shp (Grids)
+    # first get the boundary from model scale, then create grid_shp for other scale
+    
+    # build grid_shp (Grids) for level1 (modeling scale) # TODO expand grid_shp for a grid around the edge to make sure the flow direction right assigned
+    grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1, expand_grids_num=1)
+    
+    
+    
     grid_shp_lon_level0, grid_shp_lat_level0, grid_shp_level0 = createGridForBasin(basin_shp, grid_res_level0)
     grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1)
     grid_shp_lon_level2, grid_shp_lat_level2, grid_shp_level2 = createGridForBasin(basin_shp, grid_res_level2)

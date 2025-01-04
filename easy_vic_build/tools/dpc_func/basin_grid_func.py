@@ -9,8 +9,8 @@ from ..params_func.params_set import *
 from .basin_grid_class import *
 
 
-def createGridForBasin(basin_shp, grid_res):
-    grid_shp = Grids_for_shp(basin_shp, res=grid_res, adjust_boundary=True)
+def createGridForBasin(basin_shp, grid_res, **kwargs):
+    grid_shp = Grids_for_shp(basin_shp, res=grid_res, adjust_boundary=True, **kwargs)
     
     grid_shp_lon = grid_shp.point_geometry.x.to_list()
     grid_shp_lat = grid_shp.point_geometry.y.to_list()
@@ -19,7 +19,7 @@ def createGridForBasin(basin_shp, grid_res):
 
 
 def createStand_grids_lat_lon_from_gridshp(grid_shp, grid_res=None, reverse_lat=True):
-    #  grid_res is None: grid_shp is a Complete rectangular grids set, else is may be a uncomplete grids set
+    # grid_res is None: grid_shp is a Complete rectangular grids set, else is may be a uncomplete grids set
     # create sorted stand grids
     if grid_res is None:
         stand_grids_lon = list(set(grid_shp["point_geometry"].x.to_list()))

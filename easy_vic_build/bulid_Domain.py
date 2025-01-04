@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from .tools.dpc_func.basin_grid_func import grids_array_coord_map
 from tqdm import *
 from .tools.decoractors import clock_decorator
+from .tools.geo_func.search_grids import *
 
 UTM_proj_map = {"UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "EPSG:32610"},
                 "UTM Zone 11N": {"lon_min": -120, "lon_max": -114, "crs_code": "EPSG:32611"},
@@ -23,7 +24,7 @@ UTM_proj_map = {"UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "
                 "UTM Zone 19N": {"lon_min": -72, "lon_max": -66, "crs_code": "EPSG:32619"}}
 
 
-def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
+def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False, pourpoint_xindex=None, pourpoint_yindex=None):
     # get grid_shp and basin_shp
     grid_shp = dpc_VIC.grid_shp
     basin_shp = dpc_VIC.basin_shp
@@ -44,7 +45,8 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
     ## mask and frac
     # array init
     mask = np.empty((len(lat_list), len(lon_list)), dtype=int)
-    frac = np.empty((len(lat_list), len(lon_list)), dtype=float)
+    frac = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
+    frac_grid_in_basin = np.empty((len(lat_list), len(lon_list)), dtype=float)
     for i in tqdm(grid_shp.index, colour="green", desc="loop for grids to cal mask, frac"):
         center = grid_shp.loc[i, "point_geometry"]
         cen_lon = center.x
@@ -60,10 +62,14 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
         overlay_gdf = grid_i.overlay(basin_shp, how="intersection")
         if len(overlay_gdf) == 0:
             mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
-            frac[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
+            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
         else:
             mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 1
-            frac[lat_map_index[cen_lat], lon_map_index[cen_lon]] = overlay_gdf.area.values[0] / grid_i.area.values[0]
+            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = overlay_gdf.area.values[0] / grid_i.area.values[0]
+    
+    # modify for pourpoint
+    if pourpoint_xindex is not None:
+        mask[pourpoint_yindex, pourpoint_xindex] = 1
     
     ## area
     # array init
@@ -83,12 +89,12 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
     # flip for plot
     if not reverse_lat:
         mask_flip = np.flip(mask, axis=0)
-        frac_flip = np.flip(frac, axis=0)
+        frac_grid_in_basin_flip = np.flip(frac_grid_in_basin, axis=0)
         area_flip = np.flip(area, axis=0)
         extent = [lon_list[0], lon_list[-1], lat_list[0], lat_list[-1]]
     else:
         mask_flip = mask
-        frac_flip = frac
+        frac_grid_in_basin_flip = frac_grid_in_basin
         area_flip = area
         extent = [lon_list[0], lon_list[-1], lat_list[-1], lat_list[0]]
     
@@ -99,19 +105,19 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False):
         axes[0, 0].set_xlim([extent[0], extent[1]])
         axes[0, 0].set_ylim([extent[2], extent[3]])
         axes[0, 1].imshow(mask_flip, extent=extent)
-        axes[1, 0].imshow(frac_flip, extent=extent)
+        axes[1, 0].imshow(frac_grid_in_basin_flip, extent=extent)
         axes[1, 1].imshow(area_flip, extent=extent)
         
         axes[0, 0].set_title("dpc_VIC")
         axes[0, 1].set_title("mask")
-        axes[1, 0].set_title("frac")
+        axes[1, 0].set_title("frac_grid_in_basin")
         axes[1, 1].set_title("area")
     
-    return mask, frac, area, x_length, y_length
+    return mask, frac, frac_grid_in_basin, area, x_length, y_length
 
 
 @clock_decorator(print_arg_ret=False)
-def buildDomain(evb_dir, dpc_VIC, reverse_lat=True):
+def buildDomain(evb_dir, dpc_VIC, reverse_lat=True, pourpoint_xindex=None, pourpoint_yindex=None):
     # ====================== build Domain ======================
     # create domain file
     with Dataset(evb_dir.domainFile_path, "w", format="NETCDF4") as dst_dataset:
@@ -131,6 +137,7 @@ def buildDomain(evb_dir, dpc_VIC, reverse_lat=True):
         mask = dst_dataset.createVariable("mask", "i4", ("lat", "lon",))
         area = dst_dataset.createVariable("area", "f8", ("lat", "lon",))
         frac = dst_dataset.createVariable("frac", "f8", ("lat", "lon",))
+        frac_grid_in_basin = dst_dataset.createVariable("frac_grid_in_basin", "f8", ("lat", "lon",))
         x_length = dst_dataset.createVariable("x_length", "f8", ("lat", "lon",))
         y_length = dst_dataset.createVariable("y_length", "f8", ("lat", "lon",))
         
@@ -141,10 +148,12 @@ def buildDomain(evb_dir, dpc_VIC, reverse_lat=True):
         lons[:, :] = grid_array_lons
         lats[:, :] = grid_array_lats
         
-        mask_array, frac_array, area_array, x_length_array, y_length_array = cal_mask_frac_area_length(dpc_VIC, reverse_lat=reverse_lat, plot=False)
+        mask_array, frac_array, frac_grid_in_basin_array, area_array, x_length_array, y_length_array = cal_mask_frac_area_length(dpc_VIC, reverse_lat=reverse_lat, plot=False,
+                                                                                                                                 pourpoint_xindex=None, pourpoint_yindex=None)
         mask[:, :] = mask_array
         area[:, :] = area_array
         frac[:, :] = frac_array
+        frac_grid_in_basin[:, :] = frac_grid_in_basin_array
         x_length[:, :] = x_length_array
         y_length[:, :] = y_length_array
         
@@ -180,9 +189,24 @@ def buildDomain(evb_dir, dpc_VIC, reverse_lat=True):
         frac.description = "fraction of grid cell that is active"
         frac.units = "fraction"
         
+        frac_grid_in_basin.long_name = "frac_grid_in_basin"
+        frac_grid_in_basin.description = "fraction of grid cell that in basin"
+        frac_grid_in_basin.units = "fraction"
+        
         # Global attributes
         dst_dataset.title = "VIC5 image domain dataset"
         dst_dataset.note = "domain dataset generated by XudongZheng, zhengxd@sehemodel.club"
         dst_dataset.Conventions = "CF-1.6"
-    
-    
+
+
+def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
+    # modify domain
+    with Dataset(evb_dir.domainFile_path, "a", format="NETCDF4") as src_dataset:
+        # get lat, lon
+        lat = src_dataset.variables["lat"][:]
+        lon = src_dataset.variables["lon"][:]
+        
+        searched_grid_index = search_grids_nearest([pourpoint_lat], [pourpoint_lon], lat, lon, search_num=1)[0]
+        
+        # modify mask to 1
+        src_dataset.variables["mask"][searched_grid_index[0][0], searched_grid_index[1][0]] = 1

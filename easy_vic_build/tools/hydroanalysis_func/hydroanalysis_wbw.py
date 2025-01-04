@@ -6,7 +6,7 @@ from whitebox_workflows import WbEnvironment, show
 from ..geo_func.format_conversion import *
 
 
-def hydroanalysis_wbw(workspace_dir, dem_level1_tif_path, create_stream=False):
+def hydroanalysis_wbw(workspace_dir, dem_level1_tif_path, create_stream=False, pourpoint_x_index=None, pourpoint_y_index=None, pourpoint_direction_code=None):
     # build flow direction based on wbw
     
     # env set
@@ -26,6 +26,9 @@ def hydroanalysis_wbw(workspace_dir, dem_level1_tif_path, create_stream=False):
 
     # flow direction
     flow_direction = wbe.d8_pointer(filled_dem, esri_pointer=True)
+    if pourpoint_x_index is not None:
+        flow_direction[pourpoint_y_index, pourpoint_x_index] = pourpoint_direction_code
+    
     wbe.write_raster(flow_direction, 'flow_direction.tif')
     # show(flow_direction, colorbar_kwargs={'label': 'flow direction (D8)'})
     

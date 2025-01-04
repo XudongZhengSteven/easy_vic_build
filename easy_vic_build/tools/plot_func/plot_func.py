@@ -11,7 +11,7 @@ import numpy as np
 from ..params_func.params_set import *
 from matplotlib.ticker import FuncFormatter, MultipleLocator, MaxNLocator
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter, LatitudeLocator
-plt.rcParams['font.family'] = 'Arial'
+# plt.rcParams['font.family'] = 'Arial'
 
 ## ------------------------ plot utilities ------------------------
 def set_xyticks(ax, x_locator_interval, y_locator_interval):
