@@ -22,7 +22,7 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 """ 
 
 def plot_basin_map():
-    case_name = "397_6km"
+    case_name = "636_6km"
     x_locator_interval = 0.3 # 0.1 # 0.3
     y_locator_interval = 0.2 # 0.1 # 0.2
     
@@ -36,7 +36,7 @@ def plot_basin_map():
     read_params_bool = True
     read_BasinMap_bool = True
     
-    hydroanalysis_for_basin_bool = False
+    hydroanalysis_for_basin_bool = True
     
     # hydroanalysis for BasinMap
     if hydroanalysis_for_basin_bool:

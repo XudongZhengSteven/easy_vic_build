@@ -26,9 +26,9 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 def test():
     # general set
-    basin_index = 670
+    basin_index = 580
     date_period = ["19980101", "20101231"]
-    case_name = "670_6km"
+    case_name = "580_6km"
     grid_res_level0=0.00833
     grid_res_level1=0.055
     grid_res_level2=0.125

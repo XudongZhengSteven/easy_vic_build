@@ -25,9 +25,9 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 def test():
     # general set
-    basin_index = 670
+    basin_index = 636
     date_period = ["19980101", "20101231"]
-    case_name = "670_12km"
+    case_name = "636_6km"
     
     # build dir
     evb_dir = Evb_dir()
