@@ -29,7 +29,7 @@ if __name__ == "__main__":
     case_name = f"{basin_index}_{model_scale}"
     
     # build dir
-    evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
+    evb_dir = Evb_dir()  # cases_home="/home/xdz/code/VIC_xdz/cases"
     evb_dir.builddir(case_name)
     remove_and_mkdir(evb_dir.RVICParam_dir)
     evb_dir.builddir(case_name)

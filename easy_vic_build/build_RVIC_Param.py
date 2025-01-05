@@ -6,18 +6,16 @@ import numpy as np
 import pandas as pd
 import rasterio.transform
 import rasterio
-import shutil
 from copy import deepcopy
 from .tools.params_func.createParametersDataset import createFlowDirectionFile
-from .tools.utilities import check_and_mkdir, remove_and_mkdir, read_cfg_to_dict
-from .tools.hydroanalysis_func import create_dem, hydroanalysis_arcpy, hydroanalysis_wbw, create_flow_distance
+from .tools.utilities import read_cfg_to_dict
 from .tools.decoractors import clock_decorator
 from .tools.uh_func import create_uh
 from .tools.geo_func.search_grids import *
 from configparser import ConfigParser
 
 
-def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset,
+def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1,
                            ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
                            cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50}):
     # cp domain.nc to RVICParam_dir
@@ -37,13 +35,12 @@ def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, domai
     
     
 @clock_decorator
-def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset,
-                   flowdirection_kwargs={"reverse_lat": True, "stream_acc_threshold": 100.0, "flow_direction_pkg": "wbw", "crs_str": "EPSG:4326"},
+def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,
                    ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
                    cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50}):    
 
     # buildRVICParam_general
-    buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset, flowdirection_kwargs, ppf_kwargs, uh_params, cfg_params)
+    buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, ppf_kwargs, uh_params, cfg_params)
     
     # build rvic parameters
     from rvic.parameters import parameters

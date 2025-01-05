@@ -59,8 +59,8 @@ class dataProcess_VIC_level0(dataProcess_base):
         self.basin_shp.plot(ax=ax, **basin_shp_kwargs_all)
         
         boundary_x_y = self.boundary_grids_edge_x_y
-        ax.set_xlim(boundary_x_y[0], boundary_x_y[1])
-        ax.set_ylim(boundary_x_y[2], boundary_x_y[3])
+        ax.set_xlim(boundary_x_y[0], boundary_x_y[2])
+        ax.set_ylim(boundary_x_y[1], boundary_x_y[3])
         
         return fig, ax
     
@@ -85,8 +85,8 @@ class dataProcess_VIC_level0(dataProcess_base):
         self.basin_shp.plot(ax=ax, **basin_shp_kwargs_all)
         
         boundary_x_y = self.boundary_grids_edge_x_y
-        ax.set_xlim(boundary_x_y[0], boundary_x_y[1])
-        ax.set_ylim(boundary_x_y[2], boundary_x_y[3])
+        ax.set_xlim(boundary_x_y[0], boundary_x_y[2])
+        ax.set_ylim(boundary_x_y[1], boundary_x_y[3])
         
         return fig, ax
         

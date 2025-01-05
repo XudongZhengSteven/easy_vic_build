@@ -9,9 +9,10 @@ from easy_vic_build.build_GlobalParam import buildGlobalParam
 
 
 if __name__ == "__main__":
-    basin_index = 106
+    basin_index = 397
+    model_scale = "12km"
+    case_name = f"{basin_index}_{model_scale}"
     date_period = ["19980101", "20101231"]
-    case_name = "106_3km"
     
     # build dir
     evb_dir = Evb_dir()

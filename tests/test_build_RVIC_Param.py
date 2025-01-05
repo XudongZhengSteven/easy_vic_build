@@ -7,7 +7,7 @@ sys.path.append("../easy_vic_build")
 from easy_vic_build.build_RVIC_Param import *
 from easy_vic_build.build_dpc import readdpc
 from easy_vic_build import Evb_dir
-from easy_vic_build.tools.utilities import readParam, readDomain
+from easy_vic_build.tools.utilities import readParam, readDomain, remove_and_mkdir
 
 """
 general information:
@@ -23,21 +23,19 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 """ 
 
 if __name__ == "__main__":
-    basin_index = 670
+    basin_index = 397
+    model_scale = "12km"
     date_period = ["19980101", "20101231"]
-    case_name = "670_12km"
+    case_name = f"{basin_index}_{model_scale}"
     
     # build dir
-    evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
+    evb_dir = Evb_dir()  # cases_home="/home/xdz/code/VIC_xdz/cases"
     evb_dir.builddir(case_name)
     remove_and_mkdir(evb_dir.RVICParam_dir)
     evb_dir.builddir(case_name)
     
     # read dpc
     dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
-
-    # read domain
-    domain_dataset = readDomain(evb_dir)
     
     # read params
     params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
@@ -46,11 +44,10 @@ if __name__ == "__main__":
     evb_dir.arcpy_python_path = "C:\\Python27\\ArcGIS10.5\\python.exe"
     
     # build RVIC_Param
-    buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, domain_dataset,
+    buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1,
                            ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
                            cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50})
     
     # close
-    domain_dataset.close()
     params_dataset_level0.close()
     params_dataset_level1.close()

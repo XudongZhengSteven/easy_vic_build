@@ -23,14 +23,16 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 """ 
 
+scalemap = {"3km": 0.025, "6km": 0.055, "8km": 0.072, "12km": 0.11}
 
 def test():
     # general set
-    basin_index = 580
+    basin_index = 397
+    model_scale = "8km"
     date_period = ["19980101", "20101231"]
-    case_name = "580_6km"
+    case_name = f"{basin_index}_{model_scale}"
     grid_res_level0=0.00833
-    grid_res_level1=0.055
+    grid_res_level1=scalemap[model_scale]
     grid_res_level2=0.125
     
     # build dir
@@ -40,17 +42,16 @@ def test():
     # read shpfile and get basin_shp (Basins)
     basin_shp_all, basin_shp = read_one_HCDN_basin_shp(basin_index)
     
-    # first get the boundary from model scale, then create grid_shp for other scale
-    
-    # build grid_shp (Grids) for level1 (modeling scale) # TODO expand grid_shp for a grid around the edge to make sure the flow direction right assigned
+    # ================ first get the boundary from model scale, then create grid_shp for other scale ================
+    # build grid_shp (Grids) for level1 (modeling scale), expand_grids_num=1 to avoid 0 (edge) flow direction in hydroanalysis
     grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1, expand_grids_num=1)
+    _, _, _, boundary_grids_edge_x_y_level1 = grid_shp_level1.createBoundaryShp()
     
+    # build grid_shp for level0 and level2 based on the boundary of level1
+    grid_shp_lon_level0, grid_shp_lat_level0, grid_shp_level0 = createGridForBasin(basin_shp, grid_res_level0, boundary=boundary_grids_edge_x_y_level1)
+    grid_shp_lon_level2, grid_shp_lat_level2, grid_shp_level2 = createGridForBasin(basin_shp, grid_res_level2, boundary=boundary_grids_edge_x_y_level1)
     
-    
-    grid_shp_lon_level0, grid_shp_lat_level0, grid_shp_level0 = createGridForBasin(basin_shp, grid_res_level0)
-    grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1)
-    grid_shp_lon_level2, grid_shp_lat_level2, grid_shp_level2 = createGridForBasin(basin_shp, grid_res_level2)
-    
+    # ================ build dpc ================
     # build dpc
     dpc_VIC_level0 = dataProcess_VIC_level0(basin_shp, grid_shp_level0, grid_res_level0, date_period)
     dpc_VIC_level1 = dataProcess_VIC_level1(basin_shp, grid_shp_level1, grid_res_level1, date_period)

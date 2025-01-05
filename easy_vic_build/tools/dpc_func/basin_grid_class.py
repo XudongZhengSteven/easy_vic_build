@@ -73,7 +73,7 @@ def createBoundaryShp(grid_shp):
     boundary_point_center_shp = cgdf_point.createGDF_polygons(lon=[[boundary_x_min, boundary_x_max, boundary_x_max, boundary_x_min]],
                                            lat=[[boundary_y_max, boundary_y_max, boundary_y_min, boundary_y_min]],
                                            crs=grid_shp.crs)
-    boundary_point_center_x_y = [boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max]
+    boundary_point_center_x_y = [boundary_x_min, boundary_y_min, boundary_x_max, boundary_y_max]
     
     # boundary: grids edge
     boundary_x_min = min(grid_shp["geometry"].get_coordinates().x)
@@ -84,7 +84,7 @@ def createBoundaryShp(grid_shp):
     boundary_grids_edge_shp = cgdf_point.createGDF_polygons(lon=[[boundary_x_min, boundary_x_max, boundary_x_max, boundary_x_min]],
                                            lat=[[boundary_y_max, boundary_y_max, boundary_y_min, boundary_y_min]],
                                            crs=grid_shp.crs)
-    boundary_grids_edge_x_y = [boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max]
+    boundary_grids_edge_x_y = [boundary_x_min, boundary_y_min, boundary_x_max, boundary_y_max]
     
     return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y
 

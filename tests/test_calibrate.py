@@ -55,14 +55,15 @@ if __name__ == "__main__":
         pourpoint_direction_code = 128
         
         modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat)  # mask->1
+        buildPourPointFile(evb_dir, None, names=["pourpoint"], lons=[pourpoint_lon], lats=[pourpoint_lat])
         
-        params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
-        domain_dataset = readDomain(evb_dir)
-        modifyRVICParam_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat, pourpoint_direction_code, params_dataset_level1, domain_dataset,
-                                      reverse_lat=True, stream_acc_threshold=100.0, flow_direction_pkg="wbw", crs_str="EPSG:4326")
-        params_dataset_level0.close()
-        params_dataset_level1.close()
-        domain_dataset.close()
+        # params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
+        # domain_dataset = readDomain(evb_dir)
+        # modifyRVICParam_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat, pourpoint_direction_code, params_dataset_level1, domain_dataset,
+        #                               reverse_lat=True, stream_acc_threshold=100.0, flow_direction_pkg="wbw", crs_str="EPSG:4326")
+        # params_dataset_level0.close()
+        # params_dataset_level1.close()
+        # domain_dataset.close()
     
     # set GlobalParam_dict
     GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",

@@ -261,10 +261,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         # adjust ParamCFGFile
         rvic_param_cfg_params = {"VELOCITY": routing_params[0], "DIFFUSION": routing_params[1],
-                                 "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
                                  "OUTPUT_INTERVAL": self.rvic_OUTPUT_INTERVAL,
-                                 "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS,
-                                 "CELL_FLOWDAYS": uhbox_max_day}
+                                 "SUBSET_DAYS": self.rvic_SUBSET_DAYS,
+                                 "CELL_FLOWDAYS": uhbox_max_day,
+                                 "BASIN_FLOWDAYS": self.rvic_BASIN_FLOWDAYS}
         buildParamCFGFile(self.evb_dir, **rvic_param_cfg_params)
         
         # remove files

@@ -26,8 +26,8 @@ def set_xyticks(ax, x_locator_interval, y_locator_interval):
 
 
 def set_boundary(ax, boundary_x_y):
-    ax.set_xlim(boundary_x_y[0], boundary_x_y[1])
-    ax.set_ylim(boundary_x_y[2], boundary_x_y[3])
+    ax.set_xlim(boundary_x_y[0], boundary_x_y[2])
+    ax.set_ylim(boundary_x_y[1], boundary_x_y[3])
     
     
 def plotBackground(basin_shp, grid_shp, fig=None, ax=None):
