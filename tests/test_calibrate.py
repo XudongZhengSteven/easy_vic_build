@@ -25,17 +25,26 @@ basin set
 grid_res_level0=1km(0.00833)
 grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
-""" 
+
+397 12km
+    pourpoint_lon = -91.905
+    pourpoint_lat = 38.335
+
+397 6km
+    pourpoint_lon = -91.8225
+    pourpoint_lat = 38.3625
+
+"""
 
 if __name__ == "__main__":
     # make sure you have already prepare the basic params/information for running vic
     basin_index = 397
-    model_scale = "12km"
+    model_scale = "6km"
     date_period = ["19980101", "20071231"]
+    
     warmup_date_period = ["19980101", "19991231"]
     calibrate_date_period = ["20000101", "20071231"]
     case_name = f"{basin_index}_{model_scale}"
-    grid_res_level1 = 0.11
     
     # set evb_dir
     evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
@@ -50,9 +59,8 @@ if __name__ == "__main__":
     # modify: may need to modify the pourpoint and flow direction based on the acc
     modify_pourpoint_bool = True
     if modify_pourpoint_bool:
-        pourpoint_lon = -91.795
-        pourpoint_lat = 38.445
-        pourpoint_direction_code = 128
+        pourpoint_lon = -91.8225
+        pourpoint_lat = 38.3625
         
         modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat)  # mask->1
         buildPourPointFile(evb_dir, None, names=["pourpoint"], lons=[pourpoint_lon], lats=[pourpoint_lat])
@@ -66,7 +74,7 @@ if __name__ == "__main__":
         # domain_dataset.close()
     
     # set GlobalParam_dict
-    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",
+    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
                                     "SNOW_STEPS_PER_DAY": "24",
                                     "RUNOFF_STEPS_PER_DAY": "24",
                                     "STARTYEAR": str(date_period[0][:4]),

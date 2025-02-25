@@ -31,7 +31,7 @@ import math
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
-                 rvic_OUTPUT_INTERVAL=86400, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=3600,
+                 rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=60,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
         # *if parallel, uhbox_dt (rvic_OUTPUT_INTERVAL) should be same as VIC output (global param)
