@@ -53,7 +53,7 @@ hourly
 if __name__ == "__main__":
     # make sure you have already prepare the basic params/information for running vic
     basin_index = 397
-    model_scale = "12km"
+    model_scale = "6km"
     date_period = ["19980101", "20071231"]
     
     warmup_date_period = ["19980101", "19991231"]
@@ -74,8 +74,8 @@ if __name__ == "__main__":
     # modify: may need to modify the pourpoint and flow direction based on the acc
     modify_pourpoint_bool = True
     if modify_pourpoint_bool:
-        pourpoint_lon = -91.905
-        pourpoint_lat = 38.335
+        pourpoint_lon = -91.8225
+        pourpoint_lat = 38.3625
         
         modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat)  # mask->1
         buildPourPointFile(evb_dir, None, names=["pourpoint"], lons=[pourpoint_lon], lats=[pourpoint_lat])
