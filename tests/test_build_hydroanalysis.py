@@ -8,6 +8,7 @@ from easy_vic_build.build_RVIC_Param import *
 from easy_vic_build import Evb_dir
 from easy_vic_build.tools.utilities import readParam, readDomain
 from easy_vic_build.build_hydroanalysis import buildHydroanalysis
+from easy_vic_build.tools.utilities import remove_and_mkdir
 
 """
 general information:

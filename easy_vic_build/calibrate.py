@@ -453,4 +453,3 @@ def calibrate_VIC_SO(evb_dir):
     algParams = algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}
     save_path = os.path.join(evb_dir.CalibrateVIC_dir, "checkpoint.pkl")
     nsgaII_VIC = NSGAII_VIC_SO(algParams, save_path)
-    pass
