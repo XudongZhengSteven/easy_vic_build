@@ -30,8 +30,8 @@ import math
 
 class NSGAII_VIC_SO(NSGAII_Base):
     
-    def __init__(self, evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
-                 rvic_OUTPUT_INTERVAL=3600, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=60,
+    def __init__(self, evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, warmup_date_period, calibrate_date_period, verify_date_period,
+                 rvic_OUTPUT_INTERVAL=86400, rvic_BASIN_FLOWDAYS=50, rvic_SUBSET_DAYS=10, rvic_uhbox_dt=3600,
                  algParams={"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2},
                  save_path="checkpoint.pkl", reverse_lat=True, parallel=False):
         # *if parallel, uhbox_dt (rvic_OUTPUT_INTERVAL) should be same as VIC output (global param)
@@ -48,7 +48,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         # period
         self.date_period = date_period
+        self.warmup_date_period = warmup_date_period
         self.calibrate_date_period = calibrate_date_period
+        self.verify_date_period = verify_date_period
         
         # clear Param
         clearParam(self.evb_dir)
@@ -71,6 +73,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.routing_params_types = routing_params_types
         self.total_types = [item for lst in [g_types, uh_params_types, uh_params_types] for item in lst]
 
+        # set GlobalParam_dict
+        self.set_GlobalParam_dict()
+        
         # get obs
         self.get_obs()
         
@@ -93,6 +98,38 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         super().__init__(algParams, save_path)
     
+    def set_GlobalParam_dict(self):
+        GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",
+                                "SNOW_STEPS_PER_DAY": "24",
+                                "RUNOFF_STEPS_PER_DAY": "24",
+                                "STARTYEAR": str(self.warmup_date_period[0][:4]),
+                                "STARTMONTH": str(int(self.warmup_date_period[0][4:6])),
+                                "STARTDAY": str(int(self.warmup_date_period[0][6:])),
+                                "ENDYEAR": str(self.calibrate_date_period[1][:4]),
+                                "ENDMONTH": str(int(self.calibrate_date_period[1][4:6])),
+                                "ENDDAY": str(int(self.calibrate_date_period[1][6:])),
+                                "OUT_TIME_UNITS": "DAYS"},
+                    "Output": {"AGGFREQ": "NDAYS   1"},
+                    "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
+                    }
+        # perhaps it can be run at hourly scale
+        # GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
+        #                                 "SNOW_STEPS_PER_DAY": "24",
+        #                                 "RUNOFF_STEPS_PER_DAY": "24",
+        #                                 "STARTYEAR": str(warmup_date_period[0][:4]),
+        #                                 "STARTMONTH": str(int(warmup_date_period[0][4:6])),
+        #                                 "STARTDAY": str(int(warmup_date_period[0][6:])),
+        #                                 "ENDYEAR": str(calibrate_date_period[1][:4]),
+        #                                 "ENDMONTH": str(int(calibrate_date_period[1][4:6])),
+        #                                 "ENDDAY": str(int(calibrate_date_period[1][6:])),
+        #                                 "OUT_TIME_UNITS": "HOURS"},
+        #                     "Output": {"AGGFREQ": "NHOURS   1"},
+        #                     "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
+        #                     }
+        
+        # buildGlobalParam
+        buildGlobalParam(self.evb_dir, GlobalParam_dict)
+    
     def get_obs(self):
         self.obs = self.dpc_VIC_level1.basin_shp.streamflow.iloc[0]
         date = self.obs.loc[:, "date"]
@@ -101,6 +138,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.obs.index = pd.to_datetime(date)
     
     def get_sim(self):
+        # path
+        self.sim_fn = [fn for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
+        self.sim_path = os.path.join(self.evb_dir.VICResults_dir, self.sim_fn)
+            
         # sim_df
         sim_df = pd.DataFrame(columns=["time", "discharge(m3/s)"])
         
@@ -343,8 +384,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
             
             # run
             out_vic = self.run_vic()
-            self.sim_fn = [fn for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
-            self.sim_path = os.path.join(self.evb_dir.VICResults_dir, self.sim_fn)
+            # self.sim_fn = [fn for fn in os.listdir(self.evb_dir.VICResults_dir) if fn.endswith(".nc")][0]
+            # self.sim_path = os.path.join(self.evb_dir.VICResults_dir, self.sim_fn)
             
             # =============== run rvic offline ===============
             if self.parallel:
@@ -387,6 +428,51 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
         return (fitness, )
     
+    def simulate(self, ind, GlobalParam_dict):
+        # buildGlobalParam
+        buildGlobalParam(self.evb_dir, GlobalParam_dict)
+    
+        # =============== get ind ===============
+        params_g = ind[:-5]
+        uh_params = ind[-5:-2]
+        routing_params = ind[-2:]
+        
+        # type params
+        params_g = [self.g_types[i](params_g[i]) for i in range(len(params_g))]
+        uh_params = [self.uh_params_types[i](uh_params[i]) for i in range(len(uh_params))]
+        routing_params = [self.routing_params_types[i](routing_params[i]) for i in range(len(routing_params))]
+        
+        # =============== adjust vic params based on ind ===============
+        # adjust params_dataset_level0 based on params_g
+        print("============= building params_level0 =============")
+        params_dataset_level0 = self.adjust_vic_params_level0(params_g)
+
+        # adjust params_dataset_level1 based on params_dataset_level0
+        print("============= building params_level1 =============")
+        params_dataset_level1 = self.adjust_vic_params_level1(params_dataset_level0)
+        
+        # close
+        params_dataset_level0.close()
+        params_dataset_level1.close()
+        
+        # =============== adjust rvic params based on ind ===============
+        print("============= building rvic params =============")
+        self.adjust_rvic_params(uh_params, routing_params)
+        
+        # =============== run vic ===============
+        # clear VICResults_dir and VICLog_dir
+        remove_files(self.evb_dir.VICResults_dir)
+        remove_and_mkdir(self.evb_dir.VICLog_dir)
+        
+        # run
+        out_vic = self.run_vic()
+        
+        # get simulation
+        sim = self.get_sim()
+        
+        return sim
+        
+        
     def get_best_results(self):
         # get front
         front = self.history[-1][1][0][0]
@@ -394,8 +480,41 @@ class NSGAII_VIC_SO(NSGAII_Base):
         # get fitness
         print(f"current fitness: {front.fitness.values}")
         
-        # sim
-        fitness_cal_again = self.evaluate(front)
+        # GlobalParam_dict
+        GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",
+                                        "SNOW_STEPS_PER_DAY": "24",
+                                        "RUNOFF_STEPS_PER_DAY": "24",
+                                        "STARTYEAR": str(self.warmup_date_period[0][:4]),
+                                        "STARTMONTH": str(int(self.warmup_date_period[0][4:6])),
+                                        "STARTDAY": str(int(self.warmup_date_period[0][6:])),
+                                        "ENDYEAR": str(self.verify_date_period[1][:4]),
+                                        "ENDMONTH": str(int(self.verify_date_period[1][4:6])),
+                                        "ENDDAY": str(int(self.verify_date_period[1][6:])),
+                                        "OUT_TIME_UNITS": "DAYS"},
+                            "Output": {"AGGFREQ": "NDAYS   1"},
+                            "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE", "OUT_SOIL_MOIST", "OUT_EVAP"]}
+                            }
+        
+        # simulate
+        sim = self.simulate(front, GlobalParam_dict)
+        
+        # get result
+        sim_cali = sim.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
+        obs_cali = self.obs.loc[self.calibrate_date_period[0]: self.calibrate_date_period[1], "discharge(m3/s)"]
+        
+        sim_verify = sim.loc[self.verify_date_period[0]: self.verify_date_period[1], "discharge(m3/s)"]
+        obs_verify = self.obs.loc[self.verify_date_period[0]: self.verify_date_period[1], "discharge(m3/s)"]
+        
+        cali_result = pd.concat([sim_cali, obs_cali], axis=1)
+        cali_result.columns = ["sim_cali discharge(m3/s)", "obs_cali discharge(m3/s)"]
+        
+        verify_result = pd.concat([sim_verify, obs_verify], axis=1)
+        verify_result.columns = ["sim_verify discharge(m3/s)", "obs_verify discharge(m3/s)"]
+        
+        cali_result.to_csv(os.path.join(self.evb_dir.VICResults_dir, "cali_result.csv"))
+        verify_result.to_csv(os.path.join(self.evb_dir.VICResults_dir, "verify_result.csv"))
+        
+        return cali_result, verify_result
     
     @staticmethod
     def operatorMate(parent1, parent2, low, up):

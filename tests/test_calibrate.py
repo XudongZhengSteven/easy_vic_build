@@ -30,9 +30,23 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
     pourpoint_lon = -91.905
     pourpoint_lat = 38.335
 
+397 8km
+    pourpoint_lon = -91.836
+    pourpoint_lat = 38.34
+
 397 6km
     pourpoint_lon = -91.8225
     pourpoint_lat = 38.3625
+
+daily
+    rvic_OUTPUT_INTERVAL = 86400
+    rvic_uhbox_dt = 3600
+    MODEL_STEPS_PER_DAY = 1
+
+hourly
+    rvic_OUTPUT_INTERVAL = 3600
+    rvic_uhbox_dt = 60
+    MODEL_STEPS_PER_DAY = 24
 
 """
 
@@ -44,6 +58,7 @@ if __name__ == "__main__":
     
     warmup_date_period = ["19980101", "19991231"]
     calibrate_date_period = ["20000101", "20071231"]
+    verify_date_period = ["20080101", "20101231"]
     case_name = f"{basin_index}_{model_scale}"
     
     # set evb_dir
@@ -73,53 +88,20 @@ if __name__ == "__main__":
         # params_dataset_level1.close()
         # domain_dataset.close()
     
-    # set GlobalParam_dict
-    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
-                                    "SNOW_STEPS_PER_DAY": "24",
-                                    "RUNOFF_STEPS_PER_DAY": "24",
-                                    "STARTYEAR": str(date_period[0][:4]),
-                                    "STARTMONTH": str(int(date_period[0][4:6])),
-                                    "STARTDAY": str(int(date_period[0][6:])),
-                                    "ENDYEAR": str(date_period[1][:4]),
-                                    "ENDMONTH": str(int(date_period[1][4:6])),
-                                    "ENDDAY": str(int(date_period[1][6:])),
-                                    "OUT_TIME_UNITS": "DAYS"},
-                        "Output": {"AGGFREQ": "NDAYS   1"},
-                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
-                        }
-    
-    # perhaps it can be run at hourly scale
-    # GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
-    #                                 "SNOW_STEPS_PER_DAY": "24",
-    #                                 "RUNOFF_STEPS_PER_DAY": "24",
-    #                                 "STARTYEAR": str(date_period[0][:4]),
-    #                                 "STARTMONTH": str(int(date_period[0][4:6])),
-    #                                 "STARTDAY": str(int(date_period[0][6:])),
-    #                                 "ENDYEAR": str(date_period[1][:4]),
-    #                                 "ENDMONTH": str(int(date_period[1][4:6])),
-    #                                 "ENDDAY": str(int(date_period[1][6:])),
-    #                                 "OUT_TIME_UNITS": "HOURS"},
-    #                     "Output": {"AGGFREQ": "NHOURS   1"},
-    #                     "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
-    #                     }
-    
-    # buildGlobalParam
-    buildGlobalParam(evb_dir, GlobalParam_dict)
-    
     # nsgaII set
     algParams = {"popSize": 20, "maxGen": 200, "cxProb": 0.7, "mutateProb": 0.2}
-    nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, calibrate_date_period,
+    nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, warmup_date_period, calibrate_date_period, verify_date_period,
                                     algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
     
     # calibrate
-    calibrate_bool = True
+    calibrate_bool = False
     if calibrate_bool:
         nsgaII_VIC_SO.run()
     
     # get best results
-    get_best_results_bool = False
+    get_best_results_bool = True
     if get_best_results_bool:
-        nsgaII_VIC_SO.get_best_results()
+        cali_result, verify_result = nsgaII_VIC_SO.get_best_results()
     
     # read cp
     # state = readCalibrateCp(evb_dir)
