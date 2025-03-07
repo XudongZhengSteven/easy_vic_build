@@ -9,6 +9,7 @@ description = "An open-source Python package for VIC model deployment."
 authors = [
     { name = "XudongZheng", email = "zhengxd@sehemodel.club" }
 ]
+requires-python = ">=3.9"
 
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -31,21 +32,19 @@ dependencies = [
     "netcdf4>=1.7.1",  # Processing NetCDF format data
     "xarray>=2023.6.0",  # Processing multidimensional arrays and NetCDF format data
     "rasterio>=1.4.1",  # Processing gridded raster datasets
-    "folium>=0.18.0",  # Interactive maps
     "cartopy>=0.23.0",  # Spatial plotting and spatial reference
     "shapely>=2.0.6",  # Geometric operations
-    "pyproj>=3.6.1",  # Coordinate transformations
-    "pyogrio>=0.10.0",  # Geospatial data I/O
+    "nco>=1.1.2",  # pynco
 
     # Hydrological analysis
     "whitebox-workflows>=1.3.3",  # Hydrological analysis
-    "rvic>=1.1.1",  # Routing model
+    #     "rvic>=1.1.1",  # Routing model
 
     # Optimization
     "deap>=1.4.1",  # Evolutionary computation framework
 
     # Optional features
-    "nco>=1.1.2",  # NetCDF Operators
+    # "nco>=1.1.2",  # NetCDF Operators
 ]
 
 [project.optional-dependencies]
@@ -63,4 +62,4 @@ where = ["easy_vic_build"]
 exclude = ["cases*"]
 
 [tool.setuptools.package-data]
-mypackage = ["data/*"]
+easy_vic_build = ["data/*"]

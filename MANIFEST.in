@@ -1,0 +1,2 @@
+include easy_vic_build/*.py
+recursive-include easy_vic_build/*/*.py
