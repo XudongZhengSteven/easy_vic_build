@@ -3,15 +3,14 @@ import os
 __version__ = "1.0.0"
 __author__ = "Xudong Zheng"
 __email__ = "zhengxd@sehemodel.club"
+__all__ = ["Evb_dir"]
 
-from . import tools
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
-
 
 class Evb_dir:
     # easy_vic_build dir
     __package_dir__ = "./easy_vic_build" # os.path.abspath(os.path.dirname(__file__))
-    __data_dir__ = os.path.join(__package_dir__, "data")
+    __data_dir__ = os.path.join(os.path.dirname(__package_dir__), "data")
     
     def __init__(self, cases_home=None):
         self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
