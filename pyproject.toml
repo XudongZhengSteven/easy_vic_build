@@ -7,7 +7,7 @@ name = "easy_vic_build"
 version = "1.0.0"
 description = "An open-source Python package for VIC model deployment."
 authors = [
-    { name = "Xudong Zheng", email = "z786909151@163.com, zhengxd@sehemodel.club" }
+    { name = "XudongZheng", email = "zhengxd@sehemodel.club" }
 ]
 
 readme = "README.md"
@@ -55,11 +55,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://example.com"
-Repository = "https://github.com/username/mypackage"
+Homepage = "https://github.com/XudongZhengSteven/easy_vic_build"
+Repository = "https://github.com/XudongZhengSteven/easy_vic_build"
 
 [tool.setuptools.packages.find]
 where = ["easy_vic_build"]
+exclude = ["cases*"]
 
 [tool.setuptools.package-data]
 mypackage = ["data/*"]
