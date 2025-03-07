@@ -1,26 +1,12 @@
-# TODO
+# easy_vic_build
 
-## build_RVIC_Param.py
+This is a open-source Python package for VIC model deployment
 
-1. buildFlowDirection_wbw in linux
+## Install
 
-2. build
+pip install easy_vic_build
 
-3. RVIC modified
-
-## calibrate.py
-
-1. Spotpy
-
-2. DEAP
-
-## build_MeteForcing_nco.py
-
-1. totally on linux
-
-## build_GlobalParam.py
-
-1. check the params
+## Usage
 
 ## python pkgs workflow
 
