@@ -30,7 +30,8 @@ dependencies = [
     # Geospatial data processing
     "geopandas>=0.10.1",  # Geospatial data processing and geometric operations
     "netcdf4>=1.7.1",  # Processing NetCDF format data
-    "xarray>=2023.6.0",  # Processing multidimensional arrays and NetCDF format data
+    "cfgrib>=0.9.10.3",  # cfgrib
+    "xarray>=2023.8.0",  # Processing multidimensional arrays and NetCDF format data
     "rasterio>=1.4.1",  # Processing gridded raster datasets
     "cartopy>=0.23.0",  # Spatial plotting and spatial reference
     "shapely>=2.0.6",  # Geometric operations

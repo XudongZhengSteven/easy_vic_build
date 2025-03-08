@@ -331,8 +331,8 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot_month=False, save_original=Fa
         width = dataset.width
         height = dataset.height
         
-        umd_lon = [dataset.xy(0, i)[0] for i in range(width)]
-        umd_lat = [dataset.xy(i, 0)[1] for i in range(height)]
+        umd_lon = np.array([dataset.xy(0, i)[0] for i in range(width)])
+        umd_lat = np.array([dataset.xy(i, 0)[1] for i in range(height)])
         # test: row, column = dataset.index(umd_lon[103], umd_lat[95])
         
     umd_lat_res = (max(umd_lat) - min(umd_lat)) / (len(umd_lat) - 1)

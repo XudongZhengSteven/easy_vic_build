@@ -5,8 +5,25 @@ This is a open-source Python package for VIC model deployment
 ## Install
 
 pip install easy_vic_build
+pip install easy_vic_build[nco]
+pip install easy_vic_build[rvic]
+pip install easy_vic_build[nco_rvic]
+
+or
+pip install .whl
+pip install .whl[nco]
+pip install .whl[rvic]
+pip install .whl[nco_rvic]
 
 ## Usage
+
+0. install
+1. build_dpc
+2. build_Domain
+3. build_Param
+4. build_hydroanalysis
+5. build_MeteForcing (or build_MeteForcing_nco)
+6.
 
 ## python pkgs workflow
 

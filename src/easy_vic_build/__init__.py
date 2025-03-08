@@ -1,6 +1,6 @@
 import os
 
-__version__ = "1.0.0"
+__version__ = "0.1.0"
 __author__ = "Xudong Zheng"
 __email__ = "zhengxd@sehemodel.club"
 __all__ = ["Evb_dir"]
@@ -9,26 +9,31 @@ from .tools.utilities import check_and_mkdir, remove_and_mkdir
 from . import build_dpc, build_GlobalParam, build_hydroanalysis, build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, warmup
 from . import tools
 
+# Configuration
+
+print("--------------- EVB Configuration ---------------")
+
 try:
     import nco
     HAS_NCO = True
-except ImportError:
+except:
     HAS_NCO = False
     
 if HAS_NCO:
     from . import build_MeteForcing_nco as build_MeteForcing
-    print("Using MeteForcing with nco")
+    print("NCO: Using MeteForcing with nco")
 else:
     from . import build_mete_forcing
-    print("Using MeteForcing without nco")
+    print("NCO: Using MeteForcing without nco")
 
 try:
     from rvic.parameters import parameters as rvic_parameters
     HAS_RVIC = True
-except ImportError:
-    print("environment do not have rvic, but you can still use easy_vic_build")
+except:
+    print("RVIC: environment do not have rvic, but you can still use easy_vic_build")
     HAS_RVIC = False
 
+print("-------------------------------------------------")
 
 class Evb_dir:
     # easy_vic_build dir
@@ -36,7 +41,9 @@ class Evb_dir:
     __data_dir__ = os.path.join(os.path.dirname(__package_dir__), "data")
     
     def __init__(self, cases_home=None):
-        self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
+        # self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
+        self._cases_dir = cases_home if cases_home is not None else os.path.join(os.getcwd(), "cases")
+        
         self._MeteForcing_src_dir = ""
         self._MeteForcing_src_suffix = ".nc"
         self._forcing_prefix = "forcings"
@@ -76,6 +83,8 @@ class Evb_dir:
         self._case_name = case_name
         
         # set dir
+        check_and_mkdir(self._cases_dir)
+        
         self._case_dir = os.path.join(self._cases_dir, case_name)
         check_and_mkdir(self._case_dir)
         

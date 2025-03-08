@@ -5,14 +5,15 @@ import os
 from tqdm import *
 import numpy as np
 from netCDF4 import Dataset
-from .....easy_vic_build import HAS_NCO
+try:
+    import nco
+    from nco.custom import Limit, LimitSingle
+    HAS_NCO = True
+except:
+    HAS_NCO = False
 
 def clipNLDAS(dir_name, xmin, xmax, ymin, ymax):
     if HAS_NCO:
-        # nco
-        from nco import Nco
-        from nco.custom import Limit, LimitSingle
-        
         # general
         home = "E:/data/hydrometeorology/NLDAS/NLDAS2_Primary_Forcing_Data_subset_0.125"
         suffix = ".nc4"
@@ -35,9 +36,9 @@ def clipNLDAS(dir_name, xmin, xmax, ymin, ymax):
             dst_path = os.path.join(dir_path, dst_fname)
             
             nco.ncks(input=src_path, output=dst_path, options=opt)
-    
+
     else:
-        raise ImportError("environment do not have nco")
+        raise ImportError("no nco for Extract_NLDAS")
 
 
 # def clip_basin(basin_index):

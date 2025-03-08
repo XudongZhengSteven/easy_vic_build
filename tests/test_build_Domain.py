@@ -2,8 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-import sys
-sys.path.append("../easy_vic_build")
+# import sys
+# sys.path.append("../easy_vic_build")
 from easy_vic_build.bulid_Domain import buildDomain
 from easy_vic_build.build_dpc import readdpc
 from easy_vic_build import Evb_dir
@@ -23,12 +23,12 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 def test():
     # general set
-    basin_index = 397
-    model_scale = "12km"
+    basin_index = 213
+    model_scale = "6km"
     case_name = f"{basin_index}_{model_scale}"
     
     # build dir
-    evb_dir = Evb_dir() # cases_home="/home/xdz/code/VIC_xdz/cases"
+    evb_dir = Evb_dir("./examples") # cases_home="/home/xdz/code/VIC_xdz/cases"
     evb_dir.builddir(case_name)
     
     # read dpc

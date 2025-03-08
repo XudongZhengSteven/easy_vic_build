@@ -2,8 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-import sys
-sys.path.append("../easy_vic_build")
+# import sys
+# sys.path.append("../easy_vic_build")
 from easy_vic_build.tools.utilities import readdpc
 from easy_vic_build import Evb_dir
 from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
@@ -21,16 +21,17 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 """ 
 
+scalemap = {"3km": 0.025, "6km": 0.055, "8km": 0.072, "12km": 0.11}
 
 def test():
     # general set
-    basin_index = 397
-    model_scale = "12km"
-    date_period = ["19980101", "20101231"]
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
     case_name = f"{basin_index}_{model_scale}"
     
     # build dir
-    evb_dir = Evb_dir()
+    evb_dir = Evb_dir("./examples")
     evb_dir.builddir(case_name)
     
     # read dpc
@@ -43,10 +44,10 @@ def test():
     # set linux_share_temp_dir
     evb_dir.linux_share_temp_dir = "F:\\Linux\\C_VirtualBox_Share\\temp"
     
-    # build MeteForcingnco: step=1
-    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-    #                     step=1, reverse_lat=True, check_search=False,
-    #                     year_re_exp=r"\d{4}.nc4")
+    # build MeteForcingnco: step=1 # TODO nco出了问题
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=1, reverse_lat=True, check_search=False,
+                        year_re_exp=r"\d{4}.nc4")
     
     # go to linux, run combineYearly.py
     
@@ -56,9 +57,9 @@ def test():
     #                     year_re_exp=r"\d{4}.nc4")
     
     # build MeteForcingnco: step=3
-    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-                        step=3, reverse_lat=True, check_search=False,
-                        year_re_exp=r"\d{4}.nc4")
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+    #                     step=3, reverse_lat=True, check_search=False,
+    #                     year_re_exp=r"\d{4}.nc4")
     
     # build MeteForcingnco: step=4, resample
     # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,

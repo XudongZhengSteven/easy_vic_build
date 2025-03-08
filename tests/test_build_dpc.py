@@ -2,8 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-import sys
-sys.path.append("../easy_vic_build")
+# import sys
+# sys.path.append("../easy_vic_build")
 from easy_vic_build.build_dpc import builddpc
 from easy_vic_build.tools.dpc_func.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 from easy_vic_build import Evb_dir
@@ -27,16 +27,16 @@ scalemap = {"3km": 0.025, "6km": 0.055, "8km": 0.072, "12km": 0.11}
 
 def test():
     # general set
-    basin_index = 397
-    model_scale = "8km"
-    date_period = ["19980101", "20101231"]
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
     case_name = f"{basin_index}_{model_scale}"
     grid_res_level0=0.00833
     grid_res_level1=scalemap[model_scale]
     grid_res_level2=0.125
     
     # build dir
-    evb_dir = Evb_dir()
+    evb_dir = Evb_dir(cases_home="./examples")
     evb_dir.builddir(case_name)
     
     # read shpfile and get basin_shp (Basins)

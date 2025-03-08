@@ -23,12 +23,13 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import math
-from ..easy_vic_build import HAS_RVIC
 # plt.show(block=True)
 
-if HAS_RVIC:
+try:
     from rvic.parameters import parameters as rvic_parameters
-    from rvic.convolution import convolution
+    HAS_RVIC = True
+except:
+    HAS_RVIC = False
     
 class NSGAII_VIC_SO(NSGAII_Base):
     
@@ -323,7 +324,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         if HAS_RVIC:
             rvic_parameters(param_cfg_file_dict, numofproc=1)
         else:
-            raise ImportError("environment do not have rvic")
+            raise ImportError("no rvic for calibrate")
         
         # modify rout_param_path in GlobalParam
         globalParam = GlobalParamParser()

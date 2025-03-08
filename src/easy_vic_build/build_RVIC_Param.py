@@ -12,11 +12,12 @@ from .tools.utilities import read_cfg_to_dict, read_rvic_param_cfg_file_referenc
 from .tools.decoractors import clock_decorator
 from .tools.uh_func import create_uh
 from .tools.geo_func.search_grids import *
-from ..easy_vic_build import HAS_RVIC
 from configparser import ConfigParser
-
-if HAS_RVIC:
+try:
     from rvic.parameters import parameters as rvic_parameters
+    HAS_RVIC = True
+except:
+    HAS_RVIC = False
 
 
 def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1,
@@ -48,10 +49,11 @@ def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,
     
     # build rvic parameters
     param_cfg_file_dict = read_cfg_to_dict(evb_dir.rvic_param_cfg_file_path)
+    
     if HAS_RVIC:
         rvic_parameters(param_cfg_file_dict, numofproc=1)
     else:
-        print("environment do not have rvic")
+        raise ImportError("no rvic for buildRVICParam")
 
 
 def buildFlowDirectionFile(evb_dir, params_dataset_level1):

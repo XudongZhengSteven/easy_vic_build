@@ -1,8 +1,8 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-import sys
-sys.path.append("../easy_vic_build")
+# import sys
+# sys.path.append("../easy_vic_build")
 from easy_vic_build.tools.utilities import readdpc, readDomain
 from easy_vic_build import Evb_dir
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
@@ -25,13 +25,13 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 def test():
     # general set
-    basin_index = 397
-    model_scale = "12km"
-    date_period = ["19980101", "20101231"]
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
     case_name = f"{basin_index}_{model_scale}"
     
     # build dir
-    evb_dir = Evb_dir()  # cases_home="/home/xdz/code/VIC_xdz/cases"
+    evb_dir = Evb_dir(cases_home="./examples")  # cases_home="/home/xdz/code/VIC_xdz/cases"
     evb_dir.builddir(case_name)
     
     # read dpc
