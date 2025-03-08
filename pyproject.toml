@@ -64,3 +64,6 @@ exclude = ["cases*"]
 
 [tool.setuptools.package-data]
 easy_vic_build = ["data/*"]
+
+[tool.setuptools.include_package_data]
+include = true

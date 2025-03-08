@@ -445,8 +445,9 @@ def buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=
         params_dataset_level1.variables["Cv"][i, :, :] = grid_array_i_veg_Cv
     
     # read veg params, veg_params_json is a lookup_table
-    with open(evb_dir.veg_param_json_path, 'r') as f:
-        veg_params_json = json.load(f)
+    veg_params_json = read_veg_param_json()
+    # with open(evb_dir.veg_param_json_path, 'r') as f:
+    #     veg_params_json = json.load(f)
         # veg_params_json = veg_params_json["classAttributes"]
         # veg_keys = [v["class"] for v in veg_params_json]
         # veg_params = [v["properties"] for v in veg_params_json]

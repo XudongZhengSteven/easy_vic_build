@@ -8,7 +8,7 @@ import rasterio.transform
 import rasterio
 from copy import deepcopy
 from .tools.params_func.createParametersDataset import createFlowDirectionFile
-from .tools.utilities import read_cfg_to_dict
+from .tools.utilities import read_cfg_to_dict, read_rvic_param_cfg_file_reference, read_rvic_conv_cfg_file_reference
 from .tools.decoractors import clock_decorator
 from .tools.uh_func import create_uh
 from .tools.geo_func.search_grids import *
@@ -144,9 +144,10 @@ def buildUHBOXFile(evb_dir, createUH_func=create_uh.createGUH, **kwargs):
 def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86400, SUBSET_DAYS=10, CELL_FLOWDAYS=2, BASIN_FLOWDAYS=50):
     # ====================== build CFGFile ======================
     # read reference cfg
-    param_cfg_file = ConfigParser()
-    param_cfg_file.optionxform = str  # import to keep case
-    param_cfg_file.read(evb_dir.rvic_param_cfg_file_reference_path)
+    # param_cfg_file = ConfigParser()
+    # param_cfg_file.optionxform = str  # import to keep case
+    # param_cfg_file.read(evb_dir.rvic_param_cfg_file_reference_path)
+    param_cfg_file = read_rvic_param_cfg_file_reference()
     
     # set cfg
     param_cfg_file.set("OPTIONS", 'CASEID', evb_dir._case_name)
@@ -170,9 +171,10 @@ def buildParamCFGFile(evb_dir, VELOCITY=1.5, DIFFUSION=800.0, OUTPUT_INTERVAL=86
 def buildConvCFGFile(evb_dir, RUN_STARTDATE="1979-09-01-00", DATL_FILE="rasm_sample_runoff.nc", PARAM_FILE_PATH="sample_rasm_parameters.nc"):
     # ====================== build CFGFile ======================
     # read reference cfg
-    conv_cfg_file = ConfigParser()
-    conv_cfg_file.optionxform = str  # import to keep case
-    conv_cfg_file.read(evb_dir.rvic_conv_cfg_file_reference_path)
+    # conv_cfg_file = ConfigParser()
+    # conv_cfg_file.optionxform = str  # import to keep case
+    # conv_cfg_file.read(evb_dir.rvic_conv_cfg_file_reference_path)
+    conv_cfg_file = read_rvic_conv_cfg_file_reference()
     
     # set cfg
     conv_cfg_file.set("OPTIONS", 'CASEID', evb_dir._case_name)

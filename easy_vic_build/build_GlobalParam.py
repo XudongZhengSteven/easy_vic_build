@@ -3,6 +3,7 @@
 # email: z786909151@163.com
 import os
 from .tools.params_func.GlobalParamParser import GlobalParamParser
+from .tools.utilities import read_globalParam_reference
 import re
 
 def buildGlobalParam(evb_dir, GlobalParam_dict):
@@ -15,8 +16,9 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
     
     ## ====================== build GlobalParam ======================
     # read GlobalParam_reference parser
-    globalParam = GlobalParamParser()
-    globalParam.load(evb_dir.globalParam_reference_path)
+    globalParam = read_globalParam_reference()
+    # globalParam = GlobalParamParser()
+    # globalParam.load(evb_dir.globalParam_reference_path)
     
     # set default param (dir and path)
     globalParam.set("Forcing", "FORCING1", os.path.join(evb_dir.MeteForcing_dir, f"{evb_dir.forcing_prefix}."))

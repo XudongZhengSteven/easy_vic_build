@@ -3,8 +3,8 @@
 # email: z786909151@163.com
 from typing import Any
 from .dpc_base import dataProcess_base
-from .readdataIntoGrids_interface import *
-from .readdataIntoBasins_interface import *
+from .readdataIntoGrids_interface import readDataIntoGrids_API
+from .readdataIntoBasins_interface import readDataIntoBasins_API
 import matplotlib.pyplot as plt
 from  .basin_grid_class import *
 from ..utilities import *
@@ -35,8 +35,8 @@ class dataProcess_VIC_level0(dataProcess_base):
         self.boundary_point_center_shp, self.boundary_point_center_x_y, self.boundary_grids_edge_shp, self.boundary_grids_edge_x_y = self.grid_shp.createBoundaryShp()
         
     def readDataIntoGrids(self):
-        self.grid_shp = readSrtmDEMIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot=False, save_original=False, check_search=False)
-        self.grid_shp = readCONUSSoilIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_layer=False, save_original=False, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readSrtmDEMIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot=False, save_original=False, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readCONUSSoilIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_layer=False, save_original=False, check_search=False)
     
     def plot(self, fig=None, ax=None, grid_shp_kwargs=dict(), grid_shp_point_kwargs=dict(), basin_shp_kwargs=dict()):
         # plot grid_shp and basin_shp
@@ -94,18 +94,18 @@ class dataProcess_VIC_level0(dataProcess_base):
 class dataProcess_VIC_level1(dataProcess_VIC_level0):
         
     def readDataIntoBasins(self):
-        self.basin_shp = readCAMELSStreamflowIntoBasins(self.basin_shp, read_dates=self.date_period)
+        self.basin_shp = readDataIntoBasins_API.readCAMELSStreamflowIntoBasins(self.basin_shp, read_dates=self.date_period)
     
     def readBasinAttribute(self):
-        self.basin_shp = readCAMELSAttributeIntoBasins(self.basin_shp, k_list=None)
+        self.basin_shp = readDataIntoBasins_API.readCAMELSAttributeIntoBasins(self.basin_shp, k_list=None)
         
     def readDataIntoGrids(self):
-        self.grid_shp = readERA5_SoilTemperatureIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_layer=False, check_search=False)
-        self.grid_shp = readNLDAS_annual_PIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot=False, check_search=False)
-        self.grid_shp = readUMDLandCoverIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot=False, save_original=True, check_search=False)
-        self.grid_shp = readMODISBSAIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_month=False, save_original=True, check_search=False)
-        self.grid_shp = readMODISNDVIIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_month=False, save_original=True, check_search=False)
-        self.grid_shp = readMODISLAIIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_month=False, save_original=True, check_search=False)       
+        self.grid_shp = readDataIntoGrids_API.readERA5_SoilTemperatureIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_layer=False, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readNLDAS_annual_PIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot=False, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readUMDLandCoverIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot=False, save_original=True, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readMODISBSAIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_month=False, save_original=True, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readMODISNDVIIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_month=False, save_original=True, check_search=False)
+        self.grid_shp = readDataIntoGrids_API.readMODISLAIIntoGrids(self.grid_shp, grid_shp_res=self._grid_res, plot_month=False, save_original=True, check_search=False)       
 
 
 class dataProcess_VIC_level2(dataProcess_VIC_level0):

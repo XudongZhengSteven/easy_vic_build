@@ -15,7 +15,9 @@ from .params_func.GlobalParamParser import GlobalParamParser
 from .params_func.params_set import *
 from .dpc_func.basin_grid_class import HCDNBasins
 from configparser import ConfigParser
-
+import io
+import pkgutil
+import json
 
 ## ------------------------ general utilities ------------------------
 def check_and_mkdir(dir):
@@ -87,6 +89,61 @@ def checkGaugeBasin(basinShp, usgs_streamflow, BasinAttribute, forcingDaymetGaug
     # id_forcingDatmet - id_HCDN_shp: {6846500, 6775500, 3448942, 1150900, 2081113, 9535100}
 
 ## ------------------------ read function ------------------------
+def read_NLDAS_annual_prec():
+    with io.BytesIO(pkgutil.get_data(__package__, "data/NLDAS_annual_prec.npy")) as f:
+        data_annual_P = np.load(f)
+    
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/annual_prec_lon.txt')) as f:
+        annual_P_lon = np.loadtxt(f)
+    
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/annual_prec_lat.txt')) as f:
+        annual_P_lat = np.loadtxt(f)
+    
+    return data_annual_P, annual_P_lon, annual_P_lat
+
+def read_globalParam_reference():
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/global_param_reference.txt')) as f:
+        globalParam = GlobalParamParser()
+        globalParam = globalParam.load(f)
+    return globalParam
+
+def read_rvic_param_cfg_file_reference():
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/rvic.parameters.reference.cfg')) as f:
+        cfg_file = ConfigParser()
+        cfg_file.optionxform = str
+        cfg_file.read(f)
+    
+    return cfg_file
+
+def read_rvic_conv_cfg_file_reference():
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/rvic.convolution.reference.cfg')) as f:
+        cfg_file = ConfigParser()
+        cfg_file.optionxform = str
+        cfg_file.read(f)
+    
+    return cfg_file
+
+def read_veg_type_attributes_umd():
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/veg_type_attributes_umd.json')) as f:
+        veg_params_json = json.load(f)
+        veg_params_json = veg_params_json["classAttributes"]
+        veg_keys = [int(v["class"]) for v in veg_params_json]
+        veg_params = [v["properties"] for v in veg_params_json]
+        veg_params_json = dict(zip(veg_keys, veg_params))
+    return veg_params_json
+
+def read_NLDAS_Veg_monthly():
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/NLDAS_Veg_monthly.xlsx')) as f:
+        NLDAS_Veg_monthly_veg_rough = pd.read_excel(f, sheet_name=0, skiprows=2)
+        NLDAS_Veg_monthly_veg_displacement = pd.read_excel(f, sheet_name=1, skiprows=2)
+        
+    return NLDAS_Veg_monthly_veg_rough, NLDAS_Veg_monthly_veg_displacement
+
+def read_veg_param_json():
+    with io.BytesIO(pkgutil.get_data('easy_vic_build', 'data/veg_type_attributes_umd_updated.json')) as f:
+        veg_params_json = json.load(f)
+    return veg_params_json
+
 def readHCDNGrids(home="E:\\data\\hydrometeorology\\CAMELS"):
     grid_shp_label_path = os.path.join(home, "map", "grids_0_25_label.shp")
     grid_shp_label = gpd.read_file(grid_shp_label_path)
