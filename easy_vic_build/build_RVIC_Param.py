@@ -14,6 +14,13 @@ from .tools.uh_func import create_uh
 from .tools.geo_func.search_grids import *
 from configparser import ConfigParser
 
+try:
+    from rvic.parameters import parameters as rvic_parameters
+    HAS_RVIC = True
+except ImportError:
+    print("environment do not have rvic")
+    HAS_RVIC = False
+
 
 def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1,
                            ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
@@ -43,9 +50,11 @@ def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,
     buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1, ppf_kwargs, uh_params, cfg_params)
     
     # build rvic parameters
-    from rvic.parameters import parameters
     param_cfg_file_dict = read_cfg_to_dict(evb_dir.rvic_param_cfg_file_path)
-    parameters(param_cfg_file_dict, numofproc=1)
+    if HAS_RVIC:
+        rvic_parameters(param_cfg_file_dict, numofproc=1)
+    else:
+        print("environment do not have rvic")
 
 
 def buildFlowDirectionFile(evb_dir, params_dataset_level1):

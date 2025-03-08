@@ -9,31 +9,35 @@ from netCDF4 import Dataset
 
 def clipNLDAS(dir_name, xmin, xmax, ymin, ymax):
     # nco
-    from nco import Nco
-    from nco.custom import Limit, LimitSingle
-    
-    # general
-    home = "E:/data/hydrometeorology/NLDAS/NLDAS2_Primary_Forcing_Data_subset_0.125"
-    suffix = ".nc4"
-    
-    src_fnames = np.array([n for n in os.listdir(os.path.join(home, "data")) if n.endswith(suffix)], dtype=str)
-    src_paths = np.array([os.path.join(home, "data", n) for n in src_fnames], dtype=str)
-
-    # make dir
-    dir_path = os.path.join(home, dir_name)
-    if not os.path.isdir(dir_path):
-        os.mkdir(dir_path)
-    
-    # loop for clip files
-    nco = Nco()
-    opt = [Limit("lon", xmin, xmax), Limit("lat", ymin, ymax)]
-    for i in tqdm(range(len(src_fnames))):
-        src_fname = src_fnames[i]
-        src_path = src_paths[i]
-        dst_fname = src_fname
-        dst_path = os.path.join(dir_path, dst_fname)
+    try:
+        from nco import Nco
+        from nco.custom import Limit, LimitSingle
         
-        nco.ncks(input=src_path, output=dst_path, options=opt)
+        # general
+        home = "E:/data/hydrometeorology/NLDAS/NLDAS2_Primary_Forcing_Data_subset_0.125"
+        suffix = ".nc4"
+        
+        src_fnames = np.array([n for n in os.listdir(os.path.join(home, "data")) if n.endswith(suffix)], dtype=str)
+        src_paths = np.array([os.path.join(home, "data", n) for n in src_fnames], dtype=str)
+
+        # make dir
+        dir_path = os.path.join(home, dir_name)
+        if not os.path.isdir(dir_path):
+            os.mkdir(dir_path)
+        
+        # loop for clip files
+        nco = Nco()
+        opt = [Limit("lon", xmin, xmax), Limit("lat", ymin, ymax)]
+        for i in tqdm(range(len(src_fnames))):
+            src_fname = src_fnames[i]
+            src_path = src_paths[i]
+            dst_fname = src_fname
+            dst_path = os.path.join(dir_path, dst_fname)
+            
+            nco.ncks(input=src_path, output=dst_path, options=opt)
+            
+    except ImportError:
+        print("environment do not have nco")
 
 
 # def clip_basin(basin_index):

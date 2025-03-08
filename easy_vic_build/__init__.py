@@ -6,8 +6,21 @@ __email__ = "zhengxd@sehemodel.club"
 __all__ = ["Evb_dir"]
 
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
-from . import build_dpc, build_GlobalParam, build_hydroanalysis, build_MeteForcing, build_MeteForcing_nco, build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, warmup
+from . import build_dpc, build_GlobalParam, build_hydroanalysis, build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, warmup
 from . import tools
+
+try:
+    import nco
+    HAS_NCO = True
+except ImportError:
+    HAS_NCO = False
+    
+if HAS_NCO:
+    from . import build_MeteForcing_nco as build_MeteForcing
+    print("Using MeteForcing with nco")
+else:
+    from . import build_mete_forcing
+    print("Using MeteForcing without nco")
 
 class Evb_dir:
     # easy_vic_build dir

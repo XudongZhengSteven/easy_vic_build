@@ -18,6 +18,14 @@ from easy_vic_build.tools.params_func.params_set import default_g_list, g_bounda
 import os
 from configparser import ConfigParser
 
+try:
+    from rvic.parameters import parameters as rvic_parameters
+    HAS_RVIC = True
+except ImportError:
+    print("environment do not have rvic")
+    HAS_RVIC = False
+
+
 """
 general information:
 
@@ -143,7 +151,6 @@ if __name__ == "__main__":
         
         # step 2
         elif build_rvic_param_bool == 2:
-            from rvic.parameters import parameters
             
             RVICParam_dir = evb_dir.RVICParam_dir
             param_cfg_file_path = os.path.join(RVICParam_dir, "rvic.parameters.cfg")
@@ -152,7 +159,10 @@ if __name__ == "__main__":
             param_cfg_file.read(param_cfg_file_path)
             
             param_cfg_file_dict = {section: dict(param_cfg_file.items(section)) for section in param_cfg_file.sections()}
-            parameters(param_cfg_file_dict, numofproc=1)
+            if HAS_RVIC:
+                rvic_parameters(param_cfg_file_dict, numofproc=1)
+            else:
+                raise ImportError("environment do not have rvic")
         
         # build RVIC_Param
         # buildRVICParam(dpc_VIC_level1, evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0,

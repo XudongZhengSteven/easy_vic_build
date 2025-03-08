@@ -22,12 +22,17 @@ from .tools.decoractors import clock_decorator
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-from rvic.parameters import parameters
-from rvic.convolution import convolution
 import math
 # plt.show(block=True)
 
-
+try:
+    from rvic.parameters import parameters as rvic_parameters
+    from rvic.convolution import convolution
+    HAS_RVIC = True
+except ImportError:
+    print("environment do not have rvic")
+    HAS_RVIC = False
+    
 class NSGAII_VIC_SO(NSGAII_Base):
     
     def __init__(self, evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, warmup_date_period, calibrate_date_period, verify_date_period,
@@ -318,7 +323,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         # build rvic_params
         param_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_param_cfg_file_path)
-        parameters(param_cfg_file_dict, numofproc=1)
+        if HAS_RVIC:
+            rvic_parameters(param_cfg_file_dict, numofproc=1)
+        else:
+            raise ImportError("environment do not have rvic")
         
         # modify rout_param_path in GlobalParam
         globalParam = GlobalParamParser()
