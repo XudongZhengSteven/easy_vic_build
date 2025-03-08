@@ -4,7 +4,7 @@
 
 import sys
 sys.path.append("../easy_vic_build")
-from easy_vic_build import Evb_dir
+from easy_vic_build import Evb_dir, HAS_RVIC
 from easy_vic_build.bulid_Domain import buildDomain
 from easy_vic_build.build_dpc import readdpc, readParam, readDomain
 from easy_vic_build.build_dpc import builddpc
@@ -18,12 +18,8 @@ from easy_vic_build.tools.params_func.params_set import default_g_list, g_bounda
 import os
 from configparser import ConfigParser
 
-try:
+if HAS_RVIC:
     from rvic.parameters import parameters as rvic_parameters
-    HAS_RVIC = True
-except ImportError:
-    print("environment do not have rvic")
-    HAS_RVIC = False
 
 
 """

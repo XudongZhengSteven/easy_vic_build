@@ -22,6 +22,14 @@ else:
     from . import build_mete_forcing
     print("Using MeteForcing without nco")
 
+try:
+    from rvic.parameters import parameters as rvic_parameters
+    HAS_RVIC = True
+except ImportError:
+    print("environment do not have rvic, but you can still use easy_vic_build")
+    HAS_RVIC = False
+
+
 class Evb_dir:
     # easy_vic_build dir
     __package_dir__ = "./easy_vic_build" # os.path.abspath(os.path.dirname(__file__))

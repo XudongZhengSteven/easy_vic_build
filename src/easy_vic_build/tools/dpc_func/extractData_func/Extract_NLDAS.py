@@ -5,11 +5,11 @@ import os
 from tqdm import *
 import numpy as np
 from netCDF4 import Dataset
-
+from .....easy_vic_build import HAS_NCO
 
 def clipNLDAS(dir_name, xmin, xmax, ymin, ymax):
-    # nco
-    try:
+    if HAS_NCO:
+        # nco
         from nco import Nco
         from nco.custom import Limit, LimitSingle
         
@@ -35,9 +35,9 @@ def clipNLDAS(dir_name, xmin, xmax, ymin, ymax):
             dst_path = os.path.join(dir_path, dst_fname)
             
             nco.ncks(input=src_path, output=dst_path, options=opt)
-            
-    except ImportError:
-        print("environment do not have nco")
+    
+    else:
+        raise ImportError("environment do not have nco")
 
 
 # def clip_basin(basin_index):

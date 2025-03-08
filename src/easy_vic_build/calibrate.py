@@ -23,15 +23,12 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import math
+from ..easy_vic_build import HAS_RVIC
 # plt.show(block=True)
 
-try:
+if HAS_RVIC:
     from rvic.parameters import parameters as rvic_parameters
     from rvic.convolution import convolution
-    HAS_RVIC = True
-except ImportError:
-    print("environment do not have rvic")
-    HAS_RVIC = False
     
 class NSGAII_VIC_SO(NSGAII_Base):
     
