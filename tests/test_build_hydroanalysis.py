@@ -2,8 +2,6 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-# import sys
-# sys.path.append("../easy_vic_build")
 from easy_vic_build.build_RVIC_Param import *
 from easy_vic_build import Evb_dir
 from easy_vic_build.tools.utilities import readParam, readDomain
@@ -46,6 +44,7 @@ if __name__ == "__main__":
     
     # build Hydroanalysis
     buildHydroanalysis(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, flow_direction_pkg="wbw", crs_str="EPSG:4326",
+                       create_stream=True,
                        pourpoint_lon=None, pourpoint_lat=None, pourpoint_direction_code=None)
     
     # close

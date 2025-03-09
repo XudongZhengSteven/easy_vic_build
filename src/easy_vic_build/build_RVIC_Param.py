@@ -23,11 +23,9 @@ except:
 def buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1,
                            ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600, "tp": 1.4, "mu": 5.0, "m": 3.0, "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
                            cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50}):
-    # cp domain.nc to RVICParam_dir
-    # copy_domain(evb_dir)
-    
-    # buildFlowDirectionFile
-    buildFlowDirectionFile(evb_dir, params_dataset_level1)
+    # general RVICParam before using rvic_parameters
+    # buildRVICFlowDirectionFile
+    buildRVICFlowDirectionFile(evb_dir, params_dataset_level1)
     
     # buildPourPointFile
     buildPourPointFile(evb_dir, dpc_VIC_level1, **ppf_kwargs)
@@ -56,7 +54,7 @@ def buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,
         raise ImportError("no rvic for buildRVICParam")
 
 
-def buildFlowDirectionFile(evb_dir, params_dataset_level1):
+def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
     # ====================== set dir and path ======================
     # set path
     flow_direction_file_path = os.path.join(evb_dir.RVICParam_dir, "flow_direction_file.nc")
@@ -197,8 +195,8 @@ def modifyRVICParam_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat, pourpoi
     # modify PourPointFile
     buildPourPointFile(evb_dir, None, names=["pourpoint"], lons=[pourpoint_lon], lats=[pourpoint_lat])
 
-    # modify buildFlowDirectionFile, modify 0 direction (edge) of pourpoint to pourpoint_direction_code
-    buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=reverse_lat, stream_acc_threshold=stream_acc_threshold, flow_direction_pkg=flow_direction_pkg, crs_str=crs_str,
+    # modify buildRVICFlowDirectionFile, modify 0 direction (edge) of pourpoint to pourpoint_direction_code
+    buildRVICFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=reverse_lat, stream_acc_threshold=stream_acc_threshold, flow_direction_pkg=flow_direction_pkg, crs_str=crs_str,
                            pourpoint_lon=pourpoint_lon, pourpoint_lat=pourpoint_lat, pourpoint_direction_code=pourpoint_direction_code)
 
 

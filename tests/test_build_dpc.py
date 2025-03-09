@@ -2,8 +2,6 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-# import sys
-# sys.path.append("../easy_vic_build")
 from easy_vic_build.build_dpc import builddpc
 from easy_vic_build.tools.dpc_func.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
 from easy_vic_build import Evb_dir

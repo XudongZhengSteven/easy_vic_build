@@ -1,8 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-import sys
-sys.path.append("../easy_vic_build")
+
 from easy_vic_build import Evb_dir
 from easy_vic_build.tools.utilities import *
 from easy_vic_build.tools.plot_func.plot_func import *
@@ -25,18 +24,9 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 """ 
 
-def read_data_for_plot(case_name):
-    # set evb_dir
-    evb_dir = Evb_dir()
-    evb_dir.builddir(case_name)
-    
-    # read and build bool
-    hydroanalysis_for_basin_bool = False
-    
-    # hydroanalysis for BasinMap
-    if hydroanalysis_for_basin_bool:
-        hydroanalysis_for_basin(evb_dir)
-        
+scalemap = {"3km": 0.025, "6km": 0.055, "8km": 0.072, "12km": 0.11}
+
+def read_data_for_plot(evb_dir):
     # read
     dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
     domain_dataset = readDomain(evb_dir)
@@ -52,15 +42,9 @@ def close_data_for_plot(domain_dataset, params_dataset_level0, params_dataset_le
     params_dataset_level1.close()
     
     
-def plot_basin_map():
-    basin_index = 397
-    model_scale = "8km"
-    case_name = f"{basin_index}_{model_scale}"
-    x_locator_interval = 0.3 # 0.1 # 0.3
-    y_locator_interval = 0.2 # 0.1 # 0.2
-    
+def plot_basin_map(evb_dir, x_locator_interval=0.3, y_locator_interval=0.2):
     # read
-    evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, domain_dataset, params_dataset_level0, params_dataset_level1, stream_gdf = read_data_for_plot(case_name)
+    evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, domain_dataset, params_dataset_level0, params_dataset_level1, stream_gdf = read_data_for_plot(evb_dir)
     
     # plot
     fig_dict, ax_dict = plot_Basin_map(dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, stream_gdf, x_locator_interval=x_locator_interval, y_locator_interval=y_locator_interval, fig=None, ax=None)
@@ -71,55 +55,18 @@ def plot_basin_map():
     
     # close
     close_data_for_plot(domain_dataset, params_dataset_level0, params_dataset_level1)
-
-
-def plot_basin_map_location():
-    # case_names
-    cases_names = ["397_12km", "213_12km", "670_12km"]
-    
-    # set evb_dir
-    evb_dir1 = Evb_dir()
-    evb_dir1.builddir(cases_names[0])
-    
-    evb_dir2 = Evb_dir()
-    evb_dir2.builddir(cases_names[1])
-    
-    evb_dir3 = Evb_dir()
-    evb_dir3.builddir(cases_names[2])
-    
-    # read
-    dpc_VIC_level0_case1, dpc_VIC_level1_case1, dpc_VIC_level2_case1 = readdpc(evb_dir1)
-    dpc_VIC_level0_case2, dpc_VIC_level1_case2, dpc_VIC_level2_case2 = readdpc(evb_dir2)
-    dpc_VIC_level0_case3, dpc_VIC_level1_case3, dpc_VIC_level2_case3 = readdpc(evb_dir3)
-    
-    # plot location
-    fig, ax = plot_US_basemap(fig=None, ax=None, set_xyticks_bool=False)
-    dpc_VIC_level1_case1.basin_shp.plot(ax=ax, facecolor="#8ECFC9", edgecolor="k", linewidth=0.3, alpha=1)
-    dpc_VIC_level1_case2.basin_shp.plot(ax=ax, facecolor="#FFBE7A", edgecolor="k", linewidth=0.3, alpha=1)
-    dpc_VIC_level1_case3.basin_shp.plot(ax=ax, facecolor="#FA7F6F", edgecolor="k", linewidth=0.3, alpha=1)
-    
-    # save
-    fig.savefig(os.path.join(Evb_dir.__package_dir__, "cases/fig_Basin_map_location.tiff"), dpi=300)
-    
-    # finer xticks
-    fig, ax = plot_US_basemap(fig=None, ax=None, set_xyticks_bool=True, x_locator_interval=1, y_locator_interval=1)
-    dpc_VIC_level1_case1.basin_shp.plot(ax=ax, facecolor="#8ECFC9", edgecolor="k", linewidth=0.3, alpha=1)
-    dpc_VIC_level1_case2.basin_shp.plot(ax=ax, facecolor="#FFBE7A", edgecolor="k", linewidth=0.3, alpha=1)
-    dpc_VIC_level1_case3.basin_shp.plot(ax=ax, facecolor="#FA7F6F", edgecolor="k", linewidth=0.3, alpha=1)
     
 
-def plot_basin_map_combine():
-    basin_index = 397
-    model_scale = "12km"
-    case_name = f"{basin_index}_{model_scale}"
-    US_extent = [-125, 24.5, -66.5, 50.5]
-
+def plot_basin_map_combine(evb_dir, figsize=(12, 8), grid_kwarg={"left": 0.06, "right": 0.99, "bottom": 0.05, "top": 0.98, "hspace": 0.1, "wspace": 0.15}, 
+                           ax1_box_aspect_factor=1,
+                           x_locator_interval_landsurface=0.47, y_locator_interval_landsurface=0.5,
+                           x_locator_interval_grid=0.24, y_locator_interval_grid=0.3):
     # ------------ read ------------
-    evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, domain_dataset, params_dataset_level0, params_dataset_level1, stream_gdf = read_data_for_plot(case_name)
+    evb_dir, dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, domain_dataset, params_dataset_level0, params_dataset_level1, stream_gdf = read_data_for_plot(evb_dir)
     
     # ------------ plot ------------
-    fig = plt.figure(figsize=(12, 8))
-    gs = gridspec.GridSpec(2, 4, figure=fig, left=0.06, right=0.99, bottom=0.05, top=0.98, hspace=0.1)  # wspace=0.15, , 
+    fig = plt.figure(figsize=figsize)
+    gs = gridspec.GridSpec(2, 4, figure=fig, **grid_kwarg)
     ax1 = plt.subplot(gs[0, 0], projection=ccrs.PlateCarree())
     
     ax2 = plt.subplot(gs[0, 1])
@@ -127,16 +74,12 @@ def plot_basin_map_combine():
     ax4 = plt.subplot(gs[1, 0])
     ax5 = plt.subplot(gs[1, 1])
     
-    # general set
-    x_locator_interval_landsurface = 0.47
-    y_locator_interval_landsurface = 0.5
-    x_locator_interval_grid = 0.24
-    y_locator_interval_grid = 0.3
-    
     # plot US
     fig, ax1 = plot_US_basemap(fig=fig, ax=ax1, set_xyticks_bool=True, x_locator_interval=8, y_locator_interval=8, yticks_rotation=90)
-    ax1.plot(dpc_VIC_level1.basin_shp.lon_cen, dpc_VIC_level1.basin_shp.lat_cen, "r*", markersize=10, mec="k", mew=1, zorder=5)  # location
-    ax1.set_aspect('equal', adjustable='datalim')
+    ax1.plot(dpc_VIC_level1.basin_shp.lon_cen.values[0], dpc_VIC_level1.basin_shp.lat_cen.values[0], "r*", markersize=10, mec="k", mew=1, zorder=50)  # location
+    zoom_center(ax1, dpc_VIC_level1.basin_shp.lon_cen.values[0], dpc_VIC_level1.basin_shp.lat_cen.values[0], zoom_factor=2)
+    set_ax_box_aspect(ax1, ax1_box_aspect_factor)
+    # ax1.set_aspect('equal', adjustable='datalim')
     
     # plot dem
     dpc_VIC_level0.grid_shp.plot(ax=ax2, column="SrtmDEM_mean_Value", alpha=1, legend=False, colormap="terrain", zorder=1,
@@ -202,7 +145,24 @@ def plot_basin_map_combine():
     
     
 if __name__ == "__main__":
-    # plot_basin_map()
-    # plot_basin_map_location()
-    plot_basin_map_combine()
+    # general set
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
+    case_name = f"{basin_index}_{model_scale}"
+
+    # build dir
+    evb_dir = Evb_dir(cases_home="./examples")
+    evb_dir.builddir(case_name)
+    
+    # hydroanalysis for BasinMap
+    hydroanalysis_for_basin_bool = False
+    if hydroanalysis_for_basin_bool:
+        hydroanalysis_for_basin(evb_dir)
+    
+    # plot_basin_map
+    plot_basin_map(evb_dir, x_locator_interval=0.3, y_locator_interval=0.2)
+    
+    # plot_basin_map_combine
+    plot_basin_map_combine(evb_dir, figsize=(18, 8), grid_kwarg={"left": 0.06, "right": 0.99, "bottom": 0.05, "top": 0.98, "hspace": 0.01, "wspace": 0.1}, ax1_box_aspect_factor=0.8)
     

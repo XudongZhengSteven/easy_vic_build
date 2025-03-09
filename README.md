@@ -22,8 +22,12 @@ pip install .whl[nco_rvic]
 2. build_Domain
 3. build_Param
 4. build_hydroanalysis
-5. build_MeteForcing (or build_MeteForcing_nco)
-6.
+5. plot_Basin_map (do hydroanalysis_for_basin first)
+6. build_MeteForcing (or build_MeteForcing_nco)
+7. build_RVIC_Param
+8. build_GlobalParam
+9. calibrate
+10. plot_VIC_result
 
 ## python pkgs workflow
 

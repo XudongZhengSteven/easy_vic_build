@@ -62,7 +62,7 @@ def buildHydroanalysis(evb_dir, params_dataset_level1, domain_dataset, reverse_l
         
         # build flow direction based on wbw
         out = hydroanalysis_wbw.hydroanalysis_wbw(workspace_dir, dem_level1_tif_path, pourpoint_x_index=pourpoint_x_index, pourpoint_y_index=pourpoint_y_index, pourpoint_direction_code=pourpoint_direction_code)
-        
+
         # cp data from workspace to RVICParam_dir
         shutil.copy(os.path.join(workspace_dir, "flow_direction.tif"), flow_direction_path)
         shutil.copy(os.path.join(workspace_dir, "flow_acc.tif"), flow_acc_path)

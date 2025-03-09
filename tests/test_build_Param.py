@@ -1,8 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-# import sys
-# sys.path.append("../easy_vic_build")
+
 from easy_vic_build.tools.utilities import readdpc, readDomain
 from easy_vic_build import Evb_dir
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1

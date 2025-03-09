@@ -61,10 +61,21 @@ class GlobalParamParser:
         """ Get a parameter value from a section """
         return self.sections.get(section_name, {})[param_name]
     
-    def load(self, filepath, header_lines=5):
+    def load(self, file_or_path, header_lines=5):
         """ Load the configuration from a file """
+        # read
+        if isinstance(file_or_path, (str, bytes)):
+            file = open(file_or_path, 'r')
+            should_close = True
+        elif hasattr(file_or_path, "read"):
+            file = file_or_path
+            should_close = False
+        else:
+            raise ValueError("file_or_path must be a file path or a file-like object")
+        
         # read and parse
-        with open(filepath, 'r') as file:
+        # with open(filepath, 'r') as file:
+        try:
             for _ in range(header_lines):
                 self.header.append(file.readline().strip())
             
@@ -89,6 +100,9 @@ class GlobalParamParser:
                     param_name = match.group(1).strip()
                     param_value = match.group(2).strip()
                     self.set(current_section, param_name, param_value)
+        finally:
+            if should_close:
+                file.close()
     
     def write(self, file):
         """ Save the GlobalParam back to a file """

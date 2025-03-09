@@ -105,24 +105,24 @@ def read_NLDAS_annual_prec():
     return data_annual_P, annual_P_lon, annual_P_lat
 
 def read_globalParam_reference():
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/global_param_reference.txt')) as f:
+    with io.StringIO(pkgutil.get_data(top_package, 'data/global_param_reference.txt').decode("utf-8")) as f:
         globalParam = GlobalParamParser()
-        globalParam = globalParam.load(f)
+        globalParam.load(f)
     return globalParam
 
 def read_rvic_param_cfg_file_reference():
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/rvic.parameters.reference.cfg')) as f:
+    with io.StringIO(pkgutil.get_data(top_package, 'data/rvic.parameters.reference.cfg').decode("utf-8")) as f:
         cfg_file = ConfigParser()
         cfg_file.optionxform = str
-        cfg_file.read(f)
-    
+        cfg_file.read_file(f)
+
     return cfg_file
 
 def read_rvic_conv_cfg_file_reference():
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/rvic.convolution.reference.cfg')) as f:
+    with io.StringIO(pkgutil.get_data(top_package, 'data/rvic.convolution.reference.cfg').decode("utf-8")) as f:
         cfg_file = ConfigParser()
         cfg_file.optionxform = str
-        cfg_file.read(f)
+        cfg_file.read_file(f)
     
     return cfg_file
 

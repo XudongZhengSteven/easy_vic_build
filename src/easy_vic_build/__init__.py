@@ -16,15 +16,10 @@ print("--------------- EVB Configuration ---------------")
 try:
     import nco
     HAS_NCO = True
+    print("NCO: Using MeteForcing with nco")
 except:
     HAS_NCO = False
-    
-if HAS_NCO:
-    from . import build_MeteForcing_nco as build_MeteForcing
-    print("NCO: Using MeteForcing with nco")
-else:
-    from . import build_mete_forcing
-    print("NCO: Using MeteForcing without nco")
+    print("NCO: Using MeteForcing without nco")   
 
 try:
     from rvic.parameters import parameters as rvic_parameters

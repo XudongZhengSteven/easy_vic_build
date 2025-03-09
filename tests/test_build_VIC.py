@@ -2,8 +2,6 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-import sys
-sys.path.append("../easy_vic_build")
 from easy_vic_build import Evb_dir
 from easy_vic_build.bulid_Domain import buildDomain
 from easy_vic_build.build_dpc import readdpc, readParam, readDomain
@@ -13,7 +11,7 @@ from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
 from easy_vic_build.build_MeteForcing import buildMeteForcing
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import scaling_level0_to_level1
-from easy_vic_build.build_RVIC_Param import copy_domain, buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
+from easy_vic_build.build_RVIC_Param import copy_domain, buildRVICFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile
 from easy_vic_build.tools.params_func.params_set import default_g_list, g_boundary
 import os
 from configparser import ConfigParser
@@ -134,8 +132,8 @@ if __name__ == "__main__":
             # cp domain
             copy_domain(evb_dir)
             
-            # buildFlowDirectionFile
-            buildFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0)
+            # buildRVICFlowDirectionFile
+            buildRVICFlowDirectionFile(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, stream_acc_threshold=100.0)
             
             # buildPourPointFile
             buildPourPointFile(dpc_VIC_level1, evb_dir)

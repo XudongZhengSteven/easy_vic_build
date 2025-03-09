@@ -99,10 +99,10 @@ def get_UMD_LULC_cmap():
     return cmap, norm, ticks, ticks_position, colorlist, colorlevel
   
 
-def format_lon(lon):
+def format_lon(lon, pos):
     return f"{abs(lon):.1f}°W" if lon < 0 else f"{abs(lon):.1f}°E"
 
-def format_lat(lat):
+def format_lat(lat, pos):
     return f"{abs(lat):.1f}°S" if lat < 0 else f"{abs(lat):.1f}°N"
 
 def rotate_yticks(ax, yticks_rotation=0):
@@ -130,6 +130,18 @@ def set_boundary(ax, boundary_x_y):
     ax.set_xlim(boundary_x_y[0], boundary_x_y[2])
     ax.set_ylim(boundary_x_y[1], boundary_x_y[3])
     
+def zoom_center(ax, x_center, y_center, zoom_factor=2):
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+
+    x_range = (xlim[1] - xlim[0]) / zoom_factor
+    y_range = (ylim[1] - ylim[0]) / zoom_factor
+
+    ax.set_xlim(x_center - x_range / 2, x_center + x_range / 2)
+    ax.set_ylim(y_center - y_range / 2, y_center + y_range / 2)
+    
+def set_ax_box_aspect(ax, hw_factor=1):
+    ax.set_box_aspect(hw_factor)
     
 def plotBackground(basin_shp, grid_shp, fig=None, ax=None):
     if not ax:
@@ -924,8 +936,8 @@ def plot_params(params_dataset):
     
     xticks = list(range(params_dataset.variables["infilt"].shape[1]))
     yticks = list(range(params_dataset.variables["infilt"].shape[0]))
-    xticks_labels = [format_lon(lon) for lon in params_dataset.variables["lon"][:]]
-    yticks_labels = [format_lat(lat) for lat in params_dataset.variables["lat"][:]]
+    xticks_labels = [format_lon(lon, 0) for lon in params_dataset.variables["lon"][:]]
+    yticks_labels = [format_lat(lat, 0) for lat in params_dataset.variables["lat"][:]]
     yticks_labels.reverse()
     
     [ax.set_xticks(xticks[::int(len(xticks)/4)], xticks_labels[::int(len(xticks)/4)], fontfamily="Arial", fontsize=10) for ax in axes_flatten]

@@ -2,8 +2,6 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-# import sys
-# sys.path.append("../easy_vic_build")
 from easy_vic_build.bulid_Domain import buildDomain
 from easy_vic_build.build_dpc import readdpc
 from easy_vic_build import Evb_dir

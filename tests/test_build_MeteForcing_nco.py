@@ -2,11 +2,10 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-# import sys
-# sys.path.append("../easy_vic_build")
 from easy_vic_build.tools.utilities import readdpc
 from easy_vic_build import Evb_dir
 from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
+import shutil, os
 
 """
 general information:
@@ -44,10 +43,15 @@ def test():
     # set linux_share_temp_dir
     evb_dir.linux_share_temp_dir = "F:\\Linux\\C_VirtualBox_Share\\temp"
     
-    # build MeteForcingnco: step=1 # TODO nco出了问题
-    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-                        step=1, reverse_lat=True, check_search=False,
-                        year_re_exp=r"\d{4}.nc4")
+    # cp combineYearly.py to share_temp_home
+    combineYearly_py_path = "F:\\research\\Research\\easy_vic_build\\easy_vic_build\\scripts\\linux_scripts\\combineYearly.py"
+    if not os.path.exists(os.path.join(evb_dir.linux_share_temp_dir, "combineYearly.py")):
+        shutil.copy(combineYearly_py_path, os.path.join(evb_dir.linux_share_temp_dir, "combineYearly.py"))
+    
+    # build MeteForcingnco: step=1
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+    #                     step=1, reverse_lat=True, check_search=False,
+    #                     year_re_exp=r"\d{4}.nc4")
     
     # go to linux, run combineYearly.py
     
@@ -57,9 +61,9 @@ def test():
     #                     year_re_exp=r"\d{4}.nc4")
     
     # build MeteForcingnco: step=3
-    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-    #                     step=3, reverse_lat=True, check_search=False,
-    #                     year_re_exp=r"\d{4}.nc4")
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=3, reverse_lat=True, check_search=False,
+                        year_re_exp=r"\d{4}.nc4")
     
     # build MeteForcingnco: step=4, resample
     # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,

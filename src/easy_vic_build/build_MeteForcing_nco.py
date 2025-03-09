@@ -393,7 +393,7 @@ def buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
     MeteForcing_dir = evb_dir.MeteForcing_dir
     MeteForcing_clip_dir = os.path.join(MeteForcing_dir, "clip")
     MeteForcing_combineYearly_dir = os.path.join(MeteForcing_dir, "combineYearly")
-    combineYearly_py_path = os.path.join(evb_dir.__package_dir__, "linux_scripts\\combineYearly.py")
+    # combineYearly_py_path = os.path.join(evb_dir.__package_dir__, "linux_scripts\\combineYearly.py")
     
     linux_share_temp_dir = evb_dir.linux_share_temp_dir
     check_and_mkdir(linux_share_temp_dir)
@@ -411,10 +411,10 @@ def buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
         shutil.move(MeteForcing_clip_dir, linux_share_temp_dir)
         
         # -------------------- cp combineYearly.py to share_temp_home --------------------
-        shutil.copy(combineYearly_py_path, os.path.join(linux_share_temp_dir, "combineYearly.py"))
+        # shutil.copy(combineYearly_py_path, os.path.join(linux_share_temp_dir, "combineYearly.py"))
         
         # -------------------- cd to share_temp_home and run combineYearly.py --------------------
-        #* cd to share_temp_home (go to Linux): run combineYearly.py
+        #* cd to share_temp_home (go to Linux): run combineYearly.py (python combineYearly.py ./)
         
     elif step == 2:
     # -------------------- formationForcing: regrid, formation --------------------

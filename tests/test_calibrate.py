@@ -2,13 +2,11 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-import sys
-sys.path.append("../easy_vic_build")
 from easy_vic_build import Evb_dir
 from easy_vic_build.build_GlobalParam import buildGlobalParam
 from easy_vic_build.calibrate import *
 from easy_vic_build.tools.utilities import *
-from easy_vic_build.build_RVIC_Param import buildFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile, modifyRVICParam_for_pourpoint
+from easy_vic_build.build_RVIC_Param import buildRVICFlowDirectionFile, buildPourPointFile, buildUHBOXFile, buildParamCFGFile, modifyRVICParam_for_pourpoint
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Domain import *
 import warnings
