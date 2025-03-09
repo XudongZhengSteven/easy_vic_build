@@ -1,19 +1,28 @@
 # easy_vic_build
 
-This is a open-source Python package for VIC model deployment
+This is a open-source Python package for VIC model deployment  
+![Architecture][docs/evb_architecture.tif]
 
-## Install
+## Installation
 
-pip install easy_vic_build
-pip install easy_vic_build[nco]
-pip install easy_vic_build[rvic]
+To install the package, run the following command:  
+pip install easy_vic_build  
+pip install easy_vic_build[nco]  
+pip install easy_vic_build[rvic]  
 pip install easy_vic_build[nco_rvic]
 
-or
-pip install .whl
-pip install .whl[nco]
-pip install .whl[rvic]
+or  
+pip install .whl  
+pip install .whl[nco]  
+pip install .whl[rvic]  
 pip install .whl[nco_rvic]
+
+based on the environment required by the Users
+
+For development purposes, you can install it from the repository:  
+git clone https://github.com/XudongZhengSteven/easy_vic_build  
+cd easy_vic_build  
+pip install -e .
 
 ## Usage
 
@@ -29,7 +38,25 @@ pip install .whl[nco_rvic]
 9. calibrate
 10. plot_VIC_result
 
-## python pkgs workflow
+## Features
+
+## Documentation
+
+For detailed documentation, please refer to the documentation website or view the API documentation.
+
+## Contributing
+
+## Lincese
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+
+- author: XudongZheng
+- Email: zhengxd@sehemodel.club
+- Github: @XudongZhengSteven
+
+## note
 
 1. test github workflow
 
@@ -43,3 +70,5 @@ compile VIC witout RVIC:
 you can run VIC under parallel, but you need to run RVIC additionally (rvic.convolution.convolution)
 you need prepare rvic.convolution.cfg file
 note that the VIC output dt (daily, hourly) should be same with the UHBOX dt (86400, 3600)
+
+## Citation
