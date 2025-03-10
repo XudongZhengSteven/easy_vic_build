@@ -515,17 +515,17 @@ def plot_VIC_performance(cali_result, verify_result):
     # plot calibration: total
     ax2.scatter(cali_result["obs_cali discharge(m3/s)"], cali_result["sim_cali discharge(m3/s)"], color="red", s=1)
     p_cali = np.polyfit(cali_result["obs_cali discharge(m3/s)"], cali_result["sim_cali discharge(m3/s)"], deg=1, rcond=None, full=False, w=None, cov=False)
-    ax2.plot(np.arange(0, ax1.get_ylim()[1], 1), np.polyval(p_cali, np.arange(0, ax1.get_ylim()[1], 1)), color="black", linestyle="-", linewidth=1, label="total flow: y = %.2fx + %.2f" % (p_cali[0], p_cali[1]))
+    ax2.plot(np.arange(0, ax1.get_ylim()[1], 1), np.polyval(p_cali, np.arange(0, ax1.get_ylim()[1], 1)), color="black", linestyle="-", linewidth=1, label=f"total flow: y = {p_cali[0]:.2f}x {'+' if p_cali[1] >= 0 else '-'} {abs(p_cali[1]):.2f}")
     
     # plot calibration: low flow
     cali_lowflow_index = cali_result["obs_cali discharge(m3/s)"] <= lowflow_threshold
     p_cali_lowflow = np.polyfit(cali_result["obs_cali discharge(m3/s)"][cali_lowflow_index], cali_result["sim_cali discharge(m3/s)"][cali_lowflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
-    ax2.plot(np.arange(0, ax1.get_ylim()[1], 1), np.polyval(p_cali_lowflow, np.arange(0, ax1.get_ylim()[1], 1)), color="darkblue", linestyle="-", linewidth=1, label="low flow: y = %.2fx + %.2f" % (p_cali_lowflow[0], p_cali_lowflow[1]))
+    ax2.plot(np.arange(0, ax1.get_ylim()[1], 1), np.polyval(p_cali_lowflow, np.arange(0, ax1.get_ylim()[1], 1)), color="darkblue", linestyle="-", linewidth=1, label=f"low flow: y = {p_cali_lowflow[0]:.2f}x {'+' if p_cali_lowflow[1] >= 0 else '-'} {abs(p_cali_lowflow[1]):.2f}")
     
     # plot calibration: high flow
     cali_highflow_index = cali_result["obs_cali discharge(m3/s)"] >= highflow_threshold
     p_cali_highflow = np.polyfit(cali_result["obs_cali discharge(m3/s)"][cali_highflow_index], cali_result["sim_cali discharge(m3/s)"][cali_highflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
-    ax2.plot(np.arange(0, ax1.get_ylim()[1], 1), np.polyval(p_cali_highflow, np.arange(0, ax1.get_ylim()[1], 1)), color="darkgreen", linestyle="-", linewidth=1, label="high flow: y = %.2fx + %.2f" % (p_cali_highflow[0], p_cali_highflow[1]))
+    ax2.plot(np.arange(0, ax1.get_ylim()[1], 1), np.polyval(p_cali_highflow, np.arange(0, ax1.get_ylim()[1], 1)), color="darkgreen", linestyle="-", linewidth=1, label=f"high flow: y = {p_cali_highflow[0]:.2f}x {'+' if p_cali_highflow[1] >= 0 else '-'} {abs(p_cali_highflow[1]):.2f}")
     
     # set ax2
     ax2.set_xlim(0, ax1.get_ylim()[1])
@@ -537,17 +537,17 @@ def plot_VIC_performance(cali_result, verify_result):
     # plot verification: total
     ax4.scatter(verify_result["obs_verify discharge(m3/s)"], verify_result["sim_verify discharge(m3/s)"], color="red", s=1)
     p_verify = np.polyfit(verify_result["obs_verify discharge(m3/s)"], verify_result["sim_verify discharge(m3/s)"], deg=1, rcond=None, full=False, w=None, cov=False)
-    ax4.plot(np.arange(0, ax3.get_ylim()[1], 1), np.polyval(p_verify, np.arange(0, ax3.get_ylim()[1], 1)), color="black", linestyle="-", linewidth=1, label="total flow: y = %.2fx + %.2f" % (p_verify[0], p_verify[1]))
+    ax4.plot(np.arange(0, ax3.get_ylim()[1], 1), np.polyval(p_verify, np.arange(0, ax3.get_ylim()[1], 1)), color="black", linestyle="-", linewidth=1, label=f"total flow: y = {p_verify[0]:.2f}x {'+' if p_verify[1] >= 0 else '-'} {abs(p_verify[1]):.2f}")
     
     # plot verification: low flow
     verify_lowflow_index = verify_result["obs_verify discharge(m3/s)"] <= lowflow_threshold
     p_verify_lowflow = np.polyfit(verify_result["obs_verify discharge(m3/s)"][verify_lowflow_index], verify_result["sim_verify discharge(m3/s)"][verify_lowflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
-    ax4.plot(np.arange(0, ax3.get_ylim()[1], 1), np.polyval(p_verify_lowflow, np.arange(0, ax3.get_ylim()[1], 1)), color="darkblue", linestyle="-", linewidth=1, label="low flow: y = %.2fx + %.2f" % (p_verify_lowflow[0], p_verify_lowflow[1]))
+    ax4.plot(np.arange(0, ax3.get_ylim()[1], 1), np.polyval(p_verify_lowflow, np.arange(0, ax3.get_ylim()[1], 1)), color="darkblue", linestyle="-", linewidth=1, label=f"low flow: y = {p_verify_lowflow[0]:.2f}x {'+' if p_verify_lowflow[1] >= 0 else '-'} {abs(p_verify_lowflow[1]):.2f}")
     
     # plot verification: high flow
     verify_highflow_index = verify_result["obs_verify discharge(m3/s)"] >= highflow_threshold
     p_verify_highflow = np.polyfit(verify_result["obs_verify discharge(m3/s)"][verify_highflow_index], verify_result["sim_verify discharge(m3/s)"][verify_highflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
-    ax4.plot(np.arange(0, ax3.get_ylim()[1], 1), np.polyval(p_verify_highflow, np.arange(0, ax3.get_ylim()[1], 1)), color="darkgreen", linestyle="-", linewidth=1, label="high flow: y = %.2fx + %.2f" % (p_verify_highflow[0], p_verify_highflow[1]))
+    ax4.plot(np.arange(0, ax3.get_ylim()[1], 1), np.polyval(p_verify_highflow, np.arange(0, ax3.get_ylim()[1], 1)), color="darkgreen", linestyle="-", linewidth=1, label=f"high flow: y = {p_verify_highflow[0]:.2f}x {'+' if p_verify_highflow[1] >= 0 else '-'} {abs(p_verify_highflow[1]):.2f}")
     
     # ax4 set
     ax4.set_xlim(0, ax3.get_ylim()[1])
@@ -718,13 +718,13 @@ def plot_multimodel_comparison_scatter(obs_total, models_total, model_names, mod
         axes[2].scatter(obs_total[highflow_index], model[highflow_index], facecolors='none', edgecolor=model_color, s=10, linewidth=1, label=None, alpha=0.8)
         
         p_total = np.polyfit(obs_total, model, deg=1, rcond=None, full=False, w=None, cov=False)
-        axes[0].plot(np.arange(axes[0].get_xlim()[0], axes[0].get_xlim()[1], 1), np.polyval(p_total, np.arange(axes[0].get_xlim()[0], axes[0].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_total[0]:.2f}x + {p_total[1]:.2f}")
+        axes[0].plot(np.arange(axes[0].get_xlim()[0], axes[0].get_xlim()[1], 1), np.polyval(p_total, np.arange(axes[0].get_xlim()[0], axes[0].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_total[0]:.2f}x {'+' if p_total[1] >= 0 else '-'} {abs(p_total[1]):.2f}")
 
         p_lowflow = np.polyfit(obs_total[lowflow_index], model[lowflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
-        axes[1].plot(np.arange(axes[1].get_xlim()[0], axes[1].get_xlim()[1], 1), np.polyval(p_lowflow, np.arange(axes[1].get_xlim()[0], axes[1].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_lowflow[0]:.2f}x + {p_lowflow[1]:.2f}")
+        axes[1].plot(np.arange(axes[1].get_xlim()[0], axes[1].get_xlim()[1], 1), np.polyval(p_lowflow, np.arange(axes[1].get_xlim()[0], axes[1].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_lowflow[0]:.2f}x {'+' if p_lowflow[1] >= 0 else '-'} {abs(p_lowflow[1]):.2f}")
     
         p_highflow = np.polyfit(obs_total[highflow_index], model[highflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
-        axes[2].plot(np.arange(axes[2].get_xlim()[0], axes[2].get_xlim()[1], 1), np.polyval(p_highflow, np.arange(axes[2].get_xlim()[0], axes[2].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_highflow[0]:.2f}x + {p_highflow[1]:.2f}")
+        axes[2].plot(np.arange(axes[2].get_xlim()[0], axes[2].get_xlim()[1], 1), np.polyval(p_highflow, np.arange(axes[2].get_xlim()[0], axes[2].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_highflow[0]:.2f}x {'+' if p_highflow[1] >= 0 else '-'} {abs(p_highflow[1]):.2f}")
     
     axes[0].set_ylabel("Simulated discharge (m$^3$/s)")
     [ax.set_xlabel("Observed discharge (m$^3$/s)") for ax in axes]  

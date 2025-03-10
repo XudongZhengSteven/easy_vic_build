@@ -6,7 +6,8 @@ from .extractData_func import *
 def selectBasinremovingStreamflowMissing(basin_shp, date_period=["19980101", "20101231"]):
     # get remove streamflow missing
     streamflows_dict_original, streamflows_dict_removed_missing = Extract_CAMELS_Streamflow.getremoveStreamflowMissing(date_period)
-    print(f"remove Basin based on StreamflowMissing: remove {len(streamflows_dict_original["usgs_streamflows"]) - len(streamflows_dict_removed_missing["usgs_streamflows"])} files")
+    remove_num = len(streamflows_dict_original["usgs_streamflows"]) - len(streamflows_dict_removed_missing["usgs_streamflows"])
+    print(f"remove Basin based on StreamflowMissing: remove {remove_num} files")
     
     # get ids removed missing
     streamflow_ids_removed_missing = streamflows_dict_removed_missing["streamflow_ids"]

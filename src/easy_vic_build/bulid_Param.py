@@ -61,35 +61,33 @@ def buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat=True):
 
 
 @clock_decorator(print_arg_ret=False)
-def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0, reverse_lat=True,
-                           stand_grids_lat=None, stand_grids_lon=None,
-                           rows_index=None, cols_index=None):
-    """ 
+def buildParam_level0_by_g(params_dataset_level0, g_list, dpc_VIC_level0, reverse_lat=True, stand_grids_lat=None, stand_grids_lon=None, rows_index=None, cols_index=None):
+    """
     # calibrate: MPR: PTF + Scaling (calibrate for scaling coefficient)
     g_list: global parameters
-        [0]             total_depth (g)
-        [1, 2]          depth (g1, g2)
-        [3, 4]          b_infilt (g1, g2)
-        [5, 6, 7]       ksat (g1, g2, g3)
-        [8, 9, 10]      phi_s (g1, g2, g3)
-        [11, 12, 13]    psis (g1, g2, g3)
-        [14, 15, 16]    b_retcurve (g1, g2, g3)
-        [17, 18]        expt (g1, g2)
-        [19]            fc (g)
-        [20]            D4 (g), it can be set as 2
-        [21]            D1 (g)
-        [22]            D2 (g)
-        [23]            D3 (g)
-        [24]            dp (g)
-        [25, 26]        bubble (g1, g2)
-        [27]            quartz (g)
-        [28]            bulk_density (g)
-        [29, 30, 31]    soil_density (g, g, g), the three g can be set same
-        [32]            Wcr_FRACT (g)
-        [33]            wp (g)
-        [34]            Wpwp_FRACT (g)
-        [35]            rough (g), it can be set as 1
-        [36]            snow rough (g), it can be set as 1
+    [0]             total_depth (g)
+    [1, 2]          depth (g1, g2)
+    [3, 4]          b_infilt (g1, g2)
+    [5, 6, 7]       ksat (g1, g2, g3)
+    [8, 9, 10]      phi_s (g1, g2, g3)
+    [11, 12, 13]    psis (g1, g2, g3)
+    [14, 15, 16]    b_retcurve (g1, g2, g3)
+    [17, 18]        expt (g1, g2)
+    [19]            fc (g)
+    [20]            D4 (g), it can be set as 2
+    [21]            D1 (g)
+    [22]            D2 (g)
+    [23]            D3 (g)
+    [24]            dp (g)
+    [25, 26]        bubble (g1, g2)
+    [27]            quartz (g)
+    [28]            bulk_density (g)
+    [29, 30, 31]    soil_density (g, g, g), the three g can be set same
+    [32]            Wcr_FRACT (g)
+    [33]            wp (g)
+    [34]            Wpwp_FRACT (g)
+    [35]            rough (g), it can be set as 1
+    [36]            snow rough (g), it can be set as 1
         
     # TODO Q1: different layer have different global params? Ksat: 3 or 9?
     """

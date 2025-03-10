@@ -15,11 +15,11 @@ plt.rcParams['font.family']='Arial'
 plt.rcParams['font.size']=12
 plt.rcParams['font.weight']='normal'
 
-def read_VIC_result(basin_index=397, model_scale="8km"):
+def read_VIC_result(basin_index=397, model_scale="12km"):
     case_name = f"{basin_index}_{model_scale}"
     
     # set evb_dir
-    evb_dir = Evb_dir()
+    evb_dir = Evb_dir(cases_home="./examples")
     evb_dir.builddir(case_name)
     
     # read VIC result
@@ -31,7 +31,7 @@ def read_VIC_result(basin_index=397, model_scale="8km"):
 
 
 def test_plot_VIC_performance(evb_dir, cali_result, verify_result):
-    fig = plot_VIC_performance(cali_result, verify_result)
+    fig, _ = plot_VIC_performance(cali_result, verify_result)
     fig.savefig(os.path.join(evb_dir.VICResults_dir, "test_plot_VIC_performance.tiff"), dpi=300)
 
 
@@ -113,6 +113,7 @@ if __name__ == "__main__":
     # ------------- plot VIC performance -------------
     # evb_dir, cali_result, verify_result, simulated_dataset = read_VIC_result(basin_index=397, model_scale="12km")
     # test_plot_VIC_performance(evb_dir, cali_result, verify_result)
+    # simulated_dataset.close()
     
     # ------------- plot VIC transferability -------------
     evb_dir_12km, cali_result_12km, verify_result_12km, simulated_dataset_12km = read_VIC_result(basin_index=397, model_scale="12km")
@@ -139,17 +140,17 @@ if __name__ == "__main__":
     verify_names_va = ["bottom", "top", "bottom"]
     
     # streamflow comparison
-    # test_plot_VIC_streamflow_transferability(evb_dirs, cali_results, verify_results, model_names, model_colors,
-    #                                          cali_names_ha, cali_names_va, verify_names_ha, verify_names_va)
+    test_plot_VIC_streamflow_transferability(evb_dirs, cali_results, verify_results, model_names, model_colors,
+                                             cali_names_ha, cali_names_va, verify_names_ha, verify_names_va)
     
     # distributed comparison
     # test_plot_distributed_simulation_comparison(evb_dirs, cali_results, verify_results, simulated_datasets, model_names, model_colors)
     
     # params comparison
-    test_plot_params(evb_dir_12km, params_dataset_level0_12km, params_dataset_level1_12km)
+    # test_plot_params(evb_dir_12km, params_dataset_level0_12km, params_dataset_level1_12km)
     
     # close
-    [simulated_datasets.close() for simulated_datasets in simulated_datasets]
-    [params.close() for params in params_dataset_level0_sets]
-    [params.close() for params in params_dataset_level1_sets]
+    # [simulated_datasets.close() for simulated_datasets in simulated_datasets]
+    # [params.close() for params in params_dataset_level0_sets]
+    # [params.close() for params in params_dataset_level1_sets]
     

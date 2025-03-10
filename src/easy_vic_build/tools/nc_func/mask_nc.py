@@ -2,7 +2,12 @@
 # author: "Xudong Zheng" 
 # email: Z786909151@163.com
 from netCDF4 import Dataset
-import regionmask
+try:
+    import regionmask
+    HAS_regionmask = True
+except:
+    HAS_regionmask = False
+
 import geopandas as gp
 import numpy as np
 import os
@@ -74,43 +79,46 @@ class mask_nc:
 
     def get_masked_val(self, lon, lat, src_val, mask_shp, mask_region, lon_valname, lat_valname, src_dataset):
         """ get mask mask_region: [lat_min, lat_max, lon_min, lon_max] """
-        if mask_shp is not None:
-            mask = regionmask.mask_geopandas(gp.read_file(mask_shp), lon, lat, wrap_lon=False)
-            # wrap_lon=False if lon not in range(0, 180)
-            dim = 0
-            for key in src_val.dimensions:
-                if key != lon_valname and key != lat_valname:
-                    mask = np.repeat(np.expand_dims(mask, axis=dim), len(src_dataset.variables[key]), axis=dim)
-                dim += 1
+        if HAS_regionmask:
+            if mask_shp is not None:
+                mask = regionmask.mask_geopandas(gp.read_file(mask_shp), lon, lat, wrap_lon=False)
+                # wrap_lon=False if lon not in range(0, 180)
+                dim = 0
+                for key in src_val.dimensions:
+                    if key != lon_valname and key != lat_valname:
+                        mask = np.repeat(np.expand_dims(mask, axis=dim), len(src_dataset.variables[key]), axis=dim)
+                    dim += 1
 
-            masked_val = np.ma.array(src_val[:], mask=mask)
+                masked_val = np.ma.array(src_val[:], mask=mask)
 
-        elif mask_region is not None:
-            lat_min_index = np.where(src_dataset.variables[lat_valname][:] <= mask_region[0])[0][-1]
-            lat_max_index = np.where(src_dataset.variables[lat_valname][:] >= mask_region[1])[0][0]
+            elif mask_region is not None:
+                lat_min_index = np.where(src_dataset.variables[lat_valname][:] <= mask_region[0])[0][-1]
+                lat_max_index = np.where(src_dataset.variables[lat_valname][:] >= mask_region[1])[0][0]
 
-            lon_min_index = np.where(src_dataset.variables[lon_valname][:] <= mask_region[2])[0][-1]
-            lon_max_index = np.where(src_dataset.variables[lon_valname][:] >= mask_region[3])[0][0]
+                lon_min_index = np.where(src_dataset.variables[lon_valname][:] <= mask_region[2])[0][-1]
+                lon_max_index = np.where(src_dataset.variables[lon_valname][:] >= mask_region[3])[0][0]
 
-            mask = np.ones_like(src_val[:])  # all mask
-            slice_lat = slice(lat_min_index, lat_max_index + 1, 1)
-            slice_lon = slice(lon_min_index, lon_max_index + 1, 1)
-            slice_all = []
-            for key in src_val.dimensions:
-                if key == lat_valname:
-                    slice_all.append(slice_lat)
-                elif key == lon_valname:
-                    slice_all.append(slice_lon)
-                else:
-                    slice_all.append(slice(0, src_dataset.dimensions[key].size))
+                mask = np.ones_like(src_val[:])  # all mask
+                slice_lat = slice(lat_min_index, lat_max_index + 1, 1)
+                slice_lon = slice(lon_min_index, lon_max_index + 1, 1)
+                slice_all = []
+                for key in src_val.dimensions:
+                    if key == lat_valname:
+                        slice_all.append(slice_lat)
+                    elif key == lon_valname:
+                        slice_all.append(slice_lon)
+                    else:
+                        slice_all.append(slice(0, src_dataset.dimensions[key].size))
 
-            mask[slice_all] = 0
+                mask[slice_all] = 0
 
-            masked_val = np.ma.array(src_val[:], mask=mask)
+                masked_val = np.ma.array(src_val[:], mask=mask)
 
+            else:
+                raise ValueError("input mask area into mask_shp or mask_region")
         else:
-            raise ValueError("input mask area into mask_shp or mask_region")
-
+            raise ImportError("do not have regionmask package to support mask_nc module")
+        
         return masked_val
 
 
