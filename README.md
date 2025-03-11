@@ -69,7 +69,7 @@ After installation, you can use the package in the following sequence:
 
 ## Documentation
 
-For detailed documentation, please refer to the [documentation website](#) or view the [API documentation](#).
+For detailed documentation, please refer to the [documentation website](#) or view the [API documentation](#). Developing...
 
 ## Contributing
 
@@ -87,9 +87,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Notes
 
-1. **Testing GitHub Workflow**  
-   This section is to test the GitHub Actions workflow.
-2. **RVIC Compilation Note**  
+1. **RVIC Compilation Note**  
    Please note that **RVIC** should not be compiled with **VIC** if you wish to use parallel processing (e.g., `mpiexec`).
 
    There are two types of compilation:
@@ -106,5 +104,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 If you use this package in your research, please cite it as follows:
 
 ```plaintext
-Zheng, X. (Year). easy_vic_build: A Python package for VIC model deployment. Retrieved from https://github.com/XudongZhengSteven/easy_vic_build
+Xudong Zheng et al., (2025). An Open-Source Python Framework for Scalable Deployment and Advanced Applications of VIC Model. Retrieved from https://github.com/XudongZhengSteven/easy_vic_build
 ```
