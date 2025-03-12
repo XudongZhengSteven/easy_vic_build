@@ -140,11 +140,11 @@ if __name__ == "__main__":
     verify_names_va = ["bottom", "top", "bottom"]
     
     # streamflow comparison
-    test_plot_VIC_streamflow_transferability(evb_dirs, cali_results, verify_results, model_names, model_colors,
-                                             cali_names_ha, cali_names_va, verify_names_ha, verify_names_va)
+    # test_plot_VIC_streamflow_transferability(evb_dirs, cali_results, verify_results, model_names, model_colors,
+    #                                          cali_names_ha, cali_names_va, verify_names_ha, verify_names_va)
     
     # distributed comparison
-    # test_plot_distributed_simulation_comparison(evb_dirs, cali_results, verify_results, simulated_datasets, model_names, model_colors)
+    test_plot_distributed_simulation_comparison(evb_dirs, cali_results, verify_results, simulated_datasets, model_names, model_colors)
     
     # params comparison
     # test_plot_params(evb_dir_12km, params_dataset_level0_12km, params_dataset_level1_12km)

@@ -498,13 +498,13 @@ def plot_VIC_performance(cali_result, verify_result):
     ax1.plot(list(range(len(cali_result.index))), cali_result["sim_cali discharge(m3/s)"], label="sim", color="red", linestyle="", marker=".", markersize=1, linewidth=1)
     ax1.set_xticks(list(range(len(cali_result)))[::int(len(cali_result)/5)], cali_result.index[::int(len(cali_result)/5)])
     ax1.set_xlim(0, len(cali_result.index))
-    ax1.set_ylabel("Discharge (m$^3$/s)")
+    ax1.set_ylabel("Streamflow (m$^3$/s)")
     
     ax3.plot(list(range(len(verify_result.index))), verify_result["obs_verify discharge(m3/s)"], label="obs", color="black", linestyle="-", linewidth=1)
     ax3.plot(list(range(len(verify_result.index))), verify_result["sim_verify discharge(m3/s)"], label="sim", color="red", linestyle="", marker=".", markersize=1, linewidth=1)
     ax3.set_xticks(list(range(len(verify_result)))[::int(len(verify_result)/5)], verify_result.index[::int(len(verify_result)/5)])    
     ax3.set_xlim(0, len(verify_result.index))
-    ax3.set_ylabel("Discharge (m$^3$/s)")
+    ax3.set_ylabel("Streamflow (m$^3$/s)")
     ax3.set_xlabel("Date")
     
     # cal threshold for high flow and low flow
@@ -532,7 +532,7 @@ def plot_VIC_performance(cali_result, verify_result):
     ax2.set_ylim(0, ax1.get_ylim()[1])
     ax2.xaxis.set_major_locator(plt.LinearLocator(numticks=6))
     ax2.yaxis.set_major_locator(plt.LinearLocator(numticks=6))
-    ax2.set_ylabel("Simulated discharge (m$^3$/s)")
+    ax2.set_ylabel("Simulated streamflow (m$^3$/s)")
     
     # plot verification: total
     ax4.scatter(verify_result["obs_verify discharge(m3/s)"], verify_result["sim_verify discharge(m3/s)"], color="red", s=1)
@@ -554,8 +554,8 @@ def plot_VIC_performance(cali_result, verify_result):
     ax4.set_ylim(0, ax3.get_ylim()[1])
     ax4.xaxis.set_major_locator(plt.LinearLocator(numticks=6))
     ax4.yaxis.set_major_locator(plt.LinearLocator(numticks=6))
-    ax4.set_xlabel("Observed discharge (m$^3$/s)")
-    ax4.set_ylabel("Simulated discharge (m$^3$/s)")
+    ax4.set_xlabel("Observed streamflow (m$^3$/s)")
+    ax4.set_ylabel("Simulated streamflow (m$^3$/s)")
     
     # legend set
     ax1.legend(loc="upper left", prop={'size': 12, 'family': 'Arial'})
@@ -726,8 +726,8 @@ def plot_multimodel_comparison_scatter(obs_total, models_total, model_names, mod
         p_highflow = np.polyfit(obs_total[highflow_index], model[highflow_index], deg=1, rcond=None, full=False, w=None, cov=False)
         axes[2].plot(np.arange(axes[2].get_xlim()[0], axes[2].get_xlim()[1], 1), np.polyval(p_highflow, np.arange(axes[2].get_xlim()[0], axes[2].get_xlim()[1], 1)), color=model_color, linestyle="-", linewidth=1, label=f"{model_name}: y = {p_highflow[0]:.2f}x {'+' if p_highflow[1] >= 0 else '-'} {abs(p_highflow[1]):.2f}")
     
-    axes[0].set_ylabel("Simulated discharge (m$^3$/s)")
-    [ax.set_xlabel("Observed discharge (m$^3$/s)") for ax in axes]  
+    axes[0].set_ylabel("Simulated streamflow (m$^3$/s)")
+    [ax.set_xlabel("Observed streamflow (m$^3$/s)") for ax in axes]  
     
     axes[0].set_title("Total flow")
     axes[1].set_title("Low flow")
@@ -823,7 +823,7 @@ def plot_multimodel_comparison_distributed_OUTPUT(cali_results, verify_results, 
     
     ax1.set_xticks(list(range(len(all_df_event)))[::int(len(all_df_event)/10)], all_df_event.index[::int(len(all_df_event)/10)].strftime("%m/%d"))
     ax1.set_xlim(0, len(all_df_event.index)-1)
-    ax1.set_ylabel("Discharge (m$^3$/s)")
+    ax1.set_ylabel("Streamflow (m$^3$/s)")
     ax1_twinx.set_ylabel("Precipitation (mm/d)")
     
     # start_ = date[start[i]]
