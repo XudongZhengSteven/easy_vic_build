@@ -24,7 +24,7 @@ Welcome to easy_vic_build's documentation!
    notes
    citation
 
-   
+
 .. note::
 
    This project is under active development.

@@ -1,44 +1,141 @@
-import os
+""" 
+Package: easy_vic_build
 
+An Open-Source Python Framework for Scalable Deployment and Advanced Applications of VIC Model
+This package provides tools for configuring, preparing, and calibrating the VIC model efficiently.
+It supports automation, preprocessing, and postprocessing workflows.
+
+Class:
+----------
+    - Evb_dir:
+    The `Evb_dir` class defines methods and properties for managing directories and paths related to the VIC model's operations. 
+    It helps automate the creation of necessary directories for model configuration, calibration, and execution.
+
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+
+"""
+
+import os
+import logging
+from . import build_dpc, build_GlobalParam, build_hydroanalysis, build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, warmup
+from . import tools
+from .tools.utilities import check_and_mkdir, remove_and_mkdir
+
+# Define the package's public API and version
+__all__ = ["Evb_dir", "build_dpc", "build_GlobalParam", "build_hydroanalysis", "build_RVIC_Param", "bulid_Domain", "bulid_Param", "calibrate", "warmup", "tools", "build_MeteForcing_nco", "build_MeteForcing"]
 __version__ = "0.1.0"
 __author__ = "Xudong Zheng"
 __email__ = "zhengxd@sehemodel.club"
-__all__ = ["Evb_dir", "build_dpc", "build_GlobalParam", "build_hydroanalysis", "build_RVIC_Param", "bulid_Domain", "bulid_Param", "calibrate", "warmup", "tools", "build_MeteForcing_nco", "build_MeteForcing"]
 
-from .tools.utilities import check_and_mkdir, remove_and_mkdir
-from . import build_dpc, build_GlobalParam, build_hydroanalysis, build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, warmup
-from . import tools
+# Default logger setup
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
-# Configuration
+def setup_logger(log_level=None, log_format=None, log_to_file=None, log_file=None):
+    """
+    Allow users to modify the logger configuration. If no parameters are passed, 
+    the default logger configuration remains unchanged.
 
-print("--------------- EVB Configuration ---------------")
+    Parameters:
+    -----------
+    log_level : int, optional
+        The logging level to set. Default is None (no change).
+    
+    log_format : str, optional
+        The log format to set. Default is None (no change).
+    
+    log_to_file : bool, optional
+        Whether to log to a file. Default is None (no change).
+    
+    log_file : str, optional
+        If logging to a file, specify the file path. Default is None (no change).
 
+    Returns:
+    --------
+    None
+        The logger is updated in place based on the provided parameters.
+    """
+    
+    # If user provides a new log level, update it
+    if log_level is not None:
+        logger.setLevel(log_level)
+    
+    # If user provides a new format, update it
+    if log_format is not None:
+        formatter = logging.Formatter(log_format)
+        for handler in logger.handlers:
+            handler.setFormatter(formatter)
+
+    # If user provides options to log to file, add a file handler
+    if log_to_file is not None and log_to_file:
+        if log_file is None:
+            log_file = "evb.log"  # Default log file name
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+# Default logger configuration (user doesn't need to call anything)
+logger.debug("Default logger setup with INFO level.")
+
+# Example use: User wants to modify the logger setup
+# To use this, the user would call `setup_logger` with their desired configuration:
+# setup_logger(log_level=logging.DEBUG, log_format="%(asctime)s - %(levelname)s - %(message)s", log_to_file=True, log_file="custom_log.log")
+
+# Test to ensure default logging is working
+logger.info("This is an info message with the default setup.")
+
+# Log the configuration details
+logger.info("--------------- EVB Configuration ---------------")
+
+
+# log evb's configuration
+# Try to import NCO for meteorological forcing data processing
 try:
     import nco
     HAS_NCO = True
-    print("NCO: Using MeteForcing with nco")
+    logger.info("NCO: Using MeteForcing with nco")
+    from . import build_MeteForcing_nco
 except:
     HAS_NCO = False
-    print("NCO: Using MeteForcing without nco")   
+    logger.warning("NCO: Using MeteForcing without nco")   
+    from . import build_MeteForcing
 
+# Try to import RVIC parameters if available
 try:
     from rvic.parameters import parameters as rvic_parameters
+    logger.info("RVIC: You have rvic!")
     HAS_RVIC = True
 except:
-    print("RVIC: environment do not have rvic, but you can still use easy_vic_build")
+    logger.warning("RVIC: No RVIC detected, but easy_vic_build is still usable.")
     HAS_RVIC = False
 
-print("-------------------------------------------------")
+logger.info("-------------------------------------------------")
 
+
+# Class to manage directories and paths for the easy_vic_build package
 class Evb_dir:
-    # easy_vic_build dir
-    __package_dir__ = "./easy_vic_build" # os.path.abspath(os.path.dirname(__file__))
-    __data_dir__ = os.path.join(os.path.dirname(__package_dir__), "data")
+    """
+    A class to handle the creation and management of directory structures for different case scenarios in the VIC model.
+    """
+    
+    # Initialize the base directory paths
+    # __package_dir__ = "./easy_vic_build" # os.path.abspath(os.path.dirname(__file__))
+    # __data_dir__ = os.path.join(os.path.dirname(__package_dir__), "data")
     
     def __init__(self, cases_home=None):
+        """
+        Initialize the directory paths for a given case name or set the default to current working directory.
+        """
+        logger.debug("Initializing Evb_dir class")
+        
         # self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
         self._cases_dir = cases_home if cases_home is not None else os.path.join(os.getcwd(), "cases")
+        logger.debug(f"Case directory set to: {self._cases_dir}")
         
+        # Initialize all paths for meteorological forcing, domain, parameters, etc.
         self._MeteForcing_src_dir = ""
         self._MeteForcing_src_suffix = ".nc"
         self._forcing_prefix = "forcings"
@@ -72,66 +169,109 @@ class Evb_dir:
         self._rout_param_dir = ""
         
         self._calibrate_cp_path = ""
+        logger.debug("Evb_dir class initialized successfully")
          
     def builddir(self, case_name):
-        # case_name
+        """
+        Create directories and set paths for a specific case name.
+        """
+        logger.info(f"Starting to create directories for case: {case_name}")
+        
         self._case_name = case_name
         
-        # set dir
+        # Create base directories for the case
         check_and_mkdir(self._cases_dir)
+        logger.debug(f"Base case directory created at: {self._cases_dir}")
         
         self._case_dir = os.path.join(self._cases_dir, case_name)
         check_and_mkdir(self._case_dir)
+        logger.debug(f"Case directory created at: {self._case_dir}")
         
+        
+        # Create subdirectories for different components
         self.BasinMap_dir = os.path.join(self._case_dir, "BasinMap")
         check_and_mkdir(self.BasinMap_dir)
+        logger.debug(f"BasinMap directory created at: {self.BasinMap_dir}")
+        
         
         self.dpcFile_dir = os.path.join(self._case_dir, "dpcFile")
         check_and_mkdir(self.dpcFile_dir)
+        logger.debug(f"dpcFile directory created at: {self.dpcFile_dir}")
+        
         
         self.DomainFile_dir = os.path.join(self._case_dir, "DomainFile")
         check_and_mkdir(self.DomainFile_dir)
+        logger.debug(f"DomainFile directory created at: {self.DomainFile_dir}")
+        
         
         self.GlobalParam_dir = os.path.join(self._case_dir, "GlobalParam")
         check_and_mkdir(self.GlobalParam_dir)
+        logger.debug(f"GlobalParam directory created at: {self.GlobalParam_dir}")
+        
         
         self.MeteForcing_dir = os.path.join(self._case_dir, "MeteForcing")
         check_and_mkdir(self.MeteForcing_dir)
+        logger.debug(f"MeteForcing directory created at: {self.MeteForcing_dir}")
+        
         
         self.ParamFile_dir = os.path.join(self._case_dir, "ParamFile")
         check_and_mkdir(self.ParamFile_dir)
+        logger.debug(f"ParamFile directory created at: {self.ParamFile_dir}")
+        
         
         self.Hydroanalysis_dir = os.path.join(self._case_dir, "Hydroanalysis")
         check_and_mkdir(self.Hydroanalysis_dir)
+        logger.debug(f"Hydroanalysis directory created at: {self.Hydroanalysis_dir}")
+        
         
         self.RVIC_dir = os.path.join(self._case_dir, "RVIC")
         check_and_mkdir(self.RVIC_dir)
+        logger.debug(f"RVIC directory created at: {self.RVIC_dir}")
         
+        
+        # Create directories for RVIC parameters and temporary files
         self.RVICParam_dir = os.path.join(self.RVIC_dir, "RVICParam")
         check_and_mkdir(self.RVICParam_dir)
+        logger.debug(f"RVICParam directory created at: {self.RVICParam_dir}")
+        
         
         self.RVICTemp_dir = os.path.join(self.RVICParam_dir, "temp")
         check_and_mkdir(self.RVICTemp_dir)
+        logger.debug(f"RVICTemp directory created at: {self.RVICTemp_dir}")
+        
         
         self.RVICConv_dir = os.path.join(self.RVIC_dir, "Convolution")
         check_and_mkdir(self.RVICConv_dir)
+        logger.debug(f"RVICConv directory created at: {self.RVICConv_dir}")
         
+        
+        # Directories for logs, results, and states
         self.VICLog_dir = os.path.join(self._case_dir, "VICLog")
         check_and_mkdir(self.VICLog_dir)
+        logger.debug(f"VICLog directory created at: {self.VICLog_dir}")
+        
         
         self.VICResults_dir = os.path.join(self._case_dir, "VICResults")
         check_and_mkdir(self.VICResults_dir)
+        logger.debug(f"VICResults directory created at: {self.VICResults_dir}")
+        
         
         self.VICResults_fig_dir = os.path.join(self.VICResults_dir, "Figs")
         remove_and_mkdir(self.VICResults_fig_dir)
+        logger.debug(f"VICResults figs directory created at: {self.VICResults_fig_dir}")
+        
         
         self.VICStates_dir = os.path.join(self._case_dir, "VICStates")
         check_and_mkdir(self.VICStates_dir)
+        logger.debug(f"VICStates directory created at: {self.VICStates_dir}")
+        
         
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
         check_and_mkdir(self.CalibrateVIC_dir)
+        logger.debug(f"CalibrateVIC directory created at: {self.CalibrateVIC_dir}")
         
-        # set path
+        
+        # Set paths for specific files
         self._dpc_VIC_level0_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level0.pkl")
         self._dpc_VIC_level1_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level1.pkl")
         self._dpc_VIC_level2_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level2.pkl")
@@ -140,7 +280,7 @@ class Evb_dir:
         
         self._domainFile_path = os.path.join(self.DomainFile_dir, "domain.nc")
         
-        self._veg_param_json_path = os.path.join(self.__data_dir__, "veg_type_attributes_umd_updated.json")
+        # self._veg_param_json_path = os.path.join(self.__data_dir__, "veg_type_attributes_umd_updated.json")
         self._params_dataset_level0_path = os.path.join(self.ParamFile_dir, "params_level0.nc")
         self._params_dataset_level1_path = os.path.join(self.ParamFile_dir, "params_level1.nc")
         
@@ -148,16 +288,19 @@ class Evb_dir:
         self._pourpoint_file_path = os.path.join(self.RVICParam_dir, "pour_points.csv")
         self._uhbox_file_path = os.path.join(self.RVICParam_dir, "UHBOX.csv")
         self._rvic_param_cfg_file_path = os.path.join(self.RVICParam_dir, "rvic.parameters.cfg")
-        self._rvic_param_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.parameters.reference.cfg")
+        # self._rvic_param_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.parameters.reference.cfg")
         self._rvic_conv_cfg_file_path = os.path.join(self.RVICConv_dir, "rvic.convolution.cfg")
-        self._rvic_conv_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.convolution.reference.cfg")
+        # self._rvic_conv_cfg_file_reference_path = os.path.join(self.__data_dir__, "rvic.convolution.reference.cfg")
         self._rout_param_dir = os.path.join(self.RVICParam_dir, "params")
         
         self._globalParam_path = os.path.join(self.GlobalParam_dir, "global_param.txt")
-        self._globalParam_reference_path = os.path.join(self.__data_dir__, "global_param_reference.txt")
+        # self._globalParam_reference_path = os.path.join(self.__data_dir__, "global_param_reference.txt")
         
         self._calibrate_cp_path = os.path.join(self.CalibrateVIC_dir, "calibrate_cp.pkl")
+        
+        logger.info(f"Directories for case '{case_name}' created successfully")
     
+    # define property and setter
     @property
     def MeteForcing_src_dir(self):
         return self._MeteForcing_src_dir
