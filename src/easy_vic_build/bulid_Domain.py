@@ -1,7 +1,11 @@
+# code: utf-8
+# author: Xudong Zheng
+# email: z786909151@163.com
+
 """ 
 Module: build_Domain
 
-This module provides functions for constructing and modifying the VIC (Variable Infiltration Capacity) domain.
+This module provides functions for constructing and modifying the domain file.
 It includes capabilities to:
 - Calculate mask, fractional areas, and grid lengths for the domain.
 - Build a NetCDF domain file for VIC model simulations.
@@ -44,11 +48,6 @@ Author:
 
 """
 
-# code: utf-8
-# author: Xudong Zheng
-# email: z786909151@163.com
-
-import os
 from netCDF4 import Dataset
 from copy import deepcopy
 import numpy as np
@@ -71,6 +70,121 @@ UTM_proj_map = {"UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "
                 "UTM Zone 19N": {"lon_min": -72, "lon_max": -66, "crs_code": "EPSG:32619"}}
 
 
+@clock_decorator(print_arg_ret=False)
+def buildDomain(evb_dir, dpc_VIC, reverse_lat=True, pourpoint_xindex=None, pourpoint_yindex=None):
+    """
+    Build the domain file for the VIC model, including variables like latitude, longitude, mask, area, and others.
+
+    Parameters:
+    -----------
+    evb_dir : str
+        The directory where the domain file will be saved.
+    dpc_VIC : object
+        An object containing grid and basin shapefiles used to define the VIC grid.
+    reverse_lat : bool, optional, default=True
+        Flag to indicate whether to reverse latitudes (True for Northern Hemisphere: large -> small).
+    pourpoint_xindex : int, optional
+        X-index of the pour point to modify the mask. If not provided, no modification is made.
+    pourpoint_yindex : int, optional
+        Y-index of the pour point to modify the mask. If not provided, no modification is made.
+
+    Returns:
+    --------
+    None
+        This function does not return anything. It saves the domain file to the specified directory.
+
+    Notes:
+    ------
+    The function will generate a domain file for the VIC model that includes latitude, longitude, mask, area, and other necessary variables.
+    """
+    # ====================== build Domain ======================
+    logger.info("Starting to build domain file... ...")
+    # create domain file
+    logger.debug(f"open {evb_dir.domainFile_path} file for saving as domain file")
+    with Dataset(evb_dir.domainFile_path, "w", format="NETCDF4") as dst_dataset:
+        
+        # get lon/lat
+        logger.debug(f"get lon_list and lat_list from the dpc")
+        lon_list, lat_list, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(dpc_VIC.grid_shp, reverse_lat=reverse_lat)
+        
+        logger.debug(f"define dimension and variables in the domain file")
+        # Define dimensions
+        lat = dst_dataset.createDimension("lat", len(lat_list))
+        lon = dst_dataset.createDimension("lon", len(lon_list))
+        
+        # Create variables for latitudes, longitudes, and other grid data
+        lat_v = dst_dataset.createVariable("lat", "f8", ("lat",))
+        lon_v = dst_dataset.createVariable("lon", "f8", ("lon",))
+        lats = dst_dataset.createVariable("lats", "f8", ("lat", "lon",))  # 2D array
+        lons = dst_dataset.createVariable("lons", "f8", ("lat", "lon",))  # 2D array
+    
+        mask = dst_dataset.createVariable("mask", "i4", ("lat", "lon",))
+        area = dst_dataset.createVariable("area", "f8", ("lat", "lon",))
+        frac = dst_dataset.createVariable("frac", "f8", ("lat", "lon",))
+        frac_grid_in_basin = dst_dataset.createVariable("frac_grid_in_basin", "f8", ("lat", "lon",))
+        x_length = dst_dataset.createVariable("x_length", "f8", ("lat", "lon",))
+        y_length = dst_dataset.createVariable("y_length", "f8", ("lat", "lon",))
+        
+        # Assign values to variables
+        lat_v[:] = np.array(lat_list)
+        lon_v[:] = np.array(lon_list)
+        grid_array_lons, grid_array_lats = np.meshgrid(lon_v[:], lat_v[:])  # 2D array
+        lons[:, :] = grid_array_lons
+        lats[:, :] = grid_array_lats
+        
+        mask_array, frac_array, frac_grid_in_basin_array, area_array, x_length_array, y_length_array = cal_mask_frac_area_length(dpc_VIC, reverse_lat=reverse_lat, plot=False,
+                                                                                                                                 pourpoint_xindex=None, pourpoint_yindex=None)
+        mask[:, :] = mask_array
+        area[:, :] = area_array
+        frac[:, :] = frac_array
+        frac_grid_in_basin[:, :] = frac_grid_in_basin_array
+        x_length[:, :] = x_length_array
+        y_length[:, :] = y_length_array
+        
+        # Add attributes to variables
+        lat_v.standard_name = "latitude"
+        lat_v.long_name = "latitude of grid cell center"
+        lat_v.units = "degrees_north"
+        lat_v.axis = "Y"
+        
+        lon_v.standard_name = "longitude"
+        lon_v.long_name = "longitude of grid cell center"
+        lon_v.units = "degrees_east"
+        lon_v.axis = "X"
+        
+        lats.long_name = "lats 2D"
+        lats.description = "Latitude of grid cell 2D"
+        lats.units = "degrees"
+        
+        lons.long_name = "lons 2D"
+        lons.description = "longitude of grid cell 2D"
+        lons.units = "degrees"
+        
+        mask.long_name = "domain mask"
+        mask.comment = "1=inside domain, 0=outside"
+        mask.unit = "binary"
+        
+        area.standard_name = "area"
+        area.long_name = "area"
+        area.description = "area of grid cell"
+        area.units = "m2"
+        
+        frac.long_name = "frac"
+        frac.description = "fraction of grid cell that is active"
+        frac.units = "fraction"
+        
+        frac_grid_in_basin.long_name = "frac_grid_in_basin"
+        frac_grid_in_basin.description = "fraction of grid cell that in basin"
+        frac_grid_in_basin.units = "fraction"
+        
+        # Global attributes
+        dst_dataset.title = "VIC5 image domain dataset"
+        dst_dataset.note = "domain dataset generated by XudongZheng, zhengxd@sehemodel.club"
+        dst_dataset.Conventions = "CF-1.6"
+    
+    logger.info(f"Building domain completed sucessfully, domain file has been built at {evb_dir.domainFile_path}")
+    
+    
 def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False, pourpoint_xindex=None, pourpoint_yindex=None):
     """
     Calculate the mask, fractional area, and grid dimensions (x/y lengths) for the given VIC grid.
@@ -206,121 +320,6 @@ def cal_mask_frac_area_length(dpc_VIC, reverse_lat=True, plot=False, pourpoint_x
     
     return mask, frac, frac_grid_in_basin, area, x_length, y_length
 
-
-@clock_decorator(print_arg_ret=False)
-def buildDomain(evb_dir, dpc_VIC, reverse_lat=True, pourpoint_xindex=None, pourpoint_yindex=None):
-    """
-    Build the domain file for the VIC model, including variables like latitude, longitude, mask, area, and others.
-
-    Parameters:
-    -----------
-    evb_dir : str
-        The directory where the domain file will be saved.
-    dpc_VIC : object
-        An object containing grid and basin shapefiles used to define the VIC grid.
-    reverse_lat : bool, optional, default=True
-        Flag to indicate whether to reverse latitudes (True for Northern Hemisphere: large -> small).
-    pourpoint_xindex : int, optional
-        X-index of the pour point to modify the mask. If not provided, no modification is made.
-    pourpoint_yindex : int, optional
-        Y-index of the pour point to modify the mask. If not provided, no modification is made.
-
-    Returns:
-    --------
-    None
-        This function does not return anything. It saves the domain file to the specified directory.
-
-    Notes:
-    ------
-    The function will generate a domain file for the VIC model that includes latitude, longitude, mask, area, and other necessary variables.
-    """
-    # ====================== build Domain ======================
-    logger.info("Starting to build domain file... ...")
-    # create domain file
-    logger.debug(f"open {evb_dir.domainFile_path} file for saving as domain file")
-    with Dataset(evb_dir.domainFile_path, "w", format="NETCDF4") as dst_dataset:
-        
-        # get lon/lat
-        logger.debug(f"get lon_list and lat_list from the dpc")
-        lon_list, lat_list, lon_map_index_level0, lat_map_index_level0 = grids_array_coord_map(dpc_VIC.grid_shp, reverse_lat=reverse_lat)
-        
-        logger.debug(f"define dimension and variables in the domain file")
-        # Define dimensions
-        lat = dst_dataset.createDimension("lat", len(lat_list))
-        lon = dst_dataset.createDimension("lon", len(lon_list))
-        
-        # Create variables for latitudes, longitudes, and other grid data
-        lat_v = dst_dataset.createVariable("lat", "f8", ("lat",))
-        lon_v = dst_dataset.createVariable("lon", "f8", ("lon",))
-        lats = dst_dataset.createVariable("lats", "f8", ("lat", "lon",))  # 2D array
-        lons = dst_dataset.createVariable("lons", "f8", ("lat", "lon",))  # 2D array
-    
-        mask = dst_dataset.createVariable("mask", "i4", ("lat", "lon",))
-        area = dst_dataset.createVariable("area", "f8", ("lat", "lon",))
-        frac = dst_dataset.createVariable("frac", "f8", ("lat", "lon",))
-        frac_grid_in_basin = dst_dataset.createVariable("frac_grid_in_basin", "f8", ("lat", "lon",))
-        x_length = dst_dataset.createVariable("x_length", "f8", ("lat", "lon",))
-        y_length = dst_dataset.createVariable("y_length", "f8", ("lat", "lon",))
-        
-        # Assign values to variables
-        lat_v[:] = np.array(lat_list)
-        lon_v[:] = np.array(lon_list)
-        grid_array_lons, grid_array_lats = np.meshgrid(lon_v[:], lat_v[:])  # 2D array
-        lons[:, :] = grid_array_lons
-        lats[:, :] = grid_array_lats
-        
-        mask_array, frac_array, frac_grid_in_basin_array, area_array, x_length_array, y_length_array = cal_mask_frac_area_length(dpc_VIC, reverse_lat=reverse_lat, plot=False,
-                                                                                                                                 pourpoint_xindex=None, pourpoint_yindex=None)
-        mask[:, :] = mask_array
-        area[:, :] = area_array
-        frac[:, :] = frac_array
-        frac_grid_in_basin[:, :] = frac_grid_in_basin_array
-        x_length[:, :] = x_length_array
-        y_length[:, :] = y_length_array
-        
-        # Add attributes to variables
-        lat_v.standard_name = "latitude"
-        lat_v.long_name = "latitude of grid cell center"
-        lat_v.units = "degrees_north"
-        lat_v.axis = "Y"
-        
-        lon_v.standard_name = "longitude"
-        lon_v.long_name = "longitude of grid cell center"
-        lon_v.units = "degrees_east"
-        lon_v.axis = "X"
-        
-        lats.long_name = "lats 2D"
-        lats.description = "Latitude of grid cell 2D"
-        lats.units = "degrees"
-        
-        lons.long_name = "lons 2D"
-        lons.description = "longitude of grid cell 2D"
-        lons.units = "degrees"
-        
-        mask.long_name = "domain mask"
-        mask.comment = "1=inside domain, 0=outside"
-        mask.unit = "binary"
-        
-        area.standard_name = "area"
-        area.long_name = "area"
-        area.description = "area of grid cell"
-        area.units = "m2"
-        
-        frac.long_name = "frac"
-        frac.description = "fraction of grid cell that is active"
-        frac.units = "fraction"
-        
-        frac_grid_in_basin.long_name = "frac_grid_in_basin"
-        frac_grid_in_basin.description = "fraction of grid cell that in basin"
-        frac_grid_in_basin.units = "fraction"
-        
-        # Global attributes
-        dst_dataset.title = "VIC5 image domain dataset"
-        dst_dataset.note = "domain dataset generated by XudongZheng, zhengxd@sehemodel.club"
-        dst_dataset.Conventions = "CF-1.6"
-    
-    logger.info(f"Building domain completed sucessfully, domain file has been built at {evb_dir.domainFile_path}")
-    
 
 def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
     """

@@ -1,13 +1,98 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+"""
+Module: build_MeteForcing_nco
+
+This module provides functions for constructing meteorological forcing data for the VIC model using NetCDF Operators (NCO). It includes functionalities for clipping source meteorological forcing data to a basin boundary, regridding and formatting data, and resampling data to required time steps.
+
+Functions
+---------
+    - buildMeteForcingnco: Orchestrates the meteorological forcing data preparation process.
+    - clip_src_data_for_basin: Clips the source meteorological forcing data to the given basin boundary.
+    - formationForcing: Regrids and formats meteorological forcing data for VIC input.
+    - resampleTimeForcing: Resamples meteorological forcing data from the source directory to a target time step and saves the results as NetCDF files.
+
+Usage
+-----
+To use this module, provide an `evb_dir` instance that specifies the directory structure for meteorological forcing data. The `buildMeteForcingnco` function will handle data preparation, including clipping, formatting, and resampling.
+
+Example
+-------
+    # Example usage:
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
+    case_name = f"{basin_index}_{model_scale}"
+
+    evb_dir = Evb_dir("./examples")
+    evb_dir.builddir(case_name)
+
+    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
+
+    evb_dir.MeteForcing_src_dir = "E:\\data\\hydrometeorology\\NLDAS\\NLDAS2_Primary_Forcing_Data_subset_0.125\\data"
+    evb_dir.MeteForcing_src_suffix = ".nc4"
+
+    evb_dir.linux_share_temp_dir = "F:\\Linux\\C_VirtualBox_Share\\temp"
+
+    combineYearly_py_path = "F:\\research\\Research\\easy_vic_build\\easy_vic_build\\scripts\\linux_scripts\\combineYearly.py"
+    if not os.path.exists(os.path.join(evb_dir.linux_share_temp_dir, "combineYearly.py")):
+        shutil.copy(combineYearly_py_path, os.path.join(evb_dir.linux_share_temp_dir, "combineYearly.py"))
+    
+    # build MeteForcingnco: step=1
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                         step=1, reverse_lat=True, check_search=False,
+                         year_re_exp=r"\d{4}.nc4")
+    
+    # go to linux, run combineYearly.py
+    
+    # build MeteForcingnco: step=2
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+    #                     step=2, reverse_lat=True, check_search=False,
+    #                     year_re_exp=r"\d{4}.nc4")
+    
+    # build MeteForcingnco: step=3
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+    #                     step=3, reverse_lat=True, check_search=False,
+    #                     year_re_exp=r"\d{4}.nc4")
+    
+    # build MeteForcingnco: step=4, resample
+    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+    #                     step=4, reverse_lat=True, check_search=False,
+    #                     year_re_exp=r"\d{4}.nc4",
+    #                     dst_time_hours=24)
+    
+Dependencies
+------------
+    - os: For file and directory operations.
+    - numpy: For numerical computations.
+    - re: For handling regular expressions.
+    - shutil: For file and directory operations.
+    - datetime: For managing time and date.
+    - netCDF4: For reading and writing NetCDF files.
+    - cftime: For handling time units and calendars in NetCDF files.
+    - tqdm: For displaying progress bars during processing.
+    - matplotlib: For potential data visualization.
+    - xarray: For handling multidimensional arrays and working with NetCDF files.
+    - nco: For interacting with NetCDF Operators.
+    - CreateGDF: For creating geospatial data frames.
+    - search_grids: For searching grid points within a given domain.
+    - grids_array_coord_map: For mapping basin grid coordinates.
+    - check_and_mkdir, remove_and_mkdir: Utility functions for directory management.
+    - clock_decorator: A decorator for measuring function execution time.
+
+Author
+------
+    Xudong Zheng
+    Email: z786909151@163.com
+"""
 #* use nco to increase speed (you need a Linux system, as the ncrcat has not been implemented in pynco)
 #* This is particularly useful for large domain
 # TODO parallel
 
 
 from nco import Nco
-from nco.custom import Limit, LimitSingle
+from nco.custom import Limit
 import os
 from tqdm import *
 import numpy as np
@@ -23,9 +108,147 @@ import cftime
 from datetime import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
+from . import logger
 
+
+@clock_decorator(print_arg_ret=False)
+def buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=1,
+                        reverse_lat=True, check_search=False,
+                        year_re_exp=r"A\d{4}.nc4",
+                        dst_time_hours=24):
+    """
+    Build meteorological forcing data for VIC model.
+    
+    Parameters
+    ----------
+    evb_dir : object
+        Directory object containing path configurations.
+    dpc_VIC_level1 : object
+        Input data for VIC model at level 1.
+    date_period : tuple of datetime
+        Start and end date for the forcing data.
+    step : int, optional
+        Step number to control the workflow (default is 1).
+    reverse_lat : bool, optional
+        Whether to reverse latitude (default is True).
+    check_search : bool, optional
+        Whether to perform a search check (default is False).
+    year_re_exp : str, optional
+        Regular expression for year matching (default is "A\d{4}.nc4").
+    dst_time_hours : int, optional
+        Time resolution in hours for resampling (default is 24).
+
+    Returns
+    -------
+    None
+        Function executes a series of steps to generate meteorological forcing data.
+    
+    Notes
+    -----
+    This function consists of multiple steps including:
+    1. Clipping data for the basin.
+    2. Combining yearly data and forming forcing data.
+    3. Cleaning temporary data.
+    4. Resampling time-based forcing data.
+    """
+    
+    # Start of the forcing building process, log an info message
+    logger.info(f"Starting to build meteorological forcing files for step {step}... ...")
+    
+    # ====================== set dir and path ======================
+    # set path
+    MeteForcing_dir = evb_dir.MeteForcing_dir
+    MeteForcing_clip_dir = os.path.join(MeteForcing_dir, "clip")
+    MeteForcing_combineYearly_dir = os.path.join(MeteForcing_dir, "combineYearly")
+    # combineYearly_py_path = os.path.join(evb_dir.__package_dir__, "linux_scripts\\combineYearly.py")
+    
+    linux_share_temp_dir = evb_dir.linux_share_temp_dir
+    check_and_mkdir(linux_share_temp_dir)
+    
+    linux_share_temp_clip_dir = os.path.join(linux_share_temp_dir, "clip")
+    linux_share_temp_combineYearly_dir = os.path.join(linux_share_temp_dir, "combineYearly")
+    ## ====================== step1: clip for basin ======================
+    if step == 1:
+        logger.info("Step 1: Clipping data for basin...")
+        clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat)
+        
+        #* mv MeteForcing_clip_dir to linux_share_temp_dir/clip, this is used for window users
+        if os.path.exists(linux_share_temp_clip_dir):
+            shutil.rmtree(linux_share_temp_clip_dir)
+        
+        shutil.move(MeteForcing_clip_dir, linux_share_temp_dir)
+        
+        # -------------------- cp combineYearly.py to share_temp_home --------------------
+        # shutil.copy(combineYearly_py_path, os.path.join(linux_share_temp_dir, "combineYearly.py"))
+        
+        # -------------------- cd to share_temp_home and run combineYearly.py --------------------
+        #* cd to share_temp_home (go to Linux): run combineYearly.py (python combineYearly.py ./)
+        
+    elif step == 2:
+    # -------------------- formationForcing: regrid, formation --------------------
+        #* mv linux_share_temp_dir/combineYearly back to MeteForcing_combineYearly_dir
+        # if os.path.exists(dst_dir):
+        #     shutil.rmtree(dst_dir)
+        logger.info("Step 2: Combining yearly data and forming forcing...")
+        try:
+            shutil.move(linux_share_temp_combineYearly_dir, MeteForcing_combineYearly_dir)
+        except FileNotFoundError:
+            logger.warning("CombineYearly directory already moved")
+        
+        # formationForcing
+        formationForcing(evb_dir, dpc_VIC_level1, date_period, reverse_lat, check_search, year_re_exp)
+    
+    elif step == 3:
+    # -------------------- clean temp data --------------------
+        logger.info("Step 3: Cleaning temporary data...")
+        
+        logger.info(f"Removing {linux_share_temp_clip_dir}")
+        shutil.rmtree(linux_share_temp_clip_dir)
+        
+        logger.info(f"Removing {MeteForcing_combineYearly_dir}")
+        shutil.rmtree(MeteForcing_combineYearly_dir)
+
+    elif step == 4:
+    # -------------------- resample time forcing --------------------
+        logger.info("Step 4: Resampling time-based forcing data...")
+        resampleTimeForcing(evb_dir, dst_time_hours=dst_time_hours)
+    
+    else:
+        logger.error("Invalid step number. Please input a valid step number")
+    
+    logger.info(f"Building meteorological forcing files for step {step} completed successfully")
+    
 
 def clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat=True):
+    """
+    Clip the meteorological forcing data to the basin's boundary for a given date period.
+
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        An instance of the `Evb_dir` class, which provides paths to the source and destination directories for the forcing data.
+    dpc_VIC_level1 : DPC_VIC_Level1
+        An instance of the `DPC_VIC_Level1` class, which provides basin shape and grid shape information.
+    date_period : list of str
+        A list containing the start and end dates for the desired period in the format ["YYYYMMDD", "YYYYMMDD"].
+    reverse_lat : bool, optional
+        If True, the latitude values will be reversed. Default is True.
+
+    Returns
+    -------
+    None
+        The function clips the forcing data and saves the results to the specified output directory.
+
+    Notes
+    -----
+    The clipping is performed for each year within the provided `date_period`. The clipped files are saved 
+    with the `.clip.nc4` suffix in the `clip` directory.
+
+    """
+    # Start of the parameter building process, log an info message
+    logger.info("Starting to clip_src_data_for_basin... ...")
+    
     # ====================== set dir and path ======================
     # set path
     src_home = evb_dir.MeteForcing_src_dir
@@ -72,7 +295,7 @@ def clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat=Tr
     # nco
     year = start_year
     while year <= end_year:
-        print(f"clip forcing: {year}, end with year: {end_year}")
+        logger.info(f"Clipping forcing data for year {year}, ending with year {end_year}.")
         
         # get files
         src_names_year = [n for n in src_names if "A" + str(year) in n]
@@ -87,15 +310,50 @@ def clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat=Tr
             dst_fname = src_name_year[:src_name_year.find(".nc4")] + ".clip.nc4"
             dst_path = os.path.join(MeteForcing_clip_dir, dst_fname)
             
+            logger.debug(f"Clipping file: {src_name_year}")
             nco_.ncks(input=src_path, output=dst_path, options=opt)
 
         # next year
         year += 1
+        logger.info(f"Finished processing for year: {year}")
+        
+    logger.info("clip_src_data_for_basin completed successfully")
 
 
 def formationForcing(evb_dir, dpc_VIC_level1, date_period,
                      reverse_lat=True, check_search=False,
                      year_re_exp=r"\d{4}.nc4"):
+    """
+    Format meteorological forcing data and generate NetCDF files for VIC model.
+
+    Parameters
+    ----------
+    evb_dir : object
+        Directory information for meteorological forcing data.
+    dpc_VIC_level1 : object
+        Level 1 data processor object containing grid and basin shape.
+    date_period : tuple
+        A tuple of start and end date for the data period.
+    reverse_lat : bool, optional
+        If True, reverses the latitude order (default is True).
+    check_search : bool, optional
+        If True, enables grid search check and visualization (default is False).
+    year_re_exp : str, optional
+        Regular expression pattern for extracting the year from file names (default is r"\d{4}.nc4").
+
+    Returns
+    -------
+    None
+        The function saves the formatted forcing data to NetCDF files.
+    
+    Notes
+    -----
+    This function processes meteorological forcing data from source files, transforms the data according to 
+    latitude/longitude mapping, and saves the data in NetCDF format for use in VIC simulations.
+    """
+
+    logger.info("Starting to formating meteorological forcing files... ...")
+    
     # ====================== set dir and path ======================
     # set path
     suffix = evb_dir.MeteForcing_src_suffix
@@ -103,6 +361,9 @@ def formationForcing(evb_dir, dpc_VIC_level1, date_period,
     MeteForcing_combineYearly_dir = os.path.join(MeteForcing_dir, "combineYearly")
     src_home = MeteForcing_combineYearly_dir
     src_names = [n for n in os.listdir(src_home) if n.endswith(suffix)]
+        
+    logger.debug(f"set src home: {src_home}, suffix: {suffix}")
+    logger.debug(f"set MeteForcing_dir: {MeteForcing_dir}")
     
     ## ====================== get grid_shp and basin_shp ======================
     grid_shp = dpc_VIC_level1.grid_shp
@@ -126,7 +387,7 @@ def formationForcing(evb_dir, dpc_VIC_level1, date_period,
     lons_flatten_ = grid_array_lons_.flatten()
     
     # search
-    print("========== search grids for match src and dst data ==========")
+    logger.info("search grids for match src and dst data")
     searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(dst_lat=lats_flatten_, dst_lon=lons_flatten_,
                                                                               src_lat=src_lat_, src_lon=src_lon_,
                                                                               lat_radius=src_lat_res_/2, lon_radius=src_lon_res_/2)
@@ -140,8 +401,12 @@ def formationForcing(evb_dir, dpc_VIC_level1, date_period,
         # get year
         year = re.search(year_re_exp, src_name)[0][:4]
         
+        logger.info(f"formating forcing for year: {year}")
+        
         # read src
         with Dataset(src_path, "r") as src_dataset:
+            logger.debug(f"Reading data from: {src_path}")
+            
             # get lat, lon index
             src_lat = src_dataset.variables["lat"][:]
             src_lon = src_dataset.variables["lon"][:]
@@ -339,13 +604,35 @@ def formationForcing(evb_dir, dpc_VIC_level1, date_period,
                 dst_dataset.title = "VIC5 image meteForcing dataset"
                 dst_dataset.note = "meteForcing dataset generated by XudongZheng, zhengxd@sehemodel.club"
                 dst_dataset.Conventions = "CF-1.6"
+                
+        logger.info(f"Finished processing for year: {year}")
+    
+    logger.info("Formating meteorological forcing files completed successfully")
 
 
 def resampleTimeForcing(evb_dir, dst_time_hours=24):
+    """
+    Resample the meteorological forcing data to a different time step.
+
+    Parameters
+    ----------
+    evb_dir : object
+        Directory structure containing the paths to the source and destination data.
+    dst_time_hours : int, optional
+        The target time step in hours for resampling (default is 24 hours).
+
+    Returns
+    -------
+    None
+        The function saves the resampled data as NetCDF files in the destination directory.
+    """
+    logger.info(f"Starting to resample meteorological forcing files, dst_time_hours: {dst_time_hours}... ...")
+    
     suffix = ".nc"
     MeteForcing_dir = evb_dir.MeteForcing_dir
     resample_dir = os.path.join(MeteForcing_dir, "resample_forcing")
     remove_and_mkdir(resample_dir)
+    logger.debug(f"Resample directory created at: {resample_dir}")
     
     dst_home = resample_dir
     src_home = MeteForcing_dir
@@ -360,88 +647,41 @@ def resampleTimeForcing(evb_dir, dst_time_hours=24):
         src_path = os.path.join(src_home, src_name)
         dst_path = os.path.join(dst_home, src_name)
         
-        # resample time
-        src_dataset = xr.open_dataset(src_path)
-        dst_dataset = xr.Dataset({
-            "dlwrf": src_dataset["dlwrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "dswrf": src_dataset["dswrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "prcp": src_dataset["prcp"].resample(time=f"{dst_time_hours}H").sum(skipna=True),
-            "pres": src_dataset["pres"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "tas": src_dataset["tas"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "vp": src_dataset["vp"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "wind": src_dataset["wind"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-        })
+        logger.info(f"Processing {src_name} from {src_path}")
         
-        dst_dataset["lats"] = src_dataset["lats"]
-        dst_dataset["lons"] = src_dataset["lons"]
-        
-        dst_dataset.to_netcdf(dst_path)
-        
-        # close
-        src_dataset.close()
-        dst_dataset.close()
-
-    
-@clock_decorator(print_arg_ret=False)
-def buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-                        step=1,
-                        reverse_lat=True, check_search=False,
-                        year_re_exp=r"A\d{4}.nc4",
-                        dst_time_hours=24):
-    # ====================== set dir and path ======================
-    # set path
-    MeteForcing_dir = evb_dir.MeteForcing_dir
-    MeteForcing_clip_dir = os.path.join(MeteForcing_dir, "clip")
-    MeteForcing_combineYearly_dir = os.path.join(MeteForcing_dir, "combineYearly")
-    # combineYearly_py_path = os.path.join(evb_dir.__package_dir__, "linux_scripts\\combineYearly.py")
-    
-    linux_share_temp_dir = evb_dir.linux_share_temp_dir
-    check_and_mkdir(linux_share_temp_dir)
-    
-    linux_share_temp_clip_dir = os.path.join(linux_share_temp_dir, "clip")
-    linux_share_temp_combineYearly_dir = os.path.join(linux_share_temp_dir, "combineYearly")
-    ## ====================== step1: clip for basin ======================
-    if step == 1:
-        clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat)
-        
-        #* mv MeteForcing_clip_dir to linux_share_temp_dir/clip, this is used for window users
-        if os.path.exists(linux_share_temp_clip_dir):
-            shutil.rmtree(linux_share_temp_clip_dir)
-        
-        shutil.move(MeteForcing_clip_dir, linux_share_temp_dir)
-        
-        # -------------------- cp combineYearly.py to share_temp_home --------------------
-        # shutil.copy(combineYearly_py_path, os.path.join(linux_share_temp_dir, "combineYearly.py"))
-        
-        # -------------------- cd to share_temp_home and run combineYearly.py --------------------
-        #* cd to share_temp_home (go to Linux): run combineYearly.py (python combineYearly.py ./)
-        
-    elif step == 2:
-    # -------------------- formationForcing: regrid, formation --------------------
-        #* mv linux_share_temp_dir/combineYearly back to MeteForcing_combineYearly_dir
-        # if os.path.exists(dst_dir):
-        #     shutil.rmtree(dst_dir)
-        
+        # Open source dataset
         try:
-            shutil.move(linux_share_temp_combineYearly_dir, MeteForcing_combineYearly_dir)
-        except:
-            print("already moved")
+            src_dataset = xr.open_dataset(src_path)
+            logger.debug(f"Opened source dataset: {src_path}")
+        except Exception as e:
+            logger.error(f"Error opening source dataset {src_path}: {e}")
+            continue
         
-        # formationForcing
-        formationForcing(evb_dir, dpc_VIC_level1, date_period, reverse_lat, check_search, year_re_exp)
-    
-    elif step == 3:
-    # -------------------- clean temp data --------------------
-        print(f"removing {linux_share_temp_clip_dir}")
-        shutil.rmtree(linux_share_temp_clip_dir)
+        # resample data
+        try:
+            dst_dataset = xr.Dataset({
+                "dlwrf": src_dataset["dlwrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "dswrf": src_dataset["dswrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "prcp": src_dataset["prcp"].resample(time=f"{dst_time_hours}H").sum(skipna=True),
+                "pres": src_dataset["pres"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "tas": src_dataset["tas"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "vp": src_dataset["vp"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "wind": src_dataset["wind"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            })
+            
+            dst_dataset["lats"] = src_dataset["lats"]
+            dst_dataset["lons"] = src_dataset["lons"]
+            
+            dst_dataset.to_netcdf(dst_path)
+            logger.info(f"Resampled data saved to: {dst_path}")
+            
+        except Exception  as e:
+            logger.error(f"Error during resampling or saving {src_name}: {e}")
+            continue
         
-        print(f"removing {MeteForcing_combineYearly_dir}")
-        shutil.rmtree(MeteForcing_combineYearly_dir)
+        finally:
+            # close
+            src_dataset.close()
+            dst_dataset.close()
 
-    elif step == 4:
-    # -------------------- resample time forcing --------------------
-        resampleTimeForcing(evb_dir, dst_time_hours=dst_time_hours)
-    
-    else:
-        print("please input corrected step number")
-    
+    logger.info("Resample meteorological forcing files completed successfully")

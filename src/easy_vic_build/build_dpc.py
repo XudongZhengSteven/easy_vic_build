@@ -1,3 +1,7 @@
+# code: utf-8
+# author: Xudong Zheng
+# email: z786909151@163.com
+
 """ 
 Module: build_dpc
 
@@ -65,11 +69,7 @@ Author:
     Email: z786909151@163.com
 
 """
-# code: utf-8
-# author: Xudong Zheng
-# email: z786909151@163.com
 
-import os
 import matplotlib.pyplot as plt
 from .tools.utilities import *
 import pickle

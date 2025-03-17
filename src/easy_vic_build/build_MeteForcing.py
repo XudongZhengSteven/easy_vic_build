@@ -1,6 +1,65 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+
+"""
+Module: build_MeteForcing
+
+This module provides functions for constructing meteorological forcing data for the VIC model.
+It includes the main function `buildMeteForcing` and a helper function `resampleTimeForcing` to:
+- Organize and prepare meteorological forcing data for use in the VIC model.
+- Resample meteorological forcing data to the required time steps.
+
+Functions:
+----------
+    - buildMeteForcing: The main function that orchestrates the meteorological forcing data preparation.
+    - resampleTimeForcing: Resample meteorological forcing data from the source directory to a target time step, and save the results as NetCDF files.
+
+Usage:
+------
+    To use this module, provide an `evb_dir` instance that includes the directory for meteorological forcing data.
+    The `buildMeteForcing` function will prepare the data by calling `resampleTimeForcing` for resampling.
+    
+    After executing `buildMeteForcing`, the resampled forcing data will be stored in the specified directory for further use in the VIC model.
+
+Example:
+------
+    # Example usage:
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
+    case_name = f"{basin_index}_{model_scale}"
+
+    evb_dir = Evb_dir("./examples")
+    evb_dir.builddir(case_name)
+    
+    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level1 = readdpc(evb_dir)
+    
+    evb_dir.MeteForcing_src_dir = "E:\\data\\hydrometeorology\\NLDAS\\NLDAS2_Primary_Forcing_Data_subset_0.125\\data"
+    evb_dir.MeteForcing_src_suffix = ".nc4"
+
+    buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
+                     reverse_lat=True, check_search=False,
+                     time_re_exp=r"\d{8}.\d{4}")
+
+Dependencies:
+-------------
+    - os: For file and directory operations.
+    - numpy: For numerical operations.
+    - re: For regular expressions.
+    - datetime: For date and time handling.
+    - netCDF4: For reading and writing NetCDF files.
+    - cftime: For handling time units and calendars in NetCDF files.
+    - tqdm: For progress bars during file processing.
+    - matplotlib: For plotting data (if required in the future).
+    - xarray: For handling multidimensional arrays and working with NetCDF files.
+    
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+"""
+
 # TODO parallel
 import os
 import numpy as np
@@ -16,6 +75,7 @@ from .tools.dpc_func.basin_grid_func import grids_array_coord_map
 from .tools.decoractors import clock_decorator
 from .tools.utilities import remove_and_mkdir
 import xarray as xr
+from . import logger
 
 
 @clock_decorator(print_arg_ret=False)
@@ -24,13 +84,45 @@ def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
                      time_re_exp=r"\d{8}.\d{4}",
                      search_func=search_grids.search_grids_radius_rectangle_reverse,
                      dst_time_hours=None):
+    """
+    Build meteorological forcing dataset for VIC model.
+
+    Parameters
+    ----------
+    evb_dir : object
+        Directory structure that contains paths for the forcing data and output.
+    dpc_VIC_level1 : object
+        Object containing grid and basin shapefiles for the VIC model.
+    date_period : tuple of str
+        A tuple containing the start and end date in the format 'YYYYMMDD'.
+    reverse_lat : bool, optional
+        If True, reverses the latitude ordering (default is True).
+    check_search : bool, optional
+        If True, performs a visual check for grid search accuracy (default is False).
+    time_re_exp : str, optional
+        Regular expression pattern for extracting time information (default is r"\d{8}.\d{4}").
+    search_func : function, optional
+        Function used to search grid indices (default is `search_grids.search_grids_radius_rectangle_reverse`).
+    dst_time_hours : int, optional
+        Number of hours to resample the dataset (default is None, which means no resampling).
+
+    Returns
+    -------
+    None
+        The function creates a NetCDF file for the forcing data and stores it in the specified output directory.
+    """
+    # Start of the forcing building process, log an info message
+    logger.info("Starting to build meteorological forcing files... ...")
+    
     # ====================== set dir and path ======================
     # set path
     src_home = evb_dir.MeteForcing_src_dir
     suffix = evb_dir.MeteForcing_src_suffix
     src_names = [n for n in os.listdir(src_home) if n.endswith(suffix)]
-    
     MeteForcing_dir = evb_dir.MeteForcing_dir
+    
+    logger.debug(f"set src home: {src_home}, suffix: {suffix}")
+    logger.debug(f"set MeteForcing_dir: {MeteForcing_dir}")
     
     ## ====================== get grid_shp and basin_shp ======================
     grid_shp = dpc_VIC_level1.grid_shp
@@ -43,10 +135,11 @@ def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
     # set time
     start_year = int(date_period[0][:4])
     end_year = int(date_period[1][:4])
+    logger.debug(f"set forcing date: {start_year}-{end_year}")
     
     year = start_year
     while year <= end_year:
-        print(f"creating forcing: {year}, end with year: {end_year}")
+        logger.info(f"creating forcing for year: {year}, end with year: {end_year}")
         
         # get files
         src_names_year = [n for n in src_names if "A" + str(year) in n]
@@ -59,6 +152,8 @@ def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
         # create nc
         dst_path_year = os.path.join(MeteForcing_dir, f"{evb_dir.forcing_prefix}.{year}.nc")
         with Dataset(dst_path_year, "w") as dst_dataset:
+            logger.debug(f"Creating NetCDF file: {dst_path_year}")
+            
             # define dimension
             time_dim = dst_dataset.createDimension("time", len(src_names_year))
             lat_dim = dst_dataset.createDimension("lat", len(lat_list))
@@ -145,6 +240,8 @@ def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
                 src_path_year_i = os.path.join(src_home, src_name_year_i)
                 
                 with Dataset(src_path_year_i, "r") as src_dataset:
+                    logger.debug(f"Reading data from: {src_path_year_i}")
+                    
                     # get time index
                     src_dataset_time = src_dataset.variables["time"]
                     src_time_cftime = cftime.num2date(src_dataset_time[:][0], units=src_dataset_time.units, calendar=src_dataset_time.calendar)
@@ -262,17 +359,38 @@ def buildMeteForcing(evb_dir, dpc_VIC_level1, date_period,
         
         # next year
         year += 1
+        logger.info(f"Finished processing for year: {year}")
     
     ## ====================== loop for read year and resample time forcing ======================
     if dst_time_hours is not None:
         resampleTimeForcing(evb_dir, dst_time_hours)
-        
+    
+    logger.info("Building meteorological forcing files completed successfully")
+    
 
 def resampleTimeForcing(evb_dir, dst_time_hours=24):
+    """
+    Resample the meteorological forcing data to a different time step.
+
+    Parameters
+    ----------
+    evb_dir : object
+        Directory structure containing the paths to the source and destination data.
+    dst_time_hours : int, optional
+        The target time step in hours for resampling (default is 24 hours).
+
+    Returns
+    -------
+    None
+        The function saves the resampled data as NetCDF files in the destination directory.
+    """
+    logger.info(f"Starting to resample meteorological forcing files, dst_time_hours: {dst_time_hours}... ...")
+    
     suffix = ".nc"
     MeteForcing_dir = evb_dir.MeteForcing_dir
     resample_dir = os.path.join(MeteForcing_dir, "resample_forcing")
     remove_and_mkdir(resample_dir)
+    logger.debug(f"Resample directory created at: {resample_dir}")
     
     dst_home = resample_dir
     src_home = MeteForcing_dir
@@ -287,23 +405,41 @@ def resampleTimeForcing(evb_dir, dst_time_hours=24):
         src_path = os.path.join(src_home, src_name)
         dst_path = os.path.join(dst_home, src_name)
         
-        # resample time
-        src_dataset = xr.open_dataset(src_path)
-        dst_dataset = xr.Dataset({
-            "dlwrf": src_dataset["dlwrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "dswrf": src_dataset["dswrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "prcp": src_dataset["prcp"].resample(time=f"{dst_time_hours}H").sum(skipna=True),
-            "pres": src_dataset["pres"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "tas": src_dataset["tas"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "vp": src_dataset["vp"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-            "wind": src_dataset["wind"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
-        })
+        logger.info(f"Processing {src_name} from {src_path}")
         
-        dst_dataset["lats"] = src_dataset["lats"]
-        dst_dataset["lons"] = src_dataset["lons"]
+        # Open source dataset
+        try:
+            src_dataset = xr.open_dataset(src_path)
+            logger.debug(f"Opened source dataset: {src_path}")
+        except Exception as e:
+            logger.error(f"Error opening source dataset {src_path}: {e}")
+            continue
         
-        dst_dataset.to_netcdf(dst_path)
+        # resample data
+        try:
+            dst_dataset = xr.Dataset({
+                "dlwrf": src_dataset["dlwrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "dswrf": src_dataset["dswrf"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "prcp": src_dataset["prcp"].resample(time=f"{dst_time_hours}H").sum(skipna=True),
+                "pres": src_dataset["pres"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "tas": src_dataset["tas"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "vp": src_dataset["vp"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+                "wind": src_dataset["wind"].resample(time=f"{dst_time_hours}H").mean(skipna=True),
+            })
+            
+            dst_dataset["lats"] = src_dataset["lats"]
+            dst_dataset["lons"] = src_dataset["lons"]
+            
+            dst_dataset.to_netcdf(dst_path)
+            logger.info(f"Resampled data saved to: {dst_path}")
+            
+        except Exception  as e:
+            logger.error(f"Error during resampling or saving {src_name}: {e}")
+            continue
         
-        # close
-        src_dataset.close()
-        dst_dataset.close()
+        finally:
+            # close
+            src_dataset.close()
+            dst_dataset.close()
+
+    logger.info("Resample meteorological forcing files completed successfully")

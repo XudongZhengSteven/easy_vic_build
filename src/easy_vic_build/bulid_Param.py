@@ -1,14 +1,70 @@
-""" 
-
-
-
-"""
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-import os
+
+""" 
+Module: build_Param
+
+This module provides functions for constructing the Parameter file of the VIC model.
+It includes capabilities to:
+- Build the basic params_dataset_level0
+- Build the params_dataset_level0 by g parameters and TF
+- Build the params_dataset_level1
+- Searching grids for scaling grids from level 0 to level 1
+- Scaling params_dataset_level0 to params_dataset_level1
+
+Functions:
+----------
+    - buildParam_level0: Build the parameter dataset for level 0, consisting of two components: `buildParam_level0_basic` and `buildParam_level0_by_g`.
+    - buildParam_level0_basic: Build the basic parameter dataset for level 0.
+    - buildParam_level0_by_g: Use global parameter lists and TF to generate the parameter dataset.
+    - buildParam_level1: Build Level 1 parameters based on TF and dpc information.
+    - scaling_level0_to_level1_search_grids: Searching grids for scaling grids from level 0 to level 1 (Matching).
+    - scaling_level0_to_level1: Scaling the grid parameters from level 0 to level 1 based on matching grids.
+
+Usage:
+------
+    To use this module, provide dpc instances containing information about soil and vegetation information at level 0 and level 1, respectively.
+    An evb_dir instance is also required. To generate parameters at level 0, provide a g_list.
+    The Transfer function and scaling operator is set in params_func.TransferFunction and params_func.Scaling_operator module.
+
+Example:
+------
+    # Example usage:
+    basin_index = 213
+    model_scale = "6km"
+    date_period = ["19980101", "19981231"]
+    case_name = f"{basin_index}_{model_scale}"
+
+    evb_dir = Evb_dir(cases_home="./examples")  # cases_home="/home/xdz/code/VIC_xdz/cases"
+    evb_dir.builddir(case_name)
+    
+    dpc_VIC_level0, dpc_VIC_level1, dpc_level2 = readdpc(evb_dir)
+
+    domain_dataset = readDomain(evb_dir)
+
+    params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(evb_dir, default_g_list, dpc_VIC_level0, reverse_lat=True)
+    params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=domain_dataset)
+    params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1)
+    
+    domain_dataset.close()
+    params_dataset_level0.close()
+    params_dataset_level1.close()
+
+Dependencies:
+-------------
+    - tools.params_func: Custom utility functions.
+    - tools.utilities: For measuring function execution time.
+    - tools.decoractors: For measuring function execution time.
+    
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+    
+"""
+
 import numpy as np
-import json
 from .tools.utilities import *
 from .tools.params_func.createParametersDataset import createParametersDataset
 from .tools.params_func.TansferFunction import TF_VIC
@@ -794,7 +850,7 @@ def buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=
 
 def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1):
     """
-    Scale the grid parameters from level 0 to level 1 by searching for the matching grids.
+    Searching grids for scaling grids from level 0 to level 1 (Matching).
 
     This function reads longitude and latitude values from the parameter datasets of level 0 and level 1, 
     calculates the grid resolutions, creates 2D mesh grids for level 1, and searches for the closest 
@@ -860,7 +916,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
 @clock_decorator(print_arg_ret=False)
 def scaling_level0_to_level1(params_dataset_level0, params_dataset_level1, searched_grids_bool_index=None):
     """
-    Scale the grid parameters from level 0 to level 1 by searching for the matching grids.
+    Scaling the grid parameters from level 0 to level 1 based on matching grids.
 
     This function takes the parameters from the level 0 and level 1 datasets, and scales the grid
     parameters from the level 0 resolution to the level 1 resolution. It searches for the matching
