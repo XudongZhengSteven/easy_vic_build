@@ -21,8 +21,7 @@ Usage:
     2. Call the builddpc function with appropriate arguments to process and plot the data.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 213
     model_scale = "6km"
     date_period = ["19980101", "19981231"]

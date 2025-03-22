@@ -7,11 +7,8 @@ import numpy as np
 from tqdm import *
 import matplotlib.pyplot as plt
 from rasterio.plot import show
-from ...geo_func import search_grids, resample
+from ...geo_func import search_grids
 from ...geo_func.create_gdf import CreateGDF
-from ...utilities import read_NLDAS_annual_prec
-import os
-from .... import Evb_dir
 
 def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
     # read
@@ -19,6 +16,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
     # data_annual_P = np.load(NLDAS_annual_P_path)
     # annual_P_lon = np.loadtxt(os.path.join(Evb_dir.__data_dir__, "annual_prec_lon.txt"))
     # annual_P_lat = np.loadtxt(os.path.join(Evb_dir.__data_dir__, "annual_prec_lat.txt"))
+    from ...utilities import read_NLDAS_annual_prec
     data_annual_P, annual_P_lon, annual_P_lat = read_NLDAS_annual_prec()
     
     annual_P_lat_res = (max(annual_P_lat) - min(annual_P_lat)) / (len(annual_P_lat) - 1)

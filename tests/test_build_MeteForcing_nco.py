@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 from easy_vic_build.tools.utilities import readdpc
-from easy_vic_build import Evb_dir
+from easy_vic_build.Evb_dir_class import Evb_dir
 from easy_vic_build.build_MeteForcing_nco import buildMeteForcingnco
 import shutil, os
 

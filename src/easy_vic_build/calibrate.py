@@ -24,8 +24,7 @@ Usage:
     for the next generation.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 397
     model_scale = "6km"
     date_period = ["19980101", "20071231"]

@@ -4,7 +4,7 @@
 
 from easy_vic_build.build_dpc import builddpc
 from easy_vic_build.tools.dpc_func.dpc_subclass import dataProcess_VIC_level0, dataProcess_VIC_level1, dataProcess_VIC_level2
-from easy_vic_build import Evb_dir
+from easy_vic_build.Evb_dir_class import Evb_dir
 from easy_vic_build.tools.utilities import *
 from easy_vic_build.tools.dpc_func.basin_grid_func import createGridForBasin
 

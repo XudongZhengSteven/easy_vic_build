@@ -2,6 +2,67 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""
+Module: plot_func
+
+This module provides a collection of plotting functions for visualizing various aspects of hydrological, 
+geographical, and climatic data. The functions include capabilities for generating colorbars, mapping environmental 
+variables, visualizing land cover data, and plotting performance comparisons between different models. The module 
+relies on Matplotlib and Cartopy for high-quality map projections and plot generation.
+
+Functions:
+----------
+    - get_colorbar: Generates a colorbar for a given plot.
+    - get_NDVI_cmap: Returns a colormap tailored for NDVI (Normalized Difference Vegetation Index).
+    - get_UMD_LULC_cmap: Returns a colormap for Land Use Land Cover (LULC) visualization.
+    - format_lon: Formats longitude values for map labeling.
+    - format_lat: Formats latitude values for map labeling.
+    - rotate_yticks: Rotates the y-axis ticks for readability.
+    - set_xyticks: Configures the x and y ticks for maps and plots.
+    - set_boundary: Sets the boundaries for a geographical plot.
+    - zoom_center: Zooms into a specific geographical region centered on coordinates.
+    - set_ax_box_aspect: Adjusts the aspect ratio of plot axes for proper scaling.
+    - plotBackground: Plots background elements like gridlines, coastlines, etc.
+    - plotGrids: Plots gridlines over the map for reference.
+    - plotBasins: Visualizes basin boundaries on the map.
+    - setBoundary: Defines the plot's boundary region.
+    - plot_US_basemap: Creates a base map for the United States.
+    - plot_selected_map: Plots a user-selected map based on input data.
+    - plotShp: Plots shapefiles onto the map.
+    - plotLandCover: Visualizes land cover data on the map.
+    - plotHWSDSoilData: Plots soil data from the HWSD dataset.
+    - plotStrmDEM: Plots stream and digital elevation model data.
+    - plot_Calibrate_cp_SO: Creates plots for calibration comparisons in hydrological models.
+    - plot_Basin_map: Visualizes basin-specific data on the map.
+    - plot_VIC_performance: Plots the performance of VIC hydrological model simulations.
+    - taylor_diagram: Generates Taylor diagrams for model performance evaluation.
+    - plot_multimodel_comparison_scatter: Creates scatter plots comparing multiple models.
+    - plot_multimodel_comparison_distributed_OUTPUT: Plots the distributed outputs of multiple model comparisons.
+    - plot_params: Plots parameter datasets with appropriate colorbars and annotations.
+
+Dependencies:
+-------------
+    - matplotlib.pyplot: Used for creating static, interactive, and animated visualizations.
+    - matplotlib.colors: Provides tools for color handling and manipulation.
+    - cartopy.crs: Handles coordinate reference systems for map projections.
+    - cartopy.feature: Adds natural features like coastlines, rivers, etc., to maps.
+    - numpy: For numerical operations, particularly on large datasets.
+    - easy_vic_build.tools.params_func.params_set: Imports parameter settings for various datasets.
+    - matplotlib.ticker.FuncFormatter: Used for custom tick formatting on plots.
+    - easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric: Imports metric evaluation functions.
+    - pandas: For data manipulation and structured data handling.
+    - netCDF4.num2date: Converts time data in netCDF format into a standard date format.
+    - matplotlib.cm.ScalarMappable: Converts data to color ranges for visualization.
+    - matplotlib.gridspec: Provides a flexible interface for creating subplots.
+    - matplotlib.offsetbox.AnchoredText: For adding annotation boxes to plots.
+
+Author:
+-------
+    Xudong Zheng
+    Email: zhengxd@sehemodel.club
+"""
+
+
 from matplotlib import pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib import cm
@@ -9,8 +70,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
 from ..params_func.params_set import *
-from matplotlib.ticker import FuncFormatter, MultipleLocator, MaxNLocator
-from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter, LatitudeLocator
+from matplotlib.ticker import FuncFormatter, MultipleLocator
 from easy_vic_build.tools.calibrate_func.evaluate_metrics import EvaluationMetric
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
@@ -22,6 +82,47 @@ from netCDF4 import num2date
 
 ## ------------------------ plot utilities ------------------------
 def get_colorbar(vmin, vmax, cmap, figsize=(2, 6), subplots_adjust={"left": 0.5}, cb_label="", cb_label_kwargs={}, cb_kwargs={}):
+    """
+    Create a colorbar for visualizing data range using a given colormap.
+
+    Parameters
+    ----------
+    vmin : float
+        The minimum value for the colormap normalization.
+    vmax : float
+        The maximum value for the colormap normalization.
+    cmap : matplotlib.colors.Colormap
+        The colormap to be used for the colorbar.
+    figsize : tuple, optional
+        The size of the figure (width, height). Default is (2, 6).
+    subplots_adjust : dict, optional
+        A dictionary to adjust the subplot layout. The default is {"left": 0.5}.
+        This allows fine control over the subplot positioning (e.g., "top", "bottom", "right").
+    cb_label : str, optional
+        The label for the colorbar. Default is an empty string.
+    cb_label_kwargs : dict, optional
+        Additional keyword arguments to customize the colorbar label. Default is an empty dictionary.
+    cb_kwargs : dict, optional
+        Additional keyword arguments to customize the colorbar itself. This can include parameters like
+        `orientation` (either 'vertical' or 'horizontal'). Default is an empty dictionary.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure containing the colorbar.
+    ax : matplotlib.axes.Axes
+        The axis object containing the colorbar.
+    norm : matplotlib.colors.Normalize
+        The normalization used for the colormap.
+    sm : matplotlib.cm.ScalarMappable
+        The scalar mappable object for the colorbar.
+
+    Notes
+    -----
+    The function creates a colorbar using a given colormap and normalizes the values between 
+    `vmin` and `vmax`. The subplot layout can be adjusted via `subplots_adjust`, and the colorbar 
+    label can be set with `cb_label` and additional arguments provided through `cb_label_kwargs`.
+    """
     # cb_kwargs: 
     #   orientation：None or {'vertical', 'horizontal'}
     #   subplots_adjust={"left": 0.5} top/bottom/right, set  0.5
@@ -41,13 +142,37 @@ def get_colorbar(vmin, vmax, cmap, figsize=(2, 6), subplots_adjust={"left": 0.5}
 
 
 def get_NDVI_cmap():
+    """
+    Create a custom colormap for NDVI (Normalized Difference Vegetation Index) values.
+
+    This function generates a colormap that represents NDVI values, ranging from 0 to 1, using 
+    a series of colors that reflect vegetation health. The colormap starts with a light brown 
+    color for low NDVI values and transitions to deep green for high NDVI values.
+
+    Returns
+    -------
+    matplotlib.colors.LinearSegmentedColormap
+        A custom colormap designed for NDVI visualization, with color transitions at specified NDVI values.
+
+    Notes
+    -----
+    The NDVI values are mapped to the following colors:
+        - NDVI = 0: Light brown (near white).
+        - NDVI = 0.15: Light brown.
+        - NDVI = 0.3: Dark brown and light green.
+        - NDVI = 0.65: Light green.
+        - NDVI = 1: Deep green.
+
+    This colormap can be used to visualize NDVI data in a meaningful way, where lower NDVI values
+    represent less vegetation and higher NDVI values represent more vegetation.
+    """
     colors = [
-        (0.0, '#F5F5DC'),  # NDVI = 0 时为接近白色的浅棕色
-        (0.15, '#D2B48C'), # NDVI = 0.15 时为浅棕色
-        (0.3, '#8B4513'),  # NDVI = 0.3 时为深棕色
-        (0.3, '#F0FFF0'),  # NDVI = 0.3 时为接近白色的浅绿色
-        (0.65, '#90EE90'), # NDVI = 0.65 时为浅绿色
-        (1.0, '#006400')   # NDVI = 1 时为深绿色
+        (0.0, '#F5F5DC'),  # NDVI = 0: Light brown (near white)
+        (0.15, '#D2B48C'), # NDVI = 0.15: Light brown
+        (0.3, '#8B4513'),  # NDVI = 0.3: Dark brown
+        (0.3, '#F0FFF0'),  # NDVI = 0.3: Light green (near white)
+        (0.65, '#90EE90'), # NDVI = 0.65: Light green
+        (1.0, '#006400')   # NDVI = 1: Deep green
     ]
     
     ndvi_cmap = mcolors.LinearSegmentedColormap.from_list(name='ndvi_cmap', colors=colors)
@@ -55,38 +180,65 @@ def get_NDVI_cmap():
     
 
 def get_UMD_LULC_cmap():
-    # UMD LULC
-    # 		Key
-    # 0.0	Water
-    # 1.0	Evergreen Needleleaf Forest
-    # 2.0	Evergreen Broadleaf Forest
-    # 3.0	Deciduous Needleleaf Forest
-    # 4.0	Deciduous Broadleaf Forest
-    # 5.0	Mixed Forest
-    # 6.0	Woodland
-    # 7.0	Wooded Grassland
-    # 8.0	Closed Shrubland
-    # 9.0	Open Shrubland
-    # 10.0	Grassland
-    # 11.0	Cropland
-    # 12.0	Bare Ground
-    # 13.0	Urban and Built-up
+    """
+    Create a colormap for UMD Land Use and Land Cover (LULC) classification.
+
+    This function generates a colormap for the UMD LULC classes, which categorize land cover 
+    types such as water bodies, forests, grasslands, and urban areas. The colormap maps specific 
+    colors to each LULC class and returns the colormap, normalization, and other related information 
+    for visualization.
+
+    Returns
+    -------
+    cmap : matplotlib.colors.ListedColormap
+        A colormap object that maps LULC classes to specific colors.
+    norm : matplotlib.colors.BoundaryNorm
+        A normalization object that maps the LULC class values to the colormap.
+    ticks : list of str
+        A list of LULC class labels, corresponding to the categories.
+    ticks_position : list of int
+        A list of positions for each LULC class, used for tick placement in a colorbar.
+    colorlist : list of str
+        A list of hex color values representing the colors for each LULC class.
+    colorlevel : numpy.ndarray
+        An array of color boundaries that corresponds to the LULC class levels.
+
+    Notes
+    -----
+    The UMD LULC classes and their corresponding colors are as follows:
+        0.0: Water               -> Deep Blue
+        1.0: Evergreen Needleleaf Forest -> Dark Green
+        2.0: Evergreen Broadleaf Forest -> Light Green
+        3.0: Deciduous Needleleaf Forest -> Brownish
+        4.0: Deciduous Broadleaf Forest -> Orange
+        5.0: Mixed Forest        -> Purple
+        6.0: Woodland            -> Yellow-Green
+        7.0: Wooded Grassland    -> Gray
+        8.0: Closed Shrubland    -> Red
+        9.0: Open Shrubland      -> Light Orange
+        10.0: Grassland          -> Light Green
+        11.0: Cropland           -> Golden Yellow
+        12.0: Bare Ground        -> Light Brown
+        13.0: Urban and Built-up -> Bright Cyan
+
+    This colormap can be used for visualizing land cover data based on the UMD classification scheme.
+    """
 
     colordict = {
-        'Water': '#444f89',                # 水体（深蓝）
-        'Evergreen Needleleaf Forest': '#016400',   # 常绿针叶林（深绿）
-        'Evergreen Broadleaf Forest': '#018200',    # 常绿阔叶林（浅绿）
-        'Deciduous Needleleaf Forest': '#97bf47',   # 落叶针叶林（棕褐）
-        'Deciduous Broadleaf Forest': '#02dc00',    # 落叶阔叶林（橙）
-        'Mixed Forest': '#00ff00',         # 混合林（紫）
-        'Woodland': '#92ae2f',             # 林地（黄绿）
-        'Wooded Grassland': '#dcce00',     # 疏林草地（灰）
-        'Closed Shrubland': '#ffad00',     # 封闭灌木（红）
-        'Open Shrubland': '#fffbc3',       # 开放灌木（浅橙）
-        'Grassland': '#8c4809',            # 草地（浅绿）
-        'Cropland': '#f7a5ff',             # 农田（金黄）
-        'Bare Ground': '#ffc7ae',          # 裸地（浅褐）
-        'Urban and Built-up': '#00ffff'    # 城市建筑（鲜红）
+        'Water': '#444f89',                # Water (Deep Blue)
+        'Evergreen Needleleaf Forest': '#016400',   # Evergreen Needleleaf Forest (Dark Green)
+        'Evergreen Broadleaf Forest': '#018200',    # Evergreen Broadleaf Forest (Light Green)
+        'Deciduous Needleleaf Forest': '#97bf47',   # Deciduous Needleleaf Forest (Brownish)
+        'Deciduous Broadleaf Forest': '#02dc00',    # Deciduous Broadleaf Forest (Orange)
+        'Mixed Forest': '#00ff00',         # Mixed Forest (Purple)
+        'Woodland': '#92ae2f',             # Woodland (Yellow-Green)
+        'Wooded Grassland': '#dcce00',     # Wooded Grassland (Gray)
+        'Closed Shrubland': '#ffad00',     # Closed Shrubland (Red)
+        'Open Shrubland': '#fffbc3',       # Open Shrubland (Light Orange)
+        'Grassland': '#8c4809',            # Grassland (Light Green)
+        'Cropland': '#f7a5ff',             # Cropland (Golden Yellow)
+        'Bare Ground': '#ffc7ae',          # Bare Ground (Light Brown)
+        'Urban and Built-up': '#00ffff'    # Urban and Built-up (Bright Cyan)
     }
     ticks = list(colordict.keys())
     ticks_position = list(range(0, 14))  # 0~14
@@ -100,17 +252,83 @@ def get_UMD_LULC_cmap():
   
 
 def format_lon(lon, pos):
+    """
+    Format longitude value as a string with direction (East/West).
+
+    This function takes a longitude value and returns it as a string with one decimal place, 
+    followed by the corresponding directional suffix ('°E' for positive values and '°W' for negative values).
+
+    Parameters
+    ----------
+    lon : float
+        The longitude value to be formatted.
+    pos : float
+        The position of the tick (not used in this function, but required by the formatter).
+
+    Returns
+    -------
+    str
+        The formatted longitude string, e.g., "45.0°E" or "90.0°W".
+    """
     return f"{abs(lon):.1f}°W" if lon < 0 else f"{abs(lon):.1f}°E"
 
 def format_lat(lat, pos):
+    """
+    Format latitude value as a string with direction (North/South).
+
+    This function takes a latitude value and returns it as a string with one decimal place, 
+    followed by the corresponding directional suffix ('°N' for positive values and '°S' for negative values).
+
+    Parameters
+    ----------
+    lat : float
+        The latitude value to be formatted.
+    pos : float
+        The position of the tick (not used in this function, but required by the formatter).
+
+    Returns
+    -------
+    str
+        The formatted latitude string, e.g., "45.0°N" or "90.0°S".
+    """
     return f"{abs(lat):.1f}°S" if lat < 0 else f"{abs(lat):.1f}°N"
 
 def rotate_yticks(ax, yticks_rotation=0):
+    """
+    Rotate the y-axis tick labels on a given axis.
+
+    This function modifies the y-axis tick labels of the given axis object by setting their 
+    rotation angle and vertical alignment.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis object whose y-tick labels will be rotated.
+    yticks_rotation : float, optional
+        The angle of rotation for the y-tick labels in degrees (default is 0).
+    """
     for tick in ax.get_yticklabels():
         tick.set_rotation(yticks_rotation)
         tick.set_va('center')
         
 def set_xyticks(ax, x_locator_interval, y_locator_interval, yticks_rotation=0):
+    """
+    Set the x and y axis ticks with specified intervals and rotation.
+
+    This function configures the major tick locations and formatting for both the x and y axes.
+    It also allows for rotation of the y-axis tick labels.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis object where the ticks and labels will be applied.
+    x_locator_interval : float
+        The interval between x-axis ticks.
+    y_locator_interval : float
+        The interval between y-axis ticks.
+    yticks_rotation : float, optional
+        The angle of rotation for the y-tick labels in degrees (default is 0).
+    """
     # set xy ticks
     # for tick in ax.get_yticklabels():
     #     tick.set_rotation(yticks_rotation)
@@ -127,10 +345,45 @@ def set_xyticks(ax, x_locator_interval, y_locator_interval, yticks_rotation=0):
 
 
 def set_boundary(ax, boundary_x_y):
+    """
+    Set the axis limits based on the given boundary values.
+
+    This function adjusts the x and y axis limits of the provided axis object (`ax`) 
+    using the boundary values specified in `boundary_x_y`. The first two elements in 
+    `boundary_x_y` correspond to the x-axis limits, and the last two elements correspond 
+    to the y-axis limits.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis object for which the limits will be set.
+    boundary_x_y : list or tuple of 4 floats
+        The boundary values in the format [x_min, y_min, x_max, y_max], which define 
+        the x and y axis limits.
+    """
     ax.set_xlim(boundary_x_y[0], boundary_x_y[2])
     ax.set_ylim(boundary_x_y[1], boundary_x_y[3])
     
 def zoom_center(ax, x_center, y_center, zoom_factor=2):
+    """
+    Zoom into a specific region around a central point on the axis.
+
+    This function zooms into the region centered at (`x_center`, `y_center`) by a 
+    factor specified by `zoom_factor`. The zooming is applied symmetrically, maintaining 
+    the aspect ratio of the plot.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis object to apply the zoom on.
+    x_center : float
+        The x-coordinate of the center point for zooming.
+    y_center : float
+        The y-coordinate of the center point for zooming.
+    zoom_factor : float, optional
+        The factor by which to zoom the plot. A value greater than 1 will zoom in 
+        (default is 2).
+    """
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
 
@@ -141,9 +394,49 @@ def zoom_center(ax, x_center, y_center, zoom_factor=2):
     ax.set_ylim(y_center - y_range / 2, y_center + y_range / 2)
     
 def set_ax_box_aspect(ax, hw_factor=1):
+    """
+    Set the aspect ratio of the axis box.
+
+    This function adjusts the aspect ratio of the axis box. The aspect ratio is set 
+    according to the value of `hw_factor`, where a value of 1 maintains a square aspect 
+    ratio. Values greater than 1 will stretch the plot horizontally, and values less 
+    than 1 will stretch it vertically.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis object for which the box aspect ratio will be set.
+    hw_factor : float, optional
+        The ratio of the width to the height of the axis box. A value of 1 maintains 
+        a square aspect ratio (default is 1).
+    """
     ax.set_box_aspect(hw_factor)
     
 def plotBackground(basin_shp, grid_shp, fig=None, ax=None):
+    """
+    Plot the background for a given basin and grid shape.
+
+    This function plots the background for a given basin and grid shape on a figure 
+    and axis. If no axis object is provided, a new figure and axis are created.
+
+    Parameters
+    ----------
+    basin_shp : shapefile
+        The shapefile object containing basin boundaries.
+    grid_shp : shapefile
+        The shapefile object containing grid boundaries.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to plot on (default is None, a new figure is created).
+    ax : matplotlib.axes.Axes, optional
+        The axis object to plot on (default is None, a new axis is created).
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object with the background plot.
+    ax : matplotlib.axes.Axes
+        The axis object with the background plot.
+    """
     if not ax:
         fig, ax = plt.subplots()
     plot_kwgs = {"facecolor": "none", "alpha": 0.7, "edgecolor": "k"}
@@ -154,6 +447,35 @@ def plotBackground(basin_shp, grid_shp, fig=None, ax=None):
 
 
 def plotGrids(grid_shp, column=None, fig=None, ax=None, plot_kwgs1=None, plot_kwgs2=None):
+    """
+    Plot grid shapes and point geometries on a given axis.
+
+    This function plots the grid shapes from the `grid_shp` object on the given `ax` (or creates a new 
+    figure and axis if `ax` is not provided). Two sets of keyword arguments can be used to customize 
+    the appearance of the grid shapes and the point geometries.
+
+    Parameters
+    ----------
+    grid_shp : geopandas.GeoDataFrame
+        A GeoDataFrame containing the grid shapes and point geometries to be plotted.
+    column : str, optional
+        The column in `grid_shp` to use for coloring the grid shapes. If not provided, no coloring is applied.
+    fig : matplotlib.figure.Figure, optional
+        The figure to plot on. If not provided, a new figure is created.
+    ax : matplotlib.axes.Axes, optional
+        The axis to plot on. If not provided, a new axis is created.
+    plot_kwgs1 : dict, optional
+        A dictionary of keyword arguments for customizing the grid shape plot. Defaults to an empty dictionary.
+    plot_kwgs2 : dict, optional
+        A dictionary of keyword arguments for customizing the point geometry plot. Defaults to an empty dictionary.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object with the grid shapes and point geometries plotted.
+    ax : matplotlib.axes.Axes
+        The axis object with the grid shapes and point geometries plotted.
+    """
     if not ax:
         fig, ax = plt.subplots()
     plot_kwgs1 = dict() if not plot_kwgs1 else plot_kwgs1
@@ -170,6 +492,33 @@ def plotGrids(grid_shp, column=None, fig=None, ax=None, plot_kwgs1=None, plot_kw
 
 
 def plotBasins(basin_shp, column=None, fig=None, ax=None, plot_kwgs=None):
+    """
+    Plot basin shapes on a given axis.
+
+    This function plots the basin shapes from the `basin_shp` object on the given `ax` (or creates a new 
+    figure and axis if `ax` is not provided). Additional customization can be done using the `plot_kwgs` 
+    dictionary.
+
+    Parameters
+    ----------
+    basin_shp : geopandas.GeoDataFrame
+        A GeoDataFrame containing the basin shapes to be plotted.
+    column : str, optional
+        The column in `basin_shp` to use for coloring the basin shapes. If not provided, no coloring is applied.
+    fig : matplotlib.figure.Figure, optional
+        The figure to plot on. If not provided, a new figure is created.
+    ax : matplotlib.axes.Axes, optional
+        The axis to plot on. If not provided, a new axis is created.
+    plot_kwgs : dict, optional
+        A dictionary of keyword arguments for customizing the basin plot. Defaults to an empty dictionary.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object with the basin shapes plotted.
+    ax : matplotlib.axes.Axes
+        The axis object with the basin shapes plotted.
+    """
     if not ax:
         fig, ax = plt.subplots()
     plot_kwgs = dict() if not plot_kwgs else plot_kwgs
@@ -181,12 +530,64 @@ def plotBasins(basin_shp, column=None, fig=None, ax=None, plot_kwgs=None):
 
 
 def setBoundary(ax, boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max):
+    """
+    Set the boundary limits for the x and y axes.
+
+    This function adjusts the x and y axis limits of the provided axis object (`ax`) based on the 
+    given boundary values.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis object to set the boundaries on.
+    boundary_x_min : float
+        The minimum value for the x-axis.
+    boundary_x_max : float
+        The maximum value for the x-axis.
+    boundary_y_min : float
+        The minimum value for the y-axis.
+    boundary_y_max : float
+        The maximum value for the y-axis.
+
+    Returns
+    -------
+    ax : matplotlib.axes.Axes
+        The axis object with the updated boundaries.
+    """
     ax.set_xlim([boundary_x_min, boundary_x_max])
     ax.set_ylim([boundary_y_min, boundary_y_max])
     return ax
 
 
 def plot_US_basemap(fig=None, ax=None, set_xyticks_bool=True, x_locator_interval=15, y_locator_interval=10, yticks_rotation=0):
+    """
+    Plot a basemap of the United States with customizable tick settings.
+
+    This function creates a map of the United States, including coastlines, rivers, lakes, and state 
+    boundaries, and allows for customization of x and y axis ticks, including their interval and rotation.
+
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure, optional
+        The figure to plot on. If not provided, a new figure is created.
+    ax : matplotlib.axes.Axes, optional
+        The axis to plot on. If not provided, a new axis is created.
+    set_xyticks_bool : bool, optional
+        If True, sets the x and y axis ticks to a specified interval (default is True).
+    x_locator_interval : int, optional
+        The interval for the x-axis ticks (default is 15).
+    y_locator_interval : int, optional
+        The interval for the y-axis ticks (default is 10).
+    yticks_rotation : int, optional
+        The rotation angle for the y-axis ticks (default is 0).
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object with the US basemap plotted.
+    ax : matplotlib.axes.Axes
+        The axis object with the US basemap plotted.
+    """
     proj = ccrs.PlateCarree()
     # extent = [-125, -66.5, 24.5, 50.5]
     extent = [-125, 24.5, -66.5, 50.5]
@@ -229,20 +630,45 @@ def plot_US_basemap(fig=None, ax=None, set_xyticks_bool=True, x_locator_interval
 
 
 def plot_selected_map(basin_index, dpc, text_name="basin_index", plot_solely=True, column=None, plot_kwgs_set=dict(), fig=None, ax=None):
-    """_summary_
+    """
+    Plot selected basins on a map and optionally annotate and plot basins individually.
 
-    Args:
-        basin_index (_type_): _description_
-        dpc (_type_): _description_
-        text_name (str, optional): _description_. Defaults to "basin_index".
-        plot_solely (bool, optional): _description_. Defaults to True.
-        column (_type_, optional): _description_. Defaults to None.
-        plot_kwgs_set (_type_, optional): _description_. Defaults to dict().
+    Parameters
+    ----------
+    basin_index : list
+        List of basin indices to be plotted.
+    dpc : object
+        Data processing class instance containing the basin shapefile and related data.
+    text_name : str, optional
+        The type of text annotation to plot. Defaults to "basin_index".
+    plot_solely : bool, optional
+        Whether to plot each selected basin separately. Defaults to True.
+    column : str, optional
+        The column name from the shapefile to be used for coloring. Defaults to None.
+    plot_kwgs_set : dict, optional
+        Additional keyword arguments to customize the plot (e.g., color map). Defaults to an empty dictionary.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.
+    ax : matplotlib.axes.Axes, optional
+        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.
 
-    Returns:
-        _type_: _description_
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plot.
+    ax : matplotlib.axes.Axes
+        The axis object containing the plot.
+    fig_solely : dict or None
+        A dictionary of figures and axes for each basin if `plot_solely` is True, otherwise None.
+
+    Notes
+    -----
+    - The function uses a PlateCarree projection for the map.
+    - The function can annotate each basin with its `basin_index` or other attributes (e.g., `hru_id` or `gauge_id`).
+    - The basins are plotted using the `plotBasins` function.
     
-    usages:
+    Usages:
+    -----
     fig, ax, fig_solely = plot_selected_map(basin_shp_area_excluding.index.to_list(), # [0, 1, 2]
                                         dpc,
                                         text_name="basin_index",  # "basin_index", None,
@@ -317,6 +743,44 @@ def plot_selected_map(basin_index, dpc, text_name="basin_index", plot_solely=Tru
 def plotShp(basinShp_original, basinShp, grid_shp, intersects_grids,
             boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max,
             fig=None, ax=None):
+    """
+    Plot shapefiles of basins, grids, and intersecting grids on a map with specified boundaries.
+
+    Parameters
+    ----------
+    basinShp_original : geopandas.GeoDataFrame
+        Original basin shapefile to be plotted with an outline.
+    basinShp : geopandas.GeoDataFrame
+        Basin shapefile to be plotted on top of the original basin shapefile.
+    grid_shp : geopandas.GeoDataFrame
+        Grid shapefile containing the geometry and point geometry to be plotted.
+    intersects_grids : geopandas.GeoDataFrame
+        Shapefile representing the intersection of grids to be plotted.
+    boundary_x_min : float
+        Minimum x-coordinate (longitude) for the plot boundary.
+    boundary_x_max : float
+        Maximum x-coordinate (longitude) for the plot boundary.
+    boundary_y_min : float
+        Minimum y-coordinate (latitude) for the plot boundary.
+    boundary_y_max : float
+        Maximum y-coordinate (latitude) for the plot boundary.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.
+    ax : matplotlib.axes.Axes, optional
+        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plot.
+    ax : matplotlib.axes.Axes
+        The axis object containing the plot.
+
+    Notes
+    -----
+    - The plot includes multiple layers: original basin, basin, grid geometry, grid points, and intersecting grids.
+    - The boundaries of the plot are set using the provided min and max x and y coordinates.
+    """
     if not ax:
         fig, ax = plt.subplots()
     basinShp_original.plot(ax=ax, facecolor="none", alpha=0.7, edgecolor="k")
@@ -333,6 +797,46 @@ def plotShp(basinShp_original, basinShp, grid_shp, intersects_grids,
 def plotLandCover(basinShp_original, basinShp, grid_shp, intersects_grids,
                   boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max,
                   fig=None, ax=None):
+    """
+    Plot land cover data along with basin, grid, and intersection information on a map.
+
+    Parameters
+    ----------
+    basinShp_original : geopandas.GeoDataFrame
+        Original basin shapefile to be plotted with an outline.
+    basinShp : geopandas.GeoDataFrame
+        Basin shapefile to be plotted on top of the original basin shapefile.
+    grid_shp : geopandas.GeoDataFrame
+        Grid shapefile containing land cover classification data.
+    intersects_grids : geopandas.GeoDataFrame
+        Shapefile representing the intersection of grids to be plotted.
+    boundary_x_min : float
+        Minimum x-coordinate (longitude) for the plot boundary.
+    boundary_x_max : float
+        Maximum x-coordinate (longitude) for the plot boundary.
+    boundary_y_min : float
+        Minimum y-coordinate (latitude) for the plot boundary.
+    boundary_y_max : float
+        Maximum y-coordinate (latitude) for the plot boundary.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.
+    ax : matplotlib.axes.Axes, optional
+        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plot.
+    ax : matplotlib.axes.Axes
+        The axis object containing the plot.
+
+    Notes
+    -----
+    - The plot includes multiple layers: original basin, basin, grid land cover classification,
+      and intersecting grids.
+    - A color map is applied to the land cover classification with corresponding ticks in the legend.
+    - The boundaries of the plot are set using the provided min and max x and y coordinates.
+    """
     colorlevel = [-0.5 + i for i in range(15)]
     colordict = cm.get_cmap("RdBu_r", 14)
     colordict = colordict(range(14))
@@ -362,6 +866,62 @@ def plotLandCover(basinShp_original, basinShp, grid_shp, intersects_grids,
 def plotHWSDSoilData(basinShp_original, basinShp, grid_shp, intersects_grids,
                      boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max,
                      fig=None, ax=None, fig_T=None, ax_T=None, fig_S=None, ax_S=None):
+    """
+    Plot soil data from HWSD, USDA texture classes, and basin information on multiple maps.
+
+    Parameters
+    ----------
+    basinShp_original : geopandas.GeoDataFrame
+        Original basin shapefile to be plotted with an outline.
+    basinShp : geopandas.GeoDataFrame
+        Basin shapefile to be plotted on top of the original basin shapefile.
+    grid_shp : geopandas.GeoDataFrame
+        Grid shapefile containing soil data including HWSD and USDA texture classes.
+    intersects_grids : geopandas.GeoDataFrame
+        Shapefile representing the intersection of grids to be plotted.
+    boundary_x_min : float
+        Minimum x-coordinate (longitude) for the plot boundary.
+    boundary_x_max : float
+        Maximum x-coordinate (longitude) for the plot boundary.
+    boundary_y_min : float
+        Minimum y-coordinate (latitude) for the plot boundary.
+    boundary_y_max : float
+        Maximum y-coordinate (latitude) for the plot boundary.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.
+    ax : matplotlib.axes.Axes, optional
+        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.
+    fig_T : matplotlib.figure.Figure, optional
+        The figure object for T_USDA_TEX_CLASS plot. If None, a new figure will be created. Defaults to None.
+    ax_T : matplotlib.axes.Axes, optional
+        The axis object for T_USDA_TEX_CLASS plot. If None, a new axis will be created. Defaults to None.
+    fig_S : matplotlib.figure.Figure, optional
+        The figure object for S_USDA_TEX_CLASS plot. If None, a new figure will be created. Defaults to None.
+    ax_S : matplotlib.axes.Axes, optional
+        The axis object for S_USDA_TEX_CLASS plot. If None, a new axis will be created. Defaults to None.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing the main plot.
+    ax : matplotlib.axes.Axes
+        The axis object containing the main plot.
+    fig_S : matplotlib.figure.Figure
+        The figure object containing the S_USDA_TEX_CLASS plot.
+    ax_S : matplotlib.axes.Axes
+        The axis object containing the S_USDA_TEX_CLASS plot.
+    fig_T : matplotlib.figure.Figure
+        The figure object containing the T_USDA_TEX_CLASS plot.
+    ax_T : matplotlib.axes.Axes
+        The axis object containing the T_USDA_TEX_CLASS plot.
+
+    Notes
+    -----
+    - Three different maps are created for HWSD soil data, T_USDA_TEX_CLASS, and S_USDA_TEX_CLASS.
+    - Each map is plotted with the corresponding soil classification data overlaid on the basin and grid shapefiles.
+    - The boundaries of the plots are set using the provided min and max x and y coordinates.
+    - Legends for each map are created with the respective soil classification.
+    """
     if not ax:
         fig, ax = plt.subplots()
     basinShp_original.plot(ax=ax, facecolor="none", alpha=0.7, edgecolor="k")
@@ -403,6 +963,45 @@ def plotHWSDSoilData(basinShp_original, basinShp, grid_shp, intersects_grids,
 def plotStrmDEM(basinShp_original, basinShp, grid_shp, intersects_grids,
                 boundary_x_min, boundary_x_max, boundary_y_min, boundary_y_max,
                 fig=None, ax=None):
+    """
+    Plot SRTM DEM data on top of basin and grid shapefiles.
+
+    Parameters
+    ----------
+    basinShp_original : geopandas.GeoDataFrame
+        Original basin shapefile to be plotted with an outline.
+    basinShp : geopandas.GeoDataFrame
+        Basin shapefile to be plotted on top of the original basin shapefile.
+    grid_shp : geopandas.GeoDataFrame
+        Grid shapefile containing SRTM DEM data to be plotted.
+    intersects_grids : geopandas.GeoDataFrame
+        Shapefile representing the intersection of grids to be plotted.
+    boundary_x_min : float
+        Minimum x-coordinate (longitude) for the plot boundary.
+    boundary_x_max : float
+        Maximum x-coordinate (longitude) for the plot boundary.
+    boundary_y_min : float
+        Minimum y-coordinate (latitude) for the plot boundary.
+    boundary_y_max : float
+        Maximum y-coordinate (latitude) for the plot boundary.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.
+    ax : matplotlib.axes.Axes, optional
+        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plot.
+    ax : matplotlib.axes.Axes
+        The axis object containing the plot.
+
+    Notes
+    -----
+    - The SRTM DEM data is visualized using the column "SrtmDEM_mean_Value" from the grid shapefile.
+    - The plot is generated with a gray colormap, and a legend is added to indicate the meaning of the "SrtmDEM_mean_Value".
+    - The plot boundaries are set using the provided minimum and maximum x and y coordinates.
+    """
     if not ax:
         fig, ax = plt.subplots()
     basinShp_original.plot(ax=ax, facecolor="none", alpha=0.7, edgecolor="k")
@@ -418,6 +1017,28 @@ def plotStrmDEM(basinShp_original, basinShp, grid_shp, intersects_grids,
 
 
 def plot_Calibrate_cp_SO(cp_state):
+    """
+    Plot calibration results for the cp.
+
+    Parameters
+    ----------
+    cp_state : dict
+        A dictionary containing the state of the cp, specifically
+        the history of the optimization process. It should include:
+        - 'history' : A list of tuples, where each tuple contains the population
+          and the corresponding Pareto fronts during each iteration.
+
+    Returns
+    -------
+    None
+        The function generates two plots: one for fitness values and one for 
+        parameter values of the Pareto fronts.
+
+    Notes
+    -----
+    - The function extracts fitness values and parameters from the optimization 
+      history and plots the results to visualize the optimization progress.
+    """
     # get value
     populations = [h[0] for h in cp_state["history"]]
     fronts = [h[1][0][0] for h in cp_state["history"]]
@@ -433,6 +1054,41 @@ def plot_Calibrate_cp_SO(cp_state):
       
     
 def plot_Basin_map(dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, stream_gdf, x_locator_interval=0.3, y_locator_interval=0.2, fig=None, ax=None):
+    """
+    Plot the basin map including elevation, basin boundary, river network, and gauge location.
+
+    Parameters
+    ----------
+    dpc_VIC_level0 : object
+        A VIC model object at level 0 containing grid and basin shapefiles.
+    dpc_VIC_level1 : object
+        A VIC model object at level 1 containing grid and basin shapefiles.
+    dpc_VIC_level2 : object
+        A VIC model object at level 2 containing grid and basin shapefiles.
+    stream_gdf : geopandas.GeoDataFrame
+        A GeoDataFrame containing the river network to be plotted.
+    x_locator_interval : float, optional
+        The interval for x-axis ticks. Defaults to 0.3.
+    y_locator_interval : float, optional
+        The interval for y-axis ticks. Defaults to 0.2.
+    fig : matplotlib.figure.Figure, optional
+        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.
+    ax : matplotlib.axes.Axes, optional
+        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.
+
+    Returns
+    -------
+    fig_dict : dict
+        A dictionary containing the figure objects for the basin map and grid basins.
+    ax_dict : dict
+        A dictionary containing the axis objects for the basin map and grid basins.
+
+    Notes
+    -----
+    - The function plots the basin map with layers including the DEM (elevation), 
+      basin boundary, river network, and gauge location.
+    - It also generates plots for different grid levels (level 0, 1, and 2) of the VIC model.
+    """
     # =========== plot Basin_map ===========
     # get fig, ax
     if not ax:
@@ -485,6 +1141,23 @@ def plot_Basin_map(dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2, stream_gdf, x
     return fig_dict, ax_dict
 
 def plot_VIC_performance(cali_result, verify_result):
+    """
+    Plot the performance of VIC model calibration and verification.
+
+    Parameters
+    ----------
+    cali_result : pandas.DataFrame
+        Calibration results with observed and simulated streamflow.
+    verify_result : pandas.DataFrame
+        Verification results with observed and simulated streamflow.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing all subplots.
+    axes : list of matplotlib.axes.Axes
+        The list of axes for each subplot.
+    """
     # fig set
     fig = plt.figure(figsize=(12, 7))
     gs = gridspec.GridSpec(2, 3, figure=fig, left=0.08, right=0.98, bottom=0.08, top=0.98, hspace=0.15, wspace=0.3)  # wspace=0.15, wspace=0.3
@@ -583,6 +1256,47 @@ def plot_VIC_performance(cali_result, verify_result):
 
 
 def taylor_diagram(obs, models, model_names, names_ha, names_va, model_colors=None, title="Standard Taylor Diagram", fig=None, ax=None):
+    """
+    Create a Taylor diagram to compare multiple models against observations.
+
+    Parameters
+    ----------
+    obs : ndarray
+        A 1D array of observed data values.
+    models : list of ndarray
+        A list of 1D arrays, each representing model data to compare against the observations.
+    model_names : list of str
+        A list of model names, corresponding to each model in `models`.
+    names_ha : list of str
+        Horizontal alignment for each model name's position in the plot.
+    names_va : list of str
+        Vertical alignment for each model name's position in the plot.
+    model_colors : list of str, optional
+        A list of colors for each model's data points on the diagram. Default is None, which uses a color map.
+    title : str, optional
+        The title of the diagram. Default is "Standard Taylor Diagram".
+    fig : matplotlib.figure.Figure, optional
+        An existing figure to plot on. If None, a new figure is created.
+    ax : matplotlib.axes.Axes, optional
+        An existing axes object to plot on. If None, a new polar subplot is created.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure containing the Taylor diagram.
+    ax : matplotlib.axes.Axes
+        The axes containing the Taylor diagram.
+    
+    Notes
+    -----
+    This function computes the standard deviation and correlation coefficient for each model 
+    relative to the observed data and plots the results on a polar plot. The diagram includes:
+    - Observation point at the center (standard deviation = 1, correlation = 1).
+    - Models plotted at angles based on the correlation coefficient and at radii based on the standard deviation.
+    - Contour lines representing the RMSD (Root Mean Square Deviation).
+    - Arcs for standard deviation levels and radial lines for correlation levels.
+    
+    """
     # Normalize data: Set the standard deviation of observed data to 1
     obs_std = np.std(obs)
     obs_norm = obs / obs_std
@@ -683,6 +1397,28 @@ def taylor_diagram(obs, models, model_names, names_ha, names_va, model_colors=No
 
 
 def plot_multimodel_comparison_scatter(obs_total, models_total, model_names, model_colors=None):
+    """
+    Plot a comparison scatter plot for multiple models against observed data,
+    categorized into total, low flow, and high flow conditions.
+
+    Parameters
+    ----------
+    obs_total : numpy.ndarray
+        A 1D array of observed streamflow values.
+    models_total : list of numpy.ndarray
+        A list of 1D arrays, where each array contains simulated streamflow values for a model.
+    model_names : list of str
+        A list of names corresponding to the models in `models_total`.
+    model_colors : list of str, optional
+        A list of colors for each model's data points. If not provided, default colors are used.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object containing the plot.
+    axes : numpy.ndarray
+        An array of axes corresponding to the subplots.
+    """
     # threshold
     lowflow_threshold = np.percentile(obs_total, 30)
     highflow_threshold = np.percentile(obs_total, 70)
@@ -746,6 +1482,35 @@ def plot_multimodel_comparison_scatter(obs_total, models_total, model_names, mod
 def plot_multimodel_comparison_distributed_OUTPUT(cali_results, verify_results, simulated_datasets, MeteForcing_df, 
                                                   model_names, model_colors,
                                                   event_period, rising_period, recession_period):
+    """
+    Plot a comparison of model simulations and observations for multiple models with distributed surface flow and baseflow.
+
+    Parameters
+    ----------
+    cali_results : list of pandas.DataFrame
+        Calibration results containing observed and simulated discharge for calibration period.
+    verify_results : list of pandas.DataFrame
+        Verification results containing observed and simulated discharge for verification period.
+    simulated_datasets : list of netCDF4.Dataset
+        Simulated datasets containing runoff and baseflow values.
+    MeteForcing_df : pandas.DataFrame
+        Meteorological forcing data, including precipitation.
+    model_names : list of str
+        List of model names for labeling the simulations.
+    model_colors : list of str
+        List of colors corresponding to each model for plotting.
+    event_period : tuple of str
+        Start and end dates for the event period.
+    rising_period : tuple of str
+        Start and end dates for the rising period of the hydrograph.
+    recession_period : tuple of str
+        Start and end dates for the recession period of the hydrograph.
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+        The figure object containing the plotted comparison.
+    """
     # get data
     obs_cali = cali_results[0]["obs_cali discharge(m3/s)"].values
     obs_verify = verify_results[0]["obs_verify discharge(m3/s)"].values
@@ -926,6 +1691,32 @@ def plot_multimodel_comparison_distributed_OUTPUT(cali_results, verify_results, 
     return fig
 
 def plot_params(params_dataset):
+    """
+    Plot four different parameter datasets in a 2x2 grid with colorbars.
+
+    Parameters
+    ----------
+    params_dataset : Dataset
+        A xarray Dataset containing the parameters to be plotted. The dataset should have variables:
+        - "infilt"
+        - "Ws"
+        - "Ds"
+        - "Dsmax"
+        Additionally, the dataset should have "lon" and "lat" for proper axis labeling.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The generated figure containing the plots.
+    axes : ndarray
+        An array of axes objects, corresponding to each subplot.
+    
+    Notes
+    -----
+    - The color maps used for the plots are 'RdBu'.
+    - The x and y ticks are adjusted for better readability and are based on the dataset's latitude and longitude.
+    - Each subplot is annotated with a label ("(a)", "(b)", "(c)", "(d)").
+    """
     fig, axes = plt.subplots(2, 2, figsize=(9, 8), gridspec_kw={"left": 0.05, "right": 0.98, "bottom": 0.05, "top": 0.95, "wspace": 0.15, "hspace": 0.16})
     im1 = axes[0, 0].imshow(params_dataset.variables["infilt"][:, :], cmap="RdBu")  # vmin=0, vmax=0.4, 
     im2 = axes[0, 1].imshow(params_dataset.variables["Ws"][:, :], cmap="RdBu")

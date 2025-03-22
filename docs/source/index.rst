@@ -17,7 +17,7 @@ Welcome to easy_vic_build's documentation!
    installation
    usage
    features
-   api/index
+   api/modules
    contributing
    license
    contact

@@ -34,8 +34,7 @@ Usage:
     3. Build the necessary CFG files for RVIC execution.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 213
     model_scale = "6km"
     date_period = ["19980101", "19981231"]
@@ -53,12 +52,11 @@ Example:
                                                          "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
                            cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50})
     
-    # buildRVICParam: note, rvic should be installed
-    # buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,
-    #                ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600,
-    #                                              "tp": default_uh_params[0], "mu": default_uh_params[1], "m": default_uh_params[2],
-    #                                              "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
-    #                cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50})
+    buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,
+                   ppf_kwargs=dict(), uh_params={"createUH_func": create_uh.createGUH, "uh_dt": 3600,
+                                                 "tp": default_uh_params[0], "mu": default_uh_params[1], "m": default_uh_params[2],
+                                                 "plot_bool": True, "max_day":None, "max_day_range": (0, 10), "max_day_converged_threshold": 0.001},
+                   cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0, "OUTPUT_INTERVAL": 86400, "SUBSET_DAYS": 10, "CELL_FLOWDAYS": 2, "BASIN_FLOWDAYS": 50})
     
     params_dataset_level0.close()
     params_dataset_level1.close()

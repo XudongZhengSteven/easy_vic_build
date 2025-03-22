@@ -7,7 +7,7 @@ import sys
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # Add project to Python path
-sys.path.insert(0, os.path.abspath('../../src/'))
+sys.path.insert(0, os.path.abspath('../../src/easy_vic_build/'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -60,6 +60,7 @@ autodoc_default_options = {
 
 # Napoleon settings
 napoleon_google_docstring = True
+napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = True
 
 # Source file extensions

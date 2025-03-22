@@ -26,8 +26,7 @@ Usage:
     parameters, and then save the updated configuration to the specified file path.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 213
     model_scale = "6km"
     case_name = f"{basin_index}_{model_scale}"

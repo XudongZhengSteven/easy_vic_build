@@ -23,8 +23,7 @@ Usage:
     After executing `buildMeteForcing`, the resampled forcing data will be stored in the specified directory for further use in the VIC model.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 213
     model_scale = "6km"
     date_period = ["19980101", "19981231"]

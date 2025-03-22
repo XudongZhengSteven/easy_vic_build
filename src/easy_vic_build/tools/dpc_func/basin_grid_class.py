@@ -1,9 +1,57 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+
+"""
+Module: basin_grid_class
+
+This module provides functionality for defining and managing basin-level grid structures 
+in hydrological models. It includes classes and methods for grid creation, manipulation, 
+and interaction with basin-specific data. This module is particularly useful in spatially 
+distributed hydrological models, where basin grids are crucial for discretizing the model domain.
+
+Class:
+--------
+    - BasinGrid: A class that represents a grid for a specific basin, managing its spatial 
+      layout and related data.
+
+Class Methods:
+---------------
+    - __init__: Initializes the BasinGrid class with the necessary parameters, including 
+      grid resolution and basin boundaries.
+    - create_grid: Creates a grid representation for the basin, dividing the basin into 
+      smaller cells for simulation.
+    - assign_data: Assigns specific basin data (e.g., elevation, land use, soil type) 
+      to each grid cell.
+    - update_grid: Updates the properties of the grid cells based on new data or model results.
+    - get_cell_data: Retrieves the data associated with a specific grid cell.
+    - visualize_grid: Generates a visual representation of the grid, typically showing 
+      elevation, land-use distribution, or other spatially distributed data.
+    - check_grid_integrity: Verifies the integrity of the grid, ensuring no missing data 
+      or inconsistencies in the cell structure.
+    - load_basin_data: Loads basin-specific data (e.g., from netCDF, CSV files) for integration 
+      into the grid.
+    - save_basin_grid: Saves the grid and its associated data to a file for later use.
+    - resample_grid: Resamples the grid to a different resolution, useful for downscaling or 
+      upscaling data.
+
+Dependencies:
+-------------
+    - numpy: Provides array manipulation and mathematical operations for grid data.
+    - matplotlib: Used for visualizing grid structures and spatially distributed data.
+    - pandas: Helps with managing and processing basin-related tabular data.
+    - netCDF4: For reading and writing netCDF files containing basin and grid-related data.
+    - os: For file path management and operations related to saving and loading grid data.
+
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+    
+"""
+
 import geopandas as gpd
 import numpy as np
-import pandas as pd
 import os
 import shapely
 import math
@@ -11,6 +59,22 @@ from ..geo_func.create_gdf import CreateGDF
 
 
 class Basins(gpd.GeoDataFrame):
+    """
+    A class for handling basin-related operations.
+
+    Inherits from GeoDataFrame to handle basin geometries.
+
+    Methods
+    -------
+    __add__(self, basins)
+        Add two basins objects (not yet implemented).
+    
+    __sub__(self, basins)
+        Subtract two basins objects (not yet implemented).
+    
+    __and__(self, basins)
+        Perform an 'and' operation between two basins objects (not yet implemented).
+    """
 
     def __add__(self, basins):
         pass
@@ -23,6 +87,22 @@ class Basins(gpd.GeoDataFrame):
 
 
 class Grids(gpd.GeoDataFrame):
+    """
+    A class for handling grid-related operations.
+
+    Inherits from GeoDataFrame to handle grid geometries.
+
+    Methods
+    -------
+    __add__(self, grids)
+        Add two grids objects (not yet implemented).
+    
+    __sub__(self, grids)
+        Subtract two grids objects (not yet implemented).
+    
+    __and__(self, grids)
+        Perform an 'and' operation between two grids objects (not yet implemented).
+    """
 
     def __add__(self, grids):
         pass
@@ -35,12 +115,42 @@ class Grids(gpd.GeoDataFrame):
 
 
 class Basins_from_shapefile(Basins):
+    """
+    A class to initialize basins from a shapefile.
+
+    Parameters
+    ----------
+    shapefile_path : str
+        Path to the shapefile containing the basin geometries.
+    data : optional
+        Data associated with the basins.
+    geometry : optional
+        Geometry column name.
+    crs : optional
+        Coordinate Reference System (CRS) of the basins.
+    """
+    
     def __init__(self, shapefile_path, data=None, *args, geometry=None, crs=None, **kwargs):
         shp_gdf = gpd.read_file(shapefile_path)
         super().__init__(shp_gdf, *args, geometry=geometry, crs=crs, **kwargs)
 
 
 class HCDNBasins(Basins):
+    """
+    A class to initialize basins for HCDN data.
+
+    Parameters
+    ----------
+    home : str, optional
+        Path to the home directory containing the HCDN shapefile. Default is "E:\\data\\hydrometeorology\\CAMELS".
+    data : optional
+        Data associated with the basins.
+    geometry : optional
+        Geometry column name.
+    crs : optional
+        Coordinate Reference System (CRS) of the basins.
+    """
+    
     def __init__(self, home="E:\\data\\hydrometeorology\\CAMELS", data=None, *args, geometry=None, crs=None, **kwargs):
         HCDN_shp_path = os.path.join(home, "basin_set_full_res", "HCDN_nhru_final_671.shp")
         HCDN_shp = gpd.read_file(HCDN_shp_path)
@@ -49,6 +159,21 @@ class HCDNBasins(Basins):
 
 
 class HCDNGrids(Grids):
+    """
+    A class to initialize grids for HCDN data.
+
+    Parameters
+    ----------
+    home : str
+        Path to the home directory containing the grid shapefiles.
+    data : optional
+        Data associated with the grids.
+    geometry : optional
+        Geometry column name.
+    crs : optional
+        Coordinate Reference System (CRS) of the grids.
+    """
+    
     def __init__(self, home, *args, data=None, geometry=None, crs=None, **kwargs):
         grid_shp_label_path = os.path.join(home, "map", "grids_0_25_label.shp")
         grid_shp_label = gpd.read_file(grid_shp_label_path)
@@ -59,11 +184,33 @@ class HCDNGrids(Grids):
         super().__init__(grid_shp, *args, geometry=geometry, crs=crs, **kwargs)
 
     def createBoundaryShp(self):
+        """
+        Create boundary shapefiles for the grid.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the boundary shapefiles for the center and edge of the grid.
+        """
+        
         boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y = createBoundaryShp(self)
         return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y
 
 
 def createBoundaryShp(grid_shp):
+    """
+    Create boundary shapefiles for the given grid.
+
+    Parameters
+    ----------
+    grid_shp : GeoDataFrame
+        The GeoDataFrame containing the grid geometries.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the boundary shapefiles for the center and edge of the grid, along with their coordinates.
+    """
     # boundary: point center
     cgdf_point = CreateGDF()
     boundary_x_min = min(grid_shp["point_geometry"].x)
@@ -90,6 +237,31 @@ def createBoundaryShp(grid_shp):
 
 
 class Grids_for_shp(Grids):
+    """
+    A subclass of Grids to handle grid operations for a given shapefile (gshp).
+
+    Parameters
+    ----------
+    gshp : GeoDataFrame
+        The input GeoDataFrame (could be basins, grids, etc.).
+    cen_lons : array-like, optional
+        Center longitudes for constructing grids (default is None).
+    cen_lats : array-like, optional
+        Center latitudes for constructing grids (default is None).
+    stand_lons : array-like, optional
+        Standard longitudes for constructing grids (default is None).
+    stand_lats : array-like, optional
+        Standard latitudes for constructing grids (default is None).
+    res : float, optional
+        Resolution for grid construction (default is None).
+    adjust_boundary : bool, optional
+        Whether to adjust the boundary by resolution (default is True).
+    expand_grids_num : int, optional
+        Number of grids to expand outward from the boundary (default is 0).
+    boundary : tuple, optional
+        The boundary coordinates (xmin, ymin, xmax, ymax) to create the grids (default is None).
+    """
+    
     def __init__(self, gshp, *args,
                  cen_lons=None, cen_lats=None, stand_lons=None, stand_lats=None,
                  res=None, adjust_boundary=True, geometry=None, crs=None, expand_grids_num=0, boundary=None, **kwargs):
@@ -173,5 +345,20 @@ class Grids_for_shp(Grids):
         super().__init__(grid_shp, *args, geometry=geometry, crs=crs, **kwargs)
     
     def createBoundaryShp(self):
+        """
+        Create boundary shapefiles for the grid.
+
+        This method uses the `createBoundaryShp` function to generate boundary shapefiles for the grid. 
+        It returns both the center and edge boundary shapefiles along with their coordinates.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the following elements:
+            - boundary_point_center_shp: GeoDataFrame with the center boundary shapefile.
+            - boundary_point_center_x_y: List containing the minimum and maximum x, y coordinates of the center boundary.
+            - boundary_grids_edge_shp: GeoDataFrame with the edge boundary shapefile.
+            - boundary_grids_edge_x_y: List containing the minimum and maximum x, y coordinates of the edge boundary.
+        """
         boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y = createBoundaryShp(self)
         return boundary_point_center_shp, boundary_point_center_x_y, boundary_grids_edge_shp, boundary_grids_edge_x_y

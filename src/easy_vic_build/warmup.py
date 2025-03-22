@@ -24,8 +24,7 @@ Usage:
     the provided warmup period, saving the model state at the end of the warmup period.
 
 Example:
-------
-    # Example usage:
+--------
     evb_dir = Evb_dir("./rvic_example")
     evb_dir.builddir("case_study")
 

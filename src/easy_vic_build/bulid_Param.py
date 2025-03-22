@@ -29,8 +29,7 @@ Usage:
     The Transfer function and scaling operator is set in params_func.TransferFunction and params_func.Scaling_operator module.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 213
     model_scale = "6km"
     date_period = ["19980101", "19981231"]
@@ -67,7 +66,7 @@ Author:
 import numpy as np
 from .tools.utilities import *
 from .tools.params_func.createParametersDataset import createParametersDataset
-from .tools.params_func.TansferFunction import TF_VIC
+from .tools.params_func.TransferFunction import TF_VIC
 from .tools.params_func.Scaling_operator import Scaling_operator
 from .tools.params_func.params_set import *
 from .tools.dpc_func.basin_grid_func import *

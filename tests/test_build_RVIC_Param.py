@@ -4,7 +4,7 @@
 
 from easy_vic_build.build_RVIC_Param import *
 from easy_vic_build.build_dpc import readdpc
-from easy_vic_build import Evb_dir
+from easy_vic_build.Evb_dir_class import Evb_dir
 from easy_vic_build.tools.utilities import readParam, readDomain, remove_and_mkdir
 from easy_vic_build.tools.params_func.params_set import default_uh_params
 

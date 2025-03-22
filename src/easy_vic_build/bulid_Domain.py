@@ -22,8 +22,7 @@ Usage:
     To use this module, provide a domain directory and the required grid and basin shape data. You can then call `buildDomain` to generate the domain file and `modifyDomain_for_pourpoint` to modify the domain with a pour point.
 
 Example:
-------
-    # Example usage:
+--------
     basin_index = 213
     model_scale = "6km"
     case_name = f"{basin_index}_{model_scale}"

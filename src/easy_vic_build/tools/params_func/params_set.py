@@ -1,8 +1,63 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+
+"""
+Module: params_set
+
+This module defines various parameters and utility functions for managing configurations related to 
+hydrological models. It organizes parameter sets for grid configurations, unit hydrographs, and routing 
+processes, as well as utilities to facilitate conversions between depth-related data and model grid values. 
+The module includes:
+
+- `default_g_list`, `g_boundary`, and `g_types` for model grid configuration.
+- `default_uh_params`, `uh_params_boundary`, and `uh_params_types` for unit hydrograph parameters.
+- `default_routing_params`, `routing_params_boundary`, and `routing_params_types` for routing process configurations.
+- Functions that convert between depth data and grid (g) configurations, enabling seamless integration of model inputs.
+
+Class:
+------
+    - None (This module is a collection of parameter sets and functions without any classes).
+
+Functions:
+----------
+    - depth_to_g: Converts depth-related data to the corresponding model grid (g) values.
+    - g_to_depth: Converts model grid (g) values to depth-related data.
+    - convert_g_boundary: Converts boundary conditions for the model grid.
+    - convert_uh_params: Converts unit hydrograph parameters for routing processes.
+    - convert_routing_params: Converts parameters for routing processes in the model.
+    - CONUS_depth_num_to_depth_layer: Converts the depth layer numbers into actual depth values for the CONUS region.
+    - depth_layer_to_percentile: Converts depth layers into percentile values.
+    - percentile_to_real_depth: Converts percentile values into real depth values.
+    - real_depth_to_percentile: Converts real depth values into percentile values.
+    - percentile_to_depth_layer: Converts percentile values into depth layer values.
+    - depth_layer_to_CONUS_depth_num: Converts depth layers into CONUS depth numbers.
+    - percentile_to_CONUS_depth_num: Converts percentile values into CONUS depth numbers.
+
+Parameters:
+-----------
+    - default_g_list: A list of default values for model grid (g) settings.
+    - g_boundary: A set of boundary conditions for the model grid (g).
+    - g_types: A list of types or categories for model grids.
+    - default_uh_params: Default unit hydrograph parameters.
+    - uh_params_boundary: Boundary conditions for unit hydrograph parameters.
+    - uh_params_types: Different types or configurations of unit hydrograph parameters.
+    - default_routing_params: Default parameters for routing processes.
+    - routing_params_boundary: Boundary conditions for routing parameters.
+    - routing_params_types: Different types or configurations of routing parameters.
+    - all_params_types: A collection of all possible parameter types for model configuration.
+
+Dependencies:
+-------------
+    - numpy: Used for numerical operations and handling parameter arrays.
+
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+"""
+
 import numpy as np
-from copy import deepcopy
 
 
 ## ========================= param g =========================

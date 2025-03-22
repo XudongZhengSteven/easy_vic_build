@@ -1,32 +1,104 @@
 # code: utf-8
 # author: "Xudong Zheng" 
 # email: Z786909151@163.com
+
+"""
+Module: create_nc
+
+This module provides functionality for creating and managing NetCDF files. It includes a class `create_nc` 
+that offers methods to create a NetCDF file with specified dimensions, variables, and values. The module also 
+provides methods for copying global and variable attributes between NetCDF files, enabling data management 
+and file manipulation for scientific computing.
+
+Class:
+----------
+    - create_nc: A class for creating and managing NetCDF files. It supports:
+        - Creating a NetCDF file with specified dimensions, variables, and values.
+        - Copying global attributes from one NetCDF file to another.
+        - Copying variable attributes from one NetCDF file to another.
+
+Functions:
+----------
+    - copy_vattributefunc: Copies variable attributes from one variable to another.
+    - copy_garrtibutefunc: Copies global attributes from one NetCDF file to another.
+
+Dependencies:
+-------------
+    - netCDF4: Used for reading and writing NetCDF files.
+    - numpy: Used for handling arrays and numerical operations.
+    - tqdm: Used for progress bars in the terminal.
+
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+"""
+
+
 import os
 from netCDF4 import Dataset
 from tqdm import *
-
+from ... import logger
 
 class create_nc:
-    """ create nc class """
+    """
+    A class for creating and managing NetCDF files.
 
+    This class provides methods to create NetCDF files by specifying dimensions, 
+    variables, and their values. Additionally, it includes functions for copying 
+    global and variable attributes from one NetCDF file to another.
+
+    Methods:
+    --------
+    __call__(self, nc_path, dimensions, variables, var_value, return_dataset=False):
+        Creates a NetCDF file at the specified path with the given dimensions and variables.
+
+    copy_garrtibutefunc(self, dst_dataset_path, src_dataset_path):
+        Copies global attributes from the source NetCDF file to the destination NetCDF file.
+
+    copy_vattributefunc(self, dst_dataset_path, src_dataset_path):
+        Copies variable attributes from the source NetCDF file to the destination NetCDF file.
+    """
+    
     def __init__(self):
+        """ Initializes the create_nc class. """
         pass
 
     def __call__(self, nc_path, dimensions, variables, var_value, return_dataset=False):
-        """ call function
-        input:
-            nc_path: the path of created nc file
-            dimensions: dict, {"dimname": size}, general contains lon, lat, time, time_bound. If a dimension is
-                    unlimitied, set size None or 0
-            variables: dict, {"varname": kwargs}, general contains dimension variables and data variables
-                    kwargs is a dict, which could contain below:
-                        datatype, dimensions=(), zlib=False, complevel=4, shuffle=True, fletcher32=False, contiguous=False,
-                        chunksizes=None, endian='native', least_significant_digit=None, fill_value=None
-            var_value: dict, {"varname": values}, general is a np.ma.array()
-            return_dataset: bool, whether return dataset to set attributes or close file
+        """
+        Creates a NetCDF file with the specified dimensions, variables, and values.
 
-        output:
-            nc_path file
+        Parameters:
+        -----------
+        nc_path : str
+            The path where the created NetCDF file will be saved.
+        dimensions : dict
+            A dictionary where keys are dimension names and values are the sizes of the dimensions.
+            The dimensions typically include "lon", "lat", "time", etc. If a dimension is unlimited, set its size to None or 0.
+        variables : dict
+            A dictionary where keys are variable names, and values are dictionaries of keyword arguments.
+            The keyword arguments can include:
+            - datatype : str, Data type of the variable (e.g., 'float32')
+            - dimensions : tuple, Tuple of dimension names
+            - zlib : bool, Whether to use compression (default is False)
+            - complevel : int, Compression level (default is 4)
+            - shuffle : bool, Whether to use shuffle filter (default is True)
+            - fletcher32 : bool, Whether to use Fletcher32 checksum (default is False)
+            - contiguous : bool, Whether to store data contiguously (default is False)
+            - chunksizes : tuple, Chunk sizes for data storage (default is None)
+            - endian : str, Byte order (default is 'native')
+            - least_significant_digit : int, Precision of floating point data (default is None)
+            - fill_value : int/float, Value used to fill missing data (default is None)
+        var_value : dict
+            A dictionary where keys are variable names and values are their corresponding values.
+            The values should typically be `np.ma.array` or other compatible data types.
+        return_dataset : bool, optional
+            If True, returns the NetCDF dataset object for further manipulation. If False (default), closes the file after creation.
+
+        Returns:
+        --------
+        None or Dataset
+            Returns the dataset object if `return_dataset=True`, otherwise the function returns None.
         """
         dataset = Dataset(nc_path, "w")
 
@@ -48,20 +120,46 @@ class create_nc:
             dataset.close()
 
     def copy_garrtibutefunc(self, dst_dataset_path, src_dataset_path):
-        """ copy global attributes of src_dataset to dst_dataset """
+        """
+        Copies global attributes from the source NetCDF file to the destination NetCDF file.
+
+        Parameters:
+        -----------
+        dst_dataset_path : str
+            Path to the destination NetCDF file.
+        src_dataset_path : str
+            Path to the source NetCDF file.
+
+        Returns:
+        --------
+        None
+        """
         with Dataset(src_dataset_path, "r") as src_dataset:
             with Dataset(dst_dataset_path, "a") as dst_dataset:
                 for key in src_dataset.ncattrs():
-                    print(f"set global attribute {key}")
+                    logger.info(f"set global attribute {key}")
                     dst_dataset.setncattr(key, src_dataset.getncattr(key))
 
     def copy_vattributefunc(self, dst_dataset_path, src_dataset_path):
-        """ copy variable attributes of src_dataset to dst_dataset """
+        """
+        Copies variable attributes from the source NetCDF file to the destination NetCDF file.
+
+        Parameters:
+        -----------
+        dst_dataset_path : str
+            Path to the destination NetCDF file.
+        src_dataset_path : str
+            Path to the source NetCDF file.
+
+        Returns:
+        --------
+        None
+        """
         with Dataset(src_dataset_path, "r") as src_dataset:
             with Dataset(dst_dataset_path, "a") as dst_dataset:
                 # loop for each variable in dst_dataset
                 for key in dst_dataset.variables:
-                    print(f"set variable attribute for {key}")
+                    logger.info(f"set variable attribute for {key}")
 
                     # get variables attributes from src_dataset
                     ncattr_dict = dict(((key_nacttr, src_dataset.variables[key].getncattr(key_nacttr)) for key_nacttr
@@ -70,11 +168,25 @@ class create_nc:
                     # loop for setting each attributes
                     for key_nacttr in ncattr_dict.keys():
                         if key_nacttr != "_FillValue":  # "_FillValue" should be set when create variable
-                            print(f"    set variable attributes {key_nacttr}")
+                            logger.info(f"    set variable attributes {key_nacttr}")
                             dst_dataset.variables[key].setncattr(key_nacttr, ncattr_dict[key_nacttr])
 
 
 def copy_vattributefunc(src_var, dst_var):
+    """
+    Copies variable attributes from the source variable to the destination variable.
+
+    Parameters:
+    -----------
+    src_var : netCDF4.Variable
+        The source variable from which attributes will be copied.
+    dst_var : netCDF4.Variable
+        The destination variable to which attributes will be copied.
+
+    Returns:
+    --------
+    None
+    """
     ncattr_dict = dict(((key_nacttr, src_var.getncattr(key_nacttr)) for key_nacttr in src_var.ncattrs()))
     
     for key_nacttr in ncattr_dict.keys():
@@ -83,7 +195,20 @@ def copy_vattributefunc(src_var, dst_var):
 
 
 def copy_garrtibutefunc(src_dataset, dst_dataset):
-    """ copy global attributes of src_dataset to dst_dataset """
+    """
+    Copies global attributes from the source NetCDF dataset to the destination NetCDF dataset.
+
+    Parameters:
+    -----------
+    src_dataset : netCDF4.Dataset
+        The source dataset from which global attributes will be copied.
+    dst_dataset : netCDF4.Dataset
+        The destination dataset to which global attributes will be copied.
+
+    Returns:
+    --------
+    None
+    """
     for key in src_dataset.ncattrs():
         dst_dataset.setncattr(key, src_dataset.getncattr(key))
 

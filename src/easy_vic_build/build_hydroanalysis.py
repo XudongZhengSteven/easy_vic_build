@@ -22,7 +22,6 @@ Usage:
 
 Example:
 --------
-    # Example usage:
     basin_index = 213
     model_scale = "6km"
     date_period = ["19980101", "19981231"]

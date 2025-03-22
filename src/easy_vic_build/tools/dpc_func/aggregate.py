@@ -1,6 +1,38 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+
+"""
+Module: aggregate
+
+This module contains various functions for aggregating and processing spatial data related to hydrology and climate, 
+specifically focusing on different types of environmental data like precipitation, soil moisture, snow water equivalent (SWE),
+and canopy interception. These functions are designed to aggregate data from grid-based datasets within basins, often used in 
+hydrological modeling and environmental studies.
+
+Functions:
+----------
+    - aggregate_TRMM_P: Aggregates TRMM precipitation data for a basin.
+    - aggregate_ERA5_SM: Aggregates ERA5 soil moisture data for a basin.
+    - aggregate_func_SWE_axis1: Aggregates snow water equivalent (SWE) data along axis 1, removing specific values.
+    - aggregate_func_SWE_axis0: Aggregates snow water equivalent (SWE) data along axis 0, removing specific values.
+    - aggregate_GlobalSnow_SWE: Aggregates global snow SWE data for a basin.
+    - aggregate_GLDAS_CanopInt: Aggregates GLDAS canopy interception data for a basin.
+
+Dependencies:
+-------------
+    - numpy: Provides numerical operations and array manipulations.
+    - pandas: Supports data manipulation and processing of geospatial datasets.
+    - tqdm: For displaying progress bars during iterations.
+    - functools: For partial function application.
+
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+    
+"""
+
 import numpy as np
 import pandas as pd
 from functools import partial
@@ -9,6 +41,22 @@ from ..decoractors import *
 
 
 def aggregate_GLEAMEDaily(basin_shp):
+    """
+    Aggregates daily GLEAM E values for each basin.
+
+    Parameters
+    ----------
+    basin_shp : pandas.DataFrame
+        A DataFrame containing basin shapefile information, with an "intersects_grids" 
+        column that holds grid data intersecting each basin.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Updated DataFrame with a new column "aggregated_E", containing aggregated 
+        daily GLEAM E values for each basin.
+
+    """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_column = "E"
     aggregate_GLEAMEDaily_list = []
@@ -41,6 +89,19 @@ def aggregate_GLEAMEDaily(basin_shp):
 
 
 def aggregate_GLEAMEpDaily(basin_shp):
+    """
+    Aggregates daily GLEAM Ep values for each basin.
+
+    Parameters
+    ----------
+    basin_shp : pandas.DataFrame
+        A DataFrame containing basin shapefile information.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Updated DataFrame with aggregated daily GLEAM Ep values.
+    """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_column = "Ep"
     aggregate_GLEAMEpDaily_list = []
@@ -73,6 +134,19 @@ def aggregate_GLEAMEpDaily(basin_shp):
 
 
 def aggregate_TRMM_P(basin_shp):
+    """
+    Aggregate TRMM precipitation data for each basin by calculating the mean across intersecting grids.
+
+    Parameters
+    ----------
+    basin_shp : GeoDataFrame
+        A GeoDataFrame containing basin shapes and their associated grid intersections.
+
+    Returns
+    -------
+    GeoDataFrame
+        A GeoDataFrame with an additional column "aggregated_precipitation" containing the aggregated precipitation values.
+    """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_column = "precipitation"
     aggregate_list = []
@@ -106,6 +180,21 @@ def aggregate_TRMM_P(basin_shp):
 
 
 def aggregate_ERA5_SM(basin_shp, aggregate_column="swvl1"):
+    """
+    Aggregate ERA5 soil moisture data for each basin by calculating the mean across intersecting grids.
+
+    Parameters
+    ----------
+    basin_shp : GeoDataFrame
+        A GeoDataFrame containing basin shapes and their associated grid intersections.
+    aggregate_column : str, optional
+        The name of the column to aggregate, by default "swvl1".
+
+    Returns
+    -------
+    GeoDataFrame
+        A GeoDataFrame with an additional column for aggregated soil moisture values.
+    """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_list = []
     
@@ -138,6 +227,20 @@ def aggregate_ERA5_SM(basin_shp, aggregate_column="swvl1"):
     
 @apply_along_axis_decorator(axis=1)
 def aggregate_func_SWE_axis1(data_array):
+    """
+    Aggregate SWE (Snow Water Equivalent) data along axis 1 by calculating the mean,
+    while removing invalid values (negative, nan, or melting snow).
+
+    Parameters
+    ----------
+    data_array : array-like
+        Array of SWE values for a specific basin.
+
+    Returns
+    -------
+    float
+        The mean SWE value after removing invalid data.
+    """
     data_array = np.array(data_array)
     data_array = data_array.astype(float)
     
@@ -158,6 +261,20 @@ def aggregate_func_SWE_axis1(data_array):
 
 @apply_along_axis_decorator(axis=0)
 def aggregate_func_SWE_axis0(data_array):
+    """
+    Aggregate SWE (Snow Water Equivalent) data along axis 0 by calculating the mean,
+    while removing invalid values (negative, nan, or melting snow).
+
+    Parameters
+    ----------
+    data_array : array-like
+        Array of SWE values for a specific basin.
+
+    Returns
+    -------
+    float
+        The mean SWE value after removing invalid data.
+    """
     data_array = np.array(data_array)
     
     # create code map
@@ -176,6 +293,21 @@ def aggregate_func_SWE_axis0(data_array):
 
 
 def aggregate_GlobalSnow_SWE(basin_shp, aggregate_column="swe"):
+    """
+    Aggregate Global Snow SWE data for each basin by calculating the mean across intersecting grids.
+
+    Parameters
+    ----------
+    basin_shp : GeoDataFrame
+        A GeoDataFrame containing basin shapes and their associated grid intersections.
+    aggregate_column : str, optional
+        The name of the column to aggregate, by default "swe".
+
+    Returns
+    -------
+    GeoDataFrame
+        A GeoDataFrame with an additional column for aggregated Global Snow SWE values.
+    """
     aggregate_func = aggregate_func_SWE_axis1
     aggregate_list = []
     
@@ -207,6 +339,21 @@ def aggregate_GlobalSnow_SWE(basin_shp, aggregate_column="swe"):
     return basin_shp
 
 def aggregate_GLDAS_CanopInt(basin_shp, aggregate_column="CanopInt_tavg"):
+    """
+    Aggregate GLDAS canopy interception data for each basin by calculating the mean across intersecting grids.
+
+    Parameters
+    ----------
+    basin_shp : GeoDataFrame
+        A GeoDataFrame containing basin shapes and their associated grid intersections.
+    aggregate_column : str, optional
+        The name of the column to aggregate, by default "CanopInt_tavg".
+
+    Returns
+    -------
+    GeoDataFrame
+        A GeoDataFrame with an additional column for aggregated canopy interception values.
+    """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_list = []
     

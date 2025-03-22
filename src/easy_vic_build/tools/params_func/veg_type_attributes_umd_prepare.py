@@ -2,13 +2,54 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""
+Module: veg_type_attributes_umd_prepare
+
+This module defines the functionality to update the vegetation parameter JSON file by integrating 
+vegetation roughness and displacement data from the `NLDAS_Veg_monthly.xlsx` file. It reads and processes 
+vegetation attributes from the UMD dataset, updates these attributes with monthly data, and then saves 
+the updated parameters into a new JSON file.
+
+Functions:
+----------
+    - prepare_veg_param_json: Reads the original vegetation parameter JSON, updates it with 
+      data from the NLDAS_Veg_monthly file, and saves the updated data to a new file.
+
+Dependencies:
+-------------
+    - json: Used for reading and writing JSON data.
+    - easy_vic_build: Provides access to the `Evb_dir` module.
+    - utilities: Provides helper functions like `read_veg_type_attributes_umd` and `read_NLDAS_Veg_monthly`.
+
+Author:
+-------
+    Xudong Zheng
+    Email: z786909151@163.com
+"""
+
 import os
-import pandas as pd
 import json
-from easy_vic_build import Evb_dir
 from ..utilities import read_veg_type_attributes_umd, read_NLDAS_Veg_monthly
 
 def prepare_veg_param_json(veg_param_json_path, veg_param_json_updated_path, NLDAS_Veg_monthly_path):
+    """
+    Update the vegetation parameters in a JSON file using data from the NLDAS_Veg_monthly Excel file.
+
+    Parameters
+    ----------
+    veg_param_json_path : str
+        The file path to the original vegetation parameters JSON file.
+    veg_param_json_updated_path : str
+        The file path where the updated vegetation parameters JSON will be saved.
+    NLDAS_Veg_monthly_path : str
+        The file path to the NLDAS_Veg_monthly Excel file containing vegetation roughness and displacement data.
+
+    Returns
+    -------
+    None
+        This function updates the original JSON file with vegetation roughness and displacement data
+        from the NLDAS_Veg_monthly file and saves it to the specified updated file path.
+    """
     # update the veg_type_attributes_umd.json by the NLDAS_Veg_monthly.xlsx
     veg_params_json = read_veg_type_attributes_umd()
     # read json
@@ -48,7 +89,8 @@ def prepare_veg_param_json(veg_param_json_path, veg_param_json_updated_path, NLD
     
 
 if __name__ == "__main__":
-    veg_param_json_path = os.path.join(Evb_dir.__data_dir__, "veg_type_attributes_umd.json")
-    veg_param_json_updated_path = os.path.join(Evb_dir.__data_dir__, "veg_type_attributes_umd_updated.json")
-    NLDAS_Veg_monthly_path = os.path.join(Evb_dir.__data_dir__, "NLDAS_Veg_monthly.xlsx")
-    prepare_veg_param_json(veg_param_json_path, veg_param_json_updated_path, NLDAS_Veg_monthly_path)
+    # veg_param_json_path = os.path.join(Evb_dir.__data_dir__, "veg_type_attributes_umd.json")
+    # veg_param_json_updated_path = os.path.join(Evb_dir.__data_dir__, "veg_type_attributes_umd_updated.json")
+    # NLDAS_Veg_monthly_path = os.path.join(Evb_dir.__data_dir__, "NLDAS_Veg_monthly.xlsx")
+    # prepare_veg_param_json(veg_param_json_path, veg_param_json_updated_path, NLDAS_Veg_monthly_path)
+    pass

@@ -4,7 +4,7 @@
 
 from easy_vic_build.bulid_Domain import buildDomain
 from easy_vic_build.build_dpc import readdpc
-from easy_vic_build import Evb_dir
+from easy_vic_build.Evb_dir_class import Evb_dir
 
 """
 general information:

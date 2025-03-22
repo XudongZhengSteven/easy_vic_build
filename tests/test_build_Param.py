@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 from easy_vic_build.tools.utilities import readdpc, readDomain
-from easy_vic_build import Evb_dir
+from easy_vic_build.Evb_dir_class import Evb_dir
 from easy_vic_build.bulid_Param import buildParam_level0, buildParam_level1
 from easy_vic_build.bulid_Param import scaling_level0_to_level1
 from easy_vic_build.tools.params_func.params_set import default_g_list, g_boundary
