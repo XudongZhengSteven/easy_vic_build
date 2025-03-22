@@ -5,10 +5,10 @@
 """
 Module: utilities
 
-This module provides a set of utility functions for reading and processing various data 
-related to the VIC model and hydrometeorological datasets. It includes functions for reading 
-basin and parameter files, processing DPC data, and handling configuration files. These 
-functions facilitate the extraction, manipulation, and storage of data for use in VIC model 
+This module provides a set of utility functions for reading and processing various data
+related to the VIC model and hydrometeorological datasets. It includes functions for reading
+basin and parameter files, processing DPC data, and handling configuration files. These
+functions facilitate the extraction, manipulation, and storage of data for use in VIC model
 simulations and related analysis.
 
 Functions:
@@ -25,7 +25,7 @@ Functions:
     - readDomain: Reads the domain configuration from a NETCDF file.
     - readParam: Reads parameter datasets at two levels (level0 and level1) from NETCDF files.
     - clearParam: Deletes parameter datasets at level0 and level1.
-    - readRVICParam: Reads and returns configuration data related to flow direction, pourpoints, 
+    - readRVICParam: Reads and returns configuration data related to flow direction, pourpoints,
       unit hydrograph, and other parameters from various files.
     - read_cfg_to_dict: Converts the configuration file into a dictionary for easy access.
     - readGlobalParam: Loads global parameters using the GlobalParamParser.
@@ -42,7 +42,7 @@ Functions:
 
 Usage:
 ------
-    1. Ensure that the necessary data files (e.g., shapefiles, NETCDF files, configuration files) 
+    1. Ensure that the necessary data files (e.g., shapefiles, NETCDF files, configuration files)
        are available at the specified paths.
     2. Call the relevant function to read the required data:
         - `readHCDNBasins()` to load basin data from the HCDN dataset.
@@ -80,26 +80,28 @@ Author:
     Email: z786909151@163.com
 """
 
+import io
+import json
 import os
-import pandas as pd
-import geopandas as gpd
-from tqdm import *
 import pickle
-from netCDF4 import Dataset
+import pkgutil
 import shutil
+from configparser import ConfigParser
+
+import geopandas as gpd
+import pandas as pd
+from netCDF4 import Dataset
+from tqdm import *
+
+from .dpc_func.basin_grid_class import HCDNBasins
 from .geo_func.search_grids import *
 from .params_func.GlobalParamParser import GlobalParamParser
 from .params_func.params_set import *
-from .dpc_func.basin_grid_class import HCDNBasins
-from configparser import ConfigParser
-import io
-import pkgutil
-import json
-
 
 ## ------------------------ general utilities ------------------------
 
-top_package = __package__.split('.')[0]
+top_package = __package__.split(".")[0]
+
 
 def check_and_mkdir(dir):
     """
@@ -113,6 +115,7 @@ def check_and_mkdir(dir):
     if not os.path.exists(dir):
         os.mkdir(os.path.abspath(dir))
 
+
 def remove_and_mkdir(dir):
     """
     Removes a directory and creates a new one.
@@ -125,7 +128,8 @@ def remove_and_mkdir(dir):
     if os.path.exists(dir):
         shutil.rmtree(dir)
     os.mkdir(os.path.abspath(dir))
-    
+
+
 def remove_files(dir):
     """
     Removes all files in a directory, but not the subdirectories.
@@ -140,6 +144,7 @@ def remove_files(dir):
         fp = os.path.join(dir, f)
         if os.path.isfile(fp):
             os.remove(fp)
+
 
 def setHomePath(root="E:"):
     """
@@ -186,7 +191,9 @@ def exportToCsv(basin_shp, fpath_dir):
     # save streamflow
     if not os.path.exists(os.path.join(fpath_dir, "streamflow")):
         os.mkdir(os.path.join(fpath_dir, "streamflow"))
-    for i in tqdm(streamflow.index, desc="loop for basins to save streamflow", colour="green"):
+    for i in tqdm(
+        streamflow.index, desc="loop for basins to save streamflow", colour="green"
+    ):
         streamflow[i].to_csv(os.path.join(fpath_dir, "streamflow", f"{i}.csv"))
 
     # save prep
@@ -198,11 +205,17 @@ def exportToCsv(basin_shp, fpath_dir):
     # save gleam_e_daily
     if not os.path.exists(os.path.join(fpath_dir, "gleam_e_daily")):
         os.mkdir(os.path.join(fpath_dir, "gleam_e_daily"))
-    for i in tqdm(gleam_e_daily.index, desc="loop for basins to save gleam_e_daily", colour="green"):
+    for i in tqdm(
+        gleam_e_daily.index,
+        desc="loop for basins to save gleam_e_daily",
+        colour="green",
+    ):
         gleam_e_daily[i].to_csv(os.path.join(fpath_dir, "gleam_e_daily", f"{i}.csv"))
-        
 
-def checkGaugeBasin(basinShp, usgs_streamflow, BasinAttribute, forcingDaymetGaugeAttributes):
+
+def checkGaugeBasin(
+    basinShp, usgs_streamflow, BasinAttribute, forcingDaymetGaugeAttributes
+):
     """
     Compares the basin shapefile data with the USGS streamflow, BasinAttribute,
     and forcingDaymet gauge attributes to check for mismatches.
@@ -219,11 +232,19 @@ def checkGaugeBasin(basinShp, usgs_streamflow, BasinAttribute, forcingDaymetGaug
         A list of forcing Daymet gauge attributes.
     """
     id_basin_shp = set(basinShp.hru_id.values)
-    id_usgs_streamflow = set([usgs_streamflow[i].iloc[0, 0] for i in range(len(usgs_streamflow))])
+    id_usgs_streamflow = set(
+        [usgs_streamflow[i].iloc[0, 0] for i in range(len(usgs_streamflow))]
+    )
     id_BasinAttribute = set(BasinAttribute["camels_clim"].gauge_id.values)
-    id_forcingDaymet = set([forcingDaymetGaugeAttributes[i]["gauge_id"]
-                            for i in range(len(forcingDaymetGaugeAttributes))])
-    print(f"id_HCDN_shp: {len(id_basin_shp)}, id_usgs_streamflow: {len(id_usgs_streamflow)}, id_BasinAttribute: {len(id_BasinAttribute)}, id_forcingDatmet: {len(id_forcingDaymet)}")
+    id_forcingDaymet = set(
+        [
+            forcingDaymetGaugeAttributes[i]["gauge_id"]
+            for i in range(len(forcingDaymetGaugeAttributes))
+        ]
+    )
+    print(
+        f"id_HCDN_shp: {len(id_basin_shp)}, id_usgs_streamflow: {len(id_usgs_streamflow)}, id_BasinAttribute: {len(id_BasinAttribute)}, id_forcingDatmet: {len(id_forcingDaymet)}"
+    )
     print(f"id_usgs_streamflow - id_HCDN_shp: {id_usgs_streamflow - id_basin_shp}")
     print(f"id_BasinAttribute - id_HCDN_shp: {id_BasinAttribute - id_basin_shp}")
     print(f"id_forcingDatmet - id_HCDN_shp: {id_forcingDaymet - id_basin_shp}")
@@ -231,7 +252,9 @@ def checkGaugeBasin(basinShp, usgs_streamflow, BasinAttribute, forcingDaymetGaug
     # id_usgs_streamflow - id_HCDN_shp: {9535100, 6775500, 6846500}
     # id_forcingDatmet - id_HCDN_shp: {6846500, 6775500, 3448942, 1150900, 2081113, 9535100}
 
+
 ## ------------------------ read function ------------------------
+
 
 def read_NLDAS_annual_prec():
     """
@@ -244,14 +267,15 @@ def read_NLDAS_annual_prec():
     """
     with io.BytesIO(pkgutil.get_data(top_package, "data/NLDAS_annual_prec.npy")) as f:
         data_annual_P = np.load(f)
-    
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/annual_prec_lon.txt')) as f:
+
+    with io.BytesIO(pkgutil.get_data(top_package, "data/annual_prec_lon.txt")) as f:
         annual_P_lon = np.loadtxt(f)
-    
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/annual_prec_lat.txt')) as f:
+
+    with io.BytesIO(pkgutil.get_data(top_package, "data/annual_prec_lat.txt")) as f:
         annual_P_lat = np.loadtxt(f)
-    
+
     return data_annual_P, annual_P_lon, annual_P_lat
+
 
 def read_globalParam_reference():
     """
@@ -262,10 +286,13 @@ def read_globalParam_reference():
     GlobalParamParser
         The global parameter object.
     """
-    with io.StringIO(pkgutil.get_data(top_package, 'data/global_param_reference.txt').decode("utf-8")) as f:
+    with io.StringIO(
+        pkgutil.get_data(top_package, "data/global_param_reference.txt").decode("utf-8")
+    ) as f:
         globalParam = GlobalParamParser()
         globalParam.load(f)
     return globalParam
+
 
 def read_rvic_param_cfg_file_reference():
     """
@@ -276,12 +303,17 @@ def read_rvic_param_cfg_file_reference():
     ConfigParser
         The configuration file parser object.
     """
-    with io.StringIO(pkgutil.get_data(top_package, 'data/rvic.parameters.reference.cfg').decode("utf-8")) as f:
+    with io.StringIO(
+        pkgutil.get_data(top_package, "data/rvic.parameters.reference.cfg").decode(
+            "utf-8"
+        )
+    ) as f:
         cfg_file = ConfigParser()
         cfg_file.optionxform = str
         cfg_file.read_file(f)
 
     return cfg_file
+
 
 def read_rvic_conv_cfg_file_reference():
     """
@@ -292,12 +324,17 @@ def read_rvic_conv_cfg_file_reference():
     ConfigParser
         The configuration file parser object.
     """
-    with io.StringIO(pkgutil.get_data(top_package, 'data/rvic.convolution.reference.cfg').decode("utf-8")) as f:
+    with io.StringIO(
+        pkgutil.get_data(top_package, "data/rvic.convolution.reference.cfg").decode(
+            "utf-8"
+        )
+    ) as f:
         cfg_file = ConfigParser()
         cfg_file.optionxform = str
         cfg_file.read_file(f)
-    
+
     return cfg_file
+
 
 def read_veg_type_attributes_umd():
     """
@@ -308,13 +345,16 @@ def read_veg_type_attributes_umd():
     dict
         A dictionary of vegetation parameters.
     """
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/veg_type_attributes_umd.json')) as f:
+    with io.BytesIO(
+        pkgutil.get_data(top_package, "data/veg_type_attributes_umd.json")
+    ) as f:
         veg_params_json = json.load(f)
         veg_params_json = veg_params_json["classAttributes"]
         veg_keys = [int(v["class"]) for v in veg_params_json]
         veg_params = [v["properties"] for v in veg_params_json]
         veg_params_json = dict(zip(veg_keys, veg_params))
     return veg_params_json
+
 
 def read_NLDAS_Veg_monthly():
     """
@@ -325,11 +365,12 @@ def read_NLDAS_Veg_monthly():
     tuple
         A tuple containing two dataframes for vegetation roughness and displacement.
     """
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/NLDAS_Veg_monthly.xlsx')) as f:
+    with io.BytesIO(pkgutil.get_data(top_package, "data/NLDAS_Veg_monthly.xlsx")) as f:
         NLDAS_Veg_monthly_veg_rough = pd.read_excel(f, sheet_name=0, skiprows=2)
         NLDAS_Veg_monthly_veg_displacement = pd.read_excel(f, sheet_name=1, skiprows=2)
-        
+
     return NLDAS_Veg_monthly_veg_rough, NLDAS_Veg_monthly_veg_displacement
+
 
 def read_veg_param_json():
     """
@@ -340,9 +381,12 @@ def read_veg_param_json():
     dict
         A dictionary of updated vegetation parameters.
     """
-    with io.BytesIO(pkgutil.get_data(top_package, 'data/veg_type_attributes_umd_updated.json')) as f:
+    with io.BytesIO(
+        pkgutil.get_data(top_package, "data/veg_type_attributes_umd_updated.json")
+    ) as f:
         veg_params_json = json.load(f)
     return veg_params_json
+
 
 def readHCDNGrids(home="E:\\data\\hydrometeorology\\CAMELS"):
     """
@@ -411,7 +455,7 @@ def read_one_HCDN_basin_shp(basin_index, home="E:\\data\\hydrometeorology\\CAMEL
         A tuple containing the full HCDN shapefile GeoDataFrame and the specific basin's GeoDataFrame.
     """
     basin_shp_all = HCDNBasins(home)
-    basin_shp = basin_shp_all.loc[basin_index: basin_index, :]
+    basin_shp = basin_shp_all.loc[basin_index:basin_index, :]
     return basin_shp_all, basin_shp
 
 
@@ -432,13 +476,13 @@ def readdpc(evb_dir):
     # read
     with open(evb_dir.dpc_VIC_level0_path, "rb") as f:
         dpc_VIC_level0 = pickle.load(f)
-    
+
     with open(evb_dir.dpc_VIC_level1_path, "rb") as f:
         dpc_VIC_level1 = pickle.load(f)
-    
+
     with open(evb_dir.dpc_VIC_level2_path, "rb") as f:
         dpc_VIC_level2 = pickle.load(f)
-    
+
     return dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2
 
 
@@ -458,7 +502,7 @@ def readDomain(evb_dir):
     """
     # read
     domain_dataset = Dataset(evb_dir.domainFile_path, "r", format="NETCDF4")
-    
+
     return domain_dataset
 
 
@@ -479,9 +523,13 @@ def readParam(evb_dir, mode="r"):
         A tuple containing the parameter datasets at levels 0 and 1.
     """
     # read
-    params_dataset_level0 = Dataset(evb_dir.params_dataset_level0_path, mode, format="NETCDF4")
-    params_dataset_level1 = Dataset(evb_dir.params_dataset_level1_path, mode, format="NETCDF4")
-    
+    params_dataset_level0 = Dataset(
+        evb_dir.params_dataset_level0_path, mode, format="NETCDF4"
+    )
+    params_dataset_level1 = Dataset(
+        evb_dir.params_dataset_level1_path, mode, format="NETCDF4"
+    )
+
     return params_dataset_level0, params_dataset_level1
 
 
@@ -521,7 +569,7 @@ def readRVICParam(evb_dir):
     uhbox_file = pd.read_csv(evb_dir.uhbox_file_path)
     cfg_file = ConfigParser()
     cfg_file.read(evb_dir.cfg_file_path)
-    
+
     return flow_direction_dataset, pourpoint_file, uhbox_file, cfg_file
 
 
@@ -542,8 +590,10 @@ def read_cfg_to_dict(cfg_file_path):
     cfg_file = ConfigParser()
     cfg_file.optionxform = str
     cfg_file.read(cfg_file_path)
-    cfg_file_dict = {section: dict(cfg_file.items(section)) for section in cfg_file.sections()}
-    
+    cfg_file_dict = {
+        section: dict(cfg_file.items(section)) for section in cfg_file.sections()
+    }
+
     return cfg_file_dict
 
 
@@ -563,9 +613,9 @@ def readGlobalParam(evb_dir):
     """
     globalParam = GlobalParamParser()
     globalParam.load(evb_dir.globalParam_path)
-    
+
     return globalParam
-    
+
 
 def readCalibrateCp(evb_dir):
     """
@@ -606,5 +656,7 @@ def readBasinMap(evb_dir):
     GeoDataFrame
         The stream basin shapefile data.
     """
-    stream_gdf = gpd.read_file(os.path.join(evb_dir.BasinMap_dir, "stream_raster_shp_clip.shp"))
+    stream_gdf = gpd.read_file(
+        os.path.join(evb_dir.BasinMap_dir, "stream_raster_shp_clip.shp")
+    )
     return stream_gdf

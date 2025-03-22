@@ -5,15 +5,15 @@
 """
 Module: create_flow_distance
 
-This module contains the function `create_flow_distance`, which calculates the flow distance 
-for a given flow direction array and its associated x and y grid length arrays. The function 
-uses a mapping of flow directions to respective distance types (zonal, meridional, diagonal, and edge) 
-and applies the appropriate formula to compute the flow distance for each grid cell. The result 
+This module contains the function `create_flow_distance`, which calculates the flow distance
+for a given flow direction array and its associated x and y grid length arrays. The function
+uses a mapping of flow directions to respective distance types (zonal, meridional, diagonal, and edge)
+and applies the appropriate formula to compute the flow distance for each grid cell. The result
 is then saved as a GeoTIFF file, preserving the spatial transformation and coordinate reference system.
 
 Functions:
 ----------
-    - create_flow_distance: Computes the flow distance for a flow direction array based on specified 
+    - create_flow_distance: Computes the flow distance for a flow direction array based on specified
       distance types, and saves the result as a GeoTIFF file.
 
 Dependencies:
@@ -28,15 +28,22 @@ Author:
 """
 
 
+import numpy as np
 import rasterio
 from rasterio import CRS
-import numpy as np
 
 
-def create_flow_distance(flow_distance_path, flow_direction_array, x_length_array, y_length_array, transform, crs_str="EPSG:4326"):
+def create_flow_distance(
+    flow_distance_path,
+    flow_direction_array,
+    x_length_array,
+    y_length_array,
+    transform,
+    crs_str="EPSG:4326",
+):
     """
     Calculates the flow distance based on the given flow direction array and the respective x and y grid lengths.
-    The function maps flow directions to corresponding distance types and computes the flow distance for each grid 
+    The function maps flow directions to corresponding distance types and computes the flow distance for each grid
     cell accordingly. The result is saved as a GeoTIFF file.
 
     Parameters:
@@ -59,12 +66,19 @@ def create_flow_distance(flow_distance_path, flow_direction_array, x_length_arra
     None
         The flow distance is saved directly to the specified file path as a GeoTIFF.
     """
-    flow_direction_distance_map = {"zonal": [64, 4], "meridional": [1, 16], "diagonal": [32, 128, 8, 2], "edge": [0]}
-    flow_distance_func_map = {"zonal": lambda x_length, y_length: y_length,
-                            "meridional": lambda x_length, y_length: x_length,
-                            "diagonal": lambda x_length, y_length: (x_length**2 + y_length**2)**0.5,
-                            "edge": lambda x_length, y_length: (x_length**2 + y_length**2)**0.5}
-    
+    flow_direction_distance_map = {
+        "zonal": [64, 4],
+        "meridional": [1, 16],
+        "diagonal": [32, 128, 8, 2],
+        "edge": [0],
+    }
+    flow_distance_func_map = {
+        "zonal": lambda x_length, y_length: y_length,
+        "meridional": lambda x_length, y_length: x_length,
+        "diagonal": lambda x_length, y_length: (x_length**2 + y_length**2) ** 0.5,
+        "edge": lambda x_length, y_length: (x_length**2 + y_length**2) ** 0.5,
+    }
+
     def flow_distance_funcion(flow_direction, x_length, y_length):
         """
         Determines the distance type based on the flow direction and computes the flow distance.
@@ -87,21 +101,25 @@ def create_flow_distance(flow_distance_path, flow_direction_array, x_length_arra
             if flow_direction in flow_direction_distance_map[k]:
                 distance_type = k
                 break
-        
+
         flow_distance_func = flow_distance_func_map[distance_type]
         return flow_distance_func(x_length, y_length)
 
     flow_distance_funcion_vect = np.vectorize(flow_distance_funcion)
-    flow_distance_array = flow_distance_funcion_vect(flow_direction_array, x_length_array, y_length_array)
-    
+    flow_distance_array = flow_distance_funcion_vect(
+        flow_direction_array, x_length_array, y_length_array
+    )
+
     # save as tif file, transform same as dem
-    with rasterio.open(flow_distance_path, 'w', driver='GTiff',
-                    height=flow_distance_array.shape[0],
-                    width=flow_distance_array.shape[1],
-                    count=1,
-                    dtype=flow_distance_array.dtype,
-                    crs=CRS.from_string(crs_str),
-                    transform=transform,
-                    ) as dst:
+    with rasterio.open(
+        flow_distance_path,
+        "w",
+        driver="GTiff",
+        height=flow_distance_array.shape[0],
+        width=flow_distance_array.shape[1],
+        count=1,
+        dtype=flow_distance_array.dtype,
+        crs=CRS.from_string(crs_str),
+        transform=transform,
+    ) as dst:
         dst.write(flow_distance_array, 1)
-        

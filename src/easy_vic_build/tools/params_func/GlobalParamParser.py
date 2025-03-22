@@ -6,18 +6,18 @@
 Module: GlobalParamParser
 
 This module provides functionality for parsing, modifying, and writing configuration files
-that contain sections with parameters and their values. It includes two classes: 
-`GlobalParamSection` and `GlobalParamParser`. The `GlobalParamSection` class represents a 
-single section of the configuration file and handles storing parameters and their values, 
-while the `GlobalParamParser` class manages the entire configuration file, allowing for 
+that contain sections with parameters and their values. It includes two classes:
+`GlobalParamSection` and `GlobalParamParser`. The `GlobalParamSection` class represents a
+single section of the configuration file and handles storing parameters and their values,
+while the `GlobalParamParser` class manages the entire configuration file, allowing for
 section and parameter manipulation, loading from files, and writing back to files.
 
 Class:
 ------
-    - GlobalParamSection: A class that represents a section in the configuration file, 
+    - GlobalParamSection: A class that represents a section in the configuration file,
       allowing for the addition, retrieval, and organization of parameters.
 
-    - GlobalParamParser: A class that handles the parsing of the entire configuration file, 
+    - GlobalParamParser: A class that handles the parsing of the entire configuration file,
       manages sections and their parameters, and supports reading from and writing to files.
 
 Class Methods:
@@ -36,7 +36,7 @@ Class Methods:
 Dependencies:
 -------------
     - re: Used for regular expression matching to identify sections and parameters.
-    
+
 Author:
 -------
     Xudong Zheng
@@ -51,9 +51,9 @@ class GlobalParamSection:
     """
     Represents a section with parameters in a configuration.
 
-    A section is a collection of key-value pairs, where keys are the parameter names 
-    and values are their associated values. This class provides functionality to add 
-    parameters, replace the section with a new set of parameters, and retrieve 
+    A section is a collection of key-value pairs, where keys are the parameter names
+    and values are their associated values. This class provides functionality to add
+    parameters, replace the section with a new set of parameters, and retrieve
     parameter values.
 
     Attributes
@@ -66,7 +66,7 @@ class GlobalParamSection:
     Methods
     -------
     add(name, value)
-        Adds a parameter value to the section. If duplicates are allowed, appends 
+        Adds a parameter value to the section. If duplicates are allowed, appends
         the value to a list, otherwise replaces the existing value.
     set_section(section_dict)
         Replaces the current parameters with those from the provided dictionary.
@@ -87,7 +87,7 @@ class GlobalParamSection:
         """
         self.parameters = {}
         self.allow_duplicates = allow_duplicates
-    
+
     def add(self, name, value):
         """
         Adds a parameter value to the section.
@@ -101,14 +101,14 @@ class GlobalParamSection:
 
         Notes
         -----
-        If duplicates are allowed, the value will be appended to a list. Otherwise, 
+        If duplicates are allowed, the value will be appended to a list. Otherwise,
         it will replace any existing value for the given name.
         """
         if self.allow_duplicates:
             self.parameters.setdefault(name, []).append(value)
         else:
             self.parameters[name] = value
-    
+
     def set_section(self, section_dict):
         """
         Replaces the section's parameters with those in the provided dictionary.
@@ -127,7 +127,7 @@ class GlobalParamSection:
         for name, values in section_dict.items():
             for value in values if isinstance(values, list) else [values]:
                 self.add(name, value)
-    
+
     def __getitem__(self, name):
         """
         Retrieves the parameter values associated with the given name.
@@ -155,16 +155,16 @@ class GlobalParamSection:
             A string representation of the GlobalParamSection, showing its parameters.
         """
         return f"GlobalParamSection({dict(self.parameters)})"
-    
-    
+
+
 class GlobalParamParser:
     """
     A parser for reading and writing configuration files.
 
-    This class provides functionality for parsing configuration files into 
-    sections with parameters and values. It supports reading configuration 
-    files, modifying parameters, and writing the configuration back to files. 
-    Each section can contain multiple parameters, and the parser handles 
+    This class provides functionality for parsing configuration files into
+    sections with parameters and values. It supports reading configuration
+    files, modifying parameters, and writing the configuration back to files.
+    Each section can contain multiple parameters, and the parser handles
     setting, retrieving, and organizing these parameters.
 
     Attributes
@@ -198,6 +198,7 @@ class GlobalParamParser:
     __repr__()
         Returns a string representation of the configuration in its original format.
     """
+
     def __init__(self):
         """
         Initializes the GlobalParamParser instance.
@@ -207,7 +208,7 @@ class GlobalParamParser:
         self.sections = {}
         self.section_names = []
         self.header = []
-    
+
     def add_section(self, name):
         """
         Adds a new section to the configuration parser.
@@ -219,11 +220,15 @@ class GlobalParamParser:
 
         Notes
         -----
-        If the section already exists, no action is taken. If the section name matches 
+        If the section already exists, no action is taken. If the section name matches
         a specific pattern (e.g., 'FORCE_TYPE', 'DOMAIN_TYPE', etc.), duplicates are allowed in that section.
         """
         if name not in self.sections:
-            allow_duplicates = True if re.match(r'^(FORCE_TYPE|DOMAIN_TYPE|OUTVAR\d*)$', name) else False
+            allow_duplicates = (
+                True
+                if re.match(r"^(FORCE_TYPE|DOMAIN_TYPE|OUTVAR\d*)$", name)
+                else False
+            )
             self.sections[name] = GlobalParamSection(allow_duplicates)
             self.section_names.append(name)
 
@@ -245,7 +250,7 @@ class GlobalParamParser:
         If the section does not exist, it will be created automatically.
         """
         self.sections.setdefault(section, GlobalParamSection()).add(name, value)
-    
+
     def set_section_values(self, section_name, section_dict):
         """
         Replaces the parameters in a section with those from a provided dictionary.
@@ -259,11 +264,13 @@ class GlobalParamParser:
 
         Notes
         -----
-        This method allows for setting parameters, including duplicate values, 
+        This method allows for setting parameters, including duplicate values,
         in sections like 'OUTVAR'.
         it can allow_duplicates, i.e., "OUTVAR": {{"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW"]}}
         """
-        self.sections.setdefault(section_name, GlobalParamSection()).set_section(section_dict)
+        self.sections.setdefault(section_name, GlobalParamSection()).set_section(
+            section_dict
+        )
 
     def get(self, section_name, param_name):
         """
@@ -282,7 +289,7 @@ class GlobalParamParser:
             The value of the parameter, or None if the parameter is not found.
         """
         return self.sections.get(section_name, {})[param_name]
-    
+
     def load(self, file_or_path, header_lines=5):
         """
         Loads a configuration from a file and parses it into sections and parameters.
@@ -296,43 +303,46 @@ class GlobalParamParser:
 
         Notes
         -----
-        If the file is passed as a path, it will be opened. If it's a file-like object, 
-        it will be read directly. The file should be in a specific format with sections 
+        If the file is passed as a path, it will be opened. If it's a file-like object,
+        it will be read directly. The file should be in a specific format with sections
         indicated by lines starting with '# ['.
         """
         # read
         if isinstance(file_or_path, (str, bytes)):
-            file = open(file_or_path, 'r')
+            file = open(file_or_path, "r")
             should_close = True
         elif hasattr(file_or_path, "read"):
             file = file_or_path
             should_close = False
         else:
             raise ValueError("file_or_path must be a file path or a file-like object")
-        
+
         # read and parse
         # with open(filepath, 'r') as file:
         try:
             for _ in range(header_lines):
                 self.header.append(file.readline().strip())
-            
+
             current_section = None
             for line in file:
                 line = line.strip()
-                
+
                 # ignore space lines and #
-                if line == '' or (line.startswith('#') and not re.match(r'^\s*#\s*\[\s*.+?\s*\]\s*$', line)):
+                if line == "" or (
+                    line.startswith("#")
+                    and not re.match(r"^\s*#\s*\[\s*.+?\s*\]\s*$", line)
+                ):
                     continue
-                
+
                 # identify section: #[section]
-                section_match = re.match(r'^#\s*\[(.+?)\]\s*$', line)
+                section_match = re.match(r"^#\s*\[(.+?)\]\s*$", line)
                 if section_match:
                     current_section = section_match.group(1).strip()
                     self.add_section(current_section)
                     continue
-                
+
                 # match and save into parameters
-                match = re.match(r'^(\S+)\s+(.+?)(\s+#.*)?$', line)
+                match = re.match(r"^(\S+)\s+(.+?)(\s+#.*)?$", line)
                 if match and current_section:
                     param_name = match.group(1).strip()
                     param_value = match.group(2).strip()
@@ -340,7 +350,7 @@ class GlobalParamParser:
         finally:
             if should_close:
                 file.close()
-    
+
     def write(self, file):
         """
         Writes the current configuration to a file.
@@ -356,7 +366,7 @@ class GlobalParamParser:
         """
         # write header
         for line in self.header:
-            file.write(line + '\n')
+            file.write(line + "\n")
 
         # write section content
         for section_name in self.section_names:
@@ -368,8 +378,8 @@ class GlobalParamParser:
                         file.write(f"{key}\t{v}\n")
                 else:
                     file.write(f"{key}\t{value}\n")
-            file.write('\n')
-    
+            file.write("\n")
+
     def remove_section(self, section_name):
         """
         Removes a section from the configuration.
@@ -381,7 +391,7 @@ class GlobalParamParser:
         """
         self.sections.pop(section_name, None)
         self.section_names.remove(section_name)
-            
+
     def __getitem__(self, section):
         """
         Retrieves a section by name.
@@ -408,7 +418,7 @@ class GlobalParamParser:
             The string representation of the entire configuration, including header and sections.
         """
         output = self.header + [""]
-        
+
         for section_name in self.section_names:
             output.append(f"# [{section_name}]")
             section = self.sections[section_name]
@@ -418,6 +428,6 @@ class GlobalParamParser:
                 else:
                     output.append(f"{key}\t{value}")
             output.append("")
-        
+
         text = "\n".join(output)
         return text

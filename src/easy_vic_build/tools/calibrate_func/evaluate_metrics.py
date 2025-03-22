@@ -5,12 +5,12 @@
 """
 Module: evaluate_metrics
 
-This module provides a set of evaluation metrics for assessing the performance of 
-simulated and observed data. The metrics implemented include commonly used statistical 
-and performance measures in model validation, such as Mean Squared Error (MSE), Root 
-Mean Squared Error (RMSE), Pearson Correlation Coefficient (R), Nash-Sutcliffe Efficiency 
-(NSE), Bias, Percent Bias (PBias), and Kling-Gupta Efficiency (KGE). These metrics help 
-to quantify the accuracy and reliability of the simulation model by comparing its 
+This module provides a set of evaluation metrics for assessing the performance of
+simulated and observed data. The metrics implemented include commonly used statistical
+and performance measures in model validation, such as Mean Squared Error (MSE), Root
+Mean Squared Error (RMSE), Pearson Correlation Coefficient (R), Nash-Sutcliffe Efficiency
+(NSE), Bias, Percent Bias (PBias), and Kling-Gupta Efficiency (KGE). These metrics help
+to quantify the accuracy and reliability of the simulation model by comparing its
 output with the observed data.
 
 Class:
@@ -44,7 +44,7 @@ Example:
 --------
     sim_data = [1.0, 2.0, 3.0]
     obs_data = [1.2, 2.1, 2.9]
-    
+
     eval_metric = EvaluationMetric(sim_data, obs_data)
     mse = eval_metric.MSE()
     print(f"Mean Squared Error: {mse}")
@@ -63,9 +63,10 @@ Author:
 import numpy as np
 from scipy.stats import pearsonr
 
+
 class EvaluationMetric:
     """
-    A class for evaluating the performance of simulated and observed data 
+    A class for evaluating the performance of simulated and observed data
     using various statistical metrics.
 
     Attributes
@@ -122,9 +123,9 @@ class EvaluationMetric:
         float
             The calculated MSE.
         """
-        mse = (sum((self.sim - self.obs) ** 2) / len(self.sim))
+        mse = sum((self.sim - self.obs) ** 2) / len(self.sim)
         return mse
-    
+
     def RMSE(self):
         """
         Computes the Root Mean Squared Error (RMSE) between the simulated and observed values.
@@ -146,7 +147,9 @@ class EvaluationMetric:
         float
             The calculated RRMSE.
         """
-        rrmse = (sum((self.sim - self.obs) ** 2)) ** 0.5 / len(self.sim) / self.obs.mean()
+        rrmse = (
+            (sum((self.sim - self.obs) ** 2)) ** 0.5 / len(self.sim) / self.obs.mean()
+        )
         return rrmse
 
     def R(self, confidence: float = 0.95):
@@ -178,9 +181,9 @@ class EvaluationMetric:
                 significance = 1
             elif r < 0:
                 significance = -1
-        
+
         return r, p_value, significance
-    
+
     def R2(self):
         """
         Computes the R-squared (R²) value of the linear fit between the simulated and observed values.
@@ -191,10 +194,10 @@ class EvaluationMetric:
             The calculated R² value.
         """
         r = np.corrcoef(self.sim, self.obs)[0, 1]
-        r2 = r ** 2
-        
+        r2 = r**2
+
         return r2
-    
+
     def NSE(self):
         """
         Computes the Nash-Sutcliffe Efficiency (NSE) coefficient.
@@ -207,7 +210,9 @@ class EvaluationMetric:
         float
             The calculated NSE value.
         """
-        nse = 1 - sum((self.obs - self.sim) ** 2) / sum((self.obs - self.sim.mean()) ** 2)
+        nse = 1 - sum((self.obs - self.sim) ** 2) / sum(
+            (self.obs - self.sim.mean()) ** 2
+        )
         return nse
 
     def Bias(self):
@@ -235,7 +240,7 @@ class EvaluationMetric:
         """
         pbias = sum(self.obs - self.sim) / sum(self.obs) * 100
         return pbias
-    
+
     def KGE(self):
         """
         Computes the Kling-Gupta Efficiency (KGE) metric between the simulated and observed values.
@@ -251,7 +256,7 @@ class EvaluationMetric:
         r = np.corrcoef(self.sim, self.obs)[0, 1]
         beta = np.mean(self.sim) / np.mean(self.obs)
         gamma = np.std(self.sim) / np.std(self.obs)
-        
+
         kge = 1 - ((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2) ** 0.5
         return kge
 
@@ -259,7 +264,7 @@ class EvaluationMetric:
         """
         Computes the modified Kling-Gupta Efficiency (KGE-m) metric between the simulated and observed values.
 
-        The KGE-m metric is similar to KGE but adjusts the gamma term to account for 
+        The KGE-m metric is similar to KGE but adjusts the gamma term to account for
         the relative standard deviations of the observed and simulated values.
 
         Returns
@@ -269,9 +274,9 @@ class EvaluationMetric:
         """
         r = np.corrcoef(self.sim, self.obs)[0, 1]
         beta = np.mean(self.sim) / np.mean(self.obs)
-        gamma = (np.std(self.sim) / np.mean(self.sim)) / (np.std(self.obs) / np.mean(self.obs))
-        
+        gamma = (np.std(self.sim) / np.mean(self.sim)) / (
+            np.std(self.obs) / np.mean(self.obs)
+        )
+
         kge = 1 - ((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2) ** 0.5
         return kge
-
-

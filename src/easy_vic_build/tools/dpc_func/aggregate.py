@@ -5,9 +5,9 @@
 """
 Module: aggregate
 
-This module contains various functions for aggregating and processing spatial data related to hydrology and climate, 
+This module contains various functions for aggregating and processing spatial data related to hydrology and climate,
 specifically focusing on different types of environmental data like precipitation, soil moisture, snow water equivalent (SWE),
-and canopy interception. These functions are designed to aggregate data from grid-based datasets within basins, often used in 
+and canopy interception. These functions are designed to aggregate data from grid-based datasets within basins, often used in
 hydrological modeling and environmental studies.
 
 Functions:
@@ -30,13 +30,15 @@ Author:
 -------
     Xudong Zheng
     Email: z786909151@163.com
-    
+
 """
+
+from functools import partial
 
 import numpy as np
 import pandas as pd
-from functools import partial
 import tqdm
+
 from ..decoractors import *
 
 
@@ -47,20 +49,24 @@ def aggregate_GLEAMEDaily(basin_shp):
     Parameters
     ----------
     basin_shp : pandas.DataFrame
-        A DataFrame containing basin shapefile information, with an "intersects_grids" 
+        A DataFrame containing basin shapefile information, with an "intersects_grids"
         column that holds grid data intersecting each basin.
 
     Returns
     -------
     pandas.DataFrame
-        Updated DataFrame with a new column "aggregated_E", containing aggregated 
+        Updated DataFrame with a new column "aggregated_E", containing aggregated
         daily GLEAM E values for each basin.
 
     """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_column = "E"
     aggregate_GLEAMEDaily_list = []
-    for i in tqdm(basin_shp.index, desc="loop for basin to aggregate gleam_e_daily", colour="green"):
+    for i in tqdm(
+        basin_shp.index,
+        desc="loop for basin to aggregate gleam_e_daily",
+        colour="green",
+    ):
         intersects_grids_basin = basin_shp.loc[i, "intersects_grids"]
 
         intersects_grids_basin_df_list = []
@@ -105,7 +111,11 @@ def aggregate_GLEAMEpDaily(basin_shp):
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_column = "Ep"
     aggregate_GLEAMEpDaily_list = []
-    for i in tqdm(basin_shp.index, desc="loop for basin to aggregate gleam_ep_daily", colour="green"):
+    for i in tqdm(
+        basin_shp.index,
+        desc="loop for basin to aggregate gleam_ep_daily",
+        colour="green",
+    ):
         intersects_grids_basin = basin_shp.loc[i, "intersects_grids"]
 
         intersects_grids_basin_df_list = []
@@ -150,8 +160,10 @@ def aggregate_TRMM_P(basin_shp):
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_column = "precipitation"
     aggregate_list = []
-    
-    for i in tqdm(basin_shp.index, desc="loop for basins to aggregate TRMM_P", colour="green"):
+
+    for i in tqdm(
+        basin_shp.index, desc="loop for basins to aggregate TRMM_P", colour="green"
+    ):
         intersects_grids_basin = basin_shp.loc[i, "intersects_grids"]
 
         intersects_grids_basin_df_list = []
@@ -197,8 +209,10 @@ def aggregate_ERA5_SM(basin_shp, aggregate_column="swvl1"):
     """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_list = []
-    
-    for i in tqdm(basin_shp.index, desc="loop for basin to aggregate ERA5 SM", colour="green"):
+
+    for i in tqdm(
+        basin_shp.index, desc="loop for basin to aggregate ERA5 SM", colour="green"
+    ):
         intersects_grids_basin = basin_shp.loc[i, "intersects_grids"]
 
         intersects_grids_basin_df_list = []
@@ -224,7 +238,8 @@ def aggregate_ERA5_SM(basin_shp, aggregate_column="swvl1"):
     basin_shp[f"aggregated_{aggregate_column}"] = aggregate_list
 
     return basin_shp
-    
+
+
 @apply_along_axis_decorator(axis=1)
 def aggregate_func_SWE_axis1(data_array):
     """
@@ -243,19 +258,19 @@ def aggregate_func_SWE_axis1(data_array):
     """
     data_array = np.array(data_array)
     data_array = data_array.astype(float)
-    
+
     # create code map
     # 0         : physical values 0 mm
     # 0.001     : melting snow, removed
     # > 0.001   : physical values mm
     # < 0       : masked, removed
     # nan       : nan value, removed
-    bool_removed = ((data_array < 0) | (np.isnan(data_array)) | (data_array == 0.001))
+    bool_removed = (data_array < 0) | (np.isnan(data_array)) | (data_array == 0.001)
     data_array = data_array[~bool_removed]
-    
+
     # mean
     aggregate_value = np.mean(data_array)
-    
+
     return aggregate_value
 
 
@@ -276,19 +291,19 @@ def aggregate_func_SWE_axis0(data_array):
         The mean SWE value after removing invalid data.
     """
     data_array = np.array(data_array)
-    
+
     # create code map
     # 0         : physical values 0 mm
     # 0.001     : melting snow, removed
     # > 0.001   : physical values mm
     # < 0       : masked, removed
     # nan       : nan value, removed
-    bool_removed = ((data_array < 0) | (np.isnan(data_array)) | (data_array == 0.001))
+    bool_removed = (data_array < 0) | (np.isnan(data_array)) | (data_array == 0.001)
     data_array = data_array[~bool_removed]
-    
+
     # mean
     aggregate_value = np.mean(data_array)
-    
+
     return aggregate_value
 
 
@@ -310,8 +325,12 @@ def aggregate_GlobalSnow_SWE(basin_shp, aggregate_column="swe"):
     """
     aggregate_func = aggregate_func_SWE_axis1
     aggregate_list = []
-    
-    for i in tqdm(basin_shp.index, desc="loop for basin to aggregate GlobalSnow_SWE", colour="green"):
+
+    for i in tqdm(
+        basin_shp.index,
+        desc="loop for basin to aggregate GlobalSnow_SWE",
+        colour="green",
+    ):
         intersects_grids_basin = basin_shp.loc[i, "intersects_grids"]
 
         intersects_grids_basin_df_list = []
@@ -338,6 +357,7 @@ def aggregate_GlobalSnow_SWE(basin_shp, aggregate_column="swe"):
 
     return basin_shp
 
+
 def aggregate_GLDAS_CanopInt(basin_shp, aggregate_column="CanopInt_tavg"):
     """
     Aggregate GLDAS canopy interception data for each basin by calculating the mean across intersecting grids.
@@ -356,8 +376,12 @@ def aggregate_GLDAS_CanopInt(basin_shp, aggregate_column="CanopInt_tavg"):
     """
     aggregate_func = partial(np.nanmean, axis=1)
     aggregate_list = []
-    
-    for i in tqdm(basin_shp.index, desc="loop for basin to aggregate GLDAS_CanopInt", colour="green"):
+
+    for i in tqdm(
+        basin_shp.index,
+        desc="loop for basin to aggregate GLDAS_CanopInt",
+        colour="green",
+    ):
         intersects_grids_basin = basin_shp.loc[i, "intersects_grids"]
 
         intersects_grids_basin_df_list = []

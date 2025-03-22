@@ -5,8 +5,8 @@
 """
 Module: select_basin_shp
 
-This module provides functions to filter and select basins from a GeoDataFrame based on various hydrological and 
-environmental criteria, such as streamflow data, area, aridity, and elevation slope. These functions are commonly used in 
+This module provides functions to filter and select basins from a GeoDataFrame based on various hydrological and
+environmental criteria, such as streamflow data, area, aridity, and elevation slope. These functions are commonly used in
 hydrological modeling and environmental research to process and refine basin-level datasets.
 
 Functions:
@@ -27,13 +27,16 @@ Author:
 -------
     Xudong Zheng
     Email: z786909151@163.com
-    
+
 """
 
-from .extractData_func import *
 from ... import logger
+from .extractData_func import *
 
-def selectBasinremovingStreamflowMissing(basin_shp, date_period=["19980101", "20101231"]):
+
+def selectBasinremovingStreamflowMissing(
+    basin_shp, date_period=["19980101", "20101231"]
+):
     """
     Selects basins and removes those with missing streamflow data within the specified date period.
 
@@ -50,21 +53,31 @@ def selectBasinremovingStreamflowMissing(basin_shp, date_period=["19980101", "20
     basin_shp : GeoDataFrame
         A filtered GeoDataFrame with basins that have valid streamflow data for the specified date period.
     """
-    logger.info(f"Removing basins with missing streamflow data for period {date_period}.")
+    logger.info(
+        f"Removing basins with missing streamflow data for period {date_period}."
+    )
     # get remove streamflow missing
-    streamflows_dict_original, streamflows_dict_removed_missing = Extract_CAMELS_Streamflow.getremoveStreamflowMissing(date_period)
-    remove_num = len(streamflows_dict_original["usgs_streamflows"]) - len(streamflows_dict_removed_missing["usgs_streamflows"])
+    streamflows_dict_original, streamflows_dict_removed_missing = (
+        Extract_CAMELS_Streamflow.getremoveStreamflowMissing(date_period)
+    )
+    remove_num = len(streamflows_dict_original["usgs_streamflows"]) - len(
+        streamflows_dict_removed_missing["usgs_streamflows"]
+    )
     print(f"remove Basin based on StreamflowMissing: remove {remove_num} files")
-    
+
     # get ids removed missing
     streamflow_ids_removed_missing = streamflows_dict_removed_missing["streamflow_ids"]
-    index_removed_missing = [id in streamflow_ids_removed_missing for id in basin_shp.hru_id.values]
-    
+    index_removed_missing = [
+        id in streamflow_ids_removed_missing for id in basin_shp.hru_id.values
+    ]
+
     # remove
     basin_shp = basin_shp.iloc[index_removed_missing, :]
 
-    logger.info(f"Remaining {len(basin_shp)} basins after removing those with missing streamflow data.")
-    
+    logger.info(
+        f"Remaining {len(basin_shp)} basins after removing those with missing streamflow data."
+    )
+
     return basin_shp
 
 
@@ -89,13 +102,19 @@ def selectBasinBasedOnArea(basin_shp, min_area, max_area):
         A filtered GeoDataFrame with basins whose area is within the specified range.
     """
     logger.info(f"Selecting basins based on area range: {min_area} - {max_area} km².")
-    basin_shp = basin_shp.loc[(basin_shp.loc[:, "AREA_km2"] >= min_area) & (basin_shp.loc[:, "AREA_km2"] <= max_area), :]
+    basin_shp = basin_shp.loc[
+        (basin_shp.loc[:, "AREA_km2"] >= min_area)
+        & (basin_shp.loc[:, "AREA_km2"] <= max_area),
+        :,
+    ]
     logger.info(f"Remaining {len(basin_shp)} basins after filtering based on area.")
-    
+
     return basin_shp
 
 
-def selectBasinStreamflowWithZero(basin_shp, usgs_streamflow, streamflow_id, zeros_min_num=100):
+def selectBasinStreamflowWithZero(
+    basin_shp, usgs_streamflow, streamflow_id, zeros_min_num=100
+):
     """
     Selects basins with a significant number of zero streamflow values.
 
@@ -119,16 +138,20 @@ def selectBasinStreamflowWithZero(basin_shp, usgs_streamflow, streamflow_id, zer
         A filtered GeoDataFrame with basins that have a significant number of zero streamflow values.
     """
     # loop for each basin
-    logger.info(f"Selecting basins based on zero streamflow values, with a minimum of {zeros_min_num} zeros.")
+    logger.info(
+        f"Selecting basins based on zero streamflow values, with a minimum of {zeros_min_num} zeros."
+    )
     selected_id = []
-    
+
     for i in range(len(usgs_streamflow)):
         usgs_streamflow_ = usgs_streamflow[i]
         streamflow = usgs_streamflow_.iloc[:, 4].values
         zero_count = sum(streamflow == 0)
         if zero_count > zeros_min_num:  # find basin with zero streamflow
             selected_id.append(streamflow_id[i])
-            logger.info(f"Basin {streamflow_id[i]} has {zero_count} zero streamflow values.")
+            logger.info(
+                f"Basin {streamflow_id[i]} has {zero_count} zero streamflow values."
+            )
             # plt.plot(streamflow)
             # plt.ylim(bottom=0)
             # plt.show()
@@ -136,7 +159,9 @@ def selectBasinStreamflowWithZero(basin_shp, usgs_streamflow, streamflow_id, zer
     selected_index = [id in selected_id for id in basin_shp.hru_id.values]
     basin_shp = basin_shp.iloc[selected_index, :]
 
-    logger.info(f"Remaining {len(basin_shp)} basins after filtering based on zero streamflow.")
+    logger.info(
+        f"Remaining {len(basin_shp)} basins after filtering based on zero streamflow."
+    )
     return basin_shp
 
 

@@ -5,34 +5,34 @@
 """
 Module: search_grids
 
-This module contains functions for searching and matching grids between different spatial 
-resolutions. It includes methods for locating exact, nearest, or radius-based matches, as well 
-as transforming grid indices for advanced data extraction. These functions are useful for geospatial 
+This module contains functions for searching and matching grids between different spatial
+resolutions. It includes methods for locating exact, nearest, or radius-based matches, as well
+as transforming grid indices for advanced data extraction. These functions are useful for geospatial
 applications such as climate models, remote sensing, and other grid-based datasets.
 
 Functions:
 ----------
-    - Uniform_precision: Adjusts the precision of coordinates to ensure consistent comparison 
+    - Uniform_precision: Adjusts the precision of coordinates to ensure consistent comparison
       between destination and source grids.
     - search_grids_equal: Finds grids with exactly matching coordinates (latitude and longitude).
-    - search_grids_radius: Searches for grids within a specified radius based on latitude and 
+    - search_grids_radius: Searches for grids within a specified radius based on latitude and
       longitude distance.
-    - search_grids_radius_rectangle: Searches for grids within a rectangular region defined by 
+    - search_grids_radius_rectangle: Searches for grids within a rectangular region defined by
       latitude and longitude radii.
-    - search_grids_radius_rectangle_reverse: Searches for grids where the source grids cover 
+    - search_grids_radius_rectangle_reverse: Searches for grids where the source grids cover
       the destination grids, in a reverse scenario.
-    - search_grids_nearest: Identifies the nearest grids to a given set of destination grids, 
+    - search_grids_nearest: Identifies the nearest grids to a given set of destination grids,
       based on a specified number of nearest neighbors.
-    - print_ret: Prints the results of grid searches, displaying indices and their corresponding 
+    - print_ret: Prints the results of grid searches, displaying indices and their corresponding
       coordinates.
-    - searched_grids_index_to_rows_cols_index: Converts grid indices into row and column indices 
+    - searched_grids_index_to_rows_cols_index: Converts grid indices into row and column indices
       for use in array indexing.
-    - searched_grids_index_to_bool_index: Converts grid indices into boolean arrays for advanced 
+    - searched_grids_index_to_bool_index: Converts grid indices into boolean arrays for advanced
       indexing in datasets.
 
 Dependencies:
 -------------
-    - numpy: Provides numerical operations for array manipulation, distance calculations, and 
+    - numpy: Provides numerical operations for array manipulation, distance calculations, and
       indexing operations.
 
 Author:
@@ -62,7 +62,8 @@ for i in tqdm(grid_shp.index, colour="green", desc=f"loop for each grid to extra
 import numpy as np
 from tqdm import *
 
-#* note: Slicing trap in netcdf4 and xarray, transfer it as np.ndarray first
+# * note: Slicing trap in netcdf4 and xarray, transfer it as np.ndarray first
+
 
 # TODO parallel
 def parallel_function():
@@ -88,7 +89,9 @@ def Uniform_precision(coord, percision):
     return coord.round(percision)
 
 
-def search_grids_equal(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lon_radius=None, **tqdm_kwargs):
+def search_grids_equal(
+    dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lon_radius=None, **tqdm_kwargs
+):
     """Search for grids with matching coordinates (src_lat == dst_lat and src_lon == dst_lon).
 
     Parameters
@@ -98,24 +101,24 @@ def search_grids_equal(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lon_
     dst_lon : array_like
         1D array of longitude values for the destination grids.
     src_lat : array_like
-        1D array of latitude values for the source grids. Must be a sorted set 
+        1D array of latitude values for the source grids. Must be a sorted set
         (e.g., `sorted(list(set(coord.lat)))`), ensuring unique values.
     src_lon : array_like
-        1D array of longitude values for the source grids. Must be a sorted set 
+        1D array of longitude values for the source grids. Must be a sorted set
         (e.g., `sorted(list(set(coord.lon)))`), ensuring unique values.
     lat_radius : optional
         Not used in this function but reserved for potential extensions.
     lon_radius : optional
         Not used in this function but reserved for potential extensions.
     **tqdm_kwargs : dict, optional
-        Additional keyword arguments passed to `tqdm`. For nested progress bars, 
+        Additional keyword arguments passed to `tqdm`. For nested progress bars,
         set `leave=False`, keeping `leave=True` only for the outermost `tqdm`.
 
     Returns
     -------
     list of tuple
-        A list of tuples with length equal to `len(dst_lat)`, where each tuple 
-        contains two arrays: `(lat_index, lon_index)`. These represent the indices 
+        A list of tuples with length equal to `len(dst_lat)`, where each tuple
+        contains two arrays: `(lat_index, lon_index)`. These represent the indices
         of the destination grid points found in the source grid.
 
         - `lat_index`: 1D array of latitude indices.
@@ -131,24 +134,31 @@ def search_grids_equal(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lon_
 
     Notes
     -----
-    - The returned `(lat_index, lon_index)` pairs are one-to-one, meaning 
+    - The returned `(lat_index, lon_index)` pairs are one-to-one, meaning
       `len(lat_index) == len(lon_index)`, ensuring accurate matching.
-    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, it is recommended 
-      to first convert the dataset variable into a `numpy.ndarray` to avoid potential 
+    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, it is recommended
+      to first convert the dataset variable into a `numpy.ndarray` to avoid potential
       errors, e.g., `array = netCDF4.Dataset.variable[:, :, :]`, then use `array[:, lat_index, lon_index]`.
     """
-    
+
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
-    
+
     searched_grids_index = []
-    for j in tqdm(range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs):
-        searched_grids_index_ = (np.where(src_lat == dst_lat[j])[0], np.where(src_lon == dst_lon[j])[0])
+    for j in tqdm(
+        range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs
+    ):
+        searched_grids_index_ = (
+            np.where(src_lat == dst_lat[j])[0],
+            np.where(src_lon == dst_lon[j])[0],
+        )
         searched_grids_index.append(searched_grids_index_)
     return searched_grids_index
 
 
-def search_grids_radius(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radius=None, **tqdm_kwargs):
+def search_grids_radius(
+    dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radius=None, **tqdm_kwargs
+):
     """Search for nearby grids within a circular radius.
 
     Parameters
@@ -167,14 +177,14 @@ def search_grids_radius(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radi
     lon_radius : optional
         Reserved for potential extensions but not used in this function.
     **tqdm_kwargs : dict, optional
-        Additional keyword arguments passed to `tqdm`. For nested progress bars, 
+        Additional keyword arguments passed to `tqdm`. For nested progress bars,
         set `leave=False`, keeping `leave=True` only for the outermost `tqdm`.
 
     Returns
     -------
     list of tuple
-        A list of tuples with length equal to `len(dst_lat)`, where each tuple 
-        contains two arrays: `(lat_index, lon_index)`, representing the indices 
+        A list of tuples with length equal to `len(dst_lat)`, where each tuple
+        contains two arrays: `(lat_index, lon_index)`, representing the indices
         of source grid points found within the search radius.
 
         - `lat_index`: 1D array of latitude indices.
@@ -188,12 +198,12 @@ def search_grids_radius(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radi
 
     Notes
     -----
-    - The returned `(lat_index, lon_index)` pairs identify all source grids 
+    - The returned `(lat_index, lon_index)` pairs identify all source grids
       within the given `lat_radius`.
-    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, note that 
-      this operation retrieves all grid points within the index range, potentially 
-      increasing dimensionality. To avoid unintended broadcasting, convert the dataset 
-      variable into a `numpy.ndarray` first, e.g., 
+    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, note that
+      this operation retrieves all grid points within the index range, potentially
+      increasing dimensionality. To avoid unintended broadcasting, convert the dataset
+      variable into a `numpy.ndarray` first, e.g.,
       ```
       array = netCDF4.Dataset.variable[:, :, :]
       array[:, lat_index, lon_index]
@@ -202,15 +212,17 @@ def search_grids_radius(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radi
     search_radius = lat_radius
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
-    
+
     src_lon_mesh, src_lat_mesh = np.meshgrid(src_lon, src_lat)  # 2D array
     searched_grids_index = []
 
-    for j in tqdm(range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs):
+    for j in tqdm(
+        range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs
+    ):
         # cal distance
         dx = abs(src_lon_mesh - dst_lon[j])
         dy = abs(src_lat_mesh - dst_lat[j])
-        d = (dx ** 2 + dy ** 2) ** 0.5
+        d = (dx**2 + dy**2) ** 0.5
 
         # find grids in ncfile which distance <= search_radius
         searched_grids_index_ = np.where(d <= search_radius)
@@ -219,7 +231,9 @@ def search_grids_radius(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radi
     return searched_grids_index
 
 
-def search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radius, **tqdm_kwargs):
+def search_grids_radius_rectangle(
+    dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radius, **tqdm_kwargs
+):
     """Search for nearby grids within a rectangular domain.
 
     Parameters
@@ -233,20 +247,20 @@ def search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, lat_radius
     src_lon : array_like
         1D array of longitude values for the source grids.
     lat_radius : float
-        Search radius in the latitude direction, defining the search domain as 
+        Search radius in the latitude direction, defining the search domain as
         `lat ± lat_radius`.
     lon_radius : float
-        Search radius in the longitude direction, defining the search domain as 
+        Search radius in the longitude direction, defining the search domain as
         `lon ± lon_radius`.
     **tqdm_kwargs : dict, optional
-        Additional keyword arguments passed to `tqdm`. For nested progress bars, 
+        Additional keyword arguments passed to `tqdm`. For nested progress bars,
         set `leave=False`, keeping `leave=True` only for the outermost `tqdm`.
 
     Returns
     -------
     list of tuple
-        A list of tuples with length equal to `len(dst_lat)`, where each tuple 
-        contains two arrays: `(lat_index, lon_index)`, representing the indices 
+        A list of tuples with length equal to `len(dst_lat)`, where each tuple
+        contains two arrays: `(lat_index, lon_index)`, representing the indices
         of source grid points found within the rectangular search region.
 
         - `lat_index`: 1D array of latitude indices.
@@ -260,13 +274,13 @@ def search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, lat_radius
 
     Notes
     -----
-    - The destination grids (`dst_lat`, `dst_lon`) typically cover a larger area 
+    - The destination grids (`dst_lat`, `dst_lon`) typically cover a larger area
       than the source grids (`src_lat`, `src_lon`).
     - The rectangular search domain is defined by `lat ± lat_radius` and `lon ± lon_radius`.
-    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, be aware that 
-      this operation retrieves all grid points within the index range, potentially 
-      increasing dimensionality. To avoid unintended broadcasting, convert the dataset 
-      variable into a `numpy.ndarray` first, e.g., 
+    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, be aware that
+      this operation retrieves all grid points within the index range, potentially
+      increasing dimensionality. To avoid unintended broadcasting, convert the dataset
+      variable into a `numpy.ndarray` first, e.g.,
       ```
       array = netCDF4.Dataset.variable[:, :, :]
       array[:, lat_index, lon_index]
@@ -274,22 +288,24 @@ def search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, lat_radius
     """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
-    
+
     src_lon_mesh, src_lat_mesh = np.meshgrid(src_lon, src_lat)  # 2D array
     searched_grids_index = []
 
-    for j in tqdm(range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs):
+    for j in tqdm(
+        range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs
+    ):
         # cal distance
         dx = abs(src_lon_mesh - dst_lon[j])
         dy = abs(src_lat_mesh - dst_lat[j])
-        
+
         # find grids in ncfile which distance <= search_radius
         # searched_grids_index_dx_bool_re = dx >= lon_radius
         # searched_grids_index_dy_bool_re = dy >= lat_radius
         # searched_grids_index_dx_dy_bool_re = searched_grids_index_dx_bool_re + searched_grids_index_dy_bool_re
-        
+
         # searched_grids_index_ = np.where(searched_grids_index_dx_dy_bool_re == 0)
-        
+
         # old version
         searched_grids_index_ = np.where((dx <= lon_radius) & (dy <= lat_radius))
         searched_grids_index.append(searched_grids_index_)
@@ -297,12 +313,14 @@ def search_grids_radius_rectangle(dst_lat, dst_lon, src_lat, src_lon, lat_radius
     return searched_grids_index
 
 
-def search_grids_radius_rectangle_reverse(dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radius, **tqdm_kwargs):
+def search_grids_radius_rectangle_reverse(
+    dst_lat, dst_lon, src_lat, src_lon, lat_radius, lon_radius, **tqdm_kwargs
+):
     """Search for destination grids within a rectangular domain of source grids.
 
     This function finds destination grid points (`dst_lat`, `dst_lon`) that are covered by
-    a larger set of source grid points (`src_lat`, `src_lon`). The search domain is defined 
-    as a rectangle centered on each destination grid point, extending `±lat_radius` in latitude 
+    a larger set of source grid points (`src_lat`, `src_lon`). The search domain is defined
+    as a rectangle centered on each destination grid point, extending `±lat_radius` in latitude
     and `±lon_radius` in longitude.
 
     Parameters
@@ -316,20 +334,20 @@ def search_grids_radius_rectangle_reverse(dst_lat, dst_lon, src_lat, src_lon, la
     src_lon : array_like
         1D array of longitude values for the source grids.
     lat_radius : float
-        Search radius in the latitude direction, defining the search domain as 
+        Search radius in the latitude direction, defining the search domain as
         `lat ± lat_radius`.
     lon_radius : float
-        Search radius in the longitude direction, defining the search domain as 
+        Search radius in the longitude direction, defining the search domain as
         `lon ± lon_radius`.
     **tqdm_kwargs : dict, optional
-        Additional keyword arguments passed to `tqdm`. For nested progress bars, 
+        Additional keyword arguments passed to `tqdm`. For nested progress bars,
         set `leave=False`, keeping `leave=True` only for the outermost `tqdm`.
 
     Returns
     -------
     list of tuple
-        A list of tuples with length equal to `len(dst_lat)`, where each tuple 
-        contains two arrays: `(lat_index, lon_index)`, representing the indices 
+        A list of tuples with length equal to `len(dst_lat)`, where each tuple
+        contains two arrays: `(lat_index, lon_index)`, representing the indices
         of source grid points that cover the corresponding destination grid.
 
         - `lat_index`: 1D array of latitude indices.
@@ -345,10 +363,10 @@ def search_grids_radius_rectangle_reverse(dst_lat, dst_lon, src_lat, src_lon, la
     -----
     - This function assumes that the source grids are larger and cover the smaller destination grids.
     - The rectangular search domain is defined by `lat ± lat_radius` and `lon ± lon_radius`.
-    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, be aware that 
-      this operation retrieves all grid points within the index range, potentially 
-      increasing dimensionality. To avoid unintended broadcasting, convert the dataset 
-      variable into a `numpy.ndarray` first, e.g., 
+    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, be aware that
+      this operation retrieves all grid points within the index range, potentially
+      increasing dimensionality. To avoid unintended broadcasting, convert the dataset
+      variable into a `numpy.ndarray` first, e.g.,
       ```
       array = netCDF4.Dataset.variable[:, :, :]
       array[:, lat_index, lon_index]
@@ -356,26 +374,38 @@ def search_grids_radius_rectangle_reverse(dst_lat, dst_lon, src_lat, src_lon, la
     """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
-    
+
     # dst_lon_mesh, dst_lat_mesh = np.meshgrid(dst_lon, dst_lat)  # 2D array
     src_lon_mesh, src_lat_mesh = np.meshgrid(src_lon, src_lat)  # 2D array
     searched_grids_index = []
 
-    for j in tqdm(range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs):
+    for j in tqdm(
+        range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs
+    ):
         # cal distance
         dx = abs(src_lon_mesh - dst_lon[j])
         dy = abs(src_lat_mesh - dst_lat[j])
-        
+
         # old version
         searched_grids_index_ = np.where((dx <= lon_radius) & (dy <= lat_radius))
-        
+
         searched_grids_index.append(searched_grids_index_)
 
     return searched_grids_index
-    
-    
-def search_grids_nearest(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lon_radius=None,
-                         search_num=4, move_src_lat=None, move_src_lon=None, **tqdm_kwargs):
+
+
+def search_grids_nearest(
+    dst_lat,
+    dst_lon,
+    src_lat,
+    src_lon,
+    lat_radius=None,
+    lon_radius=None,
+    search_num=4,
+    move_src_lat=None,
+    move_src_lon=None,
+    **tqdm_kwargs,
+):
     """Search for the nearest source grids based on the number of neighbors.
 
     This function identifies the `search_num` closest source grid points (`src_lat`, `src_lon`)
@@ -416,14 +446,14 @@ def search_grids_nearest(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lo
     move_src_lon : float or None, optional
         If specified, shifts the source longitude values by this amount, similar to `move_src_lat`.
     **tqdm_kwargs : dict, optional
-        Additional keyword arguments passed to `tqdm`. For nested progress bars, 
+        Additional keyword arguments passed to `tqdm`. For nested progress bars,
         set `leave=False`, keeping `leave=True` only for the outermost `tqdm`.
 
     Returns
     -------
     list of tuple
-        A list of tuples with length equal to `len(dst_lat)`, where each tuple 
-        contains two arrays: `(lat_index, lon_index)`, representing the indices 
+        A list of tuples with length equal to `len(dst_lat)`, where each tuple
+        contains two arrays: `(lat_index, lon_index)`, representing the indices
         of the nearest source grid points corresponding to each destination grid.
 
         Example output:
@@ -438,17 +468,19 @@ def search_grids_nearest(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lo
       not be accurate for large-scale datasets due to Earth's curvature.
     - To ensure the nearest four grid points form a structured set (e.g., a square around
       each destination grid), `move_src_lat` and `move_src_lon` can be adjusted.
-    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, be aware that 
-      this operation retrieves all grid points within the index range, potentially 
-      increasing dimensionality. To avoid unintended broadcasting, convert the dataset 
+    - When using `netCDF4.Dataset.variable[:, lat_index, lon_index]`, be aware that
+      this operation retrieves all grid points within the index range, potentially
+      increasing dimensionality. To avoid unintended broadcasting, convert the dataset
       variable into a `numpy.ndarray` first.
 
     """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
-    
+
     # Create 2D grid indices for source grid
-    src_lon_mesh_index, src_lat_mesh_index = np.meshgrid(np.arange(len(src_lon)), np.arange(len(src_lat)))
+    src_lon_mesh_index, src_lat_mesh_index = np.meshgrid(
+        np.arange(len(src_lon)), np.arange(len(src_lat))
+    )
     src_lon_flatten_index = src_lon_mesh_index.flatten()  # 1D array
     src_lat_flatten_index = src_lat_mesh_index.flatten()
 
@@ -465,20 +497,25 @@ def search_grids_nearest(dst_lat, dst_lon, src_lat, src_lon, lat_radius=None, lo
 
     searched_grids_index = []
 
-    for j in tqdm(range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs):
+    for j in tqdm(
+        range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs
+    ):
         # Compute Euclidean distance to all source grid points
         dx = abs(src_lon_flatten - dst_lon[j])
         dy = abs(src_lat_flatten - dst_lat[j])
-        d = (dx ** 2 + dy ** 2) ** 0.5
+        d = (dx**2 + dy**2) ** 0.5
 
         # find grids in src which nearest with dst at search_num th
         min_index = np.argpartition(d, search_num)[:search_num]
-        searched_grids_index_ = (src_lat_flatten_index[min_index], src_lon_flatten_index[min_index])
+        searched_grids_index_ = (
+            src_lat_flatten_index[min_index],
+            src_lon_flatten_index[min_index],
+        )
         searched_grids_index.append(searched_grids_index_)
 
     return searched_grids_index
-    
-    
+
+
 def print_ret(searched_grids_index, src_lat, src_lon):
     """Prints the indices and coordinates of the searched grid points.
 
@@ -504,7 +541,7 @@ def print_ret(searched_grids_index, src_lat, src_lon):
     """
     # print result
     searched_grids_index = searched_grids_index[0]
-    
+
     print(f"grids: {len(searched_grids_index[0])}")
     for i in range(len(searched_grids_index[0])):
         print(searched_grids_index[0][i], searched_grids_index[1][i])
@@ -523,7 +560,7 @@ def searched_grids_index_to_rows_cols_index(searched_grids_index):
     searched_grids_index : list of tuple
         A list where each element is a tuple containing two arrays: `(lat_index, lon_index)`.
         Each tuple represents the indices of the nearest source grid point for a given destination grid.
-        **Note**: This function assumes that `len(searched_grids_index[0]) == 1`, meaning that 
+        **Note**: This function assumes that `len(searched_grids_index[0]) == 1`, meaning that
         each destination grid has exactly one matched source grid.
 
     Returns
@@ -537,24 +574,29 @@ def searched_grids_index_to_rows_cols_index(searched_grids_index):
     -----
     - This function is only valid for one-to-one searches, where each destination grid has exactly one matched source grid.
     - The output can be directly used for indexing a 2D array, such as:
-      
+
       ```python
       grids_array[rows_index, cols_index] = list_values
       ```
     """
     # usage: grids_array[rows_index, cols_index] = list_values (transfer the data into a 1D array, coord (lat, lon): value)
     # note that this fucntion can only used for one to one search, len(searched_grid_index[0]) == 1
-    searched_grids_index_trans = np.array(list(map(lambda index_: [index_[0][0], index_[1][0]], searched_grids_index)))
-    rows_index, cols_index = searched_grids_index_trans[:, 0], searched_grids_index_trans[:, 1]
-    
+    searched_grids_index_trans = np.array(
+        list(map(lambda index_: [index_[0][0], index_[1][0]], searched_grids_index))
+    )
+    rows_index, cols_index = (
+        searched_grids_index_trans[:, 0],
+        searched_grids_index_trans[:, 1],
+    )
+
     return rows_index, cols_index
 
 
 def searched_grids_index_to_bool_index(searched_grids_index, src_lat, src_lon):
     """Converts searched grid indices to boolean index arrays.
 
-    This function generates boolean masks for latitude and longitude indices based on 
-    the searched grid indices. The boolean masks can be used for advanced indexing 
+    This function generates boolean masks for latitude and longitude indices based on
+    the searched grid indices. The boolean masks can be used for advanced indexing
     to extract the corresponding grid points efficiently.
 
     Parameters
@@ -572,18 +614,18 @@ def searched_grids_index_to_bool_index(searched_grids_index, src_lat, src_lon):
     Returns
     -------
     searched_grids_bool_index : list of tuple
-        A list where each element is a tuple containing two boolean arrays: 
-        `(lat_bool_mask, lon_bool_mask)`. 
+        A list where each element is a tuple containing two boolean arrays:
+        `(lat_bool_mask, lon_bool_mask)`.
         - `lat_bool_mask` is a boolean mask for latitude indices.
         - `lon_bool_mask` is a boolean mask for longitude indices.
 
     Notes
     -----
-    - Using integer indexing on a dataset with multiple matches results in retrieving all cross-points, 
+    - Using integer indexing on a dataset with multiple matches results in retrieving all cross-points,
       leading to an array of shape `(N, N)`, where `N` is the number of matched grids.
-    - Using boolean indexing ensures that only the exact matched points are selected, preserving 
+    - Using boolean indexing ensures that only the exact matched points are selected, preserving
       a one-to-one mapping. This results in a more compact array of shape `(M, K)`, where `M * K = N`.
-      
+
     """
     # useage: params_dataset_level0.variables["depth"][0, searched_grids_bool_index[0][0], searched_grids_bool_index[0][1]].shape
     # use integer index will return all corss points: a searched_grids_index with length 143 will return (143 x 143)
@@ -591,13 +633,18 @@ def searched_grids_index_to_bool_index(searched_grids_index, src_lat, src_lon):
     searched_grids_bool_index = []
     for i in range(len(searched_grids_index)):
         searched_grid_index = searched_grids_index[i]
-        searched_grid_bool_index_lat = np.full((len(src_lat), ), fill_value=False, dtype=bool)
-        searched_grid_bool_index_lon = np.full((len(src_lon), ), fill_value=False, dtype=bool)
-        
+        searched_grid_bool_index_lat = np.full(
+            (len(src_lat),), fill_value=False, dtype=bool
+        )
+        searched_grid_bool_index_lon = np.full(
+            (len(src_lon),), fill_value=False, dtype=bool
+        )
+
         searched_grid_bool_index_lat[searched_grid_index[0]] = True
         searched_grid_bool_index_lon[searched_grid_index[1]] = True
-        
-        searched_grids_bool_index.append((searched_grid_bool_index_lat, searched_grid_bool_index_lon))
-    
+
+        searched_grids_bool_index.append(
+            (searched_grid_bool_index_lat, searched_grid_bool_index_lon)
+        )
+
     return searched_grids_bool_index
-    

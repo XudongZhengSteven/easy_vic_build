@@ -20,15 +20,11 @@ Author:
 -------
     Xudong Zheng
     Email: z786909151@163.com
-    
+
 """
 
 # Importing submodules for ease of access
-from . import clip
-from . import create_gdf
-from . import format_conversion
-from . import resample
-from . import search_grids
+from . import clip, create_gdf, format_conversion, resample, search_grids
 
 # Define the package's public API and version
 __all__ = ["clip", "create_gdf", "format_conversion", "resample", "search_grids"]

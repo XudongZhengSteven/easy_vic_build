@@ -1,24 +1,24 @@
 # code: utf-8
-# author: "Xudong Zheng" 
+# author: "Xudong Zheng"
 # email: Z786909151@163.com
 
 """
 Module: mask_nc
 
-This module provides functionality for applying spatial masking to variables in NetCDF files. 
-It includes a class `mask_nc` that allows for masking based on geographic regions or shapefiles, 
-and then saves the masked data into a new NetCDF file. This module is particularly useful for 
+This module provides functionality for applying spatial masking to variables in NetCDF files.
+It includes a class `mask_nc` that allows for masking based on geographic regions or shapefiles,
+and then saves the masked data into a new NetCDF file. This module is particularly useful for
 spatially filtered data processing in atmospheric and hydrological models that rely on NetCDF format.
 
 Class:
 ------
-    - mask_nc: A class that handles the application of spatial masks to NetCDF variables, 
+    - mask_nc: A class that handles the application of spatial masks to NetCDF variables,
       using either a shapefile or defined geographic regions (latitudes and longitudes).
 
 Class Methods:
 --------------
     - __init__: Initializes the mask_nc class.
-    - __call__: Applies the mask to the specified variables from the source NetCDF file and writes 
+    - __call__: Applies the mask to the specified variables from the source NetCDF file and writes
       the results to the destination NetCDF file.
     - get_masked_val: Retrieves the masked values by applying the mask based on a shapefile or geographic region.
 
@@ -38,36 +38,48 @@ Author:
 
 
 from netCDF4 import Dataset
+
 try:
     import regionmask
+
     HAS_regionmask = True
 except:
     HAS_regionmask = False
 
-import geopandas as gp
-import numpy as np
 import os
 import warnings
+
+import geopandas as gp
+import numpy as np
+
 warnings.filterwarnings("ignore")
 
 
 class mask_nc:
-    """ 
-    A class for applying spatial masks to variables in NetCDF files. 
-    This class allows the user to apply a mask based on either a shapefile or 
-    geographic regions (latitude and longitude), and writes the masked data 
+    """
+    A class for applying spatial masks to variables in NetCDF files.
+    This class allows the user to apply a mask based on either a shapefile or
+    geographic regions (latitude and longitude), and writes the masked data
     into a new NetCDF file.
     """
 
     def __init__(self):
         """
-        Initializes the mask_nc class. 
+        Initializes the mask_nc class.
         This class does not require any parameters for initialization.
         """
         pass
 
-    def __call__(self, src_path, dst_path, mask_valname, mask_shp=None, mask_region=None, lon_valname="lon",
-                 lat_valname="lat"):
+    def __call__(
+        self,
+        src_path,
+        dst_path,
+        mask_valname,
+        mask_shp=None,
+        mask_region=None,
+        lon_valname="lon",
+        lat_valname="lat",
+    ):
         """
         Apply the mask to variables in a NetCDF file and write the results to a new NetCDF file.
 
@@ -105,33 +117,58 @@ class mask_nc:
 
                 # create dimensions
                 for key in src_dataset.dimensions:
-                    dst_dataset.createDimension(key, size=src_dataset.dimensions[key].size)
+                    dst_dataset.createDimension(
+                        key, size=src_dataset.dimensions[key].size
+                    )
 
                 # create variables and copy variables attributes
                 for key in src_dataset.variables:
                     # get variables attributes from src_dataset
-                    ncattr_dict = dict(((key_nacttr, src_dataset.variables[key].getncattr(key_nacttr)) for key_nacttr
-                                        in src_dataset.variables[key].ncattrs()))
+                    ncattr_dict = dict(
+                        (
+                            (
+                                key_nacttr,
+                                src_dataset.variables[key].getncattr(key_nacttr),
+                            )
+                            for key_nacttr in src_dataset.variables[key].ncattrs()
+                        )
+                    )
 
                     # fill_value
-                    fill_value = ncattr_dict["_FillValue"] if "_FillValue" in ncattr_dict.keys() else None
+                    fill_value = (
+                        ncattr_dict["_FillValue"]
+                        if "_FillValue" in ncattr_dict.keys()
+                        else None
+                    )
 
                     # createVariable
-                    dst_dataset.createVariable(key,
-                                               datatype=src_dataset.variables[key].dtype,
-                                               dimensions=src_dataset.variables[key].dimensions,
-                                               fill_value=fill_value)
+                    dst_dataset.createVariable(
+                        key,
+                        datatype=src_dataset.variables[key].dtype,
+                        dimensions=src_dataset.variables[key].dimensions,
+                        fill_value=fill_value,
+                    )
 
                     # set/copy variables attributes
                     for key_nacttr in ncattr_dict.keys():
                         if key_nacttr != "_FillValue":
-                            dst_dataset.variables[key].setncattr(key_nacttr, ncattr_dict[key_nacttr])
+                            dst_dataset.variables[key].setncattr(
+                                key_nacttr, ncattr_dict[key_nacttr]
+                            )
 
                 # Assign values to variables: set mask
                 for key in src_dataset.variables:
                     if key in mask_valname:
-                        masked_val = self.get_masked_val(lon, lat, src_dataset.variables[key], mask_shp, mask_region,
-                                                         lon_valname, lat_valname, src_dataset)
+                        masked_val = self.get_masked_val(
+                            lon,
+                            lat,
+                            src_dataset.variables[key],
+                            mask_shp,
+                            mask_region,
+                            lon_valname,
+                            lat_valname,
+                            src_dataset,
+                        )
                         dst_dataset.variables[key][:] = masked_val
                     else:
                         dst_dataset.variables[key][:] = src_dataset.variables[key][:]
@@ -143,7 +180,17 @@ class mask_nc:
                 # set auto_mask
                 dst_dataset.set_auto_mask(True)
 
-    def get_masked_val(self, lon, lat, src_val, mask_shp, mask_region, lon_valname, lat_valname, src_dataset):
+    def get_masked_val(
+        self,
+        lon,
+        lat,
+        src_val,
+        mask_shp,
+        mask_region,
+        lon_valname,
+        lat_valname,
+        src_dataset,
+    ):
         """
         Retrieve the masked values based on the provided mask or geographic region.
 
@@ -180,22 +227,36 @@ class mask_nc:
         """
         if HAS_regionmask:
             if mask_shp is not None:
-                mask = regionmask.mask_geopandas(gp.read_file(mask_shp), lon, lat, wrap_lon=False)
+                mask = regionmask.mask_geopandas(
+                    gp.read_file(mask_shp), lon, lat, wrap_lon=False
+                )
                 # wrap_lon=False if lon not in range(0, 180)
                 dim = 0
                 for key in src_val.dimensions:
                     if key != lon_valname and key != lat_valname:
-                        mask = np.repeat(np.expand_dims(mask, axis=dim), len(src_dataset.variables[key]), axis=dim)
+                        mask = np.repeat(
+                            np.expand_dims(mask, axis=dim),
+                            len(src_dataset.variables[key]),
+                            axis=dim,
+                        )
                     dim += 1
 
                 masked_val = np.ma.array(src_val[:], mask=mask)
 
             elif mask_region is not None:
-                lat_min_index = np.where(src_dataset.variables[lat_valname][:] <= mask_region[0])[0][-1]
-                lat_max_index = np.where(src_dataset.variables[lat_valname][:] >= mask_region[1])[0][0]
+                lat_min_index = np.where(
+                    src_dataset.variables[lat_valname][:] <= mask_region[0]
+                )[0][-1]
+                lat_max_index = np.where(
+                    src_dataset.variables[lat_valname][:] >= mask_region[1]
+                )[0][0]
 
-                lon_min_index = np.where(src_dataset.variables[lon_valname][:] <= mask_region[2])[0][-1]
-                lon_max_index = np.where(src_dataset.variables[lon_valname][:] >= mask_region[3])[0][0]
+                lon_min_index = np.where(
+                    src_dataset.variables[lon_valname][:] <= mask_region[2]
+                )[0][-1]
+                lon_max_index = np.where(
+                    src_dataset.variables[lon_valname][:] >= mask_region[3]
+                )[0][0]
 
                 mask = np.ones_like(src_val[:])  # all mask
                 slice_lat = slice(lat_min_index, lat_max_index + 1, 1)
@@ -216,8 +277,10 @@ class mask_nc:
             else:
                 raise ValueError("input mask area into mask_shp or mask_region")
         else:
-            raise ImportError("do not have regionmask package to support mask_nc module")
-        
+            raise ImportError(
+                "do not have regionmask package to support mask_nc module"
+            )
+
         return masked_val
 
 
@@ -230,7 +293,19 @@ if __name__ == "__main__":
     f = Dataset(nc_path, mode="r")
 
     mc = mask_nc()
-    mc(nc_path, out_path1, mask_valname="Rainf_f_tavg", mask_shp=None, mask_region=[3, 53, 73, 135])
-    mc(nc_path, out_path2, mask_valname="Rainf_f_tavg", mask_shp=shp_path, mask_region=None)
+    mc(
+        nc_path,
+        out_path1,
+        mask_valname="Rainf_f_tavg",
+        mask_shp=None,
+        mask_region=[3, 53, 73, 135],
+    )
+    mc(
+        nc_path,
+        out_path2,
+        mask_valname="Rainf_f_tavg",
+        mask_shp=shp_path,
+        mask_region=None,
+    )
 
     f.close()

@@ -3,9 +3,9 @@ Subpackage: plot_func
 
 A Subpackage of easy_vic_build.tools
 
-This subpackage contains a collection of modules for creating visualizations related to 
-hydrological modeling and environmental data analysis. The modules within this subpackage 
-offer functionality to plot various hydrological parameters, model outputs, and results 
+This subpackage contains a collection of modules for creating visualizations related to
+hydrological modeling and environmental data analysis. The modules within this subpackage
+offer functionality to plot various hydrological parameters, model outputs, and results
 in a user-friendly manner for better data interpretation and presentation.
 
 Modules:
@@ -18,7 +18,7 @@ Author:
 -------
     Xudong Zheng
     Email: z786909151@163.com
-    
+
 """
 
 # Importing submodules for ease of access

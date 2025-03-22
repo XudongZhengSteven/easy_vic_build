@@ -3,21 +3,22 @@
 # email: z786909151@163.com
 
 import os
-import numpy as np
-import pandas as pd
-from matplotlib import pyplot as plt
-from copy import copy
-from tqdm import *
-import geopandas as gpd
-import rasterio
-from rasterio.plot import show
-#import pyodbc
-from ...geo_func import search_grids, resample
-from rasterio import mask
+import warnings
 from copy import copy
 
-import warnings
-warnings.filterwarnings('ignore')
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+import rasterio
+from matplotlib import pyplot as plt
+from rasterio import mask
+from rasterio.plot import show
+from tqdm import *
+
+# import pyodbc
+from ...geo_func import resample, search_grids
+
+warnings.filterwarnings("ignore")
 
 
 def ExtractData(grid_shp, boundary_shp, plot=True):
@@ -31,8 +32,12 @@ def ExtractData(grid_shp, boundary_shp, plot=True):
     grid_shp_y = grid_shp.point_geometry.y.values
 
     # HWSD grids, bounds: left, bottom, right, top
-    HWSD_x = np.linspace(HWSD_Soil_BIL.bounds[0], HWSD_Soil_BIL.bounds[2], HWSD_Soil_BIL.width)
-    HWSD_y = np.linspace(HWSD_Soil_BIL.bounds[1], HWSD_Soil_BIL.bounds[3], HWSD_Soil_BIL.height)
+    HWSD_x = np.linspace(
+        HWSD_Soil_BIL.bounds[0], HWSD_Soil_BIL.bounds[2], HWSD_Soil_BIL.width
+    )
+    HWSD_y = np.linspace(
+        HWSD_Soil_BIL.bounds[1], HWSD_Soil_BIL.bounds[3], HWSD_Soil_BIL.height
+    )
 
     # clip
     # grid_x_boundary
@@ -40,34 +45,58 @@ def ExtractData(grid_shp, boundary_shp, plot=True):
     grid_y_boundary = [grid_shp_y.min(), grid_shp_y.max()]
 
     # search x y of HWSD grids located in grid_boundary, x is lon/col, y is lat/row
-    index_x_boundary = [np.where(HWSD_x <= grid_x_boundary[0])[0][-1], np.where(HWSD_x >= grid_x_boundary[1])[0][0]]
-    index_y_boundary = [np.where(HWSD_y <= grid_y_boundary[0])[0][-1], np.where(HWSD_y >= grid_y_boundary[1])[0][0]]
-    clip_HWSD_x = HWSD_x[index_x_boundary[0]: index_x_boundary[1] + 1]
-    clip_HWSD_y = HWSD_y[index_y_boundary[0]: index_y_boundary[1] + 1]
+    index_x_boundary = [
+        np.where(HWSD_x <= grid_x_boundary[0])[0][-1],
+        np.where(HWSD_x >= grid_x_boundary[1])[0][0],
+    ]
+    index_y_boundary = [
+        np.where(HWSD_y <= grid_y_boundary[0])[0][-1],
+        np.where(HWSD_y >= grid_y_boundary[1])[0][0],
+    ]
+    clip_HWSD_x = HWSD_x[index_x_boundary[0] : index_x_boundary[1] + 1]
+    clip_HWSD_y = HWSD_y[index_y_boundary[0] : index_y_boundary[1] + 1]
     # !note: index for array not suitable for the rasterio.dataset, need to use the dataset.index(x, y)
-    index_clip_array_x = [HWSD_Soil_BIL.index(clip_HWSD_x[i], clip_HWSD_y[0])[1] for i in range(len(clip_HWSD_x))]
-    index_clip_array_y = [HWSD_Soil_BIL.index(clip_HWSD_x[0], clip_HWSD_y[i])[0] for i in range(len(clip_HWSD_y))]
+    index_clip_array_x = [
+        HWSD_Soil_BIL.index(clip_HWSD_x[i], clip_HWSD_y[0])[1]
+        for i in range(len(clip_HWSD_x))
+    ]
+    index_clip_array_y = [
+        HWSD_Soil_BIL.index(clip_HWSD_x[0], clip_HWSD_y[i])[0]
+        for i in range(len(clip_HWSD_y))
+    ]
 
-    index_clip_array_x_mesh, index_clip_array_y_mesh = np.meshgrid(index_clip_array_x, index_clip_array_y)
+    index_clip_array_x_mesh, index_clip_array_y_mesh = np.meshgrid(
+        index_clip_array_x, index_clip_array_y
+    )
     # index_clip_array_y_mesh, index_clip_array_x_mesh = np.meshgrid(index_clip_array_y, index_clip_array_x) will rotate the array
 
     # clip grid_boundary array from HWSD array, x is lon/col, y is lat/row
-    clip_HWSD_Soil_array = HWSD_Soil_array[index_clip_array_y_mesh, index_clip_array_x_mesh]
+    clip_HWSD_Soil_array = HWSD_Soil_array[
+        index_clip_array_y_mesh, index_clip_array_x_mesh
+    ]
     clip_HWSD_Soil_array_flip = np.flip(clip_HWSD_Soil_array, axis=0)
 
     # search HWSD grids for each grid in grid_shp
-    searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat=grid_shp_y, dst_lon=grid_shp_x,
-                                                                      src_lat=clip_HWSD_y, src_lon=clip_HWSD_x,
-                                                                      lat_radius=0.125, lon_radius=0.125)
+    searched_grids_index = search_grids.search_grids_radius_rectangle(
+        dst_lat=grid_shp_y,
+        dst_lon=grid_shp_x,
+        src_lat=clip_HWSD_y,
+        src_lon=clip_HWSD_x,
+        lat_radius=0.125,
+        lon_radius=0.125,
+    )
 
     # resample for Majority
     HWSD_BIL_Value = []
     for i in range(len(searched_grids_index)):
         searched_grid_index = searched_grids_index[i]
-        searched_grid_data = [clip_HWSD_Soil_array[searched_grid_index[0][j],
-                                                   searched_grid_index[1][j]]
-                              for j in range(len(searched_grid_index[0]))]  # index: (lat, lon), namely (row, col)
-        dst_data = resample.resampleMethod_Majority(searched_grid_data, None, None, None, None, missing_value=0)
+        searched_grid_data = [
+            clip_HWSD_Soil_array[searched_grid_index[0][j], searched_grid_index[1][j]]
+            for j in range(len(searched_grid_index[0]))
+        ]  # index: (lat, lon), namely (row, col)
+        dst_data = resample.resampleMethod_Majority(
+            searched_grid_data, None, None, None, None, missing_value=0
+        )
         HWSD_BIL_Value.append(dst_data)
 
     # save in grid_shp
@@ -83,10 +112,14 @@ def ExtractData(grid_shp, boundary_shp, plot=True):
         geo = boundary_shp_.geometry
         clip_image, clip_transform = mask.mask(HWSD_Soil_BIL, geo, crop=True)
         clip_meta = HWSD_Soil_BIL.meta
-        clip_meta.update({"driver": "GTiff",
-                          "height": clip_image.shape[1],
-                          "width": clip_image.shape[2],
-                          "transform": clip_transform})
+        clip_meta.update(
+            {
+                "driver": "GTiff",
+                "height": clip_image.shape[1],
+                "width": clip_image.shape[2],
+                "transform": clip_transform,
+            }
+        )
         ax2 = show(clip_image, transform=clip_transform)
 
         # clip_HWSD_Soil_array
@@ -99,9 +132,9 @@ def ExtractData(grid_shp, boundary_shp, plot=True):
 
 def inquireHWSDSoilData(MU_GLOBALS):
     # connect
-    driver = '{Microsoft Access Driver (*.mdb, *.accdb)}'
+    driver = "{Microsoft Access Driver (*.mdb, *.accdb)}"
     HWSD_Soil_mdb_path = "E:/data/LULC/HWSD_Harmonized World Soil database/HWSD.mdb"
-    cnxn = pyodbc.connect(f'Driver={driver};DBQ={HWSD_Soil_mdb_path}')
+    cnxn = pyodbc.connect(f"Driver={driver};DBQ={HWSD_Soil_mdb_path}")
 
     # cursor
     crsr = cnxn.cursor()
@@ -109,15 +142,21 @@ def inquireHWSDSoilData(MU_GLOBALS):
     # inquire data
     T_USDA_TEX_CLASS = []
     S_USDA_TEX_CLASS = []
-    for MU_GLOBAL in tqdm(MU_GLOBALS, colour="green", desc="inquire T/S_USDA_TEX_CLASS for MU_GLOBALS"):
+    for MU_GLOBAL in tqdm(
+        MU_GLOBALS, colour="green", desc="inquire T/S_USDA_TEX_CLASS for MU_GLOBALS"
+    ):
         try:
-            crsr.execute(f'SELECT {"T_USDA_TEX_CLASS"} FROM HWSD_DATA where MU_GLOBAL = {MU_GLOBAL}')
+            crsr.execute(
+                f'SELECT {"T_USDA_TEX_CLASS"} FROM HWSD_DATA where MU_GLOBAL = {MU_GLOBAL}'
+            )
             T_USDA_TEX_CLASS_ = crsr.fetchone()[0]
         except:
             T_USDA_TEX_CLASS_ = None
 
         try:
-            crsr.execute(f'SELECT {"S_USDA_TEX_CLASS"} FROM HWSD_DATA where MU_GLOBAL = {MU_GLOBAL}')
+            crsr.execute(
+                f'SELECT {"S_USDA_TEX_CLASS"} FROM HWSD_DATA where MU_GLOBAL = {MU_GLOBAL}'
+            )
             S_USDA_TEX_CLASS_ = crsr.fetchone()[0]
         except:
             S_USDA_TEX_CLASS_ = None

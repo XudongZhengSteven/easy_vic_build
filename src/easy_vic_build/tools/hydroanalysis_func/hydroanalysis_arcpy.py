@@ -5,15 +5,15 @@
 """
 Module: hydroanalysis_arcpy
 
-This module contains the `hydroanalysis_arcpy` function, which performs hydrological analysis 
-using ArcPy. Specifically, the function processes Digital Elevation Model (DEM) data to generate 
-various hydrological outputs, including flow direction, flow accumulation, stream accumulation, 
-stream link, and stream features. The analysis is conducted by invoking an external ArcPy Python 
+This module contains the `hydroanalysis_arcpy` function, which performs hydrological analysis
+using ArcPy. Specifically, the function processes Digital Elevation Model (DEM) data to generate
+various hydrological outputs, including flow direction, flow accumulation, stream accumulation,
+stream link, and stream features. The analysis is conducted by invoking an external ArcPy Python
 script and passing the necessary parameters.
 
 Functions:
 ----------
-    - hydroanalysis_arcpy: Executes hydrological analysis based on ArcPy, generating several 
+    - hydroanalysis_arcpy: Executes hydrological analysis based on ArcPy, generating several
       hydrological maps and features, including flow direction and stream features.
 
 Dependencies:
@@ -30,12 +30,19 @@ Author:
 
 import os
 
-def hydroanalysis_arcpy(workspace_path, dem_tiff_path, arcpy_python_path, arcpy_python_script_path, stream_acc_threshold):
+
+def hydroanalysis_arcpy(
+    workspace_path,
+    dem_tiff_path,
+    arcpy_python_path,
+    arcpy_python_script_path,
+    stream_acc_threshold,
+):
     """
-    Performs hydrological analysis based on ArcPy by processing DEM data to generate hydrological outputs 
+    Performs hydrological analysis based on ArcPy by processing DEM data to generate hydrological outputs
     such as flow direction, flow accumulation, and stream features.
 
-    This function calls an external ArcPy script, passing the paths to the necessary input files 
+    This function calls an external ArcPy script, passing the paths to the necessary input files
     and the analysis threshold, and then executes the script using the specified Python environment.
 
     Parameters:
@@ -57,18 +64,29 @@ def hydroanalysis_arcpy(workspace_path, dem_tiff_path, arcpy_python_path, arcpy_
         The output of the system command execution. Typically, a value indicating success or failure of the command.
     """
     # hydroanalysis based on arcpy
-    stream_acc_threshold = str(stream_acc_threshold) #* set this threshold each time
+    stream_acc_threshold = str(stream_acc_threshold)  # * set this threshold each time
     filled_dem_file_path = os.path.join(workspace_path, "filled_dem")
     flow_direction_file_path = os.path.join(workspace_path, "flow_direction")
     flow_acc_file_path = os.path.join(workspace_path, "flow_acc")
     stream_acc_file_path = os.path.join(workspace_path, "stream_acc")
     stream_link_file_path = os.path.join(workspace_path, "stream_link")
     stream_feature_file_path = "stream_feature"
-    command_arcpy = " ".join([arcpy_python_script_path, workspace_path, stream_acc_threshold, dem_tiff_path, filled_dem_file_path,
-                              flow_direction_file_path, flow_acc_file_path, stream_acc_file_path, stream_link_file_path,
-                              stream_feature_file_path])
-    
+    command_arcpy = " ".join(
+        [
+            arcpy_python_script_path,
+            workspace_path,
+            stream_acc_threshold,
+            dem_tiff_path,
+            filled_dem_file_path,
+            flow_direction_file_path,
+            flow_acc_file_path,
+            stream_acc_file_path,
+            stream_link_file_path,
+            stream_feature_file_path,
+        ]
+    )
+
     # conduct arcpy file
-    out = os.system(f'{arcpy_python_path} {command_arcpy}')
-    
+    out = os.system(f"{arcpy_python_path} {command_arcpy}")
+
     return out
