@@ -28,9 +28,6 @@ Author:
 """
 
 import json
-import os
-
-from ..utilities import read_NLDAS_Veg_monthly, read_veg_type_attributes_umd
 
 
 def prepare_veg_param_json(
@@ -55,6 +52,7 @@ def prepare_veg_param_json(
         from the NLDAS_Veg_monthly file and saves it to the specified updated file path.
     """
     # update the veg_type_attributes_umd.json by the NLDAS_Veg_monthly.xlsx
+    from ..utilities import read_NLDAS_Veg_monthly, read_veg_type_attributes_umd
     veg_params_json = read_veg_type_attributes_umd()
     # read json
     # with open(veg_param_json_path, 'r') as f:

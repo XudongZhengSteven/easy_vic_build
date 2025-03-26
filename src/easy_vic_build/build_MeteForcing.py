@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: build_MeteForcing
+build_MeteForcing - A Python module for building meteorological foring files without nco package.
 
 This module provides functions for constructing meteorological forcing data for the VIC model.
 It includes the main function `buildMeteForcing` and a helper function `resampleTimeForcing` to:
@@ -12,15 +12,15 @@ It includes the main function `buildMeteForcing` and a helper function `resample
 
 Functions:
 ----------
-    - buildMeteForcing: The main function that orchestrates the meteorological forcing data preparation.
-    - resampleTimeForcing: Resample meteorological forcing data from the source directory to a target time step, and save the results as NetCDF files.
+    - `buildMeteForcing`: The main function that orchestrates the meteorological forcing data preparation.
+    - `resampleTimeForcing`: Resample meteorological forcing data from the source directory to a target time step, and save the results as NetCDF files.
 
 Usage:
 ------
-    To use this module, provide an `evb_dir` instance that includes the directory for meteorological forcing data.
-    The `buildMeteForcing` function will prepare the data by calling `resampleTimeForcing` for resampling.
-
-    After executing `buildMeteForcing`, the resampled forcing data will be stored in the specified directory for further use in the VIC model.
+    1. provide an `evb_dir` instance that specifies the directory structure for original meteorological forcing data (`evb_dir.MeteForcing_src_dir`).
+    2. Specify the `evb_dir.MeteForcing_src_suffix`.
+    3. Call `buildMeteForcing`.
+    4. (Optional) Call `resampleTimeForcing` for Resampling time-based forcing data.
 
 Example:
 --------
@@ -43,20 +43,16 @@ Example:
 
 Dependencies:
 -------------
-    - os: For file and directory operations.
-    - numpy: For numerical operations.
-    - re: For regular expressions.
-    - datetime: For date and time handling.
-    - netCDF4: For reading and writing NetCDF files.
-    - cftime: For handling time units and calendars in NetCDF files.
-    - tqdm: For progress bars during file processing.
-    - matplotlib: For plotting data (if required in the future).
-    - xarray: For handling multidimensional arrays and working with NetCDF files.
+    - `os`: For file and directory operations.
+    - `numpy`: For numerical operations.
+    - `re`: For regular expressions.
+    - `datetime`: For date and time handling.
+    - `netCDF4`: For reading and writing NetCDF files.
+    - `cftime`: For handling time units and calendars in NetCDF files.
+    - `tqdm`: For progress bars during file processing.
+    - `matplotlib`: For plotting data (if required in the future).
+    - `xarray`: For handling multidimensional arrays and working with NetCDF files.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 
 # TODO parallel
@@ -95,22 +91,29 @@ def buildMeteForcing(
 
     Parameters
     ----------
-    evb_dir : object
-        Directory structure that contains paths for the forcing data and output.
-    dpc_VIC_level1 : object
-        Object containing grid and basin shapefiles for the VIC model.
-    date_period : tuple of str
-        A tuple containing the start and end date in the format 'YYYYMMDD'.
-    reverse_lat : bool, optional
-        If True, reverses the latitude ordering (default is True).
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 1 of the VIC model.
+
+    date_period : list of str
+        A list containing the start and end dates for the desired period in the format ["YYYYMMDD", "YYYYMMDD"].
+    
+    reverse_lat : bool
+        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+        
     check_search : bool, optional
-        If True, performs a visual check for grid search accuracy (default is False).
+        Whether to perform a search check (default is False).
+        
     time_re_exp : str, optional
         Regular expression pattern for extracting time information (default is r"\d{8}.\d{4}").
+        
     search_func : function, optional
         Function used to search grid indices (default is `search_grids.search_grids_radius_rectangle_reverse`).
+    
     dst_time_hours : int, optional
-        Number of hours to resample the dataset (default is None, which means no resampling).
+        The target time step in hours for resampling (default is 24 hours).
 
     Returns
     -------
@@ -147,7 +150,7 @@ def buildMeteForcing(
 
     year = start_year
     while year <= end_year:
-        logger.info(f"creating forcing for year: {year}, end with year: {end_year}")
+        logger.info(f"creating forcing for year: {year}, end with year: {end_year}... ...")
 
         # get files
         src_names_year = [n for n in src_names if "A" + str(year) in n]
@@ -162,7 +165,7 @@ def buildMeteForcing(
             MeteForcing_dir, f"{evb_dir.forcing_prefix}.{year}.nc"
         )
         with Dataset(dst_path_year, "w") as dst_dataset:
-            logger.debug(f"Creating NetCDF file: {dst_path_year}")
+            logger.debug(f"Creating NetCDF file: {dst_path_year}... ...")
 
             # define dimension
             time_dim = dst_dataset.createDimension("time", len(src_names_year))
@@ -562,7 +565,7 @@ def buildMeteForcing(
     if dst_time_hours is not None:
         resampleTimeForcing(evb_dir, dst_time_hours)
 
-    logger.info("Building meteorological forcing files completed successfully")
+    logger.info("Building meteorological forcing files successfully")
 
 
 def resampleTimeForcing(evb_dir, dst_time_hours=24):
@@ -571,8 +574,9 @@ def resampleTimeForcing(evb_dir, dst_time_hours=24):
 
     Parameters
     ----------
-    evb_dir : object
-        Directory structure containing the paths to the source and destination data.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
     dst_time_hours : int, optional
         The target time step in hours for resampling (default is 24 hours).
 
@@ -659,4 +663,4 @@ def resampleTimeForcing(evb_dir, dst_time_hours=24):
             src_dataset.close()
             dst_dataset.close()
 
-    logger.info("Resample meteorological forcing files completed successfully")
+    logger.info("Resample meteorological forcing files successfully")

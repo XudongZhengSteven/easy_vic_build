@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: build_GlobalParam
+build_GlobalParam - A Python module for building global parameter file.
 
 This module provides functions for constructing and modifying the global parameter file
 used in the VIC (Variable Infiltration Capacity) model. The main function `buildGlobalParam`
@@ -12,18 +12,13 @@ it with values from a provided dictionary.
 
 Functions:
 ----------
-    - buildGlobalParam: Constructs the global parameter file for VIC simulations by reading
+    - `buildGlobalParam`: Constructs the global parameter file for VIC simulations by reading
       a reference file and applying configurations from the provided dictionary.
       It sets default values and overrides them based on the dictionary content.
 
 Usage:
 ------
-    To use this module, provide an `evb_dir` instance that contains paths to necessary
-    directories and files, as well as a `GlobalParam_dict` dictionary that holds the
-    parameters to be added or overridden in the global parameter configuration.
-
-    The `buildGlobalParam` function will read a reference file, update it with the provided
-    parameters, and then save the updated configuration to the specified file path.
+    1. Call the `buildGlobalParam` to build global parameter file with specificed parameters.
 
 Example:
 --------
@@ -53,15 +48,10 @@ Example:
 
 Dependencies:
 -------------
-    - os: For file and directory operations.
-    - re: For regular expressions to match section names.
-    - .tools.utilities: For utilities like `read_globalParam_reference` to load reference files.
-    - logging: For logging messages during file processing.
+    - `os`: For file and directory operations.
+    - `re`: For regular expressions to match section names.
+    - `.tools.utilities`: For utilities like `read_globalParam_reference` to load reference files.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 
 import os
@@ -82,9 +72,9 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
 
     Parameters:
     -----------
-    evb_dir : object
-        The directory object that contains the paths to required directories and files.
-
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
     GlobalParam_dict : dict
         A dictionary containing parameters to override the default values in the global configuration.
 
@@ -138,5 +128,5 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
         globalParam.write(f)
 
     logger.info(
-        f"Building global parameter file completed successfully, saved to {evb_dir.globalParam_path}"
+        f"Building global parameter file successfully, saved to {evb_dir.globalParam_path}"
     )

@@ -3,16 +3,14 @@
 # email: Z786909151@163.com
 
 """
-Module: decorators
+decorators - A Python module providing utility decorators.
 
 This module provides utility decorators for enhancing function behavior.
-It includes two main decorators: `clock_decorator` for measuring execution time and logging it,
-and `apply_along_axis_decorator` for applying a function along a specified axis of a numpy ndarray.
 
 Decorators:
 -----------
-    - clock_decorator: A decorator for measuring the execution time of a function and logging the result.
-    - apply_along_axis_decorator: A decorator that applies a function along a specific axis of a numpy ndarray.
+    - `clock_decorator`: A decorator for measuring the execution time of a function and logging the result.
+    - `apply_along_axis_decorator`: A decorator that applies a function along a specific axis of a numpy ndarray.
 
 Usage:
 ------
@@ -36,8 +34,6 @@ Example:
         # Perform some task
         return x + y
 
-    # Logs the time taken to execute and prints the result
-
     @apply_along_axis_decorator(axis=0)
     def example_function(arr):
         # Apply a function along axis 0 of the array
@@ -45,13 +41,9 @@ Example:
 
 Dependencies:
 -------------
-    - functools: For wrapping functions and ensuring they maintain their original signature.
-    - numpy: For applying functions along specific axes of ndarrays.
+    - `functools`: For wrapping functions and ensuring they maintain their original signature.
+    - `numpy`: For applying functions along specific axes of ndarrays.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 
 import functools
@@ -108,6 +100,7 @@ def clock_decorator(print_arg_ret=True):
             ----------
             *args : tuple
                 Positional arguments passed to the wrapped function.
+                
             **kwargs : dict
                 Keyword arguments passed to the wrapped function.
 
@@ -195,6 +188,7 @@ def apply_along_axis_decorator(axis=0):
             ----------
             *args : tuple
                 Positional arguments passed to the wrapped function.
+                
             **kwargs : dict
                 Keyword arguments passed to the wrapped function.
 

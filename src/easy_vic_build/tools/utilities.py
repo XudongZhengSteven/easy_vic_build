@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: utilities
+utilities - A Python module providing a set of utility functions.
 
 This module provides a set of utility functions for reading and processing various data
 related to the VIC model and hydrometeorological datasets. It includes functions for reading
@@ -13,42 +13,32 @@ simulations and related analysis.
 
 Functions:
 ----------
-    - check_and_mkdir: Checks if a directory exists, and creates it if not.
-    - remove_and_mkdir: Removes a directory and recreates it.
-    - remove_files: Removes files from the specified path.
-    - setHomePath: Sets the home directory path.
-    - exportToCsv: Exports data to a CSV file.
-    - checkGaugeBasin: Checks if the gauge basin exists in the dataset.
-    - readHCDNBasins: Reads and returns the basin shapefile from the HCDN dataset.
-    - read_one_HCDN_basin_shp: Retrieves data for a specific basin from the HCDN dataset.
-    - readdpc: Loads and returns the serialized DPC data for the VIC model at three levels.
-    - readDomain: Reads the domain configuration from a NETCDF file.
-    - readParam: Reads parameter datasets at two levels (level0 and level1) from NETCDF files.
-    - clearParam: Deletes parameter datasets at level0 and level1.
-    - readRVICParam: Reads and returns configuration data related to flow direction, pourpoints,
+    - `check_and_mkdir`: Checks if a directory exists, and creates it if not.
+    - `remove_and_mkdir`: Removes a directory and recreates it.
+    - `remove_files`: Removes files from the specified path.
+    - `setHomePath`: Sets the home directory path.
+    - `exportToCsv`: Exports data to a CSV file.
+    - `checkGaugeBasin`: Checks if the gauge basin exists in the dataset.
+    - `readHCDNBasins`: Reads and returns the basin shapefile from the HCDN dataset.
+    - `read_one_HCDN_basin_shp`: Retrieves data for a specific basin from the HCDN dataset.
+    - `readdpc`: Loads and returns the serialized DPC data for the VIC model at three levels.
+    - `readDomain`: Reads the domain configuration from a NETCDF file.
+    - `readParam`: Reads parameter datasets at two levels (level0 and level1) from NETCDF files.
+    - `clearParam`: Deletes parameter datasets at level0 and level1.
+    - `readRVICParam`: Reads and returns configuration data related to flow direction, pourpoints,
       unit hydrograph, and other parameters from various files.
-    - read_cfg_to_dict: Converts the configuration file into a dictionary for easy access.
-    - readGlobalParam: Loads global parameters using the GlobalParamParser.
-    - readCalibrateCp: Reads and returns the state of the calibration process from a pickle file.
-    - readBasinMap: Reads the basin map shapefile containing stream data.
-    - read_NLDAS_annual_prec: Reads and processes the annual precipitation data from NLDAS.
-    - read_globalParam_reference: Reads the reference global parameter dataset.
-    - read_rvic_param_cfg_file_reference: Reads the reference configuration file for RVIC parameters.
-    - read_rvic_conv_cfg_file_reference: Reads the reference configuration file for RVIC convergence.
-    - read_veg_type_attributes_umd: Reads vegetation type attributes from UMD data.
-    - read_NLDAS_Veg_monthly: Reads and processes the monthly vegetation data from NLDAS.
-    - read_veg_param_json: Reads vegetation parameters from a JSON file.
-    - readHCDNGrids: Reads the grid data from the HCDN dataset.
-
-Usage:
-------
-    1. Ensure that the necessary data files (e.g., shapefiles, NETCDF files, configuration files)
-       are available at the specified paths.
-    2. Call the relevant function to read the required data:
-        - `readHCDNBasins()` to load basin data from the HCDN dataset.
-        - `readdpc()` to load serialized DPC data for model levels.
-        - `readDomain()` and `readParam()` to load domain and parameter datasets.
-    3. Use the data returned by the functions for further analysis or processing in the VIC model.
+    - `read_cfg_to_dict`: Converts the configuration file into a dictionary for easy access.
+    - `readGlobalParam`: Loads global parameters using the GlobalParamParser.
+    - `readCalibrateCp`: Reads and returns the state of the calibration process from a pickle file.
+    - `readBasinMap`: Reads the basin map shapefile containing stream data.
+    - `read_NLDAS_annual_prec`: Reads and processes the annual precipitation data from NLDAS.
+    - `read_globalParam_reference`: Reads the reference global parameter dataset.
+    - `read_rvic_param_cfg_file_reference`: Reads the reference configuration file for RVIC parameters.
+    - `read_rvic_conv_cfg_file_reference`: Reads the reference configuration file for RVIC convergence.
+    - `read_veg_type_attributes_umd`: Reads vegetation type attributes from UMD data.
+    - `read_NLDAS_Veg_monthly`: Reads and processes the monthly vegetation data from NLDAS.
+    - `read_veg_param_json`: Reads vegetation parameters from a JSON file.
+    - `readHCDNGrids`: Reads the grid data from the HCDN dataset.
 
 Example:
 --------
@@ -67,17 +57,13 @@ Example:
 
 Dependencies:
 -------------
-    - pickle: For serializing and deserializing DPC and calibration state data.
-    - gpd (geopandas): For reading and processing shapefiles.
-    - pandas: For reading CSV files (e.g., pourpoint and UHbox data).
-    - netCDF4: For reading NETCDF files (domain and parameter datasets).
-    - ConfigParser: For reading and processing configuration files.
-    - matplotlib: For plotting, if required in some data processing functions.
+    - `pickle`: For serializing and deserializing DPC and calibration state data.
+    - `geopandas`: For reading and processing shapefiles.
+    - `pandas`: For reading CSV files (e.g., pourpoint and UHbox data).
+    - `netCDF4`: For reading NETCDF files (domain and parameter datasets).
+    - `ConfigParser`: For reading and processing configuration files.
+    - `matplotlib`: For plotting, if required in some data processing functions.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 
 import io
@@ -157,8 +143,11 @@ def setHomePath(root="E:"):
 
     Returns
     -------
-    tuple
-        A tuple containing the root and home directory paths.
+    root: str
+        The root directory path.
+        
+    home: str
+        The home directory path.
     """
     home = f"{root}/data/hydrometeorology/CAMELS"
     return root, home
@@ -170,8 +159,9 @@ def exportToCsv(basin_shp, fpath_dir):
 
     Parameters
     ----------
-    basin_shp : GeoDataFrame
+    basin_shp : `geopandas.GeoDataFrame`
         The basin shapefile containing the required data.
+        
     fpath_dir : str
         The directory path to save the exported CSV files.
     """
@@ -222,12 +212,15 @@ def checkGaugeBasin(
 
     Parameters
     ----------
-    basinShp : GeoDataFrame
+    basinShp : `geopandas.GeoDataFrame`
         The basin shapefile containing basin IDs.
+        
     usgs_streamflow : list
         A list of USGS streamflow data.
-    BasinAttribute : DataFrame
+        
+    BasinAttribute : `pandas.DataFrame`
         A dataframe containing basin attributes.
+        
     forcingDaymetGaugeAttributes : list
         A list of forcing Daymet gauge attributes.
     """
@@ -262,8 +255,14 @@ def read_NLDAS_annual_prec():
 
     Returns
     -------
-    tuple
-        A tuple containing the annual precipitation data, longitude, and latitude.
+    data_annual_P: `np.ndarray`
+        The annual precipitation data.
+        
+    annual_P_lon: `np.ndarray`
+        The longitude data.
+        
+    annual_P_lat: `np.ndarray`
+        The latitude data.
     """
     with io.BytesIO(pkgutil.get_data(top_package, "data/NLDAS_annual_prec.npy")) as f:
         data_annual_P = np.load(f)
@@ -283,7 +282,7 @@ def read_globalParam_reference():
 
     Returns
     -------
-    GlobalParamParser
+    globalParam: `GlobalParamParser`
         The global parameter object.
     """
     with io.StringIO(
@@ -300,7 +299,7 @@ def read_rvic_param_cfg_file_reference():
 
     Returns
     -------
-    ConfigParser
+    cfg_file: `ConfigParser`
         The configuration file parser object.
     """
     with io.StringIO(
@@ -321,7 +320,7 @@ def read_rvic_conv_cfg_file_reference():
 
     Returns
     -------
-    ConfigParser
+    cfg_file: `ConfigParser`
         The configuration file parser object.
     """
     with io.StringIO(
@@ -342,7 +341,7 @@ def read_veg_type_attributes_umd():
 
     Returns
     -------
-    dict
+    veg_params_json: dict
         A dictionary of vegetation parameters.
     """
     with io.BytesIO(
@@ -362,8 +361,11 @@ def read_NLDAS_Veg_monthly():
 
     Returns
     -------
-    tuple
-        A tuple containing two dataframes for vegetation roughness and displacement.
+    NLDAS_Veg_monthly_veg_rough: `pandas.DataFrame`
+        A dataframe containing vegetation roughness data.
+        
+    NLDAS_Veg_monthly_veg_displacement: `pandas.DataFrame`
+        A dataframe containing vegetation displacement data.
     """
     with io.BytesIO(pkgutil.get_data(top_package, "data/NLDAS_Veg_monthly.xlsx")) as f:
         NLDAS_Veg_monthly_veg_rough = pd.read_excel(f, sheet_name=0, skiprows=2)
@@ -374,11 +376,11 @@ def read_NLDAS_Veg_monthly():
 
 def read_veg_param_json():
     """
-    Reads updated vegetation parameters from a JSON file.
+    Reads updated vegetation attributes from a JSON file.
 
     Returns
     -------
-    dict
+    veg_params_json: dict
         A dictionary of updated vegetation parameters.
     """
     with io.BytesIO(
@@ -399,7 +401,7 @@ def readHCDNGrids(home="E:\\data\\hydrometeorology\\CAMELS"):
 
     Returns
     -------
-    GeoDataFrame
+    grid_shp: `geopandas.GeoDataFrame`
         The grid shapefile data with added point geometry.
     """
     grid_shp_label_path = os.path.join(home, "map", "grids_0_25_label.shp")
@@ -427,7 +429,7 @@ def readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS"):
 
     Returns
     -------
-    GeoDataFrame
+    HCDN_shp: `geopandas.GeoDataFrame`
         The HCDN shapefile with an added column for basin area in km².
     """
     # read data: HCDN
@@ -446,13 +448,17 @@ def read_one_HCDN_basin_shp(basin_index, home="E:\\data\\hydrometeorology\\CAMEL
     ----------
     basin_index : int
         The index of the basin to read from the HCDN shapefile.
+        
     home : str, optional
         The root directory where the CAMELS dataset is stored, by default "E:\\data\\hydrometeorology\\CAMELS".
 
     Returns
     -------
-    tuple
-        A tuple containing the full HCDN shapefile GeoDataFrame and the specific basin's GeoDataFrame.
+    basin_shp_all: `geopandas.GeoDataFrame`
+        The full HCDN shapefile GeoDataFrame.
+        
+    basin_shp: `geopandas.GeoDataFrame`
+        The specific basin's GeoDataFrame.
     """
     basin_shp_all = HCDNBasins(home)
     basin_shp = basin_shp_all.loc[basin_index:basin_index, :]
@@ -465,13 +471,19 @@ def readdpc(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory paths to the dpc files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
     Returns
     -------
-    tuple
-        A tuple containing the dpc files at levels 0, 1, and 2.
+    dpc_VIC_level0: `dpc_VIC_level0`
+        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.
+    
+    dpc_VIC_level1: `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 0 of the VIC model.
+    
+    dpc_VIC_level2: `dpc_VIC_level2`
+        An instance of the `dpc_VIC_level2` class to process data at level 0 of the VIC model.
     """
     # read
     with open(evb_dir.dpc_VIC_level0_path, "rb") as f:
@@ -492,12 +504,12 @@ def readDomain(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory path to the domain NetCDF file.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
     Returns
     -------
-    Dataset
+    domain_dataset: `netCDF.Dataset`
         The domain dataset loaded from the NetCDF file.
     """
     # read
@@ -512,15 +524,19 @@ def readParam(evb_dir, mode="r"):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory paths to the parameter NetCDF files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
     mode : str, optional
         The mode to open the files, by default "r".
 
     Returns
     -------
-    tuple
-        A tuple containing the parameter datasets at levels 0 and 1.
+    params_dataset_level0: `netCDF4.Dataset`
+        The parameter dataset at level 0.
+        
+    params_dataset_level1: `netCDF4.Dataset`
+        The parameter dataset at level 1.
     """
     # read
     params_dataset_level0 = Dataset(
@@ -539,8 +555,8 @@ def clearParam(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory paths to the parameter NetCDF files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
     """
     if os.path.isfile(evb_dir.params_dataset_level0_path):
         os.remove(evb_dir.params_dataset_level0_path)
@@ -555,13 +571,22 @@ def readRVICParam(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory paths to the RVIC files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
     Returns
     -------
-    tuple
-        A tuple containing the flow direction dataset, pourpoint file, uhbox file, and configuration file.
+    flow_direction_dataset: `netCDF4.Dataset`
+        The flow direction dataset.
+        
+    pourpoint_file: `pandas.DataFrame`
+        The pourpoint file data.
+        
+    uhbox_file: `pandas.DataFrame`
+        The unit hydrograph box file data.
+        
+    cfg_file: `ConfigParser`
+        The configuration file parser object.
     """
     # read
     flow_direction_dataset = Dataset(evb_dir.flow_direction_file_path, "r", "NETCDF4")
@@ -584,7 +609,7 @@ def read_cfg_to_dict(cfg_file_path):
 
     Returns
     -------
-    dict
+    cfg_file_dict: dict
         A dictionary containing the configuration parameters.
     """
     cfg_file = ConfigParser()
@@ -603,12 +628,12 @@ def readGlobalParam(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory path to the global parameters file.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
     Returns
     -------
-    GlobalParamParser
+    globalParam: `GlobalParamParser`
         A global parameter object loaded from the specified file.
     """
     globalParam = GlobalParamParser()
@@ -623,13 +648,18 @@ def readCalibrateCp(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory path to the calibration control points file.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
     Returns
     -------
-    dict
-        A dictionary containing the state information from the calibration file.
+    state: dict
+        A dictionary containing the state information from the calibration file. The keys of the dictionary are:
+            - current_generation
+            - initial_population
+            - population
+            - history
+            - front_fitness
     """
     with open(evb_dir.calibrate_cp_path, "rb") as f:
         state = pickle.load(f)
@@ -648,12 +678,12 @@ def readBasinMap(evb_dir):
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the directory path to the basin map shapefile.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
     Returns
     -------
-    GeoDataFrame
+    stream_gdf: `geopandas.GeoDataFrame`
         The stream basin shapefile data.
     """
     stream_gdf = gpd.read_file(

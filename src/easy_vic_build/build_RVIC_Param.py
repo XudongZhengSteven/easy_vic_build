@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: build_RVIC_Param
+build_RVIC_Param - A Python module for building RVIC parameter files.
 
 This module provides functions for constructing and modifying RVIC (Routing of VIC model)
 parameter files, including flow direction files, pour point files, unit hydrograph (UH) box files,
@@ -12,26 +12,19 @@ for setting up and modifying the necessary inputs for hydrological routing withi
 
 Functions:
 ----------
-    - buildRVICParam_general: Generate general RVIC parameter files before using `rvic_parameters`.
-    - buildRVICParam: Constructs RVIC parameters that contains rvic_parameters based on input datasets and configurations.
-    - buildRVICFlowDirectionFile: Generates a NetCDF flow direction file using provided input datasets.
-    - buildPourPointFile: Creates a pour point file specifying the outlet locations for routing.
-    - buildUHBOXFile: Constructs a UHBOX file that defines the unit hydrograph characteristics.
-    - buildParamCFGFile: Generates the parameter configuration (CFG) file for RVIC simulations.
-    - buildConvCFGFile: Creates a conversion configuration file for RVIC execution.
-    - modifyRVICParam_for_pourpoint: Modifies RVIC parameters to include a specific
-      pour point and updates flow direction settings accordingly.
+    - `buildRVICParam_general`: Generate general RVIC parameter files before using `rvic_parameters`.
+    - `buildRVICParam`: Constructs RVIC parameters that contains rvic_parameters based on input datasets and configurations.
+    - `buildRVICFlowDirectionFile`: Generates a NetCDF flow direction file using provided input datasets.
+    - `buildPourPointFile`: Creates a pour point file specifying the outlet locations for routing.
+    - `buildUHBOXFile`: Constructs a UHBOX file that defines the unit hydrograph characteristics.
+    - `buildParamCFGFile`: Generates the parameter configuration (CFG) file for RVIC simulations.
+    - `buildConvCFGFile`: Creates a conversion configuration file for RVIC execution.
+    - `modifyRVICParam_for_pourpoint`: Modifies RVIC parameters to include a specific pour point and updates flow direction settings accordingly.
 
 Usage:
 ------
-    To use this module, provide an `evb_dir` instance that contains paths to relevant
-    RVIC parameter files. The functions will construct the necessary RVIC input files
-    for hydrological routing simulations.
-
-    Example workflow:
-    1. Generate pour point and flow direction files.
-    2. Construct UHBOX files based on routing configurations.
-    3. Build the necessary CFG files for RVIC execution.
+    1. Call `buildRVICParam_general` to generate RVIC parameter files without using `rvic_parameters`, set the necessary input parameters.
+    2. Call ``buildRVICParam`` to generate RVIC parameter files and execute RVIC parameter computation.
 
 Example:
 --------
@@ -63,28 +56,22 @@ Example:
 
 Dependencies:
 -------------
-    - os: For file and directory operations.
-    - numpy: For numerical operations.
-    - pandas: For handling tabular data (CSV files).
-    - rasterio: For reading and writing geospatial raster data.
-    - copy: For creating deep copies of objects.
-    - configparser: For reading and writing configuration (CFG) files.
-    - logging: For logging messages during file processing.
-    - xarray: For handling multidimensional arrays and NetCDF files.
-    - .tools.params_func.createParametersDataset: For creating flow direction files.
-    - .tools.utilities: For reading configuration files.
-    - .tools.decoractors: For timing function execution with `clock_decorator`.
-    - .tools.uh_func: For creating unit hydrographs (UH).
-    - .tools.geo_func.search_grids: For geospatial grid search functions.
+    - `os`: For file and directory operations.
+    - `numpy`: For numerical operations.
+    - `pandas`: For handling tabular data (CSV files).
+    - `rasterio`: For reading and writing geospatial raster data.
+    - `copy`: For creating deep copies of objects.
+    - `logging`: For logging messages during file processing.
+    - `xarray`: For handling multidimensional arrays and NetCDF files.
+    - `.tools.params_func.createParametersDataset`: For creating flow direction files.
+    - `.tools.utilities`: For reading configuration files.
+    - `.tools.decoractors`: For timing function execution with `clock_decorator`.
+    - `.tools.uh_func`: For creating unit hydrographs (UH).
+    - `.tools.geo_func`.search_grids: For geospatial grid search functions.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 
 import os
-from configparser import ConfigParser
 from copy import deepcopy
 
 import numpy as np
@@ -145,14 +132,18 @@ def buildRVICParam_general(
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure for storing RVIC parameter files.
-    dpc_VIC_level1 : Dataset
-        Level-1 VIC dataset used to determine pour points.
-    params_dataset_level1 : Dataset
-        Level-1 dataset containing flow direction and routing parameters.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to determine pour points..
+
+    params_dataset_level1 : `netCDF.Dataset`
+        The parameter dataset for level 1, containing flow direction and routing parameters.
+    
     ppf_kwargs : dict, optional
         Keyword arguments for `buildPourPointFile`, by default an empty dictionary.
+        
     uh_params : dict, optional
         Parameters for `buildUHBOXFile`, including:
         - createUH_func: Function to create UH.
@@ -160,6 +151,7 @@ def buildRVICParam_general(
         - tp, mu, m: Shape parameters for UH function.
         - plot_bool: Whether to generate UH plots.
         - max_day, max_day_range, max_day_converged_threshold: Parameters for convergence criteria.
+        
     cfg_params : dict, optional
         Configuration parameters for `buildParamCFGFile`, including:
         - VELOCITY: Flow velocity.
@@ -200,7 +192,7 @@ def buildRVICParam_general(
     buildParamCFGFile(evb_dir, **cfg_params)
 
     logger.info(
-        "RVIC parameter file generation without using rvic_parameters completed successfully"
+        "RVIC parameter file generation without using rvic_parameters successfully"
     )
 
 
@@ -238,14 +230,18 @@ def buildRVICParam(
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure for storing RVIC parameter files.
-    dpc_VIC_level1 : Dataset
-        Level-1 VIC dataset used to determine pour points.
-    params_dataset_level1 : Dataset
-        Level-1 dataset containing flow direction and routing parameters.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to determine pour points..
+
+    params_dataset_level1 : `netCDF.Dataset`
+        The parameter dataset for level 1, containing flow direction and routing parameters.
+    
     ppf_kwargs : dict, optional
         Keyword arguments for `buildPourPointFile`, by default an empty dictionary.
+        
     uh_params : dict, optional
         Parameters for `buildUHBOXFile`, including:
         - createUH_func: Function to create UH.
@@ -253,6 +249,7 @@ def buildRVICParam(
         - tp, mu, m: Shape parameters for UH function.
         - plot_bool: Whether to generate UH plots.
         - max_day, max_day_range, max_day_converged_threshold: Parameters for convergence criteria.
+        
     cfg_params : dict, optional
         Configuration parameters for `buildParamCFGFile`, including:
         - VELOCITY: Flow velocity.
@@ -293,19 +290,19 @@ def buildRVICParam(
 
     # build rvic parameters
     logger.debug(
-        f"Reading RVIC parameter configuration from {evb_dir.rvic_param_cfg_file_path}."
+        f"Reading RVIC parameter configuration from {evb_dir.rvic_param_cfg_file_path}... ..."
     )
     param_cfg_file_dict = read_cfg_to_dict(evb_dir.rvic_param_cfg_file_path)
 
     if HAS_RVIC:
-        logger.info("Executing RVIC parameter computation")
+        logger.info("Executing RVIC parameter computation... ...")
         rvic_parameters(param_cfg_file_dict, numofproc=1)
         logger.info("RVIC parameter computation completed")
     else:
         logger.error("RVIC module is not available. Cannot proceed with buildRVICParam")
         raise ImportError("no rvic for buildRVICParam")
 
-    logger.info("RVIC parameter file generation completed successfully")
+    logger.info("RVIC parameter file generation successfully")
 
 
 def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
@@ -317,10 +314,11 @@ def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure containing paths for RVIC parameter and hydroanalysis files.
-    params_dataset_level1 : Dataset
-        Level-1 VIC dataset that provides latitude, longitude, and masking information.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+    params_dataset_level1 : `netCDF.Dataset`
+        The parameter dataset for level 1, containing flow direction and routing parameters.
 
     Returns
     -------
@@ -346,33 +344,33 @@ def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
     flow_distance_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_distance.tif")
 
     # ====================== read general information ======================
-    logger.debug("Reading latitude, longitude, and mask data from VIC parameters")
+    logger.debug("Reading latitude, longitude, and mask data from VIC parameters... ...")
     params_lat = params_dataset_level1.variables["lat"][:]
     params_lon = params_dataset_level1.variables["lon"][:]
     params_mask = params_dataset_level1.variables["run_cell"][:, :]
 
     # ====================== read flow_direction and flow_acc ======================
-    logger.debug(f"Reading flow direction data from {flow_direction_path}")
+    logger.debug(f"Reading flow direction data from {flow_direction_path}... ...")
     with rasterio.open(flow_direction_path, "r", driver="GTiff") as dataset:
         flow_direction_array = dataset.read(1)
 
-    logger.debug(f"Reading flow accumulation data from {flow_acc_path}")
+    logger.debug(f"Reading flow accumulation data from {flow_acc_path}... ...")
     with rasterio.open(flow_acc_path, "r", driver="GTiff") as dataset:
         flow_acc_array = dataset.read(1)
 
-    logger.debug(f"Reading flow distance data from {flow_distance_path}")
+    logger.debug(f"Reading flow distance data from {flow_distance_path}... ...")
     with rasterio.open(flow_distance_path, "r", driver="GTiff") as dataset:
         flow_distance_array = dataset.read(1)
 
     # ====================== combine them into a nc file ======================
     # create nc file
-    logger.debug(f"Creating NetCDF file: {flow_direction_file_path}")
+    logger.debug(f"Creating NetCDF file: {flow_direction_file_path}... ...")
     flow_direction_dataset = createFlowDirectionFile(
         flow_direction_file_path, params_lat, params_lon
     )
 
     # change type
-    logger.debug("Processing and masking data")
+    logger.debug("Processing and masking data... ...")
     params_mask_array = deepcopy(params_mask)
     params_mask_array = params_mask_array.astype(int)
     flow_direction_array = flow_direction_array.astype(int)
@@ -400,7 +398,7 @@ def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
     flow_direction_dataset.close()
 
     logger.info(
-        f"RVIC flow direction file generation completed successfully, saved to: {flow_direction_file_path}"
+        f"RVIC flow direction file generation successfully, saved to: {flow_direction_file_path}"
     )
 
 
@@ -414,14 +412,18 @@ def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure containing paths for RVIC parameter files.
-    dpc_VIC_level1 : Dataset, optional
-        Level-1 VIC dataset that includes basin shapefile information.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to determine pour points..
+
     names : list, optional
         List of names for the pour points.
+        
     lons : list, optional
         List of longitude coordinates for pour points.
+        
     lats : list, optional
         List of latitude coordinates for pour points.
 
@@ -436,7 +438,6 @@ def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats
     - If `dpc_VIC_level1` is not provided, manually specified coordinates must be supplied.
     - Ensure that flow accumulation data is checked to verify pour point locations.
     """
-    # * dpc_VIC_level1.basin_shp should contain "camels_topo" attributes
     #! you should check it with FlowAcc (source area)
 
     logger.info("Starting to generate pour point file... ...")
@@ -449,7 +450,7 @@ def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats
     pourpoint_file = pd.DataFrame(columns=["lons", "lats", "names"])
 
     if dpc_VIC_level1 is not None:
-        logger.info("Extracting pour point data from basin shapefile")
+        logger.info("Extracting pour point data from basin shapefile... ...")
         try:
             x, y = (
                 dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0],
@@ -466,9 +467,9 @@ def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats
     else:
         logger.info("Using manually provided pour point data")
         if lons is None or lats is None or names is None:
-            logger.error("Missing longitude, latitude, or name data for pour points.")
+            logger.error("Missing longitude, latitude, or name data for pour points")
             raise ValueError(
-                "Longitude, latitude, and name lists must be provided when dpc_VIC_level1 is None."
+                "Longitude, latitude, and name lists must be provided when dpc_VIC_level1 is None"
             )
 
         pourpoint_file.lons = lons
@@ -478,7 +479,7 @@ def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats
     # ====================== Save pour point file ======================
     pourpoint_file.to_csv(pourpoint_file_path, header=True, index=False)
     logger.info(
-        f"Pour point file generation completed successfully, saved to {pourpoint_file_path}"
+        f"Pour point file generation successfully, saved to {pourpoint_file_path}"
     )
 
 
@@ -491,10 +492,12 @@ def buildUHBOXFile(evb_dir, createUH_func=create_uh.createGUH, **kwargs):
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure containing paths for UHBOX files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
     createUH_func : function, optional
         Function used to generate the unit hydrograph, default is `create_uh.createGUH`.
+        
     **kwargs : dict
         Additional parameters to be passed to the `createUH_func`.
 
@@ -517,7 +520,7 @@ def buildUHBOXFile(evb_dir, createUH_func=create_uh.createGUH, **kwargs):
     UHBOX_file.to_csv(evb_dir.uhbox_file_path, header=True, index=False)
 
     logger.info(
-        f"UHBOX file generation completed successfully, saved to {evb_dir.uhbox_file_path}"
+        f"UHBOX file generation successfully, saved to {evb_dir.uhbox_file_path}"
     )
 
     return max_day
@@ -540,18 +543,24 @@ def buildParamCFGFile(
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure containing paths for RVIC configuration files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
     VELOCITY : float, optional
-        Flow velocity parameter, default is 1.5.
+        Flow velocity parameter, default is 1.5, and the acceptable range is 1.0 to 3.0 m/s.
+        
     DIFFUSION : float, optional
-        Diffusion coefficient for routing, default is 800.0.
+        Diffusion coefficient for routing, default is 800.0, and the acceptable range is 200 to 4000m3/s.
+        
     OUTPUT_INTERVAL : int, optional
-        Time interval (seconds) for output, default is 86400 (1 day).
+        Time interval (seconds) for output, default is 86400 seconds (1 day), and should typically be set as a multiple of 60.
+        
     SUBSET_DAYS : int, optional
         Number of days used for subset processing, default is 10.
+        
     CELL_FLOWDAYS : int, optional
         Flow duration at the cell level (days), default is 2.
+        
     BASIN_FLOWDAYS : int, optional
         Flow duration at the basin level (days), default is 50.
 
@@ -588,7 +597,7 @@ def buildParamCFGFile(
         param_cfg_file.write(configfile)
 
     logger.info(
-        f"RVIC parameter configuration file generation completed successfully, saved to {evb_dir.rvic_param_cfg_file_path}"
+        f"RVIC parameter configuration file generation successfully, saved to {evb_dir.rvic_param_cfg_file_path}"
     )
 
 
@@ -606,12 +615,15 @@ def buildConvCFGFile(
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure containing paths for RVIC configuration files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
     RUN_STARTDATE : str, optional
-        The start date for the RVIC run in "YYYY-MM-DD-HH" format. Default is "1979-09-01-00".
+        The start date for the RVIC run in "YYYY-MM-DD-HH" format.
+        
     DATL_FILE : str, optional
         The name of the input runoff file. Default is "rasm_sample_runoff.nc".
+        
     PARAM_FILE_PATH : str, optional
         The path to the RVIC parameter file. Default is "sample_rasm_parameters.nc".
 
@@ -645,7 +657,7 @@ def buildConvCFGFile(
         conv_cfg_file.write(configfile)
 
     logger.info(
-        f"RVIC convolution configuration file generation completed successfully, saved to {evb_dir.rvic_conv_cfg_file_path}"
+        f"RVIC convolution configuration file generation successfully, saved to {evb_dir.rvic_conv_cfg_file_path}"
     )
 
 
@@ -669,24 +681,33 @@ def modifyRVICParam_for_pourpoint(
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        Directory structure containing paths for RVIC configuration files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
     pourpoint_lon : float
         Longitude of the pour point.
+        
     pourpoint_lat : float
         Latitude of the pour point.
+        
     pourpoint_direction_code : int
         Flow direction code for the pour point (e.g., based on D8 direction encoding).
+        
     params_dataset_level1 : Dataset
         Parameter dataset at level 1, used to extract grid-based information.
-    domain_dataset : Dataset
+    
+    domain_dataset : `netCDF.Dataset`, optional
         Domain dataset containing spatial attributes.
-    reverse_lat : bool, optional
-        Whether to reverse the latitude ordering (default is True).
+    
+    reverse_lat : bool
+        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+
     stream_acc_threshold : float, optional
-        Stream accumulation threshold for identifying major streams (default is 100.0).
+        The threshold value for stream accumulation. Default is 100.0. It affect the results generated by hydroanalysis_arcpy.
+
     flow_direction_pkg : str, optional
-        Package used for flow direction determination (default is "wbw").
+        The package used to calculate flow direction. Options are "arcpy" and "wbw". Default is "wbw".
+
     crs_str : str, optional
         Coordinate reference system (CRS) in EPSG format (default is "EPSG:4326").
 
@@ -720,4 +741,4 @@ def modifyRVICParam_for_pourpoint(
         pourpoint_direction_code=pourpoint_direction_code,
     )
 
-    logger.info("RVIC parameter modification for pour point completed successfully")
+    logger.info("RVIC parameter modification for pour point successfully")

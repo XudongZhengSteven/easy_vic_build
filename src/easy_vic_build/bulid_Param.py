@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: build_Param
+build_Param - A Python module for building VIC parameter file.
 
 This module provides functions for constructing the Parameter file of the VIC model.
 It includes capabilities to:
@@ -15,18 +15,20 @@ It includes capabilities to:
 
 Functions:
 ----------
-    - buildParam_level0: Build the parameter dataset for level 0, consisting of two components: `buildParam_level0_basic` and `buildParam_level0_by_g`.
-    - buildParam_level0_basic: Build the basic parameter dataset for level 0.
-    - buildParam_level0_by_g: Use global parameter lists and TF to generate the parameter dataset.
-    - buildParam_level1: Build Level 1 parameters based on TF and dpc information.
-    - scaling_level0_to_level1_search_grids: Searching grids for scaling grids from level 0 to level 1 (Matching).
-    - scaling_level0_to_level1: Scaling the grid parameters from level 0 to level 1 based on matching grids.
+    - `buildParam_level0`: Build the parameter dataset for level 0, consisting of two components: `buildParam_level0_basic` and `buildParam_level0_by_g`.
+    - `buildParam_level0_basic`: Build the basic parameter dataset for level 0.
+    - `buildParam_level0_by_g`: Use global parameter lists and TF to generate the parameter dataset.
+    - `buildParam_level1`: Build Level 1 parameters based on TF and dpc information.
+    - `scaling_level0_to_level1_search_grids`: Searching grids for scaling grids from level 0 to level 1 (Matching).
+    - `scaling_level0_to_level1`: Scaling the grid parameters from level 0 to level 1 based on matching grids.
 
 Usage:
 ------
-    To use this module, provide dpc instances containing information about soil and vegetation information at level 0 and level 1, respectively.
-    An evb_dir instance is also required. To generate parameters at level 0, provide a g_list.
-    The Transfer function and scaling operator is set in params_func.TransferFunction and params_func.Scaling_operator module.
+    1. Call `buildParam_level0` and provide g_list as well as dpc instances to generate basic params_dataset_level0.
+    2. Call `buildParam_level1` to generate params_dataset_level1.
+    3. Call `scaling_level0_to_level1_search_grids` to search grids for match grids at level 0 and level 1.
+    4. Call `scaling_level0_to_level1` to scale params_dataset_level0 to params_dataset_level1.
+    Note: The Transfer function and scaling operator is set in params_func.TransferFunction and params_func.Scaling_operator module.
 
 Example:
 --------
@@ -52,14 +54,14 @@ Example:
 
 Dependencies:
 -------------
-    - tools.params_func: Custom utility functions.
-    - tools.utilities: For measuring function execution time.
-    - tools.decoractors: For measuring function execution time.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+    - `numpy`: For numerical computations and array manipulations.
+    - `bulid_Domain.cal_mask_frac_area_length`: For calculating mask fraction, area, and length within a domain.
+    - `tools.decoractors`: For measuring function execution time.
+    - `tools.dpc_func`: For data processing and computation functions.
+    - `tools.geo_func`: For geometric calculations and spatial operations.
+    - `tools.params_func`: Custom utility functions for parameter handling.
+    - `tools.utilities`: Custom utility functions.
+    - `tools.decoractors`: For measuring function execution time (duplicate entry, consider consolidating).
 
 """
 
@@ -96,33 +98,44 @@ def buildParam_level0(
 
     Parameters:
     -----------
-    evb_dir : str
-        The directory path for the configuration files.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
     g_list : list
-        A list of global parameters for the domain.
-    dpc_VIC_level0 : object
-        An object containing grid shape information.
+        A list of global parameters (g-parameters).
+        
+    dpc_VIC_level0 : `dpc_VIC_level0`
+        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.
+
     reverse_lat : bool
         Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+        
     stand_grids_lat : list, optional
         A list of standard latitudes. If not provided, will be calculated based on the grid shape.
+        
     stand_grids_lon : list, optional
         A list of standard longitudes. If not provided, will be calculated based on the grid shape.
+        
     rows_index : list, optional
         A list of row indices for the grid. If not provided, will be calculated based on the grid shape.
+        
     cols_index : list, optional
         A list of column indices for the grid. If not provided, will be calculated based on the grid shape.
 
     Returns:
     --------
-    params_dataset_level0 : object
+    params_dataset_level0 : `netCDF.Dataset`
         The parameter dataset for level 0.
+        
     stand_grids_lat : list
         A list of standard latitudes.
+        
     stand_grids_lon : list
         A list of standard longitudes.
+        
     rows_index : list
         A list of row indices for the grid.
+        
     cols_index : list
         A list of column indices for the grid.
 
@@ -137,14 +150,14 @@ def buildParam_level0(
 
     ## ======================= buildParam_level0_basic =======================
     # Call the buildParam_level0_basic function to generate the base parameters
-    logger.info("Calling buildParam_level0_basic")
+    logger.info("Calling buildParam_level0_basic... ...")
     params_dataset_level0 = buildParam_level0_basic(
         evb_dir, dpc_VIC_level0, reverse_lat
     )
 
     ## ======================= buildParam_level0_by_g =======================
     # Call buildParam_level0_by_g to further refine the parameters based on grid list
-    logger.info("Calling buildParam_level0_by_g")
+    logger.info("Calling buildParam_level0_by_g... ...")
     params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = (
         buildParam_level0_by_g(
             params_dataset_level0,
@@ -159,7 +172,7 @@ def buildParam_level0(
     )
 
     # Log the successful completion of the parameter building
-    logger.info("Building params_dataset_level0 completed successfully")
+    logger.info("Building params_dataset_level0 successfully")
 
     return (
         params_dataset_level0,
@@ -178,38 +191,40 @@ def buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat=True):
 
     Parameters
     ----------
-    evb_dir : str
-        Directory path for configuration files.
-    dpc_VIC_level0 : object
-        dpc object containing grid shape information.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+
+    dpc_VIC_level0 : `dpc_VIC_level0`
+        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.
+
     reverse_lat : bool
         Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
 
     Returns
     -------
-    params_dataset_level0 : object
-        The generated parameter dataset for level 0.
+    params_dataset_level0 : `netCDF.Dataset`
+        The parameter dataset for level 0.
     """
     # Log the start of the parameter building process
     logger.info("Starting to build basic params_dataset_level0... ...")
 
     # ===================== Grids Map Array =====================
     # Call grids_array_coord_map to generate the grid coordinates and map indices
-    logger.debug("Generating grid coordinates and map indices")
+    logger.debug("Generating grid coordinates and map indices... ...")
     lon_list_level0, lat_list_level0, lon_map_index_level0, lat_map_index_level0 = (
         grids_array_coord_map(dpc_VIC_level0.grid_shp, reverse_lat=reverse_lat)
     )  # * all lat set as reverse if True
 
     ## ====================== create parameter ======================
     # Create the parameter dataset using the given latitudes and longitudes
-    logger.debug("Creating parameter dataset for level 0")
+    logger.debug("Creating parameter dataset for level 0... ...")
     params_dataset_level0 = createParametersDataset(
         evb_dir.params_dataset_level0_path, lat_list_level0, lon_list_level0
     )
 
     ## ===================== level0: assign values for general variables  ======================
     logger.info(
-        "Assigning values for general variables (lat, lon, nlayer, root_zone, veg_class, month)"
+        "Assigning values for general variables (lat, lon, nlayer, root_zone, veg_class, month)... ..."
     )
 
     # Dimension variables: lat, lon, nlayer, root_zone, veg_class, month
@@ -233,7 +248,7 @@ def buildParam_level0_basic(evb_dir, dpc_VIC_level0, reverse_lat=True):
 
     # Log the successful completion of the parameter building
     logger.info(
-        f"Building basic params_dataset_level0 completed successfully, params_dataset_level0 file has been built at {evb_dir.params_dataset_level0_path}"
+        f"Building basic params_dataset_level0 successfully, params_dataset_level0 file has been saved to {evb_dir.params_dataset_level0_path}"
     )
 
     return params_dataset_level0
@@ -256,8 +271,9 @@ def buildParam_level0_by_g(
 
     Parameters
     ----------
-    params_dataset_level0 : object
-        The parameter dataset for level 0 that will be modified and built.
+    params_dataset_level0 : `netCDF.Dataset`
+        The parameter dataset for level 0.
+        
     g_list : list of float
         Global parameters used in building the parameter dataset. The list is organized as follows:
         - [0] total_depth (g)
@@ -283,29 +299,39 @@ def buildParam_level0_by_g(
         - [34] Wpwp_FRACT (g)
         - [35] rough (g), can be set as 1
         - [36] snow rough (g), can be set as 1
-    dpc_VIC_level0 : object
-        dpc object containing grid shape information.
+        
+    dpc_VIC_level0 : `dpc_VIC_level0`
+        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.
+        
     reverse_lat : bool, optional, default=True
         Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small).
+        
     stand_grids_lat : list of float, optional
         List of standard latitudes for the grid. If not provided, will be calculated based on grid shape.
+        
     stand_grids_lon : list of float, optional
         List of standard longitudes for the grid. If not provided, will be calculated based on grid shape.
+        
     rows_index : list of int, optional
         List of row indices for grid positions. If not provided, will be calculated based on grid shape.
+        
     cols_index : list of int, optional
         List of column indices for grid positions. If not provided, will be calculated based on grid shape.
 
     Returns
     -------
-    params_dataset_level0 : object
-        The modified parameter dataset for Level 0 after applying global parameters.
+    params_dataset_level0 : `netCDF.Dataset`
+        The parameter dataset for level 0 after applying global parameters.
+        
     stand_grids_lat : list of float
         The list of standard latitudes used in the grid.
+        
     stand_grids_lon : list of float
         The list of standard longitudes used in the grid.
+        
     rows_index : list of int
         List of row indices for the grid.
+        
     cols_index : list of int
         List of column indices for the grid.
 
@@ -335,7 +361,7 @@ def buildParam_level0_by_g(
         logger.debug("Rows and columns index created")
 
     ## ======================= level0: Transfer function =======================
-    logger.info("Generate parameters based on Transfer function")
+    logger.info("Generating parameters based on Transfer function... ...")
 
     # TF
     tf_VIC = TF_VIC()
@@ -902,7 +928,7 @@ def buildParam_level0_by_g(
     logger.debug("snow_rough parameters assigned")
 
     # Log the successful completion of the parameter building
-    logger.info(f"Building params_dataset_level0 by g completed successfully")
+    logger.info(f"Building params_dataset_level0 by g-parameters successfully")
 
     return (
         params_dataset_level0,
@@ -929,33 +955,44 @@ def buildParam_level1(
 
     Parameters
     ----------
-    evb_dir : object
-        An object containing the path to the model parameter directory. It should include `params_dataset_level1_path`.
-    dpc_VIC_level1 : object
-        An object containing geographic information and data sources, used to provide grid shapes and other geo-data.
-    reverse_lat : bool, optional, default=True
-        Whether to reverse the latitude. If True, the latitude is reversed.
-    domain_dataset : object, optional
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 0 of the VIC model.
+    
+    reverse_lat : bool
+        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+
+    domain_dataset : `netCDF.Dataset`, optional
         Domain dataset containing terrain and mask information. If not provided, mask will be computed based on `dpc_VIC_level1`.
+    
     stand_grids_lat : list of float, optional
         A list of standard grid latitudes. If not provided, will be calculated based on the grid shape.
+        
     stand_grids_lon : list of float, optional
         A list of standard grid longitudes. If not provided, will be calculated based on the grid shape.
+        
     rows_index : list of int, optional
         A list of row indices specifying grid positions. If not provided, will be calculated based on the grid shape.
+    
     cols_index : list of int, optional
         A list of column indices specifying grid positions. If not provided, will be calculated based on the grid shape.
 
     Returns
     -------
-    params_dataset_level1 : object
-        The constructed parameter dataset for Level 1, including grid and mask information.
+    params_dataset_level1 : `netCDF.Dataset`
+        The parameter dataset for level 1.
+        
     stand_grids_lat : list of float
         The list of standard grid latitudes used in the dataset.
+        
     stand_grids_lon : list of float
         The list of standard grid longitudes used in the dataset.
+        
     rows_index : list of int
         The list of row indices used in the grid.
+        
     cols_index : list of int
         The list of column indices used in the grid.
     """
@@ -992,7 +1029,7 @@ def buildParam_level1(
     tf_VIC = TF_VIC()
 
     ## ===================== level1: assign values for general variables  ======================
-    logger.info("Generate parameters based on Transfer function")
+    logger.info("Generating parameters based on Transfer function... ...")
 
     # dimension variables: lat, lon, nlayer, root_zone, veg_class, month
     params_dataset_level1.variables["lat"][:] = np.array(
@@ -1473,7 +1510,7 @@ def buildParam_level1(
 
     # Log the successful completion of the parameter building
     logger.info(
-        f"Building params_dataset_level1 completed successfully, params_dataset_level1 file has been built at {evb_dir.params_dataset_level1_path}"
+        f"Building params_dataset_level1 successfully, params_dataset_level1 file has been saved to {evb_dir.params_dataset_level1_path}"
     )
 
     return (
@@ -1487,17 +1524,18 @@ def buildParam_level1(
 
 def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_level1):
     """
-    Searching grids for scaling grids from level 0 to level 1 (Matching).
+    Searching grids for scaling grids from level 0 to level 1 (Matching grids at different levels).
 
     This function reads longitude and latitude values from the parameter datasets of level 0 and level 1,
     calculates the grid resolutions, creates 2D mesh grids for level 1, and searches for the closest
-    matching grid indices between level 0 and level 1. The function then converts the results into boolean
-    indices for the corresponding grids.
+    matching grid indices between level 0 and level 1 with `search_grids.search_grids_radius_rectangle`.
+    The function then converts the results into boolean indices for the corresponding grids.
 
     Parameters
     ----------
     params_dataset_level0 : object
         The parameter dataset for level 0, containing the longitude and latitude values of the original grid.
+        
     params_dataset_level1 : object
         The parameter dataset for level 1, containing the longitude and latitude values of the target grid.
 
@@ -1505,6 +1543,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
     -------
     searched_grids_index : array
         The indices of the grids from level 0 that correspond to the grids of level 1.
+        
     searched_grids_bool_index : array
         Boolean indices indicating which grids from level 0 match the grids from level 1.
     """
@@ -1514,7 +1553,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
 
     # read lon, lat from params, cal res
     logger.debug(
-        "Reading longitude and latitude values from level 0 and level 1 datasets"
+        "Reading longitude and latitude values from level 0 and level 1 datasets... ..."
     )
     lon_list_level0, lat_list_level0 = (
         params_dataset_level0.variables["lon"][:],
@@ -1549,7 +1588,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
     logger.debug(f"Resolution for level 1: lon {res_lon_level1}, lat {res_lat_level1}")
 
     # Create 2D meshgrid for level 1 and flatten
-    logger.debug("Creating 2D meshgrid for level 1")
+    logger.debug("Creating 2D meshgrid for level 1... ...")
     lon_list_level1_2D, lat_list_level1_2D = np.meshgrid(
         lon_list_level1, lat_list_level1
     )
@@ -1557,7 +1596,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
     lat_list_level1_2D_flatten = lat_list_level1_2D.flatten()
 
     # Search for corresponding grids between level 0 and level 1
-    logger.debug("Searching for matching grids from level 0 to level 1")
+    logger.debug("Searching for matching grids from level 0 to level 1... ...")
     searched_grids_index = search_grids.search_grids_radius_rectangle(
         dst_lat=lat_list_level1_2D_flatten,
         dst_lon=lon_list_level1_2D_flatten,
@@ -1568,13 +1607,13 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
     )
 
     # Convert search results into boolean indices
-    logger.debug("Converting search results into boolean indices")
+    logger.debug("Converting search results into boolean indices... ...")
     searched_grids_bool_index = searched_grids_index_to_bool_index(
         searched_grids_index, lat_list_level0, lon_list_level0
     )
 
     logger.info(
-        "Searching grids for scaling grids from level 0 to level 1 completed successfully"
+        "Searching grids for scaling grids from level 0 to level 1 successfully"
     )
     return searched_grids_index, searched_grids_bool_index
 
@@ -1584,30 +1623,31 @@ def scaling_level0_to_level1(
     params_dataset_level0, params_dataset_level1, searched_grids_bool_index=None
 ):
     """
-    Scaling the grid parameters from level 0 to level 1 based on matching grids.
+    Scaling the parameters from level 0 to level 1 based on matching grids.
 
     This function takes the parameters from the level 0 and level 1 datasets, and scales the grid
     parameters from the level 0 resolution to the level 1 resolution. It searches for the matching
     grids between the two levels and then returns the level 1 dataset with the corresponding data
     mapped from level 0, along with a boolean index indicating which grids in level 0 correspond
-    to the grids in level 1.
+    to the grids in level 1. The scaling operators are applied.
 
     Parameters
     ----------
-    params_dataset_level0 : object
-        The parameter dataset for level 0, containing the longitude, latitude, and other variables
-        representing the grid at level 0.
-    params_dataset_level1 : object
-        The parameter dataset for level 1, containing the longitude, latitude, and other variables
-        representing the grid at level 1.
+    params_dataset_level0 : `netCDF.Dataset`
+        The parameter dataset for level 0.
+        
+    params_dataset_level1 : `netCDF.Dataset`
+        The parameter dataset for level 1.
+        
     searched_grids_bool_index : array-like, optional, default=None
         Boolean indices indicating which grids from level 0 match the grids from level 1.
         If not provided, it is calculated within the function.
 
     Returns
     -------
-    params_dataset_level1 : object
+    params_dataset_level1 : `netCDF.Dataset`
         The parameter dataset for level 1, with values from level 0 mapped onto the grids of level 1.
+        
     searched_grids_bool_index : array
         Boolean indices indicating which grids from level 0 correspond to grids from level 1.
 
@@ -1638,7 +1678,7 @@ def scaling_level0_to_level1(
         )
 
     # ======================= scaling (resample) =======================
-    logger.info("Scaling based on Scaling_operator")
+    logger.info("Scaling based on Scaling_operator... ...")
     scaling_operator = Scaling_operator()
 
     # resample func
@@ -1923,7 +1963,7 @@ def scaling_level0_to_level1(
     logger.debug("Scaling snow_rough parameter completed")
 
     logger.info(
-        "Scaling params_dataset_level0 to params_dataset_level1 completed successfully"
+        "Scaling params_dataset_level0 to params_dataset_level1 successfully"
     )
 
     return params_dataset_level1, searched_grids_bool_index

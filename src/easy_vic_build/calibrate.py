@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: calibrate
+calibrate - A Python module for calibrating the VIC model.
 
 This module provides functionality for calibrating hydrological models using the NSGA-II genetic algorithm approach.
 It includes the implementation of the `NSGAII_VIC_SO` class for single-objective optimization and a placeholder
@@ -12,16 +12,16 @@ with various tools for parameter setup, evaluation metrics, and simulation, as w
 
 Classes:
 --------
-    - NSGAII_VIC_SO: Performs single-objective optimization using the NSGA-II genetic algorithm.
+    - `NSGAII_VIC_SO`: Performs single-objective optimization using the NSGA-II genetic algorithm.
       It inherits from `NSGAII_Base` and handles the calibration process by optimizing model parameters.
-    - NSGAII_VIC_MO: Placeholder for multi-objective optimization implementation (currently not implemented).
+    - `NSGAII_VIC_MO`: Placeholder for multi-objective optimization implementation (currently not implemented).
 
 Usage:
 ------
-    To use this module, initialize an instance of `NSGAII_VIC_SO` and configure the parameters,
-    including the calibration period and parameter bounds. The `apply_genetic_operators` method can be used to apply
-    the crossover and mutation operations to the offspring, while the `operatorSelect` method is used to select individuals
-    for the next generation.
+    1. Initialize an instance of `NSGAII_VIC_SO` with the necessary parameters and configuration.
+    2. Run the calibration process using the `run` method to optimize the model parameters.
+    3. Retrieve the best results using the `get_best_results` method to analyze the calibration performance.
+    4. Visualize the calibration results using the provided plotting functions.
 
 Example:
 --------
@@ -62,19 +62,14 @@ Example:
 
 Dependencies:
 -------------
-    - os: For handling file operations and directory structures.
-    - deap: A library for evolutionary algorithms, used for genetic operations like crossover, mutation, and selection.
-    - pandas: For data manipulation and analysis.
-    - netCDF4: For working with netCDF files to handle model output data.
-    - matplotlib: For visualizing the calibration results.
-    - .tools: Various utility and function modules for parameter setup, evaluation, and grid search.
-    - .bulid_Param, .build_RVIC_Param, .build_GlobalParam: Modules for constructing configuration files and setting up model parameters.
-    - .tools.decoractors: For applying the clock decorator to measure function execution time.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+    - `os`: For handling file operations and directory structures.
+    - `deap`: A library for evolutionary algorithms, used for genetic operations like crossover, mutation, and selection.
+    - `pandas`: For data manipulation and analysis.
+    - `netCDF4`: For working with netCDF files to handle model output data.
+    - `matplotlib`: For visualizing the calibration results.
+    - `.tools`: Various utility and function modules for parameter setup, evaluation, and grid search.
+    - `.bulid_Param`, `.build_RVIC_Param`, `.build_GlobalParam`: Modules for constructing configuration files and setting up model parameters.
+    - `.tools.decoractors`: For applying the clock decorator to measure function execution time.
 
 """
 
@@ -145,26 +140,26 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         Parameters
         ----------
-        evb_dir : object
-            The directory object containing paths to various files and directories for the VIC model setup.
+        evb_dir : `Evb_dir`
+            An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+        dpc_VIC_level0 : `dpc_VIC_level0`
+            An instance of the `dpc_VIC_level0` class.
 
-        dpc_VIC_level0 : object
-            The VIC model parameters for level 0 (base level).
+        dpc_VIC_level1 : `dpc_VIC_level1`
+            An instance of the `dpc_VIC_level1` class.
 
-        dpc_VIC_level1 : object
-            The VIC model parameters for level 1 (calibrated level).
+        date_period : list of str
+            The full date period for the simulation, typically in the format ["YYYYMMDD", "YYYYMMDD"].
+            
+        warmup_date_period : list of str
+            The warm-up period for the model, typically in the format ["YYYYMMDD", "YYYYMMDD"].
 
-        date_period : list
-            The full date period for the simulation, typically in the format [start_date, end_date].
+        calibrate_date_period : list of str
+            The calibration period for the model, typically in the format ["YYYYMMDD", "YYYYMMDD"].
 
-        warmup_date_period : list
-            The warm-up period for the model, typically in the format [start_date, end_date].
-
-        calibrate_date_period : list
-            The calibration period for the model, typically in the format [start_date, end_date].
-
-        verify_date_period : list
-            The verification period for the model, typically in the format [start_date, end_date].
+        verify_date_period : list of str
+            The verification period for the model, typically in the format ["YYYYMMDD", "YYYYMMDD"].
 
         rvic_OUTPUT_INTERVAL : int, optional
             The output interval for RVIC in seconds (default is 86400 seconds or 1 day).
@@ -183,11 +178,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
             crossover probability, and mutation probability (default is {"popSize": 40, "maxGen": 250, "cxProb": 0.7, "mutateProb": 0.2}).
 
         save_path : str, optional
-            The path to save the checkpoint file (default is "checkpoint.pkl").
+            The path to save the checkpoint file (default is "checkpoint.pkl"), it can be set as evb_dir.calibrate_cp_path.
 
-        reverse_lat : bool, optional
-            Whether to reverse the latitude for certain grid processing (default is True).
-
+        reverse_lat : bool
+            Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+        
         parallel : bool, optional
             Whether to enable parallel processing for the VIC model (default is False).
 
@@ -224,8 +219,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         self.verify_date_period = verify_date_period
 
         # clear Param
+        logger.info("Clear previous parameters from the VIC model directory")
         clearParam(self.evb_dir)
-        logger.info("Cleared previous parameters from the VIC model directory")
 
         # params boundary
         self.g_boundary = g_boundary
@@ -253,13 +248,13 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ]
 
         # set GlobalParam_dict
+        logger.debug("Set global parameters")
         self.set_GlobalParam_dict()
-        logger.debug("Global parameters set")
-
+        
         # get obs
+        logger.debug("Load observational data")
         self.get_obs()
-        logger.debug("Observational data loaded")
-
+        
         # get sim
         self.sim_path = ""
 
@@ -297,6 +292,21 @@ class NSGAII_VIC_SO(NSGAII_Base):
         This method sets the global parameters for simulation (e.g., model steps, start and end dates)
         and defines the output variables. It then passes the parameters to the `buildGlobalParam` function
         to generate the configuration file.
+        
+        Another set: perhaps it can be run at hourly scale
+        >>> GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
+                                        "SNOW_STEPS_PER_DAY": "24",
+                                        "RUNOFF_STEPS_PER_DAY": "24",
+                                        "STARTYEAR": str(warmup_date_period[0][:4]),
+                                        "STARTMONTH": str(int(warmup_date_period[0][4:6])),
+                                        "STARTDAY": str(int(warmup_date_period[0][6:])),
+                                        "ENDYEAR": str(calibrate_date_period[1][:4]),
+                                        "ENDMONTH": str(int(calibrate_date_period[1][4:6])),
+                                        "ENDDAY": str(int(calibrate_date_period[1][6:])),
+                                        "OUT_TIME_UNITS": "HOURS"},
+                            "Output": {"AGGFREQ": "NHOURS   1"},
+                            "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
+                            }
         """
         logger.debug("Setting global parameters for the simulation... ...")
         GlobalParam_dict = {
@@ -315,23 +325,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
             "Output": {"AGGFREQ": "NDAYS   1"},
             "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]},
         }
-        # perhaps it can be run at hourly scale
-        # GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "24",
-        #                                 "SNOW_STEPS_PER_DAY": "24",
-        #                                 "RUNOFF_STEPS_PER_DAY": "24",
-        #                                 "STARTYEAR": str(warmup_date_period[0][:4]),
-        #                                 "STARTMONTH": str(int(warmup_date_period[0][4:6])),
-        #                                 "STARTDAY": str(int(warmup_date_period[0][6:])),
-        #                                 "ENDYEAR": str(calibrate_date_period[1][:4]),
-        #                                 "ENDMONTH": str(int(calibrate_date_period[1][4:6])),
-        #                                 "ENDDAY": str(int(calibrate_date_period[1][6:])),
-        #                                 "OUT_TIME_UNITS": "HOURS"},
-        #                     "Output": {"AGGFREQ": "NHOURS   1"},
-        #                     "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
-        #                     }
 
         # buildGlobalParam
         buildGlobalParam(self.evb_dir, GlobalParam_dict)
+        
+        logger.debug("Set the global parameters successfully")
 
     def get_obs(self):
         """
@@ -355,6 +353,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
         factor_unit_feet2meter = 0.0283168
         self.obs.loc[:, "discharge(m3/s)"] = self.obs.loc[:, 4] * factor_unit_feet2meter
         self.obs.index = pd.to_datetime(date)
+        
+        logger.debug("Get the observation successfully")
 
     def get_sim(self):
         """
@@ -366,7 +366,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         Returns
         -------
-        sim_df : pandas.DataFrame
+        sim_df : `pandas.DataFrame`
             A DataFrame containing the daily average discharge values. The index of the DataFrame is the
             time in datetime format, and the columns are 'time' and 'discharge(m3/s)'.
 
@@ -447,15 +447,17 @@ class NSGAII_VIC_SO(NSGAII_Base):
                     sim_df.loc[:, "discharge(m3/s)"] = out_discharge
                     sim_df.index = pd.to_datetime(time_date)
 
-                    logger.debug(f"Read discharge data: {out_discharge[:5]}...")
+                    logger.debug(f"Reading discharge data: {out_discharge[:5]}... ...")
 
             except Exception as e:
-                logger.error(f"Error reading the simulation file {self.sim_path}: {e}")
+                logger.error(f"Error when reading the simulation file {self.sim_path}: {e}")
                 return None
 
         # Resample the discharge data to daily averages
         sim_df = sim_df.resample("D").mean()
         logger.debug("Aggregated discharge data to daily averages")
+        
+        logger.debug("Get simulation successfully")
 
         return sim_df
 
@@ -500,7 +502,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         Returns
         -------
-        creator.Individual
+        creator.Individual(params_samples): `creator.Individual`
             A new individual with sampled parameter values for the evolutionary algorithm.
 
         Notes
@@ -610,9 +612,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
         out = os.system(command_run_vic)
 
         if out == 0:
-            logger.debug("VIC model simulation completed successfully.")
+            logger.debug("VIC model simulation successfully.")
         else:
-            logger.error(f"VIC model simulation failed with exit code {out}.")
+            logger.error(f"VIC model simulation failed with exit code {out}, please check the VIC logs")
 
         return out
 
@@ -645,7 +647,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         try:
             convolution(conv_cfg_file_dict)
-            logger.info("RVIC convolution process completed successfully")
+            logger.info("RVIC convolution process successfully")
 
         except Exception as e:
             logger.error(f"RVIC convolution process failed: {e}", exc_info=True)
@@ -669,9 +671,9 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         Returns
         -------
-        Dataset
-            A NetCDF dataset object containing the adjusted VIC parameters at level 0.
-
+        params_dataset_level0 : `netCDF.Dataset`
+            The parameter dataset for level 0.
+            
         Notes
         -----
         - If `params_dataset_level0_path` exists, it updates the dataset with the given parameters.
@@ -683,7 +685,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         if os.path.exists(self.evb_dir.params_dataset_level0_path):
             logger.info(
-                f"Existing params_dataset_level0 found at {self.evb_dir.params_dataset_level0_path}. Updating parameters..."
+                f"Existing params_dataset_level0 found at {self.evb_dir.params_dataset_level0_path}. Updating parameters... ..."
             )
 
             # read and adjust by g
@@ -709,7 +711,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             logger.info("Successfully updated existing params_dataset_level0")
         else:
             logger.warning(
-                f"params_dataset_level0 not found at {self.evb_dir.params_dataset_level0_path}. Creating a new dataset..."
+                f"params_dataset_level0 not found at {self.evb_dir.params_dataset_level0_path}. Creating a new dataset... ..."
             )
             # build
             (
@@ -747,25 +749,25 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         Parameters
         ----------
-        params_dataset_level0 : Dataset
-            NetCDF dataset containing level 0 VIC parameters.
+        params_dataset_level0 : `netCDF.Dataset`
+            The parameter dataset for level 0.
 
         Returns
         -------
-        Dataset
-            NetCDF dataset containing adjusted level 1 VIC parameters.
+        params_dataset_level1 : `netCDF.Dataset`
+            The parameter dataset for level 1.
         """
         logger.info("Starting to adjust params_dataset_level1... ...")
 
         if os.path.exists(self.evb_dir.params_dataset_level1_path):
             # read
-            logger.info("params_dataset_level1 file exists. Reading existing dataset")
+            logger.info("params_dataset_level1 file exists. Reading existing dataset... ...")
             params_dataset_level1 = Dataset(
                 self.evb_dir.params_dataset_level1_path, "a", format="NETCDF4"
             )
         else:
             # build
-            logger.info("params_dataset_level1 file not found. Building new dataset")
+            logger.info("params_dataset_level1 file not found. Building new dataset... ...")
             domain_dataset = readDomain(self.evb_dir)
             (
                 params_dataset_level1,
@@ -797,7 +799,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         )
         self.scaling_searched_grids_bool_index = searched_grids_bool_index
 
-        logger.info("Adjusting params_dataset_level1 completed successfully")
+        logger.info("Adjust params_dataset_level1 successfully")
 
         return params_dataset_level1
 
@@ -807,8 +809,8 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         Parameters
         ----------
-        params_dataset_level0 : Dataset
-            NetCDF dataset containing level 0 VIC parameters.
+        params_dataset_level0 : `netCDF.Dataset`
+            The parameter dataset for level 0.
 
         Returns
         -------
@@ -825,7 +827,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         )
 
         # Check constraints
-        logger.debug("Checking wp < fc constraint")
+        logger.debug("Checking wp < fc constraint... ...")
         constraint_wp_fc_destroy = np.max(
             np.array(
                 params_dataset_level0.variables["wp"][:, :, :]
@@ -833,7 +835,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             )
         )
 
-        logger.debug("Checking Wpwp_FRACT < Wcr_FRACT constraint")
+        logger.debug("Checking Wpwp_FRACT < Wcr_FRACT constraint... ...")
         constraint_Wpwp_Wcr_FRACT_destroy = np.max(
             np.array(
                 params_dataset_level0.variables["Wpwp_FRACT"][:, :, :]
@@ -841,7 +843,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             )
         )
 
-        logger.debug("Checking depth_layer0 < depth_layer1 constraint")
+        logger.debug("Checking depth_layer0 < depth_layer1 constraint... ...")
         constraint_depth_destroy = np.max(
             np.array(
                 params_dataset_level0.variables["depth"][0, :, :]
@@ -872,6 +874,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ----------
         uh_params : list
             List of unit hydrograph parameters [tp, mu, m].
+            
         routing_params : list
             List of routing parameters [VELOCITY, DIFFUSION].
 
@@ -882,7 +885,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         logger.info("Starting to adjust RVIC parameters... ...")
 
         # UHBOXFile adjustment
-        logger.debug("Building UHBOXFile with provided unit hydrograph parameters")
+        logger.debug("Building UHBOXFile with provided unit hydrograph parameters... ...")
         uh_params_input = {
             "uh_dt": self.rvic_uhbox_dt,
             "tp": uh_params[0],
@@ -894,7 +897,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         uhbox_max_day = buildUHBOXFile(self.evb_dir, **uh_params_input, plot_bool=True)
 
         # ParamCFGFile adjust
-        logger.debug("Building ParamCFGFile with routing parameters")
+        logger.debug("Building ParamCFGFile with routing parameters... ...")
         rvic_param_cfg_params = {
             "VELOCITY": routing_params[0],
             "DIFFUSION": routing_params[1],
@@ -906,7 +909,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         buildParamCFGFile(self.evb_dir, **rvic_param_cfg_params)
 
         # Cleanup and directory setup
-        logger.debug("Removing old files and creating necessary directories")
+        logger.debug("Removing old files and creating necessary directories... ...")
         remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "params"))
         remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "plots"))
         remove_and_mkdir(os.path.join(self.evb_dir.RVICParam_dir, "logs"))
@@ -917,22 +920,22 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ]
 
         for fp in inputs_fpath:
-            logger.debug(f"Removing old input file: {fp}")
+            logger.debug(f"Removing old RVIC input file in: {fp}... ...")
             os.remove(fp)
 
         # build rvic_params
-        logger.debug("Reading RVIC parameter configuration")
+        logger.debug("Reading RVIC parameter configuration... ...")
         param_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_param_cfg_file_path)
 
         if HAS_RVIC:
-            logger.info("Running rvic_parameters")
+            logger.info("Running rvic_parameters... ...")
             rvic_parameters(param_cfg_file_dict, numofproc=1)
         else:
             logger.error("RVIC module not available for calibration")
             raise ImportError("No rvic for calibrate")
 
         # modify rout_param_path in GlobalParam
-        logger.debug("Updating GlobalParam with new routing parameters")
+        logger.debug("Updating GlobalParam with new routing parameters... ...")
         globalParam = GlobalParamParser()
         globalParam.load(self.evb_dir.globalParam_path)
         self.rout_param_path = os.path.join(
@@ -941,11 +944,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
         globalParam.set("Routing", "ROUT_PARAM", self.rout_param_path)
 
         # Write updated GlobalParam
-        logger.debug("Writing updated GlobalParam file")
+        logger.debug("Writing updated GlobalParam file... ...")
         with open(self.evb_dir.globalParam_path, "w") as f:
             globalParam.write(f)
 
-        logger.info("Adjusting RVIC parameters completed successfully")
+        logger.info("Adjusting RVIC parameters successfully")
 
     def adjust_rvic_conv_params(self):
         """
@@ -961,11 +964,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
         logger.info("Starting to adjust RVIC convolution parameters... ...")
 
         # build rvic_conv_cfg_params, construct RUN_STARTDATE from date_period
-        logger.debug("Formatting RUN_STARTDATE from date_period")
+        logger.debug("Formatting RUN_STARTDATE from date_period... ...")
         RUN_STARTDATE = f"{self.date_period[0][:4]}-{self.date_period[0][4:6]}-{self.date_period[0][6:]}-00"
 
         # Build RVIC convolution configuration
-        logger.debug("Building RVIC convolution configuration file")
+        logger.debug("Building RVIC convolution configuration file... ...")
         rvic_conv_cfg_params = {
             "RUN_STARTDATE": RUN_STARTDATE,
             "DATL_FILE": self.sim_fn,
@@ -975,10 +978,10 @@ class NSGAII_VIC_SO(NSGAII_Base):
         buildConvCFGFile(self.evb_dir, **rvic_conv_cfg_params)
 
         # Read and return configuration dictionary
-        logger.debug("Reading RVIC convolution configuration file")
+        logger.debug("Reading RVIC convolution configuration file... ...")
         conv_cfg_file_dict = read_cfg_to_dict(self.evb_dir.rvic_conv_cfg_file_path)
 
-        logger.info("Adjusting convolution parameter adjustment completed successfully")
+        logger.info("Adjusting convolution parameter adjustment successfully")
 
         return conv_cfg_file_dict
 
@@ -1109,6 +1112,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ----------
         ind : list
             List of parameter values including VIC, UH, and routing parameters.
+        
         GlobalParam_dict : dict
             Dictionary containing global parameter settings for VIC.
 
@@ -1139,11 +1143,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         # =============== adjust vic params based on ind ===============
         # adjust params_dataset_level0 based on params_g
-        logger.info("Adjusting params_dataset_level0")
+        logger.info("Adjusting params_dataset_level0... ...")
         params_dataset_level0 = self.adjust_vic_params_level0(params_g)
 
         # adjust params_dataset_level1 based on params_dataset_level0
-        logger.info("Adjusting params_dataset_level1")
+        logger.info("Adjusting params_dataset_level1... ...")
         params_dataset_level1 = self.adjust_vic_params_level1(params_dataset_level0)
 
         # close
@@ -1151,20 +1155,20 @@ class NSGAII_VIC_SO(NSGAII_Base):
         params_dataset_level1.close()
 
         # =============== adjust rvic params based on ind ===============
-        logger.info("Adjusting RVIC parameters.")
+        logger.info("Adjusting RVIC parameters... ...")
         self.adjust_rvic_params(uh_params, routing_params)
 
         # =============== run vic ===============
-        logger.info("Running VIC simulation")
+        logger.info("Running VIC simulation... ...")
         remove_files(self.evb_dir.VICResults_dir)
         remove_and_mkdir(self.evb_dir.VICLog_dir)
         out_vic = self.run_vic()
 
         # get simulation
-        logger.info("Retrieving simulation results")
+        logger.info("Retrieving simulation results... ...")
         sim = self.get_sim()
 
-        logger.info("VIC simulation completed successfully")
+        logger.info("VIC simulation successfully")
 
         return sim
 
@@ -1213,11 +1217,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
         }
 
         # simulate
-        logger.info("Running simulation with best parameters")
+        logger.info("Running simulation with best parameters... ...")
         sim = self.simulate(front, GlobalParam_dict)
 
         # get result
-        logger.info("Extracting calibration and verification results")
+        logger.info("Extracting calibration and verification results... ...")
         sim_cali = sim.loc[
             self.calibrate_date_period[0] : self.calibrate_date_period[1],
             "discharge(m3/s)",
@@ -1248,7 +1252,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
             os.path.join(self.evb_dir.VICResults_dir, "verify_result.csv")
         )
 
-        logger.info("Best results extraction completed successfully")
+        logger.info(f"Best results extraction successfully, saved to {self.evb_dir.VICResults_dir}, cali_result.csv and verify_result.csv")
 
         return cali_result, verify_result
 
@@ -1261,10 +1265,13 @@ class NSGAII_VIC_SO(NSGAII_Base):
         ----------
         parent1 : Individual
             The first parent individual.
+            
         parent2 : Individual
             The second parent individual.
+            
         low : array-like
             The lower bounds for the crossover.
+            
         up : array-like
             The upper bounds for the crossover.
 
@@ -1273,7 +1280,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         tuple
             The two offspring produced by the crossover.
         """
-        logger.debug("Performing crossover between two parents")
+        logger.debug("Performing crossover between two parents... ...")
         return tools.cxSimulatedBinaryBounded(
             parent1, parent2, eta=20.0, low=low, up=up
         )
@@ -1299,7 +1306,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         Individual
             The mutated individual.
         """
-        logger.debug("Performing mutation on individual")
+        logger.debug("Performing mutation on individual... ...")
         return tools.mutPolynomialBounded(ind, eta=20.0, low=low, up=up, indpb=1 / NDim)
 
     @staticmethod
@@ -1319,7 +1326,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         list of Individual
             The selected individuals.
         """
-        logger.debug("Performing selection on the population")
+        logger.debug("Performing selection on the population... ...")
         return tools.selNSGA2(population, popSize)
 
     def apply_genetic_operators(self, offspring):
@@ -1341,7 +1348,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         # it can be implemented by algorithms.varAnd
         # crossover
-        logger.debug("Starting crossover operation")
+        logger.debug("Starting crossover operation... ...")
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             if random.random() <= self.toolbox.cxProb:
                 logger.debug(f"Crossover between {child1} and {child2}")
@@ -1350,14 +1357,14 @@ class NSGAII_VIC_SO(NSGAII_Base):
                 del child2.fitness.values
 
         # mutate
-        logger.debug("Starting mutation operation")
+        logger.debug("Starting mutation operation... ...")
         for mutant in offspring:
             if random.random() <= self.toolbox.mutateProb:
                 logger.debug(f"Mutation applied to {mutant}")
                 self.toolbox.mutate(mutant, self.low, self.up, self.NDim)
                 del mutant.fitness.values
 
-        logger.info("Applying genetic operators to offspring completed successfully")
+        logger.info("Applying genetic operators to offspring successfully")
 
 
 class NSGAII_VIC_MO(NSGAII_VIC_SO):

@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: Evb_dir_class
+Evb_dir_class - A Python module for managing directory structures in the EVB.
 
 This module provides a class for managing directory structures related to different case scenarios in the VIC
 model. The `Evb_dir` class simplifies the creation, organization, and retrieval of directories required for
@@ -12,24 +12,34 @@ properly structured and accessible.
 
 Class:
 ------
-    - Evb_dir: A class to handle the creation and management of directory structures for different case
-               scenarios in the VIC model. The `Evb_dir` class defines methods and properties for managing
-               directories and paths related to the VIC model's operations.
-               It helps automate the creation of necessary directories for model configuration, calibration, and execution.
+    - `Evb_dir`: A class to handle the creation and management of directory structures for different case
+                 scenarios in the VIC model. The `Evb_dir` class defines methods and properties for managing
+                 directories and paths related to the VIC model's operations.
+                 It helps automate the creation of necessary directories for model configuration, calibration, and execution.
+
+Usage:
+------
+    1. Instantiate `Evb_dir` and pass parameters into it.
+    2. Call `Evb_dir.builddir` to build file tree structure.
+    3. Get and use the attributes of the `Evb_dir`.
+
+Example
+-------
+To use the Evb_dir
+    >>> from Evb_dir_class import Evb_dir
+    >>> project = Evb_dir(case_name="baseline_scenario")
+    >>> project.builddir()  # Creates ./baseline_scenario/...
+    >>> print(project.dpcFile_dir)  # Outputs "/abs/path/baseline_scenario/dpcFile"
+
 
 Dependencies:
 -------------
-    - os: Provides functions for interacting with the operating system, such as creating directories.
-    - shutil: Used for high-level file and directory operations, including copying and moving files.
+    - `os`: Provides functions for interacting with the operating system, such as creating directories.
+    - `shutil`: Used for high-level file and directory operations, including copying and moving files.
 
-Author:
--------
-    Xudong Zheng
-    Email: zhengxd@sehemodel.club
 """
 
 import os
-
 from . import logger
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
 
@@ -37,7 +47,7 @@ from .tools.utilities import check_and_mkdir, remove_and_mkdir
 # Class to manage directories and paths for the easy_vic_build package
 class Evb_dir:
     """
-    A class to handle the creation and management of directory structures for different case scenarios in the VIC model.
+    A class to handle the creation and management of directory structures for different case scenarios in the VIC model deployment process.
     """
 
     # Initialize the base directory paths

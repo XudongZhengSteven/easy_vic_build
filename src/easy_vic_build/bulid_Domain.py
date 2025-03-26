@@ -3,7 +3,7 @@
 # email: z786909151@163.com
 
 """
-Module: build_Domain
+build_Domain - A Python module for building domain file.
 
 This module provides functions for constructing and modifying the domain file.
 It includes capabilities to:
@@ -13,13 +13,15 @@ It includes capabilities to:
 
 Functions:
 ----------
-    - cal_mask_frac_area_length: Computes the mask, fractional area, and grid length based on the basin shape and grid.
-    - buildDomain: Builds the VIC domain NetCDF file using grid and basin data, creating variables for latitude, longitude, mask, area, and other domain attributes.
-    - modifyDomain_for_pourpoint: Modifies the VIC domain file by updating the mask for the pour point location.
+    - `cal_mask_frac_area_length`: Computes the mask, fractional area, and grid length based on the dpc files.
+    - `buildDomain`: Builds the VIC domain NetCDF file using the dpc files, creating variables for latitude, longitude, mask, area, and other domain attributes.
+    - `modifyDomain_for_pourpoint`: Modifies the VIC domain file by updating the mask for the pour point location.
 
 Usage:
 ------
-    To use this module, provide a domain directory and the required grid and basin shape data. You can then call `buildDomain` to generate the domain file and `modifyDomain_for_pourpoint` to modify the domain with a pour point.
+    1. To use this module, provide a `Evb_dir` instance and `dpc_VIC` instance. 
+    2. Call `buildDomain` to generate the domain file.
+    3. Call `modifyDomain_for_pourpoint` to modify the domain file with a pour point.
 
 Example:
 --------
@@ -35,15 +37,13 @@ Example:
 
 Dependencies:
 -------------
-    - matplotlib: For plotting the DPCs.
-    - pickle: For serializing the DPC data.
-    - tools.utilities: Custom utility functions.
-    - tools.decoractors: For measuring function execution time.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+    - `matplotlib`: For plotting the DPCs.
+    - `numpy`: For numerical computations and array operations.
+    - `netCDF4`: For reading and writing NetCDF files.
+    - `tqdm`: For displaying progress bars in iterative tasks.
+    - `tools.dpc_func.basin_grid_func`: For mapping grid coordinates to basin arrays.
+    - `tools.geo_func.search_grids`: For searching and processing grid-related data.
+    - `tools.decoractors`: For measuring function execution time.
 
 """
 
@@ -82,14 +82,18 @@ def buildDomain(
 
     Parameters:
     -----------
-    evb_dir : str
-        The directory where the domain file will be saved.
-    dpc_VIC : object
-        An object containing grid and basin shapefiles used to define the VIC grid.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
+    dpc_VIC : `dpc_VIC`
+        An instance of the `dpc_VIC` class to process data of the VIC model.
+        
     reverse_lat : bool, optional, default=True
         Flag to indicate whether to reverse latitudes (True for Northern Hemisphere: large -> small).
+        
     pourpoint_xindex : int, optional
         X-index of the pour point to modify the mask. If not provided, no modification is made.
+        
     pourpoint_yindex : int, optional
         Y-index of the pour point to modify the mask. If not provided, no modification is made.
 
@@ -260,7 +264,7 @@ def buildDomain(
         dst_dataset.Conventions = "CF-1.6"
 
     logger.info(
-        f"Building domain completed sucessfully, domain file has been built at {evb_dir.domainFile_path}"
+        f"Building domain sucessfully, domain file has been saved to {evb_dir.domainFile_path}"
     )
 
 
@@ -272,14 +276,18 @@ def cal_mask_frac_area_length(
 
     Parameters:
     -----------
-    dpc_VIC : object
-        An object containing grid and basin information.
+    dpc_VIC : `dpc_VIC`
+        An instance of the `dpc_VIC` class to process data of the VIC model.
+        
     reverse_lat : bool, optional, default=True
         Flag to indicate whether to reverse latitudes (True for Northern Hemisphere: large -> small).
+        
     plot : bool, optional, default=False
         Flag to determine whether to plot the results.
+        
     pourpoint_xindex : int, optional
         X-index of the pour point to modify the mask. If not provided, no modification is made.
+        
     pourpoint_yindex : int, optional
         Y-index of the pour point to modify the mask. If not provided, no modification is made.
 
@@ -287,14 +295,19 @@ def cal_mask_frac_area_length(
     --------
     mask : array
         The computed mask array for the grid.
+        
     frac : array
         The fractional area of the active grid cells.
+        
     frac_grid_in_basin : array
         The fraction of the grid area that falls within the basin.
+        
     area : array
         The area of each grid cell.
+        
     x_length : float
         The x-length of the grid cells.
+        
     y_length : float
         The y-length of the grid cells.
 
@@ -302,7 +315,7 @@ def cal_mask_frac_area_length(
     ------
     The function optionally generates a plot of the mask and grid dimensions if the `plot` flag is set to True.
     """
-    logger.info("Starting cal_mask_frac_area_length... ...")
+    logger.info("Starting to cal_mask_frac_area_length... ...")
 
     # get grid_shp and basin_shp from the dpc_VIC
     grid_shp = dpc_VIC.grid_shp
@@ -420,7 +433,7 @@ def cal_mask_frac_area_length(
         axes[1, 0].set_title("frac_grid_in_basin")
         axes[1, 1].set_title("area")
 
-    logger.info("cal_mask_frac_area_length completed successfully")
+    logger.info("cal_mask_frac_area_length successfully")
 
     return mask, frac, frac_grid_in_basin, area, x_length, y_length
 
@@ -431,17 +444,19 @@ def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
 
     Parameters:
     -----------
-    evb_dir : str
-        The directory where the domain file is stored.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
     pourpoint_lon : float
         The longitude of the pour point.
+        
     pourpoint_lat : float
         The latitude of the pour point.
 
     Returns:
     --------
     None
-        This function does not return anything. It updates the VIC domain file at the specified location.
+        This function does not return anything. It updates the domain file at the specified location.
 
     Notes:
     ------
@@ -475,4 +490,4 @@ def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
             f"Mask updated to 1 at grid ({searched_grid_index[0][0]}, {searched_grid_index[1][0]}) for the pour point."
         )
 
-    logger.info(f"Modifying domain completed sucessfully")
+    logger.info(f"Modifying domain sucessfully")

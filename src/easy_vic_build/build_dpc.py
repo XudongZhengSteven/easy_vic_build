@@ -3,22 +3,21 @@
 # email: z786909151@163.com
 
 """
-Module: build_dpc
+build_dpc - A Python module for building dpc (data processing class) classes.
 
 This module provides functionality for building and visualizing the Data Process Class (DPC)
 of the VIC model at three levels (level0, level1, and level2). It includes methods for data
 processing at each level, generating corresponding plots, and saving the processed data to disk.
 
-
 Functions:
 ----------
-    - builddpc: Main function for building and visualizing the DPCs at different levels.
+    - `builddpc`: Main function for building and visualizing the dpc at different levels.
 
 Usage:
 ------
-    1. Set your own data processing classes for each level (dpc_VIC_level0,
-    dpc_VIC_level1, and dpc_VIC_level2).
-    2. Call the builddpc function with appropriate arguments to process and plot the data.
+    1. Set and instantiate your own data processing classes for each level (`dpc_VIC_level0`,
+    `dpc_VIC_level1`, and `dpc_VIC_level2`).
+    2. Call the `builddpc` function with appropriate arguments to process and plot the data.
 
 Example:
 --------
@@ -57,15 +56,10 @@ Example:
 
 Dependencies:
 -------------
-    - matplotlib: For plotting the DPCs.
-    - pickle: For serializing the DPC data.
-    - tools.utilities: Custom utility functions.
-    - tools.decoractors: For measuring function execution time.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+    - `matplotlib`: For plotting the DPCs.
+    - `pickle`: For serializing the DPC data.
+    - `tools.utilities`: Custom utility functions.
+    - `tools.decoractors`: For measuring function execution time.
 
 """
 
@@ -91,21 +85,21 @@ def builddpc(
     plot_columns_level1=["annual_P_in_src_grid_Value", "umd_lc_major_Value"],
 ):
     """
-    Build and visualize the VIC model data process classes (dpc) at multiple levels.
+    Build and visualize the VIC model data process classes (dpc) at three levels (level0/1/2).
 
     Parameters:
     -----------
-    evb_dir : object
-        Directory object containing paths for saving data and plots.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
 
-    dpc_VIC_level0 : Class
-        Class to process data at level 0 of the VIC model.
+    dpc_VIC_level0 : `dpc_VIC_level0`
+        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.
 
-    dpc_VIC_level1 : Class
-        Class to process data at level 1 of the VIC model.
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 1 of the VIC model.
 
-    dpc_VIC_level2 : Class
-        Class to process data at level 2 of the VIC model.
+    dpc_VIC_level2 : `dpc_VIC_level2`
+        An instance of the `dpc_VIC_level2` class to process data at level 2 of the VIC model.
 
     dpc_VIC_level0_call_kwargs : dict, optional
         Keyword arguments to pass to the level 0 processing function.
@@ -138,28 +132,28 @@ def builddpc(
     logger.info("Starting to build dpc... ...")
 
     # ====================== build dpc level0 ======================
-    logger.info("build dpc_level0... ...")
+    logger.info("Building dpc_level0... ...")
     try:
         dpc_VIC_level0(**dpc_VIC_level0_call_kwargs)
-        logger.info("dpc_level0 build successfully")
+        logger.info("dpc_level0 is built")
     except Exception as e:
-        logger.error(f"Error building dpc_level0: {e}")
+        logger.error(f"Error while building dpc_level0: {e}")
 
     # ====================== build dpc level1 ======================
-    logger.info("build dpc_level1... ...")
+    logger.info("Building dpc_level1... ...")
     try:
         dpc_VIC_level1(**dpc_VIC_level1_call_kwargs)
-        logger.info("dpc_level1 build successfully")
+        logger.info("dpc_level1 is built")
     except Exception as e:
-        logger.error(f"Error building dpc_level1: {e}")
+        logger.error(f"Error while building dpc_level1: {e}")
 
     # ====================== build dpc level2 ======================
-    logger.info("build dpc_level2... ...")
+    logger.info("Building dpc_level2... ...")
     try:
         dpc_VIC_level2(**dpc_VIC_level2_call_kwargs)  # Read data, not read
-        logger.info("dpc_level2 build successfully")
+        logger.info("dpc_level2 is built")
     except Exception as e:
-        logger.error(f"Error building dpc_level2: {e}")
+        logger.error(f"Error while building dpc_level2: {e}")
 
     # ====================== plot ======================
     logger.info("Plotting dpc... ...")
@@ -204,25 +198,26 @@ def builddpc(
     try:
         with open(evb_dir.dpc_VIC_level0_path, "wb") as f:
             pickle.dump(dpc_VIC_level0, f)
-        logger.info(f"Saved dpc_level0 to {evb_dir.dpc_VIC_level0_path}")
+        logger.info(f"Save dpc_level0 to {evb_dir.dpc_VIC_level0_path}")
 
         with open(evb_dir.dpc_VIC_level1_path, "wb") as f:
             pickle.dump(dpc_VIC_level1, f)
-        logger.info(f"Saved dpc_level1 to {evb_dir.dpc_VIC_level1_path}")
+        logger.info(f"Save dpc_level1 to {evb_dir.dpc_VIC_level1_path}")
 
         with open(evb_dir.dpc_VIC_level2_path, "wb") as f:
             pickle.dump(dpc_VIC_level2, f)
-        logger.info(f"Saved dpc_level2 to {evb_dir.dpc_VIC_level2_path}")
+        logger.info(f"Save dpc_level2 to {evb_dir.dpc_VIC_level2_path}")
 
         fig_grid_basin.savefig(evb_dir.dpc_VIC_plot_grid_basin_path)
-        logger.info(f"Saved plot to {evb_dir.dpc_VIC_plot_grid_basin_path}")
+        logger.info(f"Save plot to {evb_dir.dpc_VIC_plot_grid_basin_path}")
 
         if plot_columns_level0 is not None:
             fig_columns.savefig(evb_dir.dpc_VIC_plot_columns_path)
-            logger.info(f"Saved columns plot to {evb_dir.dpc_VIC_plot_columns_path}")
+            logger.info(f"Save columns plot to {evb_dir.dpc_VIC_plot_columns_path}")
 
-        logger.info("Saving dpc successfully")
+        logger.info("Save dpc successfully")
+        
     except Exception as e:
-        logger.error(f"Error saving data: {e}")
+        logger.error(f"Error while saving data: {e}")
 
-    logger.info("Building dpc completed successfully")
+    logger.info("Building dpc successfully")

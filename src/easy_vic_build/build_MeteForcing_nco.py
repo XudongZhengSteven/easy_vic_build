@@ -2,20 +2,27 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 """
-Module: build_MeteForcing_nco
+build_MeteForcing_nco - A Python module for building meteorological foring files with nco package.
 
-This module provides functions for constructing meteorological forcing data for the VIC model using NetCDF Operators (NCO). It includes functionalities for clipping source meteorological forcing data to a basin boundary, regridding and formatting data, and resampling data to required time steps.
+This module provides functions for constructing meteorological forcing data for the VIC model using NetCDF Operators (NCO).
+It includes functionalities for clipping source meteorological forcing data to a basin boundary, regridding and formatting data, and resampling data to required time steps.
 
 Functions
 ---------
-    - buildMeteForcingnco: Orchestrates the meteorological forcing data preparation process.
-    - clip_src_data_for_basin: Clips the source meteorological forcing data to the given basin boundary.
-    - formationForcing: Regrids and formats meteorological forcing data for VIC input.
-    - resampleTimeForcing: Resamples meteorological forcing data from the source directory to a target time step and saves the results as NetCDF files.
+    - `buildMeteForcingnco`: Orchestrates the meteorological forcing data preparation process.
+    - `clip_src_data_for_basin`: Clips the source meteorological forcing data to the given basin boundary.
+    - `formationForcing`: Regrids and formats meteorological forcing data for VIC input.
+    - `resampleTimeForcing`: Resamples meteorological forcing data from the source directory to a target time step and saves the results as NetCDF files.
 
 Usage
 -----
-To use this module, provide an `evb_dir` instance that specifies the directory structure for meteorological forcing data. The `buildMeteForcingnco` function will handle data preparation, including clipping, formatting, and resampling.
+    1. provide an `evb_dir` instance that specifies the directory structure for original meteorological forcing data (`evb_dir.MeteForcing_src_dir`).
+    2. Specify the `evb_dir.MeteForcing_src_suffix` and `evb_dir.linux_share_temp_dir`.
+    3. Call `buildMeteForcingnco` with step 1 for Clipping data for basin.
+    4. cd to share_temp_home (go to Linux): run combineYearly.py (python combineYearly.py ./)
+    5. Call `buildMeteForcingnco` with step 2 for Combining yearly data and forming forcing.
+    6. Call `buildMeteForcingnco` with step 3 for Cleaning temporary data.
+    7. (Optional) Call `buildMeteForcingnco` with step 4 for Resampling time-based forcing data.
 
 Example
 -------
@@ -38,52 +45,42 @@ Example
     if not os.path.exists(os.path.join(evb_dir.linux_share_temp_dir, "combineYearly.py")):
         shutil.copy(combineYearly_py_path, os.path.join(evb_dir.linux_share_temp_dir, "combineYearly.py"))
 
-    # build MeteForcingnco: step=1
     buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
                          step=1, reverse_lat=True, check_search=False,
                          year_re_exp=r"\d{4}.nc4")
 
-    # go to linux, run combineYearly.py
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=2, reverse_lat=True, check_search=False,
+                        year_re_exp=r"\d{4}.nc4")
 
-    # build MeteForcingnco: step=2
-    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-    #                     step=2, reverse_lat=True, check_search=False,
-    #                     year_re_exp=r"\d{4}.nc4")
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=3, reverse_lat=True, check_search=False,
+                        year_re_exp=r"\d{4}.nc4")
 
-    # build MeteForcingnco: step=3
-    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-    #                     step=3, reverse_lat=True, check_search=False,
-    #                     year_re_exp=r"\d{4}.nc4")
-
-    # build MeteForcingnco: step=4, resample
-    # buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
-    #                     step=4, reverse_lat=True, check_search=False,
-    #                     year_re_exp=r"\d{4}.nc4",
-    #                     dst_time_hours=24)
+    buildMeteForcingnco(evb_dir, dpc_VIC_level1, date_period,
+                        step=4, reverse_lat=True, check_search=False,
+                        year_re_exp=r"\d{4}.nc4",
+                        dst_time_hours=24)
 
 Dependencies
 ------------
-    - os: For file and directory operations.
-    - numpy: For numerical computations.
-    - re: For handling regular expressions.
-    - shutil: For file and directory operations.
-    - datetime: For managing time and date.
-    - netCDF4: For reading and writing NetCDF files.
-    - cftime: For handling time units and calendars in NetCDF files.
-    - tqdm: For displaying progress bars during processing.
-    - matplotlib: For potential data visualization.
-    - xarray: For handling multidimensional arrays and working with NetCDF files.
-    - nco: For interacting with NetCDF Operators.
-    - CreateGDF: For creating geospatial data frames.
-    - search_grids: For searching grid points within a given domain.
-    - grids_array_coord_map: For mapping basin grid coordinates.
-    - check_and_mkdir, remove_and_mkdir: Utility functions for directory management.
-    - clock_decorator: A decorator for measuring function execution time.
+    - `os`: For file and directory operations.
+    - `numpy`: For numerical computations.
+    - `re`: For handling regular expressions.
+    - `shutil`: For file and directory operations.
+    - `datetime`: For managing time and date.
+    - `netCDF4`: For reading and writing NetCDF files.
+    - `cftime`: For handling time units and calendars in NetCDF files.
+    - `tqdm`: For displaying progress bars during processing.
+    - `matplotlib`: For potential data visualization.
+    - `xarray`: For handling multidimensional arrays and working with NetCDF files.
+    - `nco`: For interacting with NetCDF Operators.
+    - `CreateGDF`: For creating geospatial data frames.
+    - `search_grids`: For searching grid points within a given domain.
+    - `grids_array_coord_map`: For mapping basin grid coordinates.
+    - `check_and_mkdir`, `remove_and_mkdir`: Utility functions for directory management.
+    - `clock_decorator`: A decorator for measuring function execution time.
 
-Author
-------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 # * use nco to increase speed (you need a Linux system, as the ncrcat has not been implemented in pynco)
 # * This is particularly useful for large domain
@@ -124,26 +121,33 @@ def buildMeteForcingnco(
     dst_time_hours=24,
 ):
     """
-    Build meteorological forcing data for VIC model.
+    Build meteorological forcing files for VIC model.
 
     Parameters
     ----------
-    evb_dir : object
-        Directory object containing path configurations.
-    dpc_VIC_level1 : object
-        Input data for VIC model at level 1.
-    date_period : tuple of datetime
-        Start and end date for the forcing data.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 1 of the VIC model.
+
+    date_period : list of str
+        A list containing the start and end dates for the desired period in the format ["YYYYMMDD", "YYYYMMDD"].
+    
     step : int, optional
-        Step number to control the workflow (default is 1).
-    reverse_lat : bool, optional
-        Whether to reverse latitude (default is True).
+        Step number to control the workflow (1, 2, 3, 4).
+        
+    reverse_lat : bool
+        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+        
     check_search : bool, optional
         Whether to perform a search check (default is False).
+        
     year_re_exp : str, optional
         Regular expression for year matching (default is "A\d{4}.nc4").
+        
     dst_time_hours : int, optional
-        Time resolution in hours for resampling (default is 24).
+        The target time step in hours for resampling (default is 24 hours).
 
     Returns
     -------
@@ -180,7 +184,7 @@ def buildMeteForcingnco(
     )
     ## ====================== step1: clip for basin ======================
     if step == 1:
-        logger.info("Step 1: Clipping data for basin...")
+        logger.info("Step 1: Clipping data for basin... ...")
         clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat)
 
         # * mv MeteForcing_clip_dir to linux_share_temp_dir/clip, this is used for window users
@@ -200,7 +204,7 @@ def buildMeteForcingnco(
         # * mv linux_share_temp_dir/combineYearly back to MeteForcing_combineYearly_dir
         # if os.path.exists(dst_dir):
         #     shutil.rmtree(dst_dir)
-        logger.info("Step 2: Combining yearly data and forming forcing...")
+        logger.info("Step 2: Combining yearly data and forming forcing... ...")
         try:
             shutil.move(
                 linux_share_temp_combineYearly_dir, MeteForcing_combineYearly_dir
@@ -215,7 +219,7 @@ def buildMeteForcingnco(
 
     elif step == 3:
         # -------------------- clean temp data --------------------
-        logger.info("Step 3: Cleaning temporary data...")
+        logger.info("Step 3: Cleaning temporary data... ...")
 
         logger.info(f"Removing {linux_share_temp_clip_dir}")
         shutil.rmtree(linux_share_temp_clip_dir)
@@ -225,14 +229,14 @@ def buildMeteForcingnco(
 
     elif step == 4:
         # -------------------- resample time forcing --------------------
-        logger.info("Step 4: Resampling time-based forcing data...")
+        logger.info("Step 4: Resampling time-based forcing data... ...")
         resampleTimeForcing(evb_dir, dst_time_hours=dst_time_hours)
 
     else:
         logger.error("Invalid step number. Please input a valid step number")
 
     logger.info(
-        f"Building meteorological forcing files for step {step} completed successfully"
+        f"Building meteorological forcing files for step {step} successfully"
     )
 
 
@@ -242,15 +246,18 @@ def clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat=Tr
 
     Parameters
     ----------
-    evb_dir : Evb_dir
-        An instance of the `Evb_dir` class, which provides paths to the source and destination directories for the forcing data.
-    dpc_VIC_level1 : DPC_VIC_Level1
-        An instance of the `DPC_VIC_Level1` class, which provides basin shape and grid shape information.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 1 of the VIC model.
+
     date_period : list of str
         A list containing the start and end dates for the desired period in the format ["YYYYMMDD", "YYYYMMDD"].
-    reverse_lat : bool, optional
-        If True, the latitude values will be reversed. Default is True.
-
+    
+    reverse_lat : bool
+        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+        
     Returns
     -------
     None
@@ -337,7 +344,7 @@ def clip_src_data_for_basin(evb_dir, dpc_VIC_level1, date_period, reverse_lat=Tr
         year += 1
         logger.info(f"Finished processing for year: {year}")
 
-    logger.info("clip_src_data_for_basin completed successfully")
+    logger.info("clip_src_data_for_basin successfully")
 
 
 def formationForcing(
@@ -349,23 +356,28 @@ def formationForcing(
     year_re_exp=r"\d{4}.nc4",
 ):
     """
-    Format meteorological forcing data and generate NetCDF files for VIC model.
+    Format meteorological forcing data and generate forcing files required by the VIC model.
 
     Parameters
     ----------
-    evb_dir : object
-        Directory information for meteorological forcing data.
-    dpc_VIC_level1 : object
-        Level 1 data processor object containing grid and basin shape.
-    date_period : tuple
-        A tuple of start and end date for the data period.
-    reverse_lat : bool, optional
-        If True, reverses the latitude order (default is True).
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
+    dpc_VIC_level1 : `dpc_VIC_level1`
+        An instance of the `dpc_VIC_level1` class to process data at level 1 of the VIC model.
+
+    date_period : list of str
+        A list containing the start and end dates for the desired period in the format ["YYYYMMDD", "YYYYMMDD"].
+    
+    reverse_lat : bool
+        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
+        
     check_search : bool, optional
         If True, enables grid search check and visualization (default is False).
+        
     year_re_exp : str, optional
-        Regular expression pattern for extracting the year from file names (default is r"\d{4}.nc4").
-
+        Regular expression for year matching (default is "A\d{4}.nc4").
+        
     Returns
     -------
     None
@@ -861,7 +873,7 @@ def formationForcing(
 
         logger.info(f"Finished processing for year: {year}")
 
-    logger.info("Formating meteorological forcing files completed successfully")
+    logger.info("Formating meteorological forcing files successfully")
 
 
 def resampleTimeForcing(evb_dir, dst_time_hours=24):
@@ -870,8 +882,9 @@ def resampleTimeForcing(evb_dir, dst_time_hours=24):
 
     Parameters
     ----------
-    evb_dir : object
-        Directory structure containing the paths to the source and destination data.
+    evb_dir : `Evb_dir`
+        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+        
     dst_time_hours : int, optional
         The target time step in hours for resampling (default is 24 hours).
 
@@ -958,4 +971,4 @@ def resampleTimeForcing(evb_dir, dst_time_hours=24):
             src_dataset.close()
             dst_dataset.close()
 
-    logger.info("Resample meteorological forcing files completed successfully")
+    logger.info("Resample meteorological forcing files successfully")

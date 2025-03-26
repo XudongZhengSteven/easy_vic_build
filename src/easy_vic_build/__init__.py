@@ -3,85 +3,55 @@
 # email: z786909151@163.com
 
 """
-Package: easy_vic_build
+easy_vic_build - A Python package for easily building VIC model.
 
-An Open-Source Python Framework for Scalable Deployment and Advanced Applications of VIC Model
-This package provides tools for configuring, preparing, and calibrating the VIC model efficiently.
-It supports automation, preprocessing, and postprocessing workflows.
+This package provides an open-source Python framework for scalable deployment and advanced applications
+of the VIC model. It streamlines the process of configuring, preparing, and calibrating the VIC model,
+and supports automation, preprocessing, and postprocessing workflows. The package is designed to
+improve efficiency and reduce the complexity of VIC model deployment.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+Submodules:
+-----------
+    - `tools`: A subpackage containing utility modules for supporting VIC model deployment.
+    - `build_dpc`: Module for building data processing class at three levels.
+    - `build_GlobalParam`: Module for building the global parameter file.
+    - `build_hydroanalysis`: Module for performing hydroanalysis tasks.
+    - `build_MeteForcing_nco`: Module for building meteorological forcing files with nco.
+    - `build_MeteForcing`: Module for building meteorological forcing files without nco.
+    - `build_RVIC_Param`: Module for building RVIC parameter files.
+    - `build_Domain`: Module for building domain files.
+    - `build_Param`: Module for building VIC parameter files.
+    - `calibrate`: Module for calibrating VIC model.
+    - `Evb_dir_class`: Module containing Evb_dir class for managing path and directory.
+    - `warmup`: Module for warmuping VIC model.
+
+Usage:
+------
+    1. Build DPC (`build_dpc`)
+    2. Build Domain (`build_Domain`)
+    3. Build Parameters (`build_Param`)
+    4. Perform Hydroanalysis (`build_hydroanalysis`)
+    5. Build Meteorological Forcing (`build_MeteForcing`) or (`build_MeteForcing_nco`)
+    6. Build RVIC Parameters (`build_RVIC_Param`)
+    7. Build Global Parameters (`build_GlobalParam`)
+    8. Calibrate the Model (`calibrate`)
+    9. Plot Basin Map (`plot_Basin_map`), note that you must first run `hydroanalysis_for_basin`
+    10. Plot VIC Results (`plot_VIC_result`)
+
+Version: 0.1.0
+Author: Xudong Zheng
+License: MIT
 
 """
+
 # import
-import logging
-
-# Default logger setup
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
-
-def setup_logger(log_level=None, log_format=None, log_to_file=None, log_file=None):
-    """
-    Allow users to modify the logger configuration. If no parameters are passed,
-    the default logger configuration remains unchanged.
-
-    Parameters:
-    -----------
-    log_level : int, optional
-        The logging level to set. Default is None (no change).
-
-    log_format : str, optional
-        The log format to set. Default is None (no change).
-
-    log_to_file : bool, optional
-        Whether to log to a file. Default is None (no change).
-
-    log_file : str, optional
-        If logging to a file, specify the file path. Default is None (no change).
-
-    Returns:
-    --------
-    None
-        The logger is updated in place based on the provided parameters.
-
-    Example:
-    --------
-    # User wants to modify the logger setup. To use this, the user would call `setup_logger` with their desired configuration:
-    setup_logger(log_level=logging.DEBUG, log_format="%(asctime)s - %(levelname)s - %(message)s", log_to_file=True, log_file="custom_log.log")
-    """
-
-    # If user provides a new log level, update it
-    if log_level is not None:
-        logger.setLevel(log_level)
-
-    # If user provides a new format, update it
-    if log_format is not None:
-        formatter = logging.Formatter(log_format)
-        for handler in logger.handlers:
-            handler.setFormatter(formatter)
-
-    # If user provides options to log to file, add a file handler
-    if log_to_file is not None and log_to_file:
-        if log_file is None:
-            log_file = "evb.log"  # Default log file name
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
-
-# Default logger configuration (user doesn't need to call anything)
-logger.debug("Default logger setup with INFO level.")
-
-# Test to ensure default logging is working
-logger.info("This is an info message with the default setup.")
+from .Logger import logger, setup_logger
+from . import (build_dpc, build_GlobalParam, build_hydroanalysis,
+               build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, tools,
+               warmup)
 
 # Log the configuration details
-logger.info("--------------- EVB Configuration ---------------")
+logger.info("---------------------- EVB Configuration ----------------------")
 
 try:
     import nco
@@ -97,18 +67,13 @@ except:
 try:
     from rvic.parameters import parameters as rvic_parameters
 
-    logger.info("RVIC: You have rvic!")
+    logger.info("RVIC: RVIC package has been imported.")
     HAS_RVIC = True
 except:
     logger.warning("RVIC: No RVIC detected, but easy_vic_build is still usable.")
     HAS_RVIC = False
 
-logger.info("-------------------------------------------------")
-
-# import
-from . import (build_dpc, build_GlobalParam, build_hydroanalysis,
-               build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, tools,
-               warmup)
+logger.info("---------------------------------------------------------------")
 
 # Define the package's public API and version
 __all__ = [
@@ -124,7 +89,9 @@ __all__ = [
     "build_MeteForcing_nco",
     "build_MeteForcing",
     "logger",
+    "setup_logger",
 ]
+
 __version__ = "0.1.0"
 __author__ = "Xudong Zheng"
 __email__ = "z786909151@163.com"
