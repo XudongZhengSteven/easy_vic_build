@@ -47,24 +47,30 @@ def raster_to_shp(raster_path, shp_path):
         Path to the input raster file.
     shp_path : str
         Path where the output shapefile will be saved.
-
+    attribute_name : str, optional
+        Name of the attribute field storing raster values (default="value").
+    
     Returns:
     --------
     gdf : GeoDataFrame
         A GeoDataFrame containing the geometries of the features from the raster file.
     """
-    with rasterio.open(raster_path, "r") as raster_dataset:
-        raster = raster_dataset.read(1)
-        mask = raster != raster_dataset.nodata
-        results = shapes(raster, mask=mask, transform=raster_dataset.transform)
+    with rasterio.open(raster_path, "r") as src:
+        data = src.read(1)
+        mask = data != src.nodata
+
+        results = shapes(
+            data,
+            mask=mask,
+            transform=src.transform
+        )
 
         geoms = []
         for geom, value in results:
             geom = shape(geom)
             geoms.append(geom)
 
-        gdf = gpd.GeoDataFrame(geometry=geoms, crs=raster_dataset.crs)
+        gdf = gpd.GeoDataFrame(geometry=geoms, crs=src.crs)
 
         gdf.to_file(shp_path)
-
-    return gdf
+    

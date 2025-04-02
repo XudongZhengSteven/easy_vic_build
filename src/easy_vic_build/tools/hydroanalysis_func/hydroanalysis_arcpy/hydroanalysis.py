@@ -68,9 +68,9 @@ def hydroanalysis_arcpy(
     filled_dem_file_path = os.path.join(workspace_path, "filled_dem")
     flow_direction_file_path = os.path.join(workspace_path, "flow_direction")
     flow_acc_file_path = os.path.join(workspace_path, "flow_acc")
-    stream_acc_file_path = os.path.join(workspace_path, "stream_acc")
+    stream_raster_file_path = os.path.join(workspace_path, "stream_raster")
     stream_link_file_path = os.path.join(workspace_path, "stream_link")
-    stream_feature_file_path = "stream_feature"
+    stream_vector_file_path = "stream_vector"
     command_arcpy = " ".join(
         [
             arcpy_python_script_path,
@@ -80,9 +80,9 @@ def hydroanalysis_arcpy(
             filled_dem_file_path,
             flow_direction_file_path,
             flow_acc_file_path,
-            stream_acc_file_path,
+            stream_raster_file_path,
             stream_link_file_path,
-            stream_feature_file_path,
+            stream_vector_file_path,
         ]
     )
 

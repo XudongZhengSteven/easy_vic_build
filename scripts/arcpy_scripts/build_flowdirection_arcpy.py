@@ -10,8 +10,8 @@ import sys
 def main(workspace_path, stream_acc_threshold,
          dem_file_name, filled_dem_file_path,
          flow_direction_file_path,
-         flow_acc_file_path, stream_acc_file_path,
-         stream_link_file_path, stream_feature_file_path):
+         flow_acc_file_path, stream_raster_file_path,
+         stream_link_file_path, stream_vector_file_path):
     # Set environment settings
     env.workspace = workspace_path
     
@@ -31,7 +31,7 @@ def main(workspace_path, stream_acc_threshold,
     
     # stream_acc based on a threshold
     raster_expression = 'Con("flow_acc">%f, True)' % stream_acc_threshold
-    stream_acc = arcpy.gp.RasterCalculator_sa(raster_expression, stream_acc_file_path + ".tif")
+    stream_acc = arcpy.gp.RasterCalculator_sa(raster_expression, stream_raster_file_path + ".tif")
     # stream_acc.save(stream_acc_file_path)
     # stream_acc.save()
     
@@ -41,7 +41,7 @@ def main(workspace_path, stream_acc_threshold,
     stream_link.save(stream_link_file_path + ".tif")
     
     # stream to feature
-    StreamToFeature(stream_acc, flow_direction, stream_feature_file_path, "NO_SIMPLIFY")
+    StreamToFeature(stream_acc, flow_direction, stream_vector_file_path, "NO_SIMPLIFY")
 
 
 if __name__ == "__main__":
@@ -51,9 +51,9 @@ if __name__ == "__main__":
     filled_dem_file_path = sys.argv[4]
     flow_direction_file_path = sys.argv[5]
     flow_acc_file_path = sys.argv[6]
-    stream_acc_file_path = sys.argv[7]
+    stream_raster_file_path = sys.argv[7]
     stream_link_file_path = sys.argv[8]
-    stream_feature_file_path = sys.argv[9]
+    stream_vector_file_path = sys.argv[9]
     main(workspace_path, stream_acc_threshold, dem_file_name, filled_dem_file_path,
-         flow_direction_file_path, flow_acc_file_path, stream_acc_file_path,
-         stream_link_file_path, stream_feature_file_path)
+         flow_direction_file_path, flow_acc_file_path, stream_raster_file_path,
+         stream_link_file_path, stream_vector_file_path)

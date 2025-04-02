@@ -45,9 +45,4 @@ Direct Modules:
     - utilities:
     General utility functions for various purposes.
 
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
 """

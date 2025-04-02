@@ -5,7 +5,7 @@
 from easy_vic_build.Evb_dir_class import Evb_dir
 from easy_vic_build.tools.utilities import *
 from easy_vic_build.tools.plot_func.plot_func import *
-from easy_vic_build.tools.hydroanalysis_func.hydroanalysis_for_BasinMap import *
+from easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis_for_BasinMap import *
 import matplotlib.gridspec as gridspec
 plt.rcParams['font.family']='Arial'
 plt.rcParams['font.size']=12
