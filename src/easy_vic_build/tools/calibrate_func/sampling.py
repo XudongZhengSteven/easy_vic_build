@@ -189,7 +189,7 @@ def sampling_LHS_1(n_samples, n_dimensions, bounds):
     return samples
 
 
-def sampling_LHS_2(n_samples, n_dimensions, bounds):
+def sampling_LHS_2(n_samples, bounds, seed=None):
     """
     Generate random samples using Latin Hypercube Sampling (LHS) method, variant 2,
     within the specified bounds.
@@ -209,16 +209,26 @@ def sampling_LHS_2(n_samples, n_dimensions, bounds):
         The generated Latin Hypercube samples, scaled to the specified bounds.
     """
     # i.e., bounds = [(0, 1), (5, 10), (-5, 5)]
-    sampler = qmc.LatinHypercube(d=n_dimensions)
+    n_dimensions = len(bounds)
+    
+    # check bounds
+    if any(b[0] >= b[1] for b in bounds):
+        raise ValueError("Each bound must satisfy min < max.")
+    
+    # sample
+    sampler = qmc.LatinHypercube(d=n_dimensions, seed=seed)
     sample = sampler.random(n=n_samples)
 
     # remapping
     lower_bounds, upper_bounds = np.array([b[0] for b in bounds]), np.array(
         [b[1] for b in bounds]
     )
-    population = qmc.scale(sample, lower_bounds, upper_bounds)
+    scaled_samples = qmc.scale(sample, lower_bounds, upper_bounds)
 
-    return population
+    # clip boundary
+    scaled_samples = np.clip(scaled_samples, lower_bounds, upper_bounds)
+    
+    return scaled_samples
 
 
 def sampling_Sobol(n_samples, n_dimensions, bounds):

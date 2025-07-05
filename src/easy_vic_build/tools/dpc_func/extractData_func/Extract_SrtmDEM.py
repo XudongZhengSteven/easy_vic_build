@@ -41,8 +41,10 @@ def ExtractData(
     )
 
     # set grids_lat, lon
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     # SrtmDEM grids, corresponding to the array index of data
     ul = SrtmDEM.transform * (0, 0)
@@ -145,7 +147,7 @@ def ExtractData(
         # check
         if check_search and i == 0:
             cgdf = CreateGDF()
-            grid_shp_grid = grid_shp.loc[i:i, "geometry"]
+            grid_shp_grid = grid_shp.loc[[i], "geometry"]
             searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
                 searched_grid_lon, searched_grid_lat, SrtmDEM_lat_res
             )
@@ -260,9 +262,3 @@ def get_grids_coord_from_StrmDEM():  # 90m
 
     return SrtmDEM_lon, SrtmDEM_lat, SrtmDEM_res
 
-
-def readSrtmDEMAsPCRasterMap():
-    # read dem data
-    # SrtmDEM_path = "E:/data/LULC/DEM/SRTM/US/Combine/srtm_11_03.tif"
-    # SrtmDEM = rasterio.open(SrtmDEM_path)
-    pass

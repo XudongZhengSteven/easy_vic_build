@@ -58,9 +58,6 @@ if __name__ == "__main__":
         evb_dir = Evb_dir()
         evb_dir.builddir(case_name)
         
-        # set arcpy_python_path
-        evb_dir.arcpy_python_path = "C:\\Python27\\ArcGIS10.5\\python.exe"
-        
         # set MeteForcing_src_dir and MeteForcing_src_suffix
         evb_dir.MeteForcing_src_dir = "E:\\data\\hydrometeorology\\NLDAS\\NLDAS2_Primary_Forcing_Data_subset_0.125\\data"
         evb_dir.MeteForcing_src_suffix = ".nc4"

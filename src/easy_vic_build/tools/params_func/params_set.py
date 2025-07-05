@@ -2,64 +2,12 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: params_set
-
-This module defines various parameters and utility functions for managing configurations related to
-hydrological models. It organizes parameter sets for grid configurations, unit hydrographs, and routing
-processes, as well as utilities to facilitate conversions between depth-related data and model grid values.
-The module includes:
-
-- `default_g_list`, `g_boundary`, and `g_types` for model grid configuration.
-- `default_uh_params`, `uh_params_boundary`, and `uh_params_types` for unit hydrograph parameters.
-- `default_routing_params`, `routing_params_boundary`, and `routing_params_types` for routing process configurations.
-- Functions that convert between depth data and grid (g) configurations, enabling seamless integration of model inputs.
-
-Class:
-------
-    - None (This module is a collection of parameter sets and functions without any classes).
-
-Functions:
-----------
-    - depth_to_g: Converts depth-related data to the corresponding model grid (g) values.
-    - g_to_depth: Converts model grid (g) values to depth-related data.
-    - convert_g_boundary: Converts boundary conditions for the model grid.
-    - convert_uh_params: Converts unit hydrograph parameters for routing processes.
-    - convert_routing_params: Converts parameters for routing processes in the model.
-    - CONUS_depth_num_to_depth_layer: Converts the depth layer numbers into actual depth values for the CONUS region.
-    - depth_layer_to_percentile: Converts depth layers into percentile values.
-    - percentile_to_real_depth: Converts percentile values into real depth values.
-    - real_depth_to_percentile: Converts real depth values into percentile values.
-    - percentile_to_depth_layer: Converts percentile values into depth layer values.
-    - depth_layer_to_CONUS_depth_num: Converts depth layers into CONUS depth numbers.
-    - percentile_to_CONUS_depth_num: Converts percentile values into CONUS depth numbers.
-
-Parameters:
------------
-    - default_g_list: A list of default values for model grid (g) settings.
-    - g_boundary: A set of boundary conditions for the model grid (g).
-    - g_types: A list of types or categories for model grids.
-    - default_uh_params: Default unit hydrograph parameters.
-    - uh_params_boundary: Boundary conditions for unit hydrograph parameters.
-    - uh_params_types: Different types or configurations of unit hydrograph parameters.
-    - default_routing_params: Default parameters for routing processes.
-    - routing_params_boundary: Boundary conditions for routing parameters.
-    - routing_params_types: Different types or configurations of routing parameters.
-    - all_params_types: A collection of all possible parameter types for model configuration.
-
-Dependencies:
--------------
-    - numpy: Used for numerical operations and handling parameter arrays.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
-
 import numpy as np
+from copy import deepcopy
+import json
 
-## ========================= param g =========================
+
+# g params
 """
 g_list: global parameters
     [0]             total_depth (g)
@@ -87,261 +35,483 @@ g_list: global parameters
     [36]            snow rough (g), it can be set as 1
 """
 
-# g
-default_g_list = [
-    1.0,
-    2,
-    8,  # num1, num2
-    0.0,
-    1.0,
-    -0.6,
-    0.0126,
-    -0.0064,
-    50.05,
-    -0.142,
-    -0.037,
-    1.54,
-    -0.0095,
-    0.0063,
-    3.1,
-    0.157,
-    -0.003,
-    3.0,
-    2.0,
-    1.0,
-    2.0,
-    2.0,
-    2.0,
-    1.0,
-    1.0,
-    0.32,
-    4.3,
-    0.8,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-]
+g_params = {
+    "total_depths": {
+        "default": [1.0],  # total depth g_params (factor)
+        "boundary": [[0.1], [4.0]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "soil_layers_breakpoints": {
+        "default": [3, 9],  # soil layer breakpoints, original layers -> modeling layers, note exclusive
+        "boundary": [[1, 3], [3, 9]],
+        "type": int,
+        "optimal": [None, None],
+    },
+    
+    "b_infilt": {
+        "default": [0.0, 1.0],
+        "boundary": [[-2.0, 0.8], [1.0, 1.2]],
+        "type": float,
+        "optimal": [None, None],
+    },
+    
+    "ksat": {
+        "default": [-0.6, 0.0126, -0.0064],
+        "boundary": [[-0.66, 0.0113, -0.007], [-0.54, 0.0139, -0.0058]],
+        "type": float,
+        "optimal": [None, None, None],
+    },
+    
+    "phi_s": {
+        "default": [50.05, -0.142, -0.037],
+        "boundary": [[45.5, -0.3, -0.1], [55.5, -0.01, -0.01]],
+        "type": float,
+        "optimal": [None, None, None],
+    },
+    
+    "psis": {
+        "default": [1.54, -0.0095, 0.0063],
+        "boundary": [[1.0, -0.01, 0.006], [2.0, -0.009, 0.0066]],
+        "type": float,
+        "optimal": [None, None, None],
+    },
+    
+    "b_retcurve": {
+        "default": [3.1, 0.157, -0.003],
+        "boundary": [[2.5, 0.1, -0.005], [3.6, 0.2, -0.001]],
+        "type": float,
+        "optimal": [None, None, None],
+    },
+    
+    "expt": {
+        "default": [3.0, 2.0],
+        "boundary": [[2.8, 1.5], [3.2, 2.5]],
+        "type": float,
+        "optimal": [None, None],
+    },
+    
+    "fc": {
+        "default": [1.0],
+        "boundary": [[0.8], [1.2]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "D4": {
+        "default": [2.0],  # it can be set as 2
+        "boundary": [[1.2], [2.5]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "D1": {
+        "default": [2.0],
+        "boundary": [[1.75], [3.5]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "D2": {
+        "default": [2.0],
+        "boundary": [[1.75], [3.5]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "D3": {
+        "default": [1.0],
+        "boundary": [[0.001], [2.0]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "dp": {
+        "default": [1.0],
+        "boundary": [[0.9], [1.1]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "bubble": {
+        "default": [0.32, 4.3],
+        "boundary": [[0.1, 0.0], [0.9, 10.0]],
+        "type": float,
+        "optimal": [None, None],
+    },
+    
+    "quartz": {
+        "default": [0.8],
+        "boundary": [[0.7], [0.9]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "bulk_density": {
+        "default": [1.0],
+        "boundary": [[0.9], [1.1]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "soil_density": {
+        "default": [1.0, 1.0, 1.0],  # the three g can be set same
+        "boundary": [[0.9, 0.9, 0.9], [1.1, 1.1, 1.1]],
+        "type": float,
+        "optimal": [None, None, None],
+    },
+    
+    "Wcr_FRACT": {
+        "default": [1.0],
+        "boundary": [[0.8], [1.2]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "wp": {
+        "default": [1.0],
+        "boundary": [[0.8], [1.2]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "Wpwp_FRACT": {
+        "default": [1.0],
+        "boundary": [[0.8], [1.2]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "rough": {
+        "default": [1.0],  # it can be set as 1
+        "boundary": [[0.9], [1.1]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "snow_rough": {
+        "default": [1.0],  # it can be set as 1
+        "boundary": [[0.9], [1.1]],
+        "type": float,
+        "optimal": [None],
+    },
+}
 
-g_boundary = [
-    [0.1, 4.0],
-    [1, 3],
-    [3, 8],  # special samples for depths, here is the boundary of num1 and num2
-    [-2.0, 1.0],
-    [0.8, 1.2],
-    [-0.66, -0.54],
-    [0.0113, 0.0139],
-    [-0.0070, -0.0058],
-    [45.5, 55.5],
-    [-0.3, -0.01],
-    [-0.1, -0.01],
-    [1.0, 2.0],
-    [-0.01, -0.009],
-    [0.006, 0.0066],
-    [2.5, 3.6],
-    [0.1, 0.2],
-    [-0.005, -0.001],
-    [2.8, 3.2],
-    [1.5, 2.5],
-    [0.8, 1.2],
-    [1.2, 2.5],
-    [1.75, 3.5],
-    [1.75, 3.5],
-    [0.001, 2.0],
-    [0.9, 1.1],
-    [0.1, 0.8],
-    [0.0, 10.0],
-    [0.7, 0.9],
-    [0.9, 1.1],
-    [0.9, 1.1],
-    [0.9, 1.1],
-    [0.9, 1.1],
-    [0.8, 1.2],
-    [0.8, 1.2],
-    [0.8, 1.2],
-    [0.9, 1.1],
-    [0.9, 1.1],
-]
+# guh params
+guh_params = {
+    "tp": {
+        "default": [1.4],
+        "boundary": [[1.0], [24.0]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "mu": {
+        "default": [5.0],
+        "boundary": [[2.0], [10.0]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "m": {
+        "default": [3.0],
+        "boundary": [[0.5], [6.0]],
+        "type": float,
+        "optimal": [None],
+    }
+}
 
-g_types = [
-    float,
-    int,
-    int,  # num1, num2
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-]
-## ========================= param g for depths transformation =========================
-# *special samples for depths
-depths_index = [1, 2]  # index for depths
+# rvic params
+rvic_params = {
+    "VELOCITY": {
+        "default": [1.5],  # velocity in m/s
+        "boundary": [[0.5], [800.0]],
+        "type": float,
+        "optimal": [None],
+    },
+    
+    "DIFFUSION": {
+        "default": [800.0],
+        "boundary": [[200.0], [4000.0]],
+        "type": float,
+        "optimal": [None],
+    }
+}
 
-# *constraint: depth_layer2 > depth_layer1
+# all params
+params = {
+    "g_params": g_params,
+    "guh_params": guh_params,
+    "rvic_params": rvic_params,
+}
 
-# CONUS layers
-CONUS_layers_depths = np.array(
-    [0.05, 0.05, 0.10, 0.10, 0.10, 0.20, 0.20, 0.20, 0.50, 0.50, 0.50]
-)
-CONUS_layers_num = len(CONUS_layers_depths)  # 11 layer
-CONUS_layers_total_depth = sum(CONUS_layers_depths)  # 2.50 m
-CONUS_layers_depths_percentile = CONUS_layers_depths / CONUS_layers_total_depth
-CONUS_layers_depths_cumsum = np.cumsum(CONUS_layers_depths)
+params_all = {**g_params, **guh_params, **rvic_params}
 
-# * note: g for depths, g1, g2 is num1, num2, resepectively (g1, the first layer; g2, the second layer)
-""" 
-TF
-    @staticmethod
-    def depth(total_depth, g1, g2):
-        # total_depth, m
-        # depth, m
-        # g1, g2: num1, num2, int
-        # set num1 as the num of end CONUS layer num of the first layer
-        # set num2 as the num of end CONUS layer num of the second layer
-        # Arithmetic mean
+# default params
+default_params = deepcopy(params)
+for key in default_params.keys():
+    for sub_key in default_params[key].keys():
+        default_params[key][sub_key]["optimal"] = default_params[key][sub_key]["default"]
+
+# ParamManager
+class ParamManager:
+    def __init__(self, param_dicts: dict):
+        """
+        Initialize ParamManager with nested parameter dictionaries.
+
+        Parameters
+        ----------
+        param_dicts : dict
+            Nested parameter dictionary, e.g.:
+            {
+                "rvic_params": {
+                    "VELOCITY": {
+                        "default": [1.5],
+                        "boundary": [0.5, 800.0],
+                        "type": float,
+                        "optimal": None,
+                    }
+                },
+                ...
+            }
+        """
+        self.param_template = deepcopy(param_dicts)
+        self._index_map = self._build_index_map()
+
+    def _build_index_map(self):
+        """
+        Build an index mapping for parameters.
+
+        Returns
+        -------
+        list of tuples:
+            Each tuple contains (group_name, param_name, dimension, type)
+        """
+        index_map = []
+        for group, param_group in self.param_template.items():
+            for param, meta in param_group.items():
+                dim = len(meta.get("default", []))
+                typ = meta.get("type", float)
+                index_map.append((group, param, dim, typ))
+        return index_map
+
+    def to_vector(self, field='default'):
+        """
+        Flatten parameters into a single list (vector) from specified field.
+
+        Parameters
+        ----------
+        field : str
+            The key inside parameter dict to extract (e.g. 'default' or 'optimal').
+
+        Returns
+        -------
+        list:
+            Flattened parameter values.
+        """
+        vec = []
+        for group, param, dim, _ in self._index_map:
+            values = self.param_template[group][param].get(field)
+            if values is None:
+                vec.extend([None] * dim)
+            else:
+                vec.extend(values)
+        return vec
+
+    def from_vector(self, vector, field='default'):
+        """
+        Restore nested parameter dict from a flat vector into specified field.
+
+        Parameters
+        ----------
+        vector : list
+            Flat list of parameter values.
+        field : str
+            The key inside parameter dict to update (e.g. 'default' or 'optimal').
+
+        Returns
+        -------
+        dict:
+            New nested parameter dictionary with updated values.
+        """
+        new_param = deepcopy(self.param_template)
+        idx = 0
+        for group, param, dim, typ in self._index_map:
+            vals = vector[idx:idx+dim]
+            if typ is int:
+                vals = [int(round(v)) for v in vals]
+            elif typ is float:
+                vals = [float(v) for v in vals]
+            new_param[group][param][field] = vals
+            idx += dim
+        return new_param
+    
+    def to_dict(self, vector=None, field="optimal"):
+        """
+        Build and return a full parameter dictionary with values filled from:
+        - the internal template (if vector is None), or
+        - the provided vector (if vector is given), written to `field`.
+
+        Parameters
+        ----------
+        vector : list or None
+            Flat parameter values to write to the specified field. If None, use existing field values.
+        field : str
+            The field to populate in the returned structure (e.g. "default" or "optimal").
+
+        Returns
+        -------
+        dict:
+            A new parameter dictionary with updated field values.
+        """
+        result = deepcopy(self.param_template)
         
-        # transfer g1, g2 into percentile
-        percentile_layer1, percentile_layer2 = CONUS_depth_num_to_percentile(g1, g2)
-        ret = [total_depth * percentile_layer1, total_depth * percentile_layer2, total_depth * (1.0 - percentile_layer1 - percentile_layer2)]
-        return ret
-"""
+        if vector is None:
+            return result  # use stored default structure
+        
+        idx = 0
+        for group, param, dim, typ in self._index_map:
+            values = vector[idx:idx+dim]
+            if typ is int:
+                values = [int(round(v)) for v in values]
+            elif typ is float:
+                values = [float(v) for v in values]
+            result[group][param][field] = values
+            idx += dim
 
-# transfermation idea
-#!index is start from 0 (0-10), num is start from 1 (1-11), num = index + 1
-#!how to index: array[index0:index1+1], array[num0-1:num1]
-#! i.e., you want to get layer1->layer3, use index: array[0, 2+1], use num: array[1-1:3]
-#! i.e., [0, 5], [5, 8], [8, 11] represent layer1->layer5, layer5->layer8, layer9->layer10
+        return result
+        
+    def get_vector_info(self):
+        """
+        Get combined information of parameters as vectors.
+
+        Returns
+        -------
+        dict:
+            {
+                "defaults": list of default values,
+                "optimal": list of optimal values,
+                "types": list of parameter types,
+                "bounds": list of (min, max) tuples,
+                "names": list of parameter full names like "group.param"
+            }
+        """
+        return {
+            "defaults": self.to_vector(field='default'),
+            "optimal": self.to_vector(field='optimal'),
+            "types": self.vector_types(),
+            "bounds": self.vector_bounds(),
+            "names": self.vector_names(),
+        }
+
+    def vector_bounds(self):
+        """
+        Return a flat list of (min, max) tuples for each scalar parameter.
+
+        Each boundary must be specified as a list of two lists:
+        e.g., boundary = [[min1, min2, ...], [max1, max2, ...]]
+        """
+        bounds = []
+        for group, param, dim, _ in self._index_map:
+            b = self.param_template[group][param].get("boundary")
+
+            if not (isinstance(b, list) and len(b) == 2):
+                raise ValueError(f"Boundary for {group}.{param} must be a list of [mins, maxs].")
+
+            b_min, b_max = b
+
+            if not (len(b_min) == len(b_max) == dim):
+                raise ValueError(
+                    f"Boundary length mismatch in {group}.{param}: "
+                    f"expected {dim}, got {len(b_min)} and {len(b_max)}"
+                )
+
+            bounds.extend([(minv, maxv) for minv, maxv in zip(b_min, b_max)])
+
+        return bounds
+
+    def vector_types(self):
+        """
+        Get flattened list of parameter types.
+
+        Returns
+        -------
+        list of types
+        """
+        return [typ for _, _, dim, typ in self._index_map for _ in range(dim)]
+
+    def vector_names(self):
+        """
+        Get flattened list of parameter names as "group.param".
+
+        Returns
+        -------
+        list of str
+        """
+        return [f"{group}.{param}" for group, param, dim, _ in self._index_map for _ in range(dim)]
+
+    def save(self, filepath):
+        """
+        Save current parameter structure to a JSON file.
+
+        Parameters
+        ----------
+        filepath : str
+            Path to save JSON file.
+        """
+        def serialize(d):
+            d = deepcopy(d)
+            for group in d.values():
+                for param in group.values():
+                    if "type" in param:
+                        param["type"] = param["type"].__name__
+            return d
+
+        with open(filepath, "w") as f:
+            json.dump(serialize(self.param_template), f, indent=2)
+
+    @classmethod
+    def load(cls, filepath):
+        """
+        Load parameter structure from a JSON file.
+
+        Parameters
+        ----------
+        filepath : str
+            Path to JSON file.
+
+        Returns
+        -------
+        ParamManager
+        """
+        def deserialize(d):
+            for group in d.values():
+                for param in group.values():
+                    if "type" in param:
+                        if param["type"] == "int":
+                            param["type"] = int
+                        elif param["type"] == "float":
+                            param["type"] = float
+            return d
+
+        with open(filepath, "r") as f:
+            raw = json.load(f)
+        return cls(deserialize(raw))
 
 
-# * three steps: CONUS depth num -> percentile -> real depths
-# * step1: num->depths (this depths is constrained by CONUS_layers)
-# set num1 as the num of end CONUS layer num of the first layer
-# set num2 as the num of end CONUS layer num of the second layer
-# transfer into depths
-# first layer: layer num (0<->num1), depth_layer1 = sum(CONUS_layers_depths[:num1])
-# second layer: layer num (num1+1<->num2), depth_layer2 = sum(CONUS_layers_depths[num1:num2])
-# * step2: depths->percentile
-# divide by the total depths
-# first layer: percentile_layer1 = depth_layer1 / CONUS_layers_total_depth
-# second layer: percentile_layer2 = depth_layer2 / CONUS_layers_total_depth
-# third layer: percentile_layer3 = 1 - percentile_layer1 - percentile_layer2
-# * step3: use TF to get real depths (this depths could be a modified value, see TF for total_depth)
-# real_depth = percentile * real_total_depth (modified value)
-def CONUS_depth_num_to_depth_layer(num1, num2):
-    # num start from 1
-    depth_layer1 = sum(CONUS_layers_depths[:num1])
-    depth_layer2 = sum(CONUS_layers_depths[num1:num2])
-    return depth_layer1, depth_layer2
-
-
-def depth_layer_to_percentile(depth_layer1, depth_layer2):
-    percentile_layer1 = depth_layer1 / CONUS_layers_total_depth
-    percentile_layer2 = depth_layer2 / CONUS_layers_total_depth
-
-    return percentile_layer1, percentile_layer2
-
-
-def percentile_to_real_depth(real_total_depth, percentile_layer1, percentile_layer2):
-    real_depth_layer1 = real_total_depth * percentile_layer1
-    real_dapth_layer2 = real_total_depth * percentile_layer2
-
-    return real_depth_layer1, real_dapth_layer2
-
-
-def CONUS_depth_num_to_percentile(num1, num2):
-    depth_layer1 = sum(CONUS_layers_depths[:num1])
-    depth_layer2 = sum(CONUS_layers_depths[num1:num2])
-
-    percentile_layer1 = depth_layer1 / CONUS_layers_total_depth
-    percentile_layer2 = depth_layer2 / CONUS_layers_total_depth
-
-    return percentile_layer1, percentile_layer2
-
-
-# * reverse: real depths -> percentile -> CONUS depth num
-# * step1: real depths -> percentile
-# first layer: percentile_layer1 = real_depth_layer1 / total_depth (it can be a modified value, see TF for total_depth)
-# second layer: percentile_layer2 = real_depth_layer2 / total_depth
-# * step2: percentile -> depths
-# first layer: depth_layer1 = percentile_layer1 * CONUS_layers_total_depth
-# second layer: depth_layer2 = percentile_layer2 * CONUS_layers_total_depth
-# * step3: depths -> CONUS depth num
-# first layer: 0<->num1 = np.argmin(np.abs(CONUS_layers_depths_cumsum - depth_layer1))
-# second layer: num1+1<->num2 = np.argmin(np.abs(CONUS_layers_depths_cumsum - depth_layer2))
-
-
-def real_depth_to_percentile(real_total_depth, real_depth_layer1, real_dapth_layer2):
-    percentile_layer1 = real_depth_layer1 / real_total_depth
-    percentile_layer2 = real_dapth_layer2 / real_total_depth
-    return percentile_layer1, percentile_layer2
-
-
-def percentile_to_depth_layer(percentile_layer1, percentile_layer2):
-    depth_layer1 = percentile_layer1 * CONUS_layers_total_depth
-    depth_layer2 = percentile_layer2 * CONUS_layers_total_depth
-    return depth_layer1, depth_layer2
-
-
-def depth_layer_to_CONUS_depth_num(depth_layer1, depth_layer2):
-    num1 = np.argmin(np.abs(CONUS_layers_depths_cumsum - depth_layer1)) + 1
-    num2 = np.argmin(np.abs(CONUS_layers_depths_cumsum - depth_layer2)) + 1
-    return num1, num2
-
-
-def percentile_to_CONUS_depth_num(percentile_layer1, percentile_layer2):
-    depth_layer1 = percentile_layer1 * CONUS_layers_total_depth
-    depth_layer2 = percentile_layer2 * CONUS_layers_total_depth
-
-    num1 = np.argmin(np.abs(CONUS_layers_depths_cumsum - depth_layer1)) + 1
-    num2 = np.argmin(np.abs(CONUS_layers_depths_cumsum - depth_layer2)) + 1
-    return num1, num2
-
-
-## ========================= RVIC params =========================
-# uh_params={"tp": 1.4, "mu": 5.0, "m": 3.0}
-default_uh_params = [1.4, 5.0, 3.0]
-uh_params_boundary = [(1.0, 24.0), (2.0, 10.0), (0.5, 6.0)]
-uh_params_types = [float, float, float]
-
-# cfg_params={"VELOCITY": 1.5, "DIFFUSION": 800.0}
-# Lohmann, D., Nolte-Holube, R., and Raschke, E.: A large-scale horizontal routing model to be coupled to land surface parametrization schemes, Tellus A, 48, 10.3402/tellusa.v48i5.12200, 1996.
-default_routing_params = [1.5, 800.0]
-routing_params_boundary = [(0.5, 5.0), (200, 4000)]
-routing_params_types = [float, int]
-
-# all param types
-all_params_types = g_types + uh_params_types + routing_params_types
+if __name__ == "__main__":
+    # Example usage
+    pm = ParamManager(params)
+    pm.vector_bounds()
+    vector = pm.to_vector(field='default')
+    restored_params = pm.from_vector(vector, field='default')
+    
+    print("Flattened vector:", vector)
+    print("Restored parameters:", restored_params)
+    
+    # Save and load example
+    pm.save("params.json")
+    loaded_pm = ParamManager.load("params.json")
+    
+    print("Loaded parameters:", loaded_pm.param_template)

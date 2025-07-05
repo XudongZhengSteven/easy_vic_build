@@ -30,9 +30,6 @@ def d8_flowdirection(
     wbe,
     filled_dem,
     output_file="flow_direction.tif",
-    pourpoint_x_index=None,
-    pourpoint_y_index=None,
-    pourpoint_direction_code=None,
     **kwargs
 ):
     """Calculate D8 flow direction from a depression-filled DEM.
@@ -111,10 +108,6 @@ def d8_flowdirection(
     
     # flow direction
     flow_direction = wbe.d8_pointer(filled_dem, **kwargs)
-    
-    # modify code at pourpoint if provided
-    if pourpoint_x_index is not None:
-        flow_direction[pourpoint_y_index, pourpoint_x_index] = pourpoint_direction_code
     
     # write
     wbe.write_raster(flow_direction, output_file)

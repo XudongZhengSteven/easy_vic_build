@@ -11,6 +11,7 @@ from tqdm import *
 
 from ...geo_func import resample, search_grids
 from ...geo_func.create_gdf import CreateGDF
+from .... import logger
 
 """     
         0.0	water
@@ -52,10 +53,14 @@ def ExtractData(
 
     umd_lat_res = (max(umd_lat) - min(umd_lat)) / (len(umd_lat) - 1)
     umd_lon_res = (max(umd_lon) - min(umd_lon)) / (len(umd_lon) - 1)
-
+    umd_lat_res = float(f"{umd_lat_res:.5g}")
+    umd_lon_res = float(f"{umd_lon_res:.5g}")
+    
     # set grids_lat, lon
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     # clip: extract before to improve speed
     xindex_start = np.where(umd_lon <= min(grids_lon) - grid_shp_res)[0][-1]
@@ -73,10 +78,9 @@ def ExtractData(
     umd_lat_clip = umd_lat[yindex_start : yindex_end + 1]
 
     # search grids
-    # searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,
-    #                                                          src_lat=umd_lat_clip, src_lon=umd_lon_clip,
-    #                                                          search_num=1)
-    print("========== search grids for UMD 1km ==========")
+    logger.info("searching grids for UMD 1km... ...")
+    
+    # source data res: 1km
     searched_grids_index = search_grids.search_grids_radius_rectangle(
         dst_lat=grids_lat,
         dst_lon=grids_lon,
@@ -117,28 +121,50 @@ def ExtractData(
         )
 
         # cal cv
-        cgdf = CreateGDF()
-        grid_shp_grid = grid_shp.loc[i:i, "geometry"]
-        grid_shp_gdf = grid_shp.loc[i:i, :]
-        searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
+        # cgdf = CreateGDF()
+        # grid_shp_grid = grid_shp.loc[[i], "geometry"]
+        # grid_shp_gdf = grid_shp.loc[[i], :]
+        # searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
+        #     searched_grid_lon, searched_grid_lat, umd_lon_res
+        # )
+
+        # overlay_grids = gpd.overlay(
+        #     grid_shp_gdf, searched_grids_gdf, how="intersection"
+        # )
+        # grid_shp_area = grid_shp_gdf.area[i]
+        # overlay_grids_area = [overlay_grids.area[oi] for oi in overlay_grids.index]
+
+        # Cv = [a / grid_shp_area for a in overlay_grids_area]
+        
+        grid_geom = grid_shp.geometry.iat[i]
+        grid_shp_area = grid_geom.area
+        
+        searched_grids_gdf = CreateGDF().createGDF_rectangle_central_coord(
             searched_grid_lon, searched_grid_lat, umd_lon_res
         )
-
-        overlay_grids = gpd.overlay(
-            grid_shp_gdf, searched_grids_gdf, how="intersection"
-        )
-        grid_shp_area = grid_shp_gdf.area[i]
-        overlay_grids_area = [overlay_grids.area[oi] for oi in overlay_grids.index]
-
-        Cv = [a / grid_shp_area for a in overlay_grids_area]
+        
+        overlay_grids = grid_geom.intersection(searched_grids_gdf.geometry)
+        Cv = [geom.area / grid_shp_area for geom in overlay_grids]
 
         # check
         if check_search and i == 0:
+            cgdf = CreateGDF()
+            grid_shp_grid = grid_shp.loc[[i], "geometry"]
+            searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
+                searched_grid_lon, searched_grid_lat, umd_lat_res
+            )
+
             fig, ax = plt.subplots()
             grid_shp_grid.boundary.plot(ax=ax, edgecolor="r", linewidth=2)
             searched_grids_gdf.plot(
                 ax=ax, edgecolor="k", linewidth=0.2, facecolor="b", alpha=0.5
             )
+            ax.set_title("check search for UMD 1KM LULC")
+        
+            # grid_shp.boundary.plot(ax=ax, edgecolor="r", linewidth=2)
+            # searched_grids_gdf.plot(
+            #     ax=ax, edgecolor="k", linewidth=0.2, facecolor="b", alpha=0.5
+            # )
 
         # umd_lc_nearest_Value.append(searched_grid_data[0])
         umd_lc_major_Value.append(major_value)

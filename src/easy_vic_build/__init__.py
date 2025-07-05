@@ -27,10 +27,11 @@ Submodules:
 
 Usage:
 ------
+    0. Perform hydrological analysis for level0
     1. Build DPC (`build_dpc`)
     2. Build Domain (`build_Domain`)
     3. Build Parameters (`build_Param`)
-    4. Perform Hydroanalysis (`build_hydroanalysis`)
+    4. Perform Hydroanalysis for level1 (`build_hydroanalysis`)
     5. Build Meteorological Forcing (`build_MeteForcing`) or (`build_MeteForcing_nco`)
     6. Build RVIC Parameters (`build_RVIC_Param`)
     7. Build Global Parameters (`build_GlobalParam`)
@@ -46,9 +47,9 @@ License: MIT
 
 # import
 from .Logger import logger, setup_logger
-from . import (build_dpc, build_GlobalParam, build_hydroanalysis,
-               build_RVIC_Param, bulid_Domain, bulid_Param, calibrate, tools,
-               warmup)
+from . import (build_GlobalParam, build_hydroanalysis,
+               build_RVIC_Param, bulid_Domain, build_Param,
+               calibrate, tools, warmup)
 
 # Log the configuration details
 logger.info("---------------------- EVB Configuration ----------------------")
@@ -77,16 +78,14 @@ logger.info("---------------------------------------------------------------")
 
 # Define the package's public API and version
 __all__ = [
-    "build_dpc",
     "build_GlobalParam",
     "build_hydroanalysis",
     "build_RVIC_Param",
     "bulid_Domain",
-    "bulid_Param",
+    "build_Param",
     "calibrate",
     "warmup",
     "tools",
-    "build_MeteForcing_nco",
     "build_MeteForcing",
     "logger",
     "setup_logger",

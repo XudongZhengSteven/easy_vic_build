@@ -48,7 +48,7 @@ Dependencies:
 
 import functools
 import time
-
+from typing import Callable, Dict, List, Optional, Any, Union
 import numpy as np
 
 from .. import logger
@@ -248,6 +248,21 @@ def test_apply_along_axis_decorator():
 
     aggregate_value = test_func_apply_along_axis_decorator(y)
     print("aggregate_value", aggregate_value)
+
+
+def processing_step(
+    step_name: str,
+    save_names: Union[str, List[str]],
+    data_level: str,
+    deps: Optional[List[str]] = None
+):
+    def decorator(func: Callable):
+        func._step_name = step_name
+        func._step_deps = deps or []
+        func._save_names = save_names
+        func._data_level = data_level
+        return func
+    return decorator
 
 
 if __name__ == "__main__":

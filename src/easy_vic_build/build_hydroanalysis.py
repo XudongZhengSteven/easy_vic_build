@@ -64,6 +64,40 @@ from .tools.hydroanalysis_func import (create_dem, create_flow_distance)
 from .tools.utilities import remove_and_mkdir
 
 
+def buildHydroanalysis_level0(
+    evb_dir,
+    dem_level0_path,
+    flow_direction_pkg="wbw",
+    **kwargs,
+):
+    logger.info(f"Starting to performing hydroanalysis for level0 based on {flow_direction_pkg}... ...")
+    # ====================== set dir and path ======================
+    logger.debug(f"DEM path: {dem_level0_path}")
+    
+    # ====================== perform hydrological analysis ======================
+    if flow_direction_pkg == "wbw":
+        # import
+        from .tools.hydroanalysis_func.hydroanalysis_wbw import hydroanalysis
+        
+        # wbw related path
+        wbw_working_directory = os.path.join(evb_dir.Hydroanalysis_dir, "wbw_working_directory_level0")
+        remove_and_mkdir(wbw_working_directory)
+        working_directory = wbw_working_directory
+
+        # perform hydrological analysis for level0 based on wbw
+        hydroanalysis.hydroanalysis_for_level0(
+            working_directory,
+            dem_level0_path,
+            **kwargs,
+        )
+        
+        logger.info("hydroanalysis for level0 based on wbw has been completed successfully")
+        
+    else:
+        logger.error("Invalid flow_direction_pkg. Please choose 'wbw'")
+        print("please input correct flow_direction_pkg")
+        return
+    
 def buildHydroanalysis_level1(
     evb_dir,
     params_dataset_level1,
@@ -72,9 +106,7 @@ def buildHydroanalysis_level1(
     stream_acc_threshold=None,
     flow_direction_pkg="wbw",
     crs_str="EPSG:4326",
-    pourpoint_lon=None,
-    pourpoint_lat=None,
-    pourpoint_direction_code=None,
+    **kwargs,
 ):
     """
     Perform hydroanalysis tasks to generate DEM, flow direction, flow accumulation, and flow distance.
@@ -104,7 +136,7 @@ def buildHydroanalysis_level1(
         The coordinate reference system string. Default is "EPSG:4326".
 
     pourpoint_lon : float, optional
-        Longitude of the pour point location. Default is None.
+        Longitude of the pour point location (corresponding to the coord at level1). Default is None.
 
     pourpoint_lat : float, optional
         Latitude of the pour point location. Default is None.
@@ -119,7 +151,7 @@ def buildHydroanalysis_level1(
         and saves them in the specified directory.
     """
 
-    logger.info("Starting to performing hydroanalysis... ...")
+    logger.info(f"Starting to performing hydroanalysis for level1 based on {flow_direction_pkg}... ...")
     # ====================== set dir and path ======================
     # set path
     dem_level1_path = os.path.join(evb_dir.Hydroanalysis_dir, "dem_level1.tif")
@@ -136,23 +168,6 @@ def buildHydroanalysis_level1(
     x_length_array = domain_dataset.variables["x_length"][:, :]
     y_length_array = domain_dataset.variables["y_length"][:, :]
 
-    # get index for pourpoint
-    if pourpoint_lat is not None:
-        searched_grid_index = search_grids_nearest(
-            [pourpoint_lat], [pourpoint_lon], params_lat, params_lon, search_num=1
-        )[0]
-        pourpoint_x_index = searched_grid_index[1][0]
-        pourpoint_y_index = searched_grid_index[0][0]
-        logger.info(
-            f"Pourpoint found at index: ({pourpoint_y_index}, {pourpoint_x_index})"
-        )
-    else:
-        pourpoint_x_index = None
-        pourpoint_y_index = None
-        logger.info(
-            f"No pourpoint provided, default flow direction calculation will be used"
-        )
-
     # ====================== create and save dem_level1.tif ======================
     transform = create_dem.create_dem_from_params(
         params_dataset_level1,
@@ -163,55 +178,31 @@ def buildHydroanalysis_level1(
     logger.debug(f"DEM created and saved to: {dem_level1_path}")
 
     # ====================== build flow drection ======================
-    if flow_direction_pkg == "arcpy":
-        from .tools.hydroanalysis_func.hydroanalysis_arcpy import hydroanalysis
-        # arcpy related path
-        arcpy_python_path = evb_dir.arcpy_python_path
-        arcpy_python_script_path = os.path.join(
-            evb_dir.__package_dir__, "scripts\\arcpy_scripts\\build_flowdirection_arcpy.py"
-        )
-
-        arcpy_working_directory = os.path.join(evb_dir.Hydroanalysis_dir, "arcpy_workspace")
-        remove_and_mkdir(arcpy_working_directory)
-        working_directory = arcpy_working_directory
-
-        # build flow direction based on arcpy
-        out = hydroanalysis.hydroanalysis_arcpy(
-            working_directory,
-            dem_level1_path,
-            arcpy_python_path,
-            arcpy_python_script_path,
-            stream_acc_threshold,
-        )
-        logger.info("Flow direction and accumulation calculated using arcpy")
-        
-    elif flow_direction_pkg == "wbw":
+    if flow_direction_pkg == "wbw":
         # import
         from .tools.hydroanalysis_func.hydroanalysis_wbw import hydroanalysis
         
         # wbw related path
-        wbw_working_directory = os.path.join(evb_dir.Hydroanalysis_dir, "wbw_workspace_level1")
+        wbw_working_directory = os.path.join(evb_dir.Hydroanalysis_dir, "wbw_working_directory_level1")
         remove_and_mkdir(wbw_working_directory)
         working_directory = wbw_working_directory
 
-        # build flow direction based on wbw
+        # perform hydrological analysis for level0 based on wbw: build flow direction
         out = hydroanalysis.hydroanalysis_for_level1(
             working_directory,
             dem_level1_path,
-            pourpoint_x_index=pourpoint_x_index,
-            pourpoint_y_index=pourpoint_y_index,
-            pourpoint_direction_code=pourpoint_direction_code,
             stream_acc_threshold=stream_acc_threshold,
-            crs_str=crs_str
+            crs_str=crs_str,
+            **kwargs,
         )
         logger.info("Flow direction and accumulation calculated using wbw")
 
     else:
-        logger.error("Invalid flow_direction_pkg. Please choose 'arcpy' or 'wbw'")
+        logger.error("Invalid flow_direction_pkg. Please choose 'wbw'")
         print("please input correct flow_direction_pkg")
         return
 
-    # cp data from workspace to RVICParam_dir
+    # cp data from workspace to Hydroanalysis_dir
     shutil.copy(os.path.join(working_directory, "flow_direction.tif"), flow_direction_path)
     shutil.copy(os.path.join(working_directory, "flow_acc.tif"), flow_acc_path)
     

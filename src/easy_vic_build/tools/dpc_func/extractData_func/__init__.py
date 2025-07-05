@@ -41,7 +41,7 @@ from . import (Extract_CAMELS_Attribute, Extract_CAMELS_ForcingDaymet,
                Extract_GlobalSnow_SWE, Extract_HWSD, Extract_MODIS_BSA,
                Extract_MODIS_LAI, Extract_MODIS_NDVI, Extract_NLDAS,
                Extract_NLDAS_annual_P, Extract_SrtmDEM, Extract_TRMM_P,
-               Extract_UMD_1km, Extract_UMDLandCover)
+               Extract_UMD_1km, Extract_UMDLandCover, Extract_NLDAS_forcing)
 
 # Define the package's public API and version
 __all__ = [
@@ -64,4 +64,5 @@ __all__ = [
     "Extract_UMDLandCover",
     "Extract_CAMELS_Streamflow",
     "Extract_CAMELS_Attribute",
+    "Extract_NLDAS_forcing"
 ]

@@ -4,6 +4,7 @@
 
 from easy_vic_build.Evb_dir_class import Evb_dir
 from easy_vic_build.build_GlobalParam import buildGlobalParam
+from general_info import *
 
 """
 general information:
@@ -18,16 +19,12 @@ grid_res_level1=3km(0.025), 6km(0.055), 8km(0.072), 12km(0.11)
 
 """ 
 
-scalemap = {"3km": 0.025, "6km": 0.055, "8km": 0.072, "12km": 0.11}
-
-if __name__ == "__main__":
-    basin_index = 213
-    model_scale = "6km"
+def test():
+    # general set
     case_name = f"{basin_index}_{model_scale}"
-    date_period = ["19980101", "19981231"]
     
     # build dir
-    evb_dir = Evb_dir("./examples")
+    evb_dir = Evb_dir(cases_home="./examples")
     evb_dir.builddir(case_name)
 
     # set GlobalParam_dict
@@ -36,16 +33,20 @@ if __name__ == "__main__":
                                       "RUNOFF_STEPS_PER_DAY": "24",
                                       "STARTYEAR": str(date_period[0][:4]),
                                       "STARTMONTH": str(int(date_period[0][4:6])),
-                                      "STARTDAY": str(int(date_period[0][4:6])),
+                                      "STARTDAY": str(int(date_period[0][6:8])),
                                       "ENDYEAR": str(date_period[1][:4]),
                                       "ENDMONTH": str(int(date_period[1][4:6])),
-                                      "ENDDAY": str(int(date_period[1][4:6])),
+                                      "ENDDAY": str(int(date_period[1][6:8])),
                                       "OUT_TIME_UNITS": "DAYS"},
                         "Output": {"AGGFREQ": "NDAYS   1"},
                         "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
                         }
-    
+
     # buildGlobalParam
     buildGlobalParam(evb_dir, GlobalParam_dict)
+
+
+if __name__ == "__main__":
+    test()   
     
     

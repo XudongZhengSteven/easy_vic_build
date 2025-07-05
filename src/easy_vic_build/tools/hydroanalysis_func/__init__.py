@@ -13,7 +13,6 @@ Modules:
     - create_dem: Generates digital elevation models (DEMs) from input topographic data.
     - create_flow_distance: Computes flow distance from a given source, aiding in hydrological modeling.
     - mosaic_dem: Mosaics multiple DEMs into a single raster dataset.
-    - hydroanalysis_arcpy: Provides hydrological analysis functions utilizing the ArcPy library.
     - hydroanalysis_wbw: Contains tools for watershed and basin-wide hydrological analysis.
 
 Author:
@@ -24,7 +23,7 @@ Author:
 """
 
 # Importing submodules for ease of access
-from . import (create_dem, create_flow_distance, mosaic_dem, hydroanalysis_wbw, hydroanalysis_arcpy)
+from . import (create_dem, create_flow_distance, mosaic_dem, hydroanalysis_wbw)
 
 # Define the package's public API and version
 __all__ = [
@@ -32,5 +31,4 @@ __all__ = [
     "create_flow_distance",
     "mosaic_dem",
     "hydroanalysis_wbw",
-    "hydroanalysis_arcpy",
 ]

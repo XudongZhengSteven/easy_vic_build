@@ -17,6 +17,7 @@ from tqdm import *
 
 from ...geo_func import resample, search_grids
 from ...geo_func.create_gdf import CreateGDF
+from .... import logger
 
 
 def combine_MODIS_LAI_data(reverse_lat=True):
@@ -311,8 +312,10 @@ def ExtractData(
     umd_landcover_1km_path = "E:\\data\\LULC\\UMD_landcover_classification\\UMD_GLCF_GLCDS_data\\differentFormat\\data.tiff"
 
     # set grids_lat, lon
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     # read LAI, lat, lon, res
     LAI_months_clip = dict(zip(list(range(1, 13)), [[] for m in range(1, 13)]))
@@ -330,6 +333,8 @@ def ExtractData(
 
         LAI_lat_res = (max(LAI_lat) - min(LAI_lat)) / (len(LAI_lat) - 1)
         LAI_lon_res = (max(LAI_lon) - min(LAI_lon)) / (len(LAI_lon) - 1)
+        LAI_lat_res = float(f"{LAI_lat_res:.5g}")  # 0.0072277 deg ~= 0.8km
+        LAI_lon_res = float(f"{LAI_lon_res:.5g}")
 
         # clip
         xindex_start = np.where(LAI_lon <= min(grids_lon) - grid_shp_res)[0][-1]
@@ -365,6 +370,8 @@ def ExtractData(
 
     umd_lat_res = (max(umd_lat) - min(umd_lat)) / (len(umd_lat) - 1)
     umd_lon_res = (max(umd_lon) - min(umd_lon)) / (len(umd_lon) - 1)
+    umd_lat_res = float(f"{umd_lat_res:.5g}")
+    umd_lon_res = float(f"{umd_lon_res:.5g}")
 
     # clip umd
     xindex_start = np.where(umd_lon <= min(grids_lon) - grid_shp_res)[0][-1]
@@ -379,7 +386,9 @@ def ExtractData(
     umd_lat_clip = umd_lat[yindex_start : yindex_end + 1]
 
     # search grids
-    print("========== search grids for LAI ==========")
+    logger.info("searching grids for LAI... ...")
+
+    # source data res: 1km (UMD LULC)
     searched_grids_index = search_grids.search_grids_radius_rectangle(
         dst_lat=grids_lat,
         dst_lon=grids_lon,
@@ -422,7 +431,7 @@ def ExtractData(
             searched_grid_lat = umd_lat_clip[searched_grid_index[0][j]]
             searched_grid_lon = umd_lon_clip[searched_grid_index[1][j]]
 
-            # search neartest LAI grid with umd grid
+            # search neartest LAI grid with umd grid, 1km to 0.8km
             searched_grids_index_match = search_grids.search_grids_nearest(
                 dst_lat=[searched_grid_lat],
                 dst_lon=[searched_grid_lon],
@@ -466,7 +475,7 @@ def ExtractData(
         # check
         if check_search and i == 0:
             cgdf = CreateGDF()
-            grid_shp_grid = grid_shp.loc[i:i, "geometry"]
+            grid_shp_grid = grid_shp.loc[[i], "geometry"]
             searched_umd_grids_gdf = cgdf.createGDF_rectangle_central_coord(
                 searched_grids_lon_umd, searched_grids_lat_umd, umd_lat_res
             )
@@ -482,7 +491,7 @@ def ExtractData(
             searched_match_LAI_grids_gdf.plot(
                 ax=ax, edgecolor="k", linewidth=1, facecolor="b", alpha=0.5
             )
-            ax.set_title("check search")
+            ax.set_title("check search for MODIS LAI")
 
     # save in grid_shp
     for m in range(1, 13):

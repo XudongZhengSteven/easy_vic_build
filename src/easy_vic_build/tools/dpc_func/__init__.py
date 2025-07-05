@@ -33,8 +33,7 @@ Author:
 
 # Importing submodules for ease of access
 from . import (aggregate, basin_grid_class, basin_grid_func, dpc_base,
-               dpc_subclass, readdataIntoBasins_interface,
-               readdataIntoGrids_interface, select_basin_shp)
+               dpc_subclass, select_basin_shp)
 
 # Define the package's public API and version
 __all__ = [
@@ -43,7 +42,5 @@ __all__ = [
     "aggregate",
     "dpc_base",
     "dpc_subclass",
-    "readdataIntoBasins_interface",
-    "readdataIntoGrids_interface",
     "select_basin_shp",
 ]

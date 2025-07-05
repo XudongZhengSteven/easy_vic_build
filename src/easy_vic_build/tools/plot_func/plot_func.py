@@ -76,6 +76,7 @@ from matplotlib.colors import Normalize
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.ticker import FuncFormatter, MultipleLocator
 from netCDF4 import num2date
+import geopandas as gpd
 
 from easy_vic_build.tools.calibrate_func.evaluate_metrics import \
     EvaluationMetric
@@ -1231,10 +1232,13 @@ def plot_Basin_map(
     dpc_VIC_level1,
     dpc_VIC_level2,
     stream_gdf,
+    gauge_coord,
     x_locator_interval=0.3,
     y_locator_interval=0.2,
     fig=None,
     ax=None,
+    dem_column="SrtmDEM_mean_Value",
+    **kwargs
 ):
     """
     Plot the basin map including elevation, basin boundary, river network, and gauge location.
@@ -1249,6 +1253,7 @@ def plot_Basin_map(
         A VIC model object at level 2 containing grid and basin shapefiles.
     stream_gdf : geopandas.GeoDataFrame
         A GeoDataFrame containing the river network to be plotted.
+    gauge_coord: [lon, lat]
     x_locator_interval : float, optional
         The interval for x-axis ticks. Defaults to 0.3.
     y_locator_interval : float, optional
@@ -1274,47 +1279,55 @@ def plot_Basin_map(
     # =========== plot Basin_map ===========
     # get fig, ax
     if not ax:
-        fig_Basin_map, ax_Basin_map = plt.subplots()
+        fig_Basin_map, ax_Basin_map = plt.subplots(**kwargs)
 
+    # get data
+    basin_shp_level0 = dpc_VIC_level0.get_data_from_cache("basin_shp")[0]
+    grid_shp_level0 = dpc_VIC_level0.get_data_from_cache("grid_shp")[0]
+    
+    basin_shp_level1 = dpc_VIC_level1.get_data_from_cache("basin_shp")[0]
+    grid_shp_level1 = dpc_VIC_level1.get_data_from_cache("grid_shp")[0]
+    
+    basin_shp_level2 = dpc_VIC_level2.get_data_from_cache("basin_shp")[0]
+    grid_shp_level2 = dpc_VIC_level2.get_data_from_cache("grid_shp")[0]
+    
     # plot dem at level0
-    dpc_VIC_level0.grid_shp.plot(
+    dpc_VIC_level0.get_data_from_cache("dem")[0].plot(
         ax=ax_Basin_map,
-        column="SrtmDEM_mean_Value",
+        column=dem_column,
         alpha=1,
         legend=True,
         colormap="terrain",
         zorder=1,
         legend_kwds={"label": "Elevation (m)"},
     )  # terrain gray
-
+    
     # plot basin boundary
-    dpc_VIC_level0.basin_shp.plot(
+    basin_shp_level0.plot(
         ax=ax_Basin_map, facecolor="none", linewidth=2, alpha=1, edgecolor="k", zorder=2
     )
-    dpc_VIC_level0.basin_shp.plot(ax=ax_Basin_map, facecolor="k", alpha=0.2, zorder=3)
+    basin_shp_level0.plot(ax=ax_Basin_map, facecolor="k", alpha=0.2, zorder=3)
 
     # plot river
     stream_gdf.plot(ax=ax_Basin_map, color="b", zorder=4)
-
+        
     # plot gauge
-    gauge_lon = dpc_VIC_level1.basin_shp["camels_topo:gauge_lon"].values[0]
-    gauge_lat = dpc_VIC_level1.basin_shp["camels_topo:gauge_lat"].values[0]
     ax_Basin_map.plot(
-        gauge_lon, gauge_lat, "r*", markersize=10, mec="k", mew=1, zorder=5
-    )
+        gauge_coord[0], gauge_coord[1], "r*", markersize=10, mec="k", mew=1, zorder=5
+    )  # gauge_coord[lon, lat]
 
     # set plot boundary and ticks
-    set_boundary(ax_Basin_map, dpc_VIC_level0.boundary_grids_edge_x_y)
+    set_boundary(ax_Basin_map, grid_shp_level0.createBoundaryShp()[-1])
     set_xyticks(ax_Basin_map, x_locator_interval, y_locator_interval)
 
     # =========== plot grid basin ===========
     fig_grid_basin_level0, ax_grid_basin_level0 = dpc_VIC_level0.plot()
     fig_grid_basin_level1, ax_grid_basin_level1 = dpc_VIC_level1.plot()
     fig_grid_basin_level2, ax_grid_basin_level2 = dpc_VIC_level2.plot()
-
-    set_boundary(ax_grid_basin_level0, dpc_VIC_level0.boundary_grids_edge_x_y)
-    set_boundary(ax_grid_basin_level1, dpc_VIC_level1.boundary_grids_edge_x_y)
-    set_boundary(ax_grid_basin_level2, dpc_VIC_level2.boundary_grids_edge_x_y)
+    
+    set_boundary(ax_grid_basin_level0, grid_shp_level0.createBoundaryShp()[-1])
+    set_boundary(ax_grid_basin_level1, grid_shp_level1.createBoundaryShp()[-1])
+    set_boundary(ax_grid_basin_level2, grid_shp_level2.createBoundaryShp()[-1])
 
     set_xyticks(ax_grid_basin_level0, x_locator_interval, y_locator_interval)
     set_xyticks(ax_grid_basin_level1, x_locator_interval, y_locator_interval)

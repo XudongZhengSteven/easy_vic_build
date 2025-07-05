@@ -83,7 +83,7 @@ from . import logger
 from .tools.decoractors import clock_decorator
 from .tools.geo_func.search_grids import *
 from .tools.params_func.createParametersDataset import createFlowDirectionFile
-from .tools.uh_func import create_uh
+from .tools.routing_func import create_uh
 from .tools.utilities import (read_cfg_to_dict,
                               read_rvic_conv_cfg_file_reference,
                               read_rvic_param_cfg_file_reference)
@@ -96,10 +96,9 @@ except:
     HAS_RVIC = False
 
 
-def buildRVICParam_general(
+def buildRVICParam_basic(
     evb_dir,
-    dpc_VIC_level1,
-    params_dataset_level1,
+    domain_dataset,
     ppf_kwargs=dict(),
     uh_params={
         "createUH_func": create_uh.createGUH,
@@ -180,15 +179,18 @@ def buildRVICParam_general(
 
     # general RVICParam before using rvic_parameters
     # buildRVICFlowDirectionFile
-    buildRVICFlowDirectionFile(evb_dir, params_dataset_level1)
+    buildRVICFlowDirectionFile(evb_dir, domain_dataset)
 
     # buildPourPointFile
-    buildPourPointFile(evb_dir, dpc_VIC_level1, **ppf_kwargs)
+    buildPourPointFile(evb_dir, **ppf_kwargs)
 
     # buildUHBOXFile
-    buildUHBOXFile(evb_dir, **uh_params)
+    max_day = buildUHBOXFile(evb_dir, **uh_params)
 
     # buildParamCFGFile
+    if cfg_params["CELL_FLOWDAYS"] is None:
+        cfg_params["CELL_FLOWDAYS"] = max_day
+        
     buildParamCFGFile(evb_dir, **cfg_params)
 
     logger.info(
@@ -199,8 +201,7 @@ def buildRVICParam_general(
 @clock_decorator
 def buildRVICParam(
     evb_dir,
-    dpc_VIC_level1,
-    params_dataset_level1,
+    domain_dataset,
     ppf_kwargs=dict(),
     uh_params={
         "createUH_func": create_uh.createGUH,
@@ -279,10 +280,9 @@ def buildRVICParam(
     logger.info("Starting to generate RVIC parameter file... ...")
 
     # buildRVICParam_general
-    buildRVICParam_general(
+    buildRVICParam_basic(
         evb_dir,
-        dpc_VIC_level1,
-        params_dataset_level1,
+        domain_dataset,
         ppf_kwargs,
         uh_params,
         cfg_params,
@@ -305,7 +305,7 @@ def buildRVICParam(
     logger.info("RVIC parameter file generation successfully")
 
 
-def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
+def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
     """
     Generate an RVIC flow direction file in NetCDF format.
 
@@ -345,9 +345,9 @@ def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
 
     # ====================== read general information ======================
     logger.debug("Reading latitude, longitude, and mask data from VIC parameters... ...")
-    params_lat = params_dataset_level1.variables["lat"][:]
-    params_lon = params_dataset_level1.variables["lon"][:]
-    params_mask = params_dataset_level1.variables["run_cell"][:, :]
+    domain_lat = domain_dataset.variables["lat"][:]
+    domain_lon = domain_dataset.variables["lon"][:]
+    domain_mask = domain_dataset.variables["mask"][:, :]
 
     # ====================== read flow_direction and flow_acc ======================
     logger.debug(f"Reading flow direction data from {flow_direction_path}... ...")
@@ -366,27 +366,27 @@ def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
     # create nc file
     logger.debug(f"Creating NetCDF file: {flow_direction_file_path}... ...")
     flow_direction_dataset = createFlowDirectionFile(
-        flow_direction_file_path, params_lat, params_lon
+        flow_direction_file_path, domain_lat, domain_lon
     )
 
     # change type
     logger.debug("Processing and masking data... ...")
-    params_mask_array = deepcopy(params_mask)
-    params_mask_array = params_mask_array.astype(int)
+    domain_mask_array = deepcopy(domain_mask)
+    domain_mask_array = domain_mask_array.astype(int)
     flow_direction_array = flow_direction_array.astype(int)
     flow_distance_array = flow_distance_array.astype(float)
     flow_acc_array = flow_acc_array.astype(float)
 
     # mask
-    params_mask_array[params_mask == 0] = int(-9999)
-    flow_direction_array[params_mask == 0] = int(-9999)
-    flow_distance_array[params_mask == 0] = float(-9999.0)
-    flow_acc_array[params_mask == 0] = float(-9999.0)
+    domain_mask_array[domain_mask == 0] = int(-9999)
+    flow_direction_array[domain_mask == 0] = int(-9999)
+    flow_distance_array[domain_mask == 0] = float(-9999.0)
+    flow_acc_array[domain_mask == 0] = float(-9999.0)
 
     # assign values
-    flow_direction_dataset.variables["lat"][:] = np.array(params_lat)
-    flow_direction_dataset.variables["lon"][:] = np.array(params_lon)
-    flow_direction_dataset.variables["Basin_ID"][:, :] = np.array(params_mask_array)
+    flow_direction_dataset.variables["lat"][:] = np.array(domain_lat)
+    flow_direction_dataset.variables["lon"][:] = np.array(domain_lon)
+    flow_direction_dataset.variables["Basin_ID"][:, :] = np.array(domain_mask_array)
     flow_direction_dataset.variables["Flow_Direction"][:, :] = np.array(
         flow_direction_array
     )
@@ -402,7 +402,7 @@ def buildRVICFlowDirectionFile(evb_dir, params_dataset_level1):
     )
 
 
-def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats=None):
+def buildPourPointFile(evb_dir, names=None, lons=None, lats=None):
     """
     Generate a pour point CSV file for RVIC.
 
@@ -448,33 +448,16 @@ def buildPourPointFile(evb_dir, dpc_VIC_level1=None, names=None, lons=None, lats
     # ====================== build PourPointFile ======================
     # df
     pourpoint_file = pd.DataFrame(columns=["lons", "lats", "names"])
+    
+    if lons is None or lats is None or names is None:
+        logger.error("Missing longitude, latitude, or name data for pour points")
+        raise ValueError(
+            "Longitude, latitude, and name lists must be provided when dpc_VIC_level1 is None"
+        )
 
-    if dpc_VIC_level1 is not None:
-        logger.info("Extracting pour point data from basin shapefile... ...")
-        try:
-            x, y = (
-                dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lon"].values[0],
-                dpc_VIC_level1.basin_shp.loc[:, "camels_topo:gauge_lat"].values[0],
-            )
-            pourpoint_file.lons = [x]
-            pourpoint_file.lats = [y]
-            pourpoint_file.names = [
-                f"gauge_id:{dpc_VIC_level1.basin_shp.loc[:, 'camels_topo:gauge_id'].values[0]}"
-            ]
-        except KeyError as e:
-            logger.error(f"Missing expected attributes in basin shapefile: {e}")
-            raise e
-    else:
-        logger.info("Using manually provided pour point data")
-        if lons is None or lats is None or names is None:
-            logger.error("Missing longitude, latitude, or name data for pour points")
-            raise ValueError(
-                "Longitude, latitude, and name lists must be provided when dpc_VIC_level1 is None"
-            )
-
-        pourpoint_file.lons = lons
-        pourpoint_file.lats = lats
-        pourpoint_file.names = names
+    pourpoint_file.lons = lons
+    pourpoint_file.lats = lats
+    pourpoint_file.names = names
 
     # ====================== Save pour point file ======================
     pourpoint_file.to_csv(pourpoint_file_path, header=True, index=False)

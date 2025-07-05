@@ -63,6 +63,7 @@ import numpy as np
 from tqdm import *
 
 # * note: Slicing trap in netcdf4 and xarray, transfer it as np.ndarray first
+# TODO use mask array
 
 
 # TODO parallel

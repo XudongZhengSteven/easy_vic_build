@@ -40,9 +40,6 @@ Author:
 
 import numpy as np
 
-from .params_set import *
-
-
 class TF_VIC:
     """Class containing methods for soil hydraulic parameter calculations, Transfer Functions."""
 
@@ -94,33 +91,36 @@ class TF_VIC:
         return ret
 
     @staticmethod
-    def depth(total_depth, g1, g2):
+    def depth(total_depth, soillayerresampler, g):
         """
         Calculate the distribution of soil layer depths.
 
         Parameters:
         total_depth (ndarray): Original total depth.
-        g1 (float): Coefficient for the first layer.
-        g2 (float): Coefficient for the second layer.
+        g: breakpoints for layers, such as [2, 6] (total 8 layers, this set 3 layers: 0-2, 2-6. 6-8)
 
         Returns:
         list: Depth values for each layer.
         """
         # total_depth, m
         # depth, m
+        # g: 
         # g1, g2: num1 (1, 3), num2 (3, 8), int
         # set num1 as the num of end CONUS layer num of the first layer
         # set num2 as the num of end CONUS layer num of the second layer
         # d1 0~0.15, d2 0.2~0.5, d3 0.7~1.5, d2 > d1, default d1 (0.1), d2 (0.5), d3 (3.0)
         # Arithmetic mean
-
+        
+        # resampler
+        soillayerresampler.create_grouping(g)
+        grouping = soillayerresampler.grouping
+        
+        # transfer into percent
+        depth_percentages = grouping['depth_percentages']
+        
         # transfer g1, g2 into percentile
-        percentile_layer1, percentile_layer2 = CONUS_depth_num_to_percentile(g1, g2)
-        ret = [
-            total_depth * percentile_layer1,
-            total_depth * percentile_layer2,
-            total_depth * (1.0 - percentile_layer1 - percentile_layer2),
-        ]
+        ret = [total_depth * p for p in depth_percentages]
+        
         return ret
 
     @staticmethod
@@ -938,3 +938,253 @@ class TF_VIC:
     # def resid_moist(): # set as 0
     #     ret = 0.0
     #     return ret
+
+class SoilLayerResampler:
+    """
+    A class to resample soil layers with simplified continuous grouping.
+    
+    Now accepts breakpoints instead of full grouping scheme.
+    
+    attributes:
+        self.orig_depths = np.array(original_depths, dtype=float)
+        self.n_orig = len(self.orig_depths)
+        self.orig_total = np.sum(self.orig_depths)
+        self.orig_cumsum = np.cumsum(self.orig_depths)
+        self.orig_boundaries = np.concatenate(([0], self.orig_cumsum))
+        self.grouping
+            dict: Contains computed parameters including:
+                - depths: thickness of each new layer
+                - boundaries: depth boundaries
+                - percentages: thickness percentages
+                - group_info: detailed grouping information
+    
+    example:
+        # Original 11 layers
+        original_depths = [10,10,10,20,20,30,30,40,50,50,50]
+        resampler = SoilLayerResampler(original_depths)
+        resampler.create_grouping([2, 6])
+        
+        # 1. Create grouping
+        grouping = resampler.grouping
+        print("Original grouping:")
+        print("Depths:", grouping['depths'])
+        print("Depth percentages:", grouping['depth_percentages'])
+        
+        >>>
+        Original grouping:
+        Depths: [ 20.  80. 220.]
+        Depth percentages: [0.0625 0.25   0.6875]
+        
+        # 2. Scale to new total depth
+        scaled_grouping = resampler.scale_grouping(grouping, 500)  # Scale to 500cm total
+        print("\nScaled grouping (500cm total):")
+        print("Scaled depths:", scaled_grouping['depths'])
+        print("Boundaries:", scaled_grouping['boundaries'])
+        
+        >>>        
+        Scaled grouping (500cm total):
+        Scaled depths: [ 31.25 125.   343.75]
+        Boundaries: [  0.    31.25 156.25 500.  ]
+        
+        # 3. Value conversion
+        print("\n=== Value conversion ===")
+        orig_values = np.array([1,2,3,4,5,6,7,8,9,10,11])
+        grouped_values = resampler.convert_to_grouping(orig_values, grouping, method='mean')
+        print("Original:", orig_values)
+        print("Grouped (mean):", grouped_values)
+        
+        >>>
+        === Value conversion ===
+        Original: [ 1  2  3  4  5  6  7  8  9 10 11]
+        Grouped (mean): [1.5 4.5 9. ]
+        
+    """
+    
+    def __init__(self, original_depths, breakpoints=None):
+        """
+        Initialize with original layer depths.
+        
+        Args:
+            original_depths (list/np.array): Depth thickness of each original layer
+        """
+        self.orig_depths = np.array(original_depths, dtype=float)
+        self.n_orig = len(self.orig_depths)
+        self.orig_total = np.sum(self.orig_depths)
+        self.orig_cumsum = np.cumsum(self.orig_depths)
+        self.orig_boundaries = np.concatenate(([0], self.orig_cumsum))
+        if breakpoints is not None:
+            self.grouping = self.create_grouping(breakpoints)
+        else:
+            self.grouping = None
+        
+    def create_grouping(self, breakpoints):
+        """
+        Create grouping by specifying layer breakpoints (0-based).
+        
+        Args:
+            breakpoints (list): End indices of each group (exclusive).
+                e.g. [2,6] for 11 layers creates groups 0-1, 2-5, 6-10
+        
+        Returns:
+            dict: Contains computed parameters including:
+                - depths: thickness of each new layer
+                - boundaries: depth boundaries
+                - percentages: thickness percentages
+                - group_info: detailed grouping information
+        """
+        # Process breakpoints
+        breakpoints = np.unique(np.concatenate(([0], breakpoints, [self.n_orig])))
+        if breakpoints[0] != 0 or breakpoints[-1] != self.n_orig:
+            raise ValueError("Breakpoints must cover all layers from 0 to n_orig-1")
+        
+        # Generate grouping scheme
+        grouping_scheme = []
+        for i in range(len(breakpoints)-1):
+            grouping_scheme.append(list(range(breakpoints[i], breakpoints[i+1])))
+        
+        # Calculate layer parameters
+        new_depths = []
+        new_boundaries = [0]
+        group_info = []
+        
+        for group in grouping_scheme:
+            total_depth = np.sum(self.orig_depths[group])
+            group_start = self.orig_boundaries[group[0]]
+            group_end = self.orig_boundaries[group[-1]+1]
+            
+            new_depths.append(total_depth)
+            new_boundaries.append(group_end)
+            group_info.append({
+                'orig_indices': group,
+                'start_depth': group_start,
+                'end_depth': group_end,
+                'thickness': total_depth,
+                'n_orig_layers': len(group)
+            })
+        
+        # Calculate percentages
+        new_total = sum(new_depths)
+        depth_percentages = np.array(new_depths) / new_total
+        
+        self.grouping = {
+            'n_layers': len(grouping_scheme),
+            'depths': np.array(new_depths),
+            'boundaries': np.array(new_boundaries),
+            'depth_percentages': depth_percentages,
+            'total_depth': new_total,
+            'group_info': group_info,
+            'grouping_scheme': grouping_scheme
+        }
+        
+    def scale_grouping(self, grouping, new_total_depth):
+        """
+        Scale the grouped layers to a new total depth while maintaining percentages.
+        
+        Args:
+            grouping: Grouping dictionary from create_grouping()
+            new_total_depth: Desired total depth after scaling
+            
+        Returns:
+            dict: New grouping with scaled depths
+        """
+        scaled_depths = grouping['depth_percentages'] * new_total_depth
+        scaled_boundaries = np.cumsum(np.concatenate(([0], scaled_depths)))
+        
+        return {
+            **grouping,
+            'depths': scaled_depths,
+            'boundaries': scaled_boundaries,
+            'total_depth': new_total_depth
+        }
+        
+    def convert_to_grouping(self, values, grouping, direction='orig_to_new', method='mean'):
+        """
+        Convert values between original and grouped layers.
+        
+        Args:
+            values: Values to convert
+            grouping: Grouping scheme from create_grouping()
+            direction: 'orig_to_new' or 'new_to_orig'
+            method: 'mean' or 'sum' for aggregation
+        
+        Returns:
+            Converted values
+        """
+        if direction == 'orig_to_new':
+            if len(values) != self.n_orig:
+                raise ValueError(f"Expected {self.n_orig} original values")
+                
+            converted = []
+            for group in grouping['grouping_scheme']:
+                if method == 'mean':
+                    converted.append(np.mean(values[group]))
+                elif method == 'sum':
+                    converted.append(np.sum(values[group]))
+                else:
+                    raise ValueError("Method must be 'mean' or 'sum'")
+            return np.array(converted)
+            
+        elif direction == 'new_to_orig':
+            if len(values) != grouping['n_layers']:
+                raise ValueError(f"Expected {grouping['n_layers']} grouped values")
+                
+            converted = np.zeros(self.n_orig)
+            for i, group in enumerate(grouping['grouping_scheme']):
+                converted[group] = values[i]
+            return converted
+            
+        else:
+            raise ValueError("Direction must be 'orig_to_new' or 'new_to_orig'")
+    
+    def get_optimal_grouping(self, target_n_layers, method='equal_thickness'):
+        """
+        Automatically generate grouping to achieve target layer count.
+        Returns breakpoints ready for create_grouping().
+        """
+        if method == 'equal_thickness':
+            target_depth = self.orig_total / target_n_layers
+            breakpoints = []
+            cum_depth = 0
+            for i in range(1, target_n_layers):
+                cum_depth += target_depth
+                breakpoints.append(np.argmax(self.orig_cumsum >= cum_depth))
+        elif method == 'equal_layers':
+            layers_per_group = self.n_orig // target_n_layers
+            breakpoints = [i*layers_per_group for i in range(1, target_n_layers)]
+        else:
+            raise ValueError("Method must be 'equal_thickness' or 'equal_layers'")
+        
+        # Ensure we cover all layers
+        breakpoints = [bp for bp in breakpoints if bp < self.n_orig]
+        breakpoints = list(np.unique(breakpoints))
+        if breakpoints[-1] != self.n_orig-1:
+            breakpoints.append(self.n_orig-1)
+        
+        return breakpoints
+
+
+if __name__ == "__main__":
+    # # Original 11 layers
+    # original_depths = [10,10,10,20,20,30,30,40,50,50,50]
+    # resampler = SoilLayerResampler(original_depths)
+    # resampler.create_grouping([2, 6])
+    
+    # # Create grouping
+    # grouping = resampler.grouping
+    # print("Original grouping:")
+    # print("Depths:", grouping['depths'])
+    # print("Depth percentages:", grouping['depth_percentages'])
+    
+    # # Scale to new total depth
+    # scaled_grouping = resampler.scale_grouping(grouping, 500)  # Scale to 500cm total
+    # print("\nScaled grouping (500cm total):")
+    # print("Scaled depths:", scaled_grouping['depths'])
+    # print("Boundaries:", scaled_grouping['boundaries'])
+    
+    # # Value conversion
+    # print("\n=== Value conversion ===")
+    # orig_values = np.array([1,2,3,4,5,6,7,8,9,10,11])
+    # grouped_values = resampler.convert_to_grouping(orig_values, grouping, method='mean')
+    # print("Original:", orig_values)
+    # print("Grouped (mean):", grouped_values)
+    pass

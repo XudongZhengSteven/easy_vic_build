@@ -40,6 +40,7 @@ import rasterio
 import numpy as np
 from ...geo_func.format_conversion import *
 from .... import logger
+from whitebox_workflows import show
 
 def d8_streamnetwork(
     wbe,
@@ -48,6 +49,7 @@ def d8_streamnetwork(
     filled_dem,
     stream_acc_threshold=100.0,
     output_file_stream_raster="stream_raster.tif",
+    output_file_stream_raster_vector="stream_raster_vector.shp",
     output_file_stream_raster_link="stream_raster_link.tif",
     output_file_stream_vector="stream_vector.shp",
     output_file_stream_vector_repaired="stream_vector_repaired.shp",
@@ -177,6 +179,11 @@ def d8_streamnetwork(
     wbe.write_raster(stream_raster, output_file_stream_raster)
     # show(stream_raster, colorbar_kwargs={'label': 'stream raster (1, bool)'})
     
+    # stream raster vector
+    stream_raster_vector = wbe.raster_to_vector_lines(stream_raster)
+    wbe.write_vector(stream_raster_vector, output_file_stream_raster_vector)
+    # show(stream_raster_vector, colorbar_kwargs={'label': 'stream raster vector(1, bool)'})
+    
     # stream link
     logger.info("Linking stream_raster... ...")
     stream_raster_link = wbe.stream_link_class(flow_direction, stream_raster, esri_pntr=esri_pointer)
@@ -213,9 +220,21 @@ def d8_streamnetwork(
     vector_stream_network_analysis_result = (stream_lines_vector, confluences_points_vector, outlet_points_vector, channel_head_points_vector)
     
     wbe.write_vector(stream_lines_vector, output_file_stream_lines_vector)
-    wbe.write_vector(confluences_points_vector, output_file_confluences_points_vector)
-    wbe.write_vector(outlet_points_vector, output_file_outlet_points_vector)
-    wbe.write_vector(channel_head_points_vector, output_file_channel_head_points_vector)
+    
+    if len(confluences_points_vector.records) > 0:
+        wbe.write_vector(confluences_points_vector, output_file_confluences_points_vector)
+    else:
+        logger.warning("Confluences points vector could not be written. It may be empty.")
+    
+    if len(outlet_points_vector.records) > 0:
+        wbe.write_vector(outlet_points_vector, output_file_outlet_points_vector)
+    else:
+        logger.warning("Outlet points vector could not be written. It may be empty.")
+    
+    if len(channel_head_points_vector.records) > 0:
+        wbe.write_vector(channel_head_points_vector, output_file_channel_head_points_vector)
+    else:
+        logger.warning("Channel head points vector could not be written. It may be empty.")
     
     return stream_raster, stream_vector, repaired_stream_vector, vector_stream_network_analysis_result
     

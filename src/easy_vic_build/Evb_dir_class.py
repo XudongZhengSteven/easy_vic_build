@@ -71,12 +71,12 @@ class Evb_dir:
         self._MeteForcing_src_suffix = ".nc"
         self._forcing_prefix = "forcings"
         self._linux_share_temp_dir = ""
-        self._arcpy_python_path = ""
         self._vic_exe_path = ""
 
         self._dpc_VIC_level0_path = ""
         self._dpc_VIC_level1_path = ""
         self._dpc_VIC_level2_path = ""
+        self._dpc_VIC_level3_path = ""
         self._dpc_VIC_plot_grid_basin_path = ""
         self._dpc_VIC_plot_columns_path = ""
 
@@ -189,6 +189,7 @@ class Evb_dir:
         self._dpc_VIC_level0_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level0.pkl")
         self._dpc_VIC_level1_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level1.pkl")
         self._dpc_VIC_level2_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level2.pkl")
+        self._dpc_VIC_level3_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level3.pkl")
         self._dpc_VIC_plot_grid_basin_path = os.path.join(
             self.dpcFile_dir, "dpc_VIC_plot_grid_basin.tiff"
         )
@@ -264,14 +265,6 @@ class Evb_dir:
         self._linux_share_temp_dir = linux_share_temp_dir
 
     @property
-    def arcpy_python_path(self):
-        return self._arcpy_python_path
-
-    @arcpy_python_path.setter
-    def arcpy_python_path(self, arcpy_python_path):
-        self._arcpy_python_path = arcpy_python_path
-
-    @property
     def vic_exe_path(self):
         return self._vic_exe_path
 
@@ -304,6 +297,14 @@ class Evb_dir:
     @dpc_VIC_level2_path.setter
     def dpc_VIC_level2_path(self, dpc_VIC_level2_path):
         self._dpc_VIC_level2_path = dpc_VIC_level2_path
+    
+    @property
+    def dpc_VIC_level3_path(self):
+        return self._dpc_VIC_level3_path
+
+    @dpc_VIC_level3_path.setter
+    def dpc_VIC_level3_path(self, dpc_VIC_level3_path):
+        self._dpc_VIC_level3_path = dpc_VIC_level3_path
 
     @property
     def dpc_VIC_plot_grid_basin_path(self):

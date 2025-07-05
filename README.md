@@ -108,3 +108,7 @@ If you use this package in your research, please cite it as follows:
 ```plaintext
 Xudong Zheng et al., (2025). An Open-Source Python Framework for Scalable Deployment and Advanced Applications of VIC Model. Retrieved from https://github.com/XudongZhengSteven/easy_vic_build
 ```
+
+## TODO
+
+distributed save: dpc (each component saved, a copuler can be used for combined these components into a dpc)

@@ -59,23 +59,49 @@ from .tools.decoractors import clock_decorator
 from .tools.dpc_func.basin_grid_func import grids_array_coord_map
 from .tools.geo_func.search_grids import *
 
-UTM_proj_map = {
-    "UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "EPSG:32610"},
-    "UTM Zone 11N": {"lon_min": -120, "lon_max": -114, "crs_code": "EPSG:32611"},
-    "UTM Zone 12N": {"lon_min": -114, "lon_max": -108, "crs_code": "EPSG:32612"},
-    "UTM Zone 13N": {"lon_min": -108, "lon_max": -102, "crs_code": "EPSG:32613"},
-    "UTM Zone 14N": {"lon_min": -102, "lon_max": -96, "crs_code": "EPSG:32614"},
-    "UTM Zone 15N": {"lon_min": -96, "lon_max": -90, "crs_code": "EPSG:32615"},
-    "UTM Zone 16N": {"lon_min": -90, "lon_max": -84, "crs_code": "EPSG:32616"},
-    "UTM Zone 17N": {"lon_min": -84, "lon_max": -78, "crs_code": "EPSG:32617"},
-    "UTM Zone 18N": {"lon_min": -78, "lon_max": -72, "crs_code": "EPSG:32618"},
-    "UTM Zone 19N": {"lon_min": -72, "lon_max": -66, "crs_code": "EPSG:32619"},
-}
+# UTM_proj_map = {
+#     "UTM Zone 10N": {"lon_min": -126, "lon_max": -120, "crs_code": "EPSG:32610"},
+#     "UTM Zone 11N": {"lon_min": -120, "lon_max": -114, "crs_code": "EPSG:32611"},
+#     "UTM Zone 12N": {"lon_min": -114, "lon_max": -108, "crs_code": "EPSG:32612"},
+#     "UTM Zone 13N": {"lon_min": -108, "lon_max": -102, "crs_code": "EPSG:32613"},
+#     "UTM Zone 14N": {"lon_min": -102, "lon_max": -96, "crs_code": "EPSG:32614"},
+#     "UTM Zone 15N": {"lon_min": -96, "lon_max": -90, "crs_code": "EPSG:32615"},
+#     "UTM Zone 16N": {"lon_min": -90, "lon_max": -84, "crs_code": "EPSG:32616"},
+#     "UTM Zone 17N": {"lon_min": -84, "lon_max": -78, "crs_code": "EPSG:32617"},
+#     "UTM Zone 18N": {"lon_min": -78, "lon_max": -72, "crs_code": "EPSG:32618"},
+#     "UTM Zone 19N": {"lon_min": -72, "lon_max": -66, "crs_code": "EPSG:32619"},
+# }
 
+def generate_utm_proj_map() -> dict:
+    """Generate a global UTM zone dictionary (Zone 1-60, N/S)"""
+    utm_proj_map = {}
+    
+    for zone in range(1, 61):
+        # Calculate the longitude range of each zone (each zone is 6 degrees wide)
+        lon_min = -180 + (zone - 1) * 6
+        lon_max = lon_min + 6
+        
+        # Northern Hemisphere (N) - EPSG:326XX
+        utm_proj_map[f"UTM Zone {zone}N"] = {
+            "lon_min": lon_min,
+            "lon_max": lon_max,
+            "crs_code": f"EPSG:326{zone:02d}"  # Zero-padded, e.g., 1 -> 01
+        }
+        
+        # Southern Hemisphere (S) - EPSG:327XX
+        utm_proj_map[f"UTM Zone {zone}S"] = {
+            "lon_min": lon_min,
+            "lon_max": lon_max,
+            "crs_code": f"EPSG:327{zone:02d}"
+        }
+    
+    return utm_proj_map
+
+UTM_proj_map = generate_utm_proj_map()
 
 @clock_decorator(print_arg_ret=False)
 def buildDomain(
-    evb_dir, dpc_VIC, reverse_lat=True, pourpoint_xindex=None, pourpoint_yindex=None
+    evb_dir, dpc_VIC, reverse_lat=True
 ):
     """
     Build the domain file for the VIC model, including variables like latitude, longitude, mask, area, and others.
@@ -114,8 +140,9 @@ def buildDomain(
 
         # get lon/lat
         logger.debug(f"get lon_list and lat_list from the dpc")
+        grid_shp = dpc_VIC.get_data_from_cache("grid_shp")[0]
         lon_list, lat_list, lon_map_index_level0, lat_map_index_level0 = (
-            grids_array_coord_map(dpc_VIC.grid_shp, reverse_lat=reverse_lat)
+            grids_array_coord_map(grid_shp, reverse_lat=reverse_lat)
         )
 
         logger.debug(f"define dimension and variables in the domain file")
@@ -167,14 +194,14 @@ def buildDomain(
                 "lon",
             ),
         )
-        frac_grid_in_basin = dst_dataset.createVariable(
-            "frac_grid_in_basin",
-            "f8",
-            (
-                "lat",
-                "lon",
-            ),
-        )
+        # frac_grid_in_basin = dst_dataset.createVariable(
+        #     "frac_grid_in_basin",
+        #     "f8",
+        #     (
+        #         "lat",
+        #         "lon",
+        #     ),
+        # )
         x_length = dst_dataset.createVariable(
             "x_length",
             "f8",
@@ -201,7 +228,6 @@ def buildDomain(
 
         (
             mask_array,
-            frac_array,
             frac_grid_in_basin_array,
             area_array,
             x_length_array,
@@ -210,13 +236,11 @@ def buildDomain(
             dpc_VIC,
             reverse_lat=reverse_lat,
             plot=False,
-            pourpoint_xindex=None,
-            pourpoint_yindex=None,
         )
         mask[:, :] = mask_array
         area[:, :] = area_array
-        frac[:, :] = frac_array
-        frac_grid_in_basin[:, :] = frac_grid_in_basin_array
+        frac[:, :] = frac_grid_in_basin_array
+        # frac_grid_in_basin[:, :] = frac_grid_in_basin_array
         x_length[:, :] = x_length_array
         y_length[:, :] = y_length_array
 
@@ -252,9 +276,9 @@ def buildDomain(
         frac.description = "fraction of grid cell that is active"
         frac.units = "fraction"
 
-        frac_grid_in_basin.long_name = "frac_grid_in_basin"
-        frac_grid_in_basin.description = "fraction of grid cell that in basin"
-        frac_grid_in_basin.units = "fraction"
+        # frac_grid_in_basin.long_name = "frac_grid_in_basin"
+        # frac_grid_in_basin.description = "fraction of grid cell that in basin"
+        # frac_grid_in_basin.units = "fraction"
 
         # Global attributes
         dst_dataset.title = "VIC5 image domain dataset"
@@ -269,7 +293,9 @@ def buildDomain(
 
 
 def cal_mask_frac_area_length(
-    dpc_VIC, reverse_lat=True, plot=False, pourpoint_xindex=None, pourpoint_yindex=None
+    dpc_VIC,
+    reverse_lat=True,
+    plot=False,
 ):
     """
     Calculate the mask, fractional area, and grid dimensions (x/y lengths) for the given VIC grid.
@@ -318,11 +344,15 @@ def cal_mask_frac_area_length(
     logger.info("Starting to cal_mask_frac_area_length... ...")
 
     # get grid_shp and basin_shp from the dpc_VIC
-    grid_shp = dpc_VIC.grid_shp
-    basin_shp = dpc_VIC.basin_shp
+    grid_shp = dpc_VIC.get_data_from_cache("grid_shp")[0]
+    basin_shp = dpc_VIC.get_data_from_cache("basin_shp")[0]
 
     # Determine the UTM CRS based on the longitude of the basin center
-    lon_cen = basin_shp["lon_cen"].values[0]
+    try:
+        lon_cen = basin_shp["lon_cen"].values[0]
+    except:
+        lon_cen = basin_shp.centroid.x[0]
+        
     for k in UTM_proj_map.keys():
         if (
             lon_cen >= UTM_proj_map[k]["lon_min"]
@@ -341,7 +371,7 @@ def cal_mask_frac_area_length(
 
     # Initialize arrays for mask, frac, and frac_grid_in_basin
     mask = np.empty((len(lat_list), len(lon_list)), dtype=int)
-    frac = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
+    # frac = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
     frac_grid_in_basin = np.empty((len(lat_list), len(lon_list)), dtype=float)
 
     logger.debug("Calculating mask and fraction for grid cells...")
@@ -353,7 +383,7 @@ def cal_mask_frac_area_length(
         cen_lat = center.y
 
         # Get the grid at the current index
-        grid_i = grid_shp.loc[i:i, :]
+        grid_i = grid_shp.loc[[i], :]
         # fig, ax = plt.subplots()  # plot for testing
         # grid_i.plot(ax=ax)
         # basin_shp.plot(ax=ax, alpha=0.5)
@@ -364,7 +394,7 @@ def cal_mask_frac_area_length(
         # Update mask and fraction based on intersection
         if len(overlay_gdf) == 0:
             mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
-            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
+            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.NAN  # 0
         else:
             mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 1
             frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
@@ -372,10 +402,6 @@ def cal_mask_frac_area_length(
             )
 
     logger.debug("Calculating mask and fraction successfully")
-
-    # Modify pourpoint if provided
-    if pourpoint_xindex is not None:
-        mask[pourpoint_yindex, pourpoint_xindex] = 1
 
     # Initialize arrays for area and grid cell dimensions
     area = np.empty((len(lat_list), len(lon_list)), dtype=float)
@@ -435,7 +461,7 @@ def cal_mask_frac_area_length(
 
     logger.info("cal_mask_frac_area_length successfully")
 
-    return mask, frac, frac_grid_in_basin, area, x_length, y_length
+    return mask, frac_grid_in_basin, area, x_length, y_length
 
 
 def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):

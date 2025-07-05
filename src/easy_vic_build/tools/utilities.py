@@ -79,7 +79,7 @@ import pandas as pd
 from netCDF4 import Dataset
 from tqdm import *
 
-from .dpc_func.basin_grid_class import HCDNBasins
+from .dpc_func.basin_grid_class import Basins
 from .geo_func.search_grids import *
 from .params_func.GlobalParamParser import GlobalParamParser
 from .params_func.params_set import *
@@ -460,12 +460,19 @@ def read_one_HCDN_basin_shp(basin_index, home="E:\\data\\hydrometeorology\\CAMEL
     basin_shp: `geopandas.GeoDataFrame`
         The specific basin's GeoDataFrame.
     """
-    basin_shp_all = HCDNBasins(home)
+    HCDN_shp_path = os.path.join(
+        home, "basin_set_full_res", "HCDN_nhru_final_671.shp"
+    )
+    basin_shp_all = Basins.from_shapefile(HCDN_shp_path)
+    basin_shp_all["AREA_km2"] = basin_shp_all.AREA / 1000000  # m2 -> km2
     basin_shp = basin_shp_all.loc[basin_index:basin_index, :]
     return basin_shp_all, basin_shp
 
 
-def readdpc(evb_dir):
+def readdpc(
+    dpc_fpath,
+    dpc_class,
+):
     """
     Reads the dpc files from disk.
 
@@ -486,16 +493,9 @@ def readdpc(evb_dir):
         An instance of the `dpc_VIC_level2` class to process data at level 0 of the VIC model.
     """
     # read
-    with open(evb_dir.dpc_VIC_level0_path, "rb") as f:
-        dpc_VIC_level0 = pickle.load(f)
+    dpc_instance = dpc_class(dpc_fpath)
 
-    with open(evb_dir.dpc_VIC_level1_path, "rb") as f:
-        dpc_VIC_level1 = pickle.load(f)
-
-    with open(evb_dir.dpc_VIC_level2_path, "rb") as f:
-        dpc_VIC_level2 = pickle.load(f)
-
-    return dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2
+    return dpc_instance
 
 
 def readDomain(evb_dir):

@@ -10,6 +10,7 @@ from tqdm import *
 
 from ...geo_func import resample, search_grids
 from ...geo_func.create_gdf import CreateGDF
+from ...params_func.TransferFunction import SoilLayerResampler
 
 """ 
 potential issues: NOTE that geographic coordinates are NOT a projection -- scales vary with latitude and are substantially different in the x and y directions, and the 30-arcsec
@@ -28,7 +29,9 @@ CONUS_layers_depths = [
     0.50,
     0.50,
     0.50,
-]  # 11 layers. m
+]  # 11 layers m
+
+CONUS_soillayerresampler = SoilLayerResampler(CONUS_layers_depths)
 
 
 def ExtractData(
@@ -66,8 +69,10 @@ def ExtractData(
         )
 
     # set grids_lat, lon
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     # soil data lon, lat
     soil_data_Xmin = -124 - 45 / 60
@@ -188,7 +193,7 @@ def ExtractData(
             # check
             if check_search and l + i == 0:
                 cgdf = CreateGDF()
-                grid_shp_grid = grid_shp.loc[i:i, "geometry"]
+                grid_shp_grid = grid_shp.loc[[i], "geometry"]
                 searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
                     searched_grid_lon, searched_grid_lat, soil_lon_res
                 )

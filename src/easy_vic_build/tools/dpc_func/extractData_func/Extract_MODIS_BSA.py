@@ -15,12 +15,15 @@ from tqdm import *
 
 from ...geo_func import resample, search_grids
 from ...geo_func.create_gdf import CreateGDF
+from .... import logger
 
 
 def combine_MODIS_BSA_data():
     # data1: 2000055 - 2002008; data2: 2002009 - 2004366; data3: 2005
-    # src_home = "E:\data\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\US\\data2"
-    src_home = "G:\\data\\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\US\\data3"
+    # src_home = "G:\data\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\Global\\data1"
+    # src_home = "G:\data\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\Global\\data2"
+    # src_home = "G:\\data\\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\Global\\data3"
+    src_home = "G:\\data\\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\Global\\data4"
     suffix = ".hdf"
     src_names = [n for n in os.listdir(src_home) if n.endswith(suffix)]
 
@@ -51,11 +54,13 @@ def combine_MODIS_BSA_data():
                 lon_Albedo_BSA = np.linspace(-180, 180, width)  # 8000
                 lat_Albedo_BSA_res = 180 / height  # 1km
                 lon_Albedo_BSA_res = 360 / width
+                
                 # US [-125,   26,  -67,   48.5]
                 lat_US_min = 26
                 lat_US_max = 48.5
                 lon_US_min = -125
                 lon_US_max = -67
+                
                 lat_index = np.where(
                     (lat_Albedo_BSA >= lat_US_min) & (lat_Albedo_BSA <= lat_US_max)
                 )[0]
@@ -123,7 +128,7 @@ def combineThreeData():
 def gapfillingBSA():
     src_home = "E:\\data\\hydrometeorology\\MODIS\\MCD43D51 v061_Black_Sky_Albedo_Shortwave_daily_1km\\US"
     for i in range(1, 13):
-        src_path = os.path.join(src_home, f"combine_MODIS_BSA_US_month{i}_all_data.npy")
+        src_path = os.path.join(src_home, f"combine_MODIS_BSA_US_month{i}.npy")
         src_data = np.load(src_path)
         src_data = src_data.reshape((src_data.shape[0], src_data.shape[1]))
 
@@ -135,7 +140,7 @@ def gapfillingBSA():
         # save
         np.save(
             os.path.join(
-                src_home, f"combine_MODIS_BSA_US_month{i}_all_data_filled.npy"
+                src_home, f"combine_MODIS_BSA_US_month{i}_filled.npy"
             ),
             filled_data,
         )
@@ -160,10 +165,14 @@ def ExtractData(
 
     BSA_lat_res = (max(BSA_lat) - min(BSA_lat)) / (len(BSA_lat) - 1)
     BSA_lon_res = (max(BSA_lon) - min(BSA_lon)) / (len(BSA_lon) - 1)
+    BSA_lat_res = float(f"{BSA_lat_res:.5g}")  # 0.008333deg ~= 1km
+    BSA_lon_res = float(f"{BSA_lon_res:.5g}")
 
     # set grids_lat, lon
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     # read BSA_months
     BSA_months_clip = dict(zip(list(range(1, 13)), [[] for m in range(1, 13)]))
@@ -206,6 +215,8 @@ def ExtractData(
 
     umd_lat_res = (max(umd_lat) - min(umd_lat)) / (len(umd_lat) - 1)
     umd_lon_res = (max(umd_lon) - min(umd_lon)) / (len(umd_lon) - 1)
+    umd_lat_res = float(f"{umd_lat_res:.5g}")
+    umd_lon_res = float(f"{umd_lon_res:.5g}")
 
     # clip umd
     xindex_start = np.where(umd_lon <= min(grids_lon) - grid_shp_res)[0][-1]
@@ -220,7 +231,9 @@ def ExtractData(
     umd_lat_clip = umd_lat[yindex_start : yindex_end + 1]
 
     # search grids
-    print("========== search grids for BSA ==========")
+    logger.info("searching grids for BSA... ...")
+
+    # source data res: 1km
     searched_grids_index = search_grids.search_grids_radius_rectangle(
         dst_lat=grids_lat,
         dst_lon=grids_lon,
@@ -263,7 +276,7 @@ def ExtractData(
             searched_grid_lat = umd_lat_clip[searched_grid_index[0][j]]
             searched_grid_lon = umd_lon_clip[searched_grid_index[1][j]]
 
-            # search neartest BSA grid with umd grid
+            # search neartest BSA grid with umd grid, 1km to 1km
             searched_grids_index_match = search_grids.search_grids_nearest(
                 dst_lat=[searched_grid_lat],
                 dst_lon=[searched_grid_lon],
@@ -307,7 +320,7 @@ def ExtractData(
         # check
         if check_search and i == 0:
             cgdf = CreateGDF()
-            grid_shp_grid = grid_shp.loc[i:i, "geometry"]
+            grid_shp_grid = grid_shp.loc[[i], "geometry"]
             searched_umd_grids_gdf = cgdf.createGDF_rectangle_central_coord(
                 searched_grids_lon_umd, searched_grids_lat_umd, umd_lat_res
             )
@@ -323,7 +336,7 @@ def ExtractData(
             searched_match_BSA_grids_gdf.plot(
                 ax=ax, edgecolor="k", linewidth=1, facecolor="b", alpha=0.5
             )
-            ax.set_title("check search")
+            ax.set_title("check search for MODIS BSA")
 
     # save in grid_shp
     for m in range(1, 13):
@@ -376,7 +389,7 @@ def ExtractData(
 
 
 if __name__ == "__main__":
-    # combine_MODIS_BSA_data()
+    combine_MODIS_BSA_data()
     # combineThreeData()
     # gapfillingBSA()
-    pass
+    # pass

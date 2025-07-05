@@ -9,35 +9,84 @@ from tqdm import *
 
 from ...geo_func import search_grids
 from ...geo_func.create_gdf import CreateGDF
+from .... import logger
 
-
-def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
+def ExtractData(
+    grid_shp,
+    grid_shp_res=0.125,
+    plot=False,
+    check_search=False,
+    search_method="radius_rectangle_reverse",
+):
     # read
     # NLDAS_annual_P_path = os.path.join(Evb_dir.__data_dir__, "NLDAS_annual_prec.npy")
     # data_annual_P = np.load(NLDAS_annual_P_path)
     # annual_P_lon = np.loadtxt(os.path.join(Evb_dir.__data_dir__, "annual_prec_lon.txt"))
     # annual_P_lat = np.loadtxt(os.path.join(Evb_dir.__data_dir__, "annual_prec_lat.txt"))
     from ...utilities import read_NLDAS_annual_prec
-
     data_annual_P, annual_P_lon, annual_P_lat = read_NLDAS_annual_prec()
 
     annual_P_lat_res = (max(annual_P_lat) - min(annual_P_lat)) / (len(annual_P_lat) - 1)
     annual_P_lon_res = (max(annual_P_lon) - min(annual_P_lon)) / (len(annual_P_lon) - 1)
+    annual_P_lat_res = float(f"{annual_P_lat_res:.3g}")  # 0.125 deg ~= 13.875km
+    annual_P_lon_res = float(f"{annual_P_lon_res:.3g}")
 
     # set grids_lat, lon
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     # search grids
-    print("========== search grids for NLDSA annual P ==========")
-    searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(
-        dst_lat=grids_lat,
-        dst_lon=grids_lon,
-        src_lat=annual_P_lat,
-        src_lon=annual_P_lon,
-        lat_radius=annual_P_lat_res / 2,
-        lon_radius=annual_P_lon_res / 2,
-    )
+    logger.info("searching grids for NLDSA annual P... ...")
+    
+    # source data res: 0.125 deg ~= 13.875km
+    if search_method == "radius":
+        searched_grids_index = search_grids.search_grids_radius(
+            dst_lat=grids_lat,
+            dst_lon=grids_lon,
+            src_lat=annual_P_lat,
+            src_lon=annual_P_lon,
+            lat_radius=grid_shp_res / 2,
+            lon_radius=grid_shp_res / 2,
+        )
+        
+    if search_method == "radius_rectangle":
+        searched_grids_index = search_grids.search_grids_radius_rectangle(
+            dst_lat=grids_lat,
+            dst_lon=grids_lon,
+            src_lat=annual_P_lat,
+            src_lon=annual_P_lon,
+            lat_radius=grid_shp_res / 2,
+            lon_radius=grid_shp_res / 2,
+        )
+    
+    elif search_method == "radius_rectangle_reverse":
+        searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(
+            dst_lat=grids_lat,
+            dst_lon=grids_lon,
+            src_lat=annual_P_lat,
+            src_lon=annual_P_lon,
+            lat_radius=annual_P_lat_res / 2,
+            lon_radius=annual_P_lon_res / 2,
+        )
+    
+    elif search_method == "nearest":
+        searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,
+                                                                 src_lat=annual_P_lat, src_lon=annual_P_lon,
+                                                                 search_num=1,
+                                                                 move_src_lat=None, move_src_lon=None)
+    else:
+        logger.warning(f"search method {search_method} not supported")
+        
+    # searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(
+    #     dst_lat=grids_lat,
+    #     dst_lon=grids_lon,
+    #     src_lat=annual_P_lat,
+    #     src_lon=annual_P_lon,
+    #     lat_radius=annual_P_lat_res / 2,
+    #     lon_radius=annual_P_lon_res / 2,
+    # )
 
     # read annual_P for each grid
     annual_P_in_src_grid_Value = []
@@ -66,7 +115,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
         # check
         if check_search and i == 0:
             cgdf = CreateGDF()
-            grid_shp_grid = grid_shp.loc[i:i, "geometry"]
+            grid_shp_grid = grid_shp.loc[[i], "geometry"]
             searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
                 searched_grid_lon, searched_grid_lat, annual_P_lat_res
             )
@@ -76,7 +125,7 @@ def ExtractData(grid_shp, grid_shp_res=0.125, plot=False, check_search=False):
             searched_grids_gdf.plot(
                 ax=ax, edgecolor="k", linewidth=0.2, facecolor="b", alpha=0.5
             )
-            ax.set_title("check search")
+            ax.set_title("check search for NLDAS_annual_P")
 
     grid_shp[f"annual_P_in_src_grid_Value"] = np.array(annual_P_in_src_grid_Value)
 

@@ -38,8 +38,10 @@ def ExtractData(grid_shp):
     umd_lon = np.arange(-179.875, 180.125, 0.25)
 
     # search grids
-    grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
-    grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
+    grids_lat = grid_shp.point_geometry.y.to_list()
+    grids_lon = grid_shp.point_geometry.x.to_list()
+    # grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]
+    # grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]
 
     searched_grids_index = search_grids_equal(
         dst_lat=grids_lat, dst_lon=grids_lon, src_lat=umd_lat, src_lon=umd_lon

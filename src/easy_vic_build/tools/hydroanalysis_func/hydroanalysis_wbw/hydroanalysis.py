@@ -7,7 +7,6 @@ import os
 
 from ...geo_func.format_conversion import *
 from ...utilities import *
-from ..create_dem import create_dem_from_params
 from .... import logger
 from . import (set_workenv, fill_dem, flow_direction, flow_accumulation, stream_network, outlet_detection, basin_delineation)
 
@@ -15,9 +14,6 @@ from . import (set_workenv, fill_dem, flow_direction, flow_accumulation, stream_
 def hydroanalysis_for_level0(
     working_directory,
     dem_level0_path,
-    pourpoint_x_index=None,
-    pourpoint_y_index=None,
-    pourpoint_direction_code=None,
     stream_acc_threshold=None,
     filldem_kwargs={},
     d8_flowdirection_kwargs={},
@@ -132,9 +128,6 @@ def hydroanalysis_for_level0(
     d8_flowdirection_kwargs["esri_pointer"] = esri_pointer
     dst_flow_direction = flow_direction.d8_flowdirection(
         wbe, dst_filled_dem, output_file="flow_direction.tif",
-        pourpoint_x_index=pourpoint_x_index,
-        pourpoint_y_index=pourpoint_y_index,
-        pourpoint_direction_code=pourpoint_direction_code,
         **d8_flowdirection_kwargs        
     )
     
@@ -283,9 +276,6 @@ def hydroanalysis_for_level0(
 def hydroanalysis_for_level1(
     working_directory,
     dem_level1_path,
-    pourpoint_x_index=None,
-    pourpoint_y_index=None,
-    pourpoint_direction_code=None,
     stream_acc_threshold=None,
     filldem_kwargs={},
     d8_flowdirection_kwargs={},
@@ -400,10 +390,7 @@ def hydroanalysis_for_level1(
     d8_flowdirection_kwargs["esri_pointer"] = esri_pointer
     dst_flow_direction = flow_direction.d8_flowdirection(
         wbe, dst_filled_dem, output_file="flow_direction.tif",
-        pourpoint_x_index=pourpoint_x_index,
-        pourpoint_y_index=pourpoint_y_index,
-        pourpoint_direction_code=pourpoint_direction_code,
-        **d8_flowdirection_kwargs        
+        **d8_flowdirection_kwargs
     )
     
     # flow accumulation
@@ -437,8 +424,8 @@ def hydroanalysis_for_level1(
     )
     
     # outlets with reference
-    logger.info(f"Detecting outlets with reference: {list(zip(outlets_with_reference_coords, outlets_with_reference_coords))}... ...")
     if outlets_with_reference_coords is not None:
+        logger.info(f"Detecting outlets with reference: {list(zip(outlets_with_reference_coords, outlets_with_reference_coords))}... ...")
         dst_outlet_gdf_with_reference, dst_snaped_outlet_vector_with_reference = outlet_detection.detect_outlets_with_reference(
             wbe,
             x_coords=outlets_with_reference_coords[0],
@@ -449,7 +436,21 @@ def hydroanalysis_for_level1(
             snaped_output_file_path=os.path.join(working_directory, "snaped_outlets_with_reference.shp"),
             **snap_outlet_to_stream_kwargs
         )
-    
+        
+        # detect_outlets_with_reference for each outlet
+        if len(outlets_with_reference_coords[0]) > 1:
+            for i in range(len(outlets_with_reference_coords[0])):
+                outlet_detection.detect_outlets_with_reference(
+                    wbe,
+                    x_coords=[outlets_with_reference_coords[0][i]],
+                    y_coords=[outlets_with_reference_coords[1][i]],
+                    stream_raster=dst_stream_raster,
+                    crs_str=crs_str,
+                    output_file_path=os.path.join(working_directory, f"outlet_with_reference_{i}.shp"),
+                    snaped_output_file_path=os.path.join(working_directory, f"snaped_outlet_with_reference_{i}.shp"),
+                    **snap_outlet_to_stream_kwargs
+                )
+                
     return True
 
 
