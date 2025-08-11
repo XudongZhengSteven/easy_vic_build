@@ -194,14 +194,14 @@ def buildDomain(
                 "lon",
             ),
         )
-        # frac_grid_in_basin = dst_dataset.createVariable(
-        #     "frac_grid_in_basin",
-        #     "f8",
-        #     (
-        #         "lat",
-        #         "lon",
-        #     ),
-        # )
+        frac_full_one = dst_dataset.createVariable(
+            "frac_full_one",
+            "f8",
+            (
+                "lat",
+                "lon",
+            ),
+        )
         x_length = dst_dataset.createVariable(
             "x_length",
             "f8",
@@ -229,6 +229,7 @@ def buildDomain(
         (
             mask_array,
             frac_grid_in_basin_array,
+            frac_full_one_array,
             area_array,
             x_length_array,
             y_length_array,
@@ -240,7 +241,7 @@ def buildDomain(
         mask[:, :] = mask_array
         area[:, :] = area_array
         frac[:, :] = frac_grid_in_basin_array
-        # frac_grid_in_basin[:, :] = frac_grid_in_basin_array
+        frac_full_one[:, :] = frac_full_one_array
         x_length[:, :] = x_length_array
         y_length[:, :] = y_length_array
 
@@ -276,9 +277,9 @@ def buildDomain(
         frac.description = "fraction of grid cell that is active"
         frac.units = "fraction"
 
-        # frac_grid_in_basin.long_name = "frac_grid_in_basin"
-        # frac_grid_in_basin.description = "fraction of grid cell that in basin"
-        # frac_grid_in_basin.units = "fraction"
+        frac_full_one.long_name = "frac_full_one"
+        frac_full_one.description = "all value set to 1"
+        frac_full_one.units = "fraction"
 
         # Global attributes
         dst_dataset.title = "VIC5 image domain dataset"
@@ -371,7 +372,7 @@ def cal_mask_frac_area_length(
 
     # Initialize arrays for mask, frac, and frac_grid_in_basin
     mask = np.empty((len(lat_list), len(lon_list)), dtype=int)
-    # frac = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
+    frac_full_one = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
     frac_grid_in_basin = np.empty((len(lat_list), len(lon_list)), dtype=float)
 
     logger.debug("Calculating mask and fraction for grid cells...")
@@ -394,7 +395,8 @@ def cal_mask_frac_area_length(
         # Update mask and fraction based on intersection
         if len(overlay_gdf) == 0:
             mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
-            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.NAN  # 0
+            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.nan  # 0
+            frac_full_one[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.nan  # 0
         else:
             mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 1
             frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
@@ -461,7 +463,7 @@ def cal_mask_frac_area_length(
 
     logger.info("cal_mask_frac_area_length successfully")
 
-    return mask, frac_grid_in_basin, area, x_length, y_length
+    return mask, frac_grid_in_basin, frac_full_one, area, x_length, y_length
 
 
 def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):

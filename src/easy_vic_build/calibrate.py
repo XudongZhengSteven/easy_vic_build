@@ -99,7 +99,6 @@ from .build_RVIC_Param import buildRVICParam_basic, buildRVICParam
 from .tools.dpc_func.extractData_func.Extract_CONUS_SOIL import CONUS_soillayerresampler
 from .tools.utilities import *
 
-matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 
 from . import logger

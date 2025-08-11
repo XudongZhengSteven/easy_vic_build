@@ -166,7 +166,7 @@ def ExtractData(
 
     # set missing_value as none
     SrtmDEM_mean_Value = np.array(SrtmDEM_mean_Value)
-    SrtmDEM_mean_Value[SrtmDEM_mean_Value == 32767] = np.NAN
+    SrtmDEM_mean_Value[SrtmDEM_mean_Value == 32767] = np.nan
     SrtmDEM_std_Value = np.array(SrtmDEM_std_Value)
     SrtmDEM_mean_slope_Value = np.array(SrtmDEM_mean_slope_Value)
 
@@ -174,7 +174,7 @@ def ExtractData(
         for i in range(len(original_Value)):
             original_Value_grid = original_Value[i]
             original_Value_grid = np.array(original_Value_grid, float)
-            original_Value_grid[original_Value_grid == 32767] = np.NAN
+            original_Value_grid[original_Value_grid == 32767] = np.nan
             original_Value[i] = original_Value_grid.tolist()
 
     # save in grid_shp

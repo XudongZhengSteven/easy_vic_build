@@ -1565,10 +1565,10 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
     )
 
     # Replace masked values with NaN
-    lon_list_level0 = np.ma.filled(lon_list_level0, fill_value=np.NAN)
-    lat_list_level0 = np.ma.filled(lat_list_level0, fill_value=np.NAN)
-    lon_list_level1 = np.ma.filled(lon_list_level1, fill_value=np.NAN)
-    lat_list_level1 = np.ma.filled(lat_list_level1, fill_value=np.NAN)
+    lon_list_level0 = np.ma.filled(lon_list_level0, fill_value=np.nan)
+    lat_list_level0 = np.ma.filled(lat_list_level0, fill_value=np.nan)
+    lon_list_level1 = np.ma.filled(lon_list_level1, fill_value=np.nan)
+    lat_list_level1 = np.ma.filled(lat_list_level1, fill_value=np.nan)
 
     # Calculate grid resolution for level 0 and level 1
     res_lon_level0 = (max(lon_list_level0) - min(lon_list_level0)) / (
@@ -1666,8 +1666,8 @@ def scaling_level0_to_level1(
         params_dataset_level1.variables["lon"][:],
         params_dataset_level1.variables["lat"][:],
     )
-    lon_list_level1 = np.ma.filled(lon_list_level1, fill_value=np.NAN)
-    lat_list_level1 = np.ma.filled(lat_list_level1, fill_value=np.NAN)
+    lon_list_level1 = np.ma.filled(lon_list_level1, fill_value=np.nan)
+    lat_list_level1 = np.ma.filled(lat_list_level1, fill_value=np.nan)
 
     # search grids
     if searched_grids_bool_index is None:

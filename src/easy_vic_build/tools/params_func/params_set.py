@@ -58,35 +58,35 @@ g_params = {
     },
     
     "ksat": {
-        "default": [-0.6, 0.0126, -0.0064],
-        "boundary": [[-0.66, 0.0113, -0.007], [-0.54, 0.0139, -0.0058]],
+        "default": [-0.6, 0.0126, -0.0064],  # from Cosby et al. (1984)
+        "boundary": [[-0.66, 0.0113, -0.007], [-0.54, 0.0139, -0.0058]],  # +- 10%
         "type": float,
         "optimal": [None, None, None],
     },
     
     "phi_s": {
-        "default": [50.05, -0.142, -0.037],
+        "default": [50.5, -0.142, -0.037],  # from Cosby et al. (1984)
         "boundary": [[45.5, -0.3, -0.1], [55.5, -0.01, -0.01]],
         "type": float,
         "optimal": [None, None, None],
     },
     
     "psis": {
-        "default": [1.54, -0.0095, 0.0063],
+        "default": [1.54, -0.0095, 0.0063],  # from Cosby et al. (1984)
         "boundary": [[1.0, -0.01, 0.006], [2.0, -0.009, 0.0066]],
         "type": float,
         "optimal": [None, None, None],
     },
     
     "b_retcurve": {
-        "default": [3.1, 0.157, -0.003],
+        "default": [3.1, 0.157, -0.003],  # from Cosby et al. (1984)
         "boundary": [[2.5, 0.1, -0.005], [3.6, 0.2, -0.001]],
         "type": float,
         "optimal": [None, None, None],
     },
     
     "expt": {
-        "default": [3.0, 2.0],
+        "default": [3.0, 2.0],  # from Campbell (1974), expt=2b+3
         "boundary": [[2.8, 1.5], [3.2, 2.5]],
         "type": float,
         "optimal": [None, None],
@@ -101,7 +101,7 @@ g_params = {
     
     "D4": {
         "default": [2.0],  # it can be set as 2
-        "boundary": [[1.2], [2.5]],
+        "boundary": [[1.5], [2.5]],
         "type": float,
         "optimal": [None],
     },
@@ -226,14 +226,14 @@ guh_params = {
 rvic_params = {
     "VELOCITY": {
         "default": [1.5],  # velocity in m/s
-        "boundary": [[0.5], [800.0]],
+        "boundary": [[0.1], [3.0]],
         "type": float,
         "optimal": [None],
     },
     
     "DIFFUSION": {
         "default": [800.0],
-        "boundary": [[200.0], [4000.0]],
+        "boundary": [[10.0], [4000.0]],
         "type": float,
         "optimal": [None],
     }

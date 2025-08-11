@@ -37,6 +37,9 @@ class buildParam_level0_interface:
         self.tf_VIC = TF_VIC()
         self.soillayerresampler = soillayerresampler
         
+        if self.dpc_VIC_level0.get_data_from_cache("merged_grid_shp")[0] is None:
+            self.dpc_VIC_level0.merge_grid_data()
+            
         self.grid_shp_level0 = deepcopy(self.dpc_VIC_level0.get_data_from_cache("merged_grid_shp")[0])
         self.grids_num_level0 = len(self.grid_shp_level0.index)
         
@@ -174,7 +177,7 @@ class buildParam_level0_interface:
             
             grid_array_depth_layer_i = assignValue_for_grid_array(
                 grid_array_depth_layer_i,
-                np.full((self.grids_num_level0,), fill_value=depths[0]),
+                np.full((self.grids_num_level0,), fill_value=depths[i]),
                 self.rows_index_level0,
                 self.cols_index_level0,
             )
@@ -811,6 +814,9 @@ class buildParam_level1_interface:
         self.tf_VIC = TF_VIC()
         self.domain_dataset = domain_dataset
         
+        if self.dpc_VIC_level1.get_data_from_cache("merged_grid_shp")[0] is None:
+            self.dpc_VIC_level1.merge_grid_data()
+            
         self.grid_shp_level1 = deepcopy(self.dpc_VIC_level1.get_data_from_cache("merged_grid_shp")[0])
         self.grids_num_level1 = len(self.grid_shp_level1.index)
         

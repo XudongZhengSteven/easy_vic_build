@@ -100,7 +100,7 @@ class buildMeteForcing_interface:
     def set_vars_names_map(self):
         self.vars_names_maps = {
             "tas": "tmp_avg_C",
-            "prcp": "pre_mm_per_day",
+            "prcp": "pre_mm_per_3h",
             "pres": "prs_kPa",
             "dswrf": "swd_W_per_m2",
             "dlwrf": "lwd_W_per_m2",

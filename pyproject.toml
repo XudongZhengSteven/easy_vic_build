@@ -26,6 +26,7 @@ dependencies = [
     "matplotlib>=3.9.2",  # Plotting
     "scipy>=1.13.1",  # Scientific computing
     "tqdm>=4.66.5",  # Progress bar
+    "eofs>=2.0.0",  # eof analysis
 
     # Geospatial data processing
     "geopandas>=0.10.1",  # Geospatial data processing and geometric operations
@@ -35,6 +36,7 @@ dependencies = [
     "rasterio>=1.4.1",  # Processing gridded raster datasets
     "cartopy>=0.23.0",  # Spatial plotting and spatial reference
     "shapely>=2.0.6",  # Geometric operations
+    "cdo>=1.6.1",  # cdo for rvic
 
     # Hydrological analysis
     "whitebox-workflows>=1.3.3",  # Hydrological analysis

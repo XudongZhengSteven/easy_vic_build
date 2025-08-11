@@ -75,7 +75,7 @@ def combine_MODIS_BSA_data():
                 Albedo_BSA_array = Albedo_BSA[
                     lat_index[0] : lat_index[-1] + 1, lon_index[0] : lon_index[-1] + 1
                 ]
-                Albedo_BSA_array = Albedo_BSA_array.filled(np.NAN)
+                Albedo_BSA_array = Albedo_BSA_array.filled(np.nan)
             except:
                 continue
 

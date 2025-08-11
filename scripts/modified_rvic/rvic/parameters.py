@@ -194,7 +194,7 @@ def gen_uh_init(config):
             #     pour_points.iloc[i, 'names'] = strip_invalid_char(name)
 
         pour_points.drop_duplicates(inplace=True)
-        pour_points.dropna()
+        pour_points.dropna(inplace=True)
     except Exception as e:
         log.error('Error opening pour points file: %s',
                   config_dict['POUR_POINTS']['FILE_NAME'])
@@ -300,13 +300,13 @@ def gen_uh_init(config):
     # ---------------------------------------------------------------- #
     # If remap is False, domain coordinates needs to be in the fdr coordinates
     # We can move the unit hydrographs to the domain grid later
-    if options['AGGREGATE'] and not options['REMAP']:
+    if options['AGGREGATE'].lower() == "true" and not options['REMAP'].lower() == "true":
         log.error('RVIC parameter generation requires REMAP option to be True'
                   ' if AGGREGATE is True')
         raise ValueError('Invalid option')
 
     # If remap is False, then the resolution needs to match the routing data
-    if not options['REMAP']:
+    if not options['REMAP'].lower() == "true":
         domain_res = np.abs(dom_data[domain['LONGITUDE_VAR']][0, 1] -
                             dom_data[domain['LONGITUDE_VAR']][0, 0])
         if not np.isclose(fdr_data['resolution'], domain_res):
@@ -318,7 +318,7 @@ def gen_uh_init(config):
 
     # ---------------------------------------------------------------- #
     # Group pour points (if aggregate)
-    if options['AGGREGATE']:
+    if options['AGGREGATE'].lower() == "true":
         outlets = make_agg_pairs(pour_points, dom_data, fdr_data, config_dict)
 
         log.info('Finished making agg pairs of '
@@ -349,8 +349,7 @@ def gen_uh_init(config):
                                        plons=lons,
                                        glats=fdr_data[fdr_lat],
                                        glons=fdr_data[fdr_lon])
-
-        if options['SEARCH_FOR_CHANNEL']:
+        if options['SEARCH_FOR_CHANNEL'].lower() == "true":
             routys, routxs = search_for_channel(
                 fdr_data[config_dict['ROUTING']['SOURCE_AREA_VAR']],
                 routys, routxs, tol=10, search=5)
@@ -457,16 +456,16 @@ def gen_uh_run(uh_box, fdr_data, fdr_vatts, dom_data, outlet, config_dict,
                          config_dict['ROUTING'])
 
         log.debug('Done routing to pour_point')
-        log.debug('rout_data: %s, %s', rout_data['unit_hydrograph'].min(),
-                  rout_data['unit_hydrograph'].max())
-        log.debug('rout_data sum: %s, %s', rout_data['unit_hydrograph'].sum(),
-                  rout_data['fraction'].sum())
+        log.debug('rout_data: %s, %s', np.nanmin(rout_data['unit_hydrograph']),
+                  np.nanmax(rout_data['unit_hydrograph']))
+        log.debug('rout_data sum: %s, %s', np.nansum(rout_data['unit_hydrograph']),
+                  np.nansum(rout_data['fraction']))
 
         # -------------------------------------------------------- #
 
         # -------------------------------------------------------- #
         # aggregate
-        if options['AGGREGATE']:
+        if options['AGGREGATE'].lower() == "true":
             if j != len(outlet.pour_points) - 1:
                 agg_data = aggregate(rout_data, agg_data,
                                      res=fdr_data['resolution'])
@@ -485,7 +484,7 @@ def gen_uh_run(uh_box, fdr_data, fdr_vatts, dom_data, outlet, config_dict,
 
     # ------------------------------------------------------------ #
     # write temporary file #1
-    if options['REMAP']:
+    if options['REMAP'].lower() == "true":
         glob_atts = NcGlobals(
             title='RVIC Unit Hydrograph Grid File',
             RvicPourPointsFile=os.path.split(

@@ -29,10 +29,13 @@ Alternatively, you can install from a `.whl` file:
   ```
 
 - For additional dependencies:
+
   ```bash
   pip install .whl[nco]
   pip install .whl[rvic]
   pip install .whl[nco_rvic]
+
+  conda install -c conda-forge gdal
   ```
 
 Choose the appropriate installation based on your environment requirements.

@@ -76,10 +76,10 @@ def warmup_VIC(evb_dir, warmup_period):
     logger.info(f"Setting simulation period: {warmup_period[0]} to {warmup_period[1]}")
     globalParam.set("Simulation", "STARTYEAR", str(warmup_period[0][:4]))
     globalParam.set("Simulation", "STARTMONTH", str(warmup_period[0][4:6]))
-    globalParam.set("Simulation", "STARTDAY", str(warmup_period[0][6:]))
+    globalParam.set("Simulation", "STARTDAY", str(warmup_period[0][6:8]))
     globalParam.set("Simulation", "ENDYEAR", str(warmup_period[1][:4]))
     globalParam.set("Simulation", "ENDMONTH", str(warmup_period[1][4:6]))
-    globalParam.set("Simulation", "ENDDAY", str(warmup_period[1][6:]))
+    globalParam.set("Simulation", "ENDDAY", str(warmup_period[1][6:8]))
 
     # set [State Files], the last day of the warmup_period will be saved as states
     logger.info(
@@ -90,7 +90,7 @@ def warmup_VIC(evb_dir, warmup_period):
     )
     globalParam.set("State Files", "STATEYEAR", str(warmup_period[1][:4]))
     globalParam.set("State Files", "STATEMONTH", str(warmup_period[1][4:6]))
-    globalParam.set("State Files", "STATEDAY", str(warmup_period[1][6:]))
+    globalParam.set("State Files", "STATEDAY", str(warmup_period[1][6:8]))
     globalParam.set("State Files", "STATESEC", str(86400))
     globalParam.set("State Files", "STATE_FORMAT", "NETCDF4")
 

@@ -201,7 +201,7 @@ def createGUH(
     gUH_st = lambda t: 1 - gUH_gt(t)
 
     gUH_iuh = lambda t: mu / tp * gUH_xt(t) * (1 + m * gUH_xt(t)) ** (-(1 + 1 / m))
-    det_t = 1
+    det_t = uh_dt / 3600
     gUH_uh = lambda t: (gUH_gt(t)[1:] - gUH_gt(t)[:-1]) / det_t
 
     # t
@@ -253,7 +253,7 @@ def createGUH(
     # df
     UHBOX_file = pd.DataFrame(columns=["time", "UHBOX"])
     UHBOX_file.time = t_s
-    UHBOX_file.UHBOX = gUH_iuh_ret
+    UHBOX_file.UHBOX = gUH_iuh_ret * uh_dt / 3600
     UHBOX_file["UHBOX"] = UHBOX_file["UHBOX"].fillna(0)
 
     return max_day, UHBOX_file

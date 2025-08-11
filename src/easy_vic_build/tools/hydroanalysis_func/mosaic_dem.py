@@ -22,7 +22,6 @@ Dependencies:
 
 """
 
-from osgeo import gdal
 import os
 from ... import logger
 
@@ -70,6 +69,11 @@ def merge_dems(input_dir, suffix=".tif", output_file="merged_dem.tif",
     >>> merge_dems("/path/to/dems/", output_file="output.tif",
     ...           cutline_file="aoi.shp", blendDistance=30)
     """
+    try:
+        from osgeo import gdal
+    except ImportError:
+        logger.error("gdal is not avaiable for mosaic_dem module")
+    
     logger.info(f"Starting to merge dems in {input_dir}... ...")
     
     # get all dem files in the input directory

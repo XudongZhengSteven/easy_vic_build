@@ -198,7 +198,7 @@ def buildRVICParam_basic(
     )
 
 
-@clock_decorator
+@clock_decorator(print_arg_ret=False)
 def buildRVICParam(
     evb_dir,
     domain_dataset,
@@ -378,10 +378,10 @@ def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
     flow_acc_array = flow_acc_array.astype(float)
 
     # mask
-    domain_mask_array[domain_mask == 0] = int(-9999)
-    flow_direction_array[domain_mask == 0] = int(-9999)
-    flow_distance_array[domain_mask == 0] = float(-9999.0)
-    flow_acc_array[domain_mask == 0] = float(-9999.0)
+    # domain_mask_array[domain_mask == 0] = int(-9999)
+    # flow_direction_array[domain_mask == 0] = int(-9999)
+    # flow_distance_array[domain_mask == 0] = float(-9999.0)
+    # flow_acc_array[domain_mask == 0] = float(-9999.0)
 
     # assign values
     flow_direction_dataset.variables["lat"][:] = np.array(domain_lat)

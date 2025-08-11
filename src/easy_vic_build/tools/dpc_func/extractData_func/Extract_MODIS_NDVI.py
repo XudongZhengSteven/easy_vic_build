@@ -135,7 +135,7 @@ def combine_MODIS_NDVI_data(reverse_lat=True):
             with Dataset(src_path, "r", format="NETCDF4_CLASSIC") as dataset:
                 # read NDVI
                 NDVI = dataset.variables["1 km monthly NDVI"][:, :]
-                NDVI = NDVI.filled(np.NAN)
+                NDVI = NDVI.filled(np.nan)
 
                 # get xy
                 structureMetadata = dataset.__dict__["StructMetadata.0"]
@@ -171,7 +171,7 @@ def combine_MODIS_NDVI_data(reverse_lat=True):
                 )  # large -> small
 
                 # NDVI array
-                NDVI_array = np.full((array_height, array_width), fill_value=np.NAN)
+                NDVI_array = np.full((array_height, array_width), fill_value=np.nan)
 
                 # xy -> index
                 x_index_start = np.where(abs((array_x - x_min)) <= 0.001)[0][0]

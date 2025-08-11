@@ -274,7 +274,7 @@ class TF_VIC:
         # Cosby et al. WRR 1984, b = 0.157x3 (- 0.003x1) + 3.10, b~=0~20
         # g1, g2, g3: 3.1 (2.5, 3.6), 0.157 (0.1, 0.2), -0.003 (-0.005, -0.001)
         # Arithmetic mean
-        ret = g1 + g2 * sand + g3 * clay
+        ret = g1 + g2 * clay + g3 * sand
         return ret
 
     @staticmethod

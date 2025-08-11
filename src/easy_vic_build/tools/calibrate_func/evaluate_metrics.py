@@ -62,6 +62,8 @@ Author:
 
 import numpy as np
 from scipy.stats import pearsonr
+from eofs.standard import Eof
+from scipy.spatial.distance import cosine
 
 
 class EvaluationMetric:
@@ -280,3 +282,158 @@ class EvaluationMetric:
 
         kge = 1 - ((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2) ** 0.5
         return kge
+    
+    def ESS(self, lats=None, n_modes=None, remove_mean=True, mask=None):
+        assert self.obs.shape == self.sim.shape, "sim and obs must have identical dimensions"
+        
+        ntime, nlat, nlon = self.sim.shape
+        
+        # reshape
+        sim_2d = self.sim.reshape(ntime, nlat * nlon)
+        obs_2d = self.obs.reshape(ntime, nlat * nlon)
+        
+        # mask
+        if mask is not None:
+            assert mask.shape == (nlat, nlon), "mask shape must match spatial dimensions"
+            flat_mask = mask.flatten()
+            sim_2d = sim_2d[:, flat_mask]
+            obs_2d = obs_2d[:, flat_mask]
+            
+        # combine sim and obs array
+        combine_2d = np.concatenate([sim_2d, obs_2d], axis=0)
+        
+        # Compute anomalies by removing the time-mean
+        if remove_mean:
+            combine_2d -= np.mean(combine_2d, axis=0)
+        
+        # latitude weights are applied before the computation of EOFs
+        if lats is not None:
+            coslat = np.cos(np.deg2rad(lats)).clip(0., 1.)
+            wgts = np.sqrt(coslat)[..., np.newaxis]
+            
+            if mask is not None:
+                # Also apply mask to weights
+                wgts = wgts.flatten()[flat_mask]
+        else:
+            wgts = None
+        
+        # solver
+        solver = Eof(combine_2d, weights=wgts)
+        
+        # get values
+        pcs = solver.pcs(npcs=n_modes)
+        eigvals = solver.eigenvalues()[:n_modes]
+        varfrac = solver.varianceFraction(neigs=n_modes)
+        
+        loadings = pcs * np.sqrt(eigvals)  # shape: (2*ntime, n_modes)
+        
+        # get ess
+        obs_loadings = loadings[:ntime]        # shape: (ntime, n_modes)
+        sim_loadings = loadings[ntime:]  # shape: (ntime, n_modes)
+        
+        diffs = np.abs(obs_loadings - sim_loadings)  # shape: (n_days, n_modes)
+        
+        ess = np.sum(diffs * varfrac[np.newaxis, :], axis=1)  # shape: (ntime,)
+        
+        return ess
+
+    def spatialPCC(self, mask=None):
+        assert self.obs.shape == self.sim.shape, "sim and obs must have identical dimensions"        
+
+        ntime, nlat, nlon = self.sim.shape       
+
+        # reshape
+        sim_2d = self.sim.reshape(ntime, nlat * nlon)
+        obs_2d = self.obs.reshape(ntime, nlat * nlon)        
+
+        # mask
+        if mask is not None:
+            assert mask.shape == (nlat, nlon), "mask shape must match spatial dimensions"
+            flat_mask = mask.flatten()
+            sim_2d = sim_2d[:, ~flat_mask]
+            obs_2d = obs_2d[:, ~flat_mask]
+            
+        pcc_array = np.full(ntime, np.nan)
+
+        for t in range(ntime):
+            sim_vec = sim_2d[t, :]
+            obs_vec = obs_2d[t, :]
+
+            valid_idx = (~np.isnan(sim_vec)) & (~np.isnan(obs_vec))
+
+            if np.sum(valid_idx) > 1:
+                pcc = np.corrcoef(sim_vec[valid_idx], obs_vec[valid_idx])[0, 1]
+                pcc_array[t] = pcc
+            else:
+                pcc_array[t] = np.nan
+
+        return pcc_array
+
+
+def create_test_data(seed=42):
+    np.random.seed(seed)
+    
+    T, H, W = 10, 25, 25
+
+    # Construct a base spatial pattern (e.g., high values concentrated in upper-right)
+    x = np.linspace(0, 1, W)
+    y = np.linspace(0, 1, H)
+    X, Y = np.meshgrid(x, y)
+    
+    # Gaussian pattern centered at (0.8, 0.2)
+    base_pattern = np.exp(-((X - 0.8)**2 + (Y - 0.2)**2) / 0.05)
+    
+    # Create time-dependent scaling (simulating seasonal or dynamic variation)
+    time_scaling = np.sin(np.linspace(0, 2*np.pi, T)) + 1.5  # shifted sine wave to ensure all values ≥ 0
+
+    # Construct data1: reference dataset with clean spatial-temporal structure
+    data1 = np.array([time_scaling[t] * base_pattern for t in range(T)])  # shape: (T, H, W)
+
+    # Construct data2: similar to data1 but with additional noise and a slight spatial bias
+    noise_level = 0.2
+    
+    # Random spatial noise added to each time step
+    spatial_noise = np.random.normal(0, noise_level, size=(T, H, W))
+    
+    # Small systematic bias in spatial structure (simulating model error)
+    mode_shift = 0.03 * np.random.randn(H, W)
+
+    # Combine to generate simulated dataset
+    data2 = data1 + spatial_noise + mode_shift
+    
+    return data1, data2
+
+
+def create_test_data2():
+    n_time = 30
+    n_lat = 25
+    n_lon = 25
+
+    lat_grid, lon_grid = np.meshgrid(np.linspace(-1, 1, n_lat), np.linspace(-1, 1, n_lon))
+    base_pattern = np.exp(-4 * (lat_grid**2 + lon_grid**2))
+
+    obs_data = np.zeros((n_time, n_lat, n_lon))
+    sim_data = np.zeros((n_time, n_lat, n_lon))
+
+    for t in range(n_time):
+        noise_level = 0.0
+        if t < 5:
+            noise_level = 0.05
+        elif t < 25:
+            noise_level = 0.3
+        else:
+            noise_level = 0.5
+
+        obs_data[t] = base_pattern + np.random.normal(0, 0.02, size=base_pattern.shape)
+        sim_data[t] = base_pattern + np.random.normal(0, noise_level, size=base_pattern.shape)
+    
+    return obs_data, sim_data
+
+
+if __name__ == "__main__":
+    data1, data2 = create_test_data2()
+    
+    EM = EvaluationMetric(data1, data2)
+    
+    ess = EM.ESS()
+    
