@@ -74,7 +74,7 @@ Other
 
 ## Documentation
 
-For detailed documentation, please refer to the [documentation website](#) or view the [API documentation](#). Developing...
+📖 [Read the documentation here](https://XudongZhengSteven.github.io/easy_vic_build/)[![Documentation Status](https://img.shields.io/badge/docs-online-brightgreen)](https://XudongZhengSteven.github.io/easy_vic_build/)
 
 ## Contributing
 
