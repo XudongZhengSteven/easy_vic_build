@@ -28,7 +28,7 @@ extensions = [
     'sphinx.ext.napoleon',      # Support for Google-style docstrings
     'sphinx.ext.githubpages',   # Publish to GitHub Pages
     'sphinx.ext.autosummary',   # Generate summaries
-    'sphinx_multiversion',
+    # 'sphinx_multiversion',
 ]
 
 templates_path = ['_templates']
