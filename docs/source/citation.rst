@@ -1,8 +1,11 @@
 Citation
 ========
 
-If you use this package in your research, please cite it as follows:
+If you use **Easy VIC Build (EVB)** in your research or publications, please cite it as follows:
 
-.. code-block::
+.. code-block:: text
 
-   Zheng, X. (Year). easy_vic_build: A Python package for VIC model deployment. Retrieved from https://github.com/XudongZhengSteven/easy_vic_build
+    Zheng, X., Liu, D., Tang, Q., Li, Q., & Wang, H. (under review).
+    An open-source Python framework for the scalable deployment and advanced applications
+    of the Variable Infiltration Capacity (VIC) model.
+    *Environmental Modelling & Software*.

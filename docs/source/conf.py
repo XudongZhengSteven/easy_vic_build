@@ -35,6 +35,16 @@ templates_path = ['_templates']
 exclude_patterns = []
 autosummary_generate = True
 
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': False,
+    'private-members': False,
+    'special-members': '__init__',
+    'inherited-members': True,
+    'show-inheritance': True,
+}
+
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
@@ -50,6 +60,10 @@ html_context = {
 }
 
 html_static_path = ['_static']
+
+html_css_files = [
+    'custom.css',
+]
 
 # Autodoc settings
 autodoc_default_options = {
