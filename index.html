@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Easy VIC Build (EVB) documentation! &mdash; easy_vic_build 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            easy_vic_build
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#plot">11. <strong>Plot</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Easy VIC Build (EVB) documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-easy-vic-build-evb-documentation">
+<h1>Welcome to Easy VIC Build (EVB) documentation!<a class="headerlink" href="#welcome-to-easy-vic-build-evb-documentation" title="Link to this heading"></a></h1>
+<p><strong>Easy VIC Build (EVB)</strong> is a Python-based framework designed to streamline the deployment of the VIC model, while remaining flexible, extensible, and aligned with ongoing VIC development.</p>
+<section id="easy-vic-build-evb">
+<h2>Easy VIC Build (EVB)<a class="headerlink" href="#easy-vic-build-evb" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#basic-installation">Basic installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#for-additional-dependencies">For additional dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#for-development-purposes">For development purposes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#plot">11. <strong>Plot</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.html">easy_vic_build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+</div>
+</section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<p>The proposed framework, <strong>Easy VIC Build (EVB)</strong>, is designed with the following features.</p>
+<section id="full-python-implementation">
+<h3>Full Python Implementation<a class="headerlink" href="#full-python-implementation" title="Link to this heading"></a></h3>
+<p>Leverages the extensive Python ecosystem to enable on-demand scalability.</p>
+</section>
+<section id="loosely-coupled-object-oriented-design">
+<h3>Loosely Coupled, Object-Oriented Design<a class="headerlink" href="#loosely-coupled-object-oriented-design" title="Link to this heading"></a></h3>
+<p>Preserves the independence of individual components so they can be replaced or modified without affecting the overall architecture.
+This flexibility allows adjustments to:</p>
+<ul class="simple">
+<li><p><strong>Model structures</strong> (e.g., soil layer depths, number of root zones)</p></li>
+<li><p><strong>Data sources and processing workflows</strong> (e.g., forcing and land surface data)</p></li>
+<li><p><strong>Spatiotemporal scales</strong> — to align with specific research objectives</p></li>
+</ul>
+</section>
+<section id="alignment-with-vic-development">
+<h3>Alignment with VIC Development<a class="headerlink" href="#alignment-with-vic-development" title="Link to this heading"></a></h3>
+<p>Supports the processing and generation of widely used data formats, including NetCDF and TIFF.</p>
+</section>
+<section id="advanced-methods">
+<h3>Advanced Methods<a class="headerlink" href="#advanced-methods" title="Link to this heading"></a></h3>
+<p>To enhance its applicability, EVB tentatively integrates several advanced methods associated with model deployment, including:</p>
+<ul class="simple">
+<li><p><strong>Multiscale Parameter Regionalization (MPR)</strong></p></li>
+<li><p><strong>General Unit Hydrograph (GUH)</strong></p></li>
+</ul>
+<p><a class="reference internal" href="references.html#samaniego2010" id="id1"><span>[Samaniego2010]</span></a>, <a class="reference internal" href="references.html#mizukami2017" id="id2"><span>[Mizukami2017]</span></a>, <a class="reference internal" href="references.html#guo2022" id="id3"><span>[Guo2022]</span></a></p>
+</section>
+<section id="applications">
+<h3>Applications<a class="headerlink" href="#applications" title="Link to this heading"></a></h3>
+<p>The EVB framework has been applied in multiple real-world basin systems to rigorously evaluate its performance.</p>
+</section>
+<section id="vision">
+<h3>Vision<a class="headerlink" href="#vision" title="Link to this heading"></a></h3>
+<p>We anticipate that EVB will serve a broad user community—both current and prospective VIC users—by providing a more streamlined and accessible pathway for VIC model deployment, thereby strengthening its utility in both applications and research.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This project is under active development.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

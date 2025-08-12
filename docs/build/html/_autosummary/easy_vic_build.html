@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build &mdash; easy_vic_build 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.Logger" href="easy_vic_build.Logger.html" />
+    <link rel="prev" title="API Reference" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            easy_vic_build
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html#plot">11. <strong>Plot</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">easy_vic_build</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+      <li class="breadcrumb-item active">easy_vic_build</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build">
+<span id="easy-vic-build"></span><h1>easy_vic_build<a class="headerlink" href="#module-easy_vic_build" title="Link to this heading"></a></h1>
+<p>easy_vic_build - A Python package for easily building VIC model.</p>
+<p>This package provides an open-source Python framework for scalable deployment and advanced applications
+of the VIC model. It streamlines the process of configuring, preparing, and calibrating the VIC model,
+and supports automation, preprocessing, and postprocessing workflows. The package is designed to
+improve efficiency and reduce the complexity of VIC model deployment.</p>
+<section id="submodules">
+<h2>Submodules:<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>tools</cite>: A subpackage containing utility modules for supporting VIC model deployment.</p></li>
+<li><p><cite>build_dpc</cite>: Module for building data processing class at three levels.</p></li>
+<li><p><cite>build_GlobalParam</cite>: Module for building the global parameter file.</p></li>
+<li><p><cite>build_hydroanalysis</cite>: Module for performing hydroanalysis tasks.</p></li>
+<li><p><cite>build_MeteForcing_nco</cite>: Module for building meteorological forcing files with nco.</p></li>
+<li><p><cite>build_MeteForcing</cite>: Module for building meteorological forcing files without nco.</p></li>
+<li><p><cite>build_RVIC_Param</cite>: Module for building RVIC parameter files.</p></li>
+<li><p><cite>build_Domain</cite>: Module for building domain files.</p></li>
+<li><p><cite>build_Param</cite>: Module for building VIC parameter files.</p></li>
+<li><p><cite>calibrate</cite>: Module for calibrating VIC model.</p></li>
+<li><p><cite>Evb_dir_class</cite>: Module containing Evb_dir class for managing path and directory.</p></li>
+<li><p><cite>warmup</cite>: Module for warmuping VIC model.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="usage">
+<h2>Usage:<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ol class="arabic simple" start="0">
+<li><p>Perform hydrological analysis for level0</p></li>
+<li><p>Build DPC (<cite>build_dpc</cite>)</p></li>
+<li><p>Build Domain (<cite>build_Domain</cite>)</p></li>
+<li><p>Build Parameters (<cite>build_Param</cite>)</p></li>
+<li><p>Perform Hydroanalysis for level1 (<cite>build_hydroanalysis</cite>)</p></li>
+<li><p>Build Meteorological Forcing (<cite>build_MeteForcing</cite>) or (<cite>build_MeteForcing_nco</cite>)</p></li>
+<li><p>Build RVIC Parameters (<cite>build_RVIC_Param</cite>)</p></li>
+<li><p>Build Global Parameters (<cite>build_GlobalParam</cite>)</p></li>
+<li><p>Calibrate the Model (<cite>calibrate</cite>)</p></li>
+<li><p>Plot Basin Map (<cite>plot_Basin_map</cite>), note that you must first run <cite>hydroanalysis_for_basin</cite></p></li>
+<li><p>Plot VIC Results (<cite>plot_VIC_result</cite>)</p></li>
+</ol>
+</div></blockquote>
+<p>Version: 0.1.0
+Author: Xudong Zheng
+License: MIT</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.setup_logger">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.</span></span><span class="sig-name descname"><span class="pre">setup_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/Logger.html#setup_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.setup_logger" title="Link to this definition"></a></dt>
+<dd><p>Configure the logger with user-defined settings.</p>
+<p>This function allows users to dynamically modify the logger’s configuration,
+including the logging level, format, and output destination (console or file).
+If no parameters are provided, the default configuration is used.</p>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>log_level<span class="classifier">int, optional</span></dt><dd><p>The logging level to set. Default is None (no change).</p>
+</dd>
+<dt>log_format<span class="classifier">str, optional</span></dt><dd><p>The log format to set. Default is None (no change).</p>
+</dd>
+<dt>log_to_file<span class="classifier">bool, optional</span></dt><dd><p>Whether to log to a file. Default is None (no change).</p>
+</dd>
+<dt>log_file<span class="classifier">str, optional</span></dt><dd><p>If logging to a file, specify the file path. Default is None (no change).</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>Logging.Logger</dt><dd><p>The configured logger instance.</p>
+</dd>
+</dl>
+</section>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<dl>
+<dt>To customize the logger configuration:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">setup_logger</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">log_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">log_to_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;custom_log.log&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.Logger.html" class="btn btn-neutral float-right" title="easy_vic_build.Logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
