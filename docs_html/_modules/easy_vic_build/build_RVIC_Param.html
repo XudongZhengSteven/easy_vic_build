@@ -1,0 +1,872 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.build_RVIC_Param &mdash; easy_vic_build 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            easy_vic_build
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plot">11. <strong>Plot</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.build_RVIC_Param</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.build_RVIC_Param</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">build_RVIC_Param - A Python module for building RVIC parameter files.</span>
+
+<span class="sd">This module provides functions for constructing and modifying RVIC (Routing of VIC model)</span>
+<span class="sd">parameter files, including flow direction files, pour point files, unit hydrograph (UH) box files,</span>
+<span class="sd">and configuration (CFG) files essential for RVIC simulations. The module also includes utilities</span>
+<span class="sd">for setting up and modifying the necessary inputs for hydrological routing within the VIC framework.</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">----------</span>
+<span class="sd">    - `buildRVICParam_general`: Generate general RVIC parameter files before using `rvic_parameters`.</span>
+<span class="sd">    - `buildRVICParam`: Constructs RVIC parameters that contains rvic_parameters based on input datasets and configurations.</span>
+<span class="sd">    - `buildRVICFlowDirectionFile`: Generates a NetCDF flow direction file using provided input datasets.</span>
+<span class="sd">    - `buildPourPointFile`: Creates a pour point file specifying the outlet locations for routing.</span>
+<span class="sd">    - `buildUHBOXFile`: Constructs a UHBOX file that defines the unit hydrograph characteristics.</span>
+<span class="sd">    - `buildParamCFGFile`: Generates the parameter configuration (CFG) file for RVIC simulations.</span>
+<span class="sd">    - `buildConvCFGFile`: Creates a conversion configuration file for RVIC execution.</span>
+<span class="sd">    - `modifyRVICParam_for_pourpoint`: Modifies RVIC parameters to include a specific pour point and updates flow direction settings accordingly.</span>
+
+<span class="sd">Usage:</span>
+<span class="sd">------</span>
+<span class="sd">    1. Call `buildRVICParam_general` to generate RVIC parameter files without using `rvic_parameters`, set the necessary input parameters.</span>
+<span class="sd">    2. Call ``buildRVICParam`` to generate RVIC parameter files and execute RVIC parameter computation.</span>
+
+<span class="sd">Example:</span>
+<span class="sd">--------</span>
+<span class="sd">    basin_index = 213</span>
+<span class="sd">    model_scale = &quot;6km&quot;</span>
+<span class="sd">    date_period = [&quot;19980101&quot;, &quot;19981231&quot;]</span>
+<span class="sd">    case_name = f&quot;{basin_index}_{model_scale}&quot;</span>
+
+<span class="sd">    evb_dir = Evb_dir(&quot;./examples&quot;)  # cases_home=&quot;/home/xdz/code/VIC_xdz/cases&quot;</span>
+<span class="sd">    evb_dir.builddir(case_name)</span>
+
+<span class="sd">    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)</span>
+<span class="sd">    params_dataset_level0, params_dataset_level1 = readParam(evb_dir)</span>
+
+<span class="sd">    buildRVICParam_general(evb_dir, dpc_VIC_level1, params_dataset_level1,</span>
+<span class="sd">                           ppf_kwargs=dict(), uh_params={&quot;createUH_func&quot;: create_uh.createGUH, &quot;uh_dt&quot;: 3600,</span>
+<span class="sd">                                                         &quot;tp&quot;: default_uh_params[0], &quot;mu&quot;: default_uh_params[1], &quot;m&quot;: default_uh_params[2],</span>
+<span class="sd">                                                         &quot;plot_bool&quot;: True, &quot;max_day&quot;:None, &quot;max_day_range&quot;: (0, 10), &quot;max_day_converged_threshold&quot;: 0.001},</span>
+<span class="sd">                           cfg_params={&quot;VELOCITY&quot;: 1.5, &quot;DIFFUSION&quot;: 800.0, &quot;OUTPUT_INTERVAL&quot;: 86400, &quot;SUBSET_DAYS&quot;: 10, &quot;CELL_FLOWDAYS&quot;: 2, &quot;BASIN_FLOWDAYS&quot;: 50})</span>
+
+<span class="sd">    buildRVICParam(evb_dir, dpc_VIC_level1, params_dataset_level1,</span>
+<span class="sd">                   ppf_kwargs=dict(), uh_params={&quot;createUH_func&quot;: create_uh.createGUH, &quot;uh_dt&quot;: 3600,</span>
+<span class="sd">                                                 &quot;tp&quot;: default_uh_params[0], &quot;mu&quot;: default_uh_params[1], &quot;m&quot;: default_uh_params[2],</span>
+<span class="sd">                                                 &quot;plot_bool&quot;: True, &quot;max_day&quot;:None, &quot;max_day_range&quot;: (0, 10), &quot;max_day_converged_threshold&quot;: 0.001},</span>
+<span class="sd">                   cfg_params={&quot;VELOCITY&quot;: 1.5, &quot;DIFFUSION&quot;: 800.0, &quot;OUTPUT_INTERVAL&quot;: 86400, &quot;SUBSET_DAYS&quot;: 10, &quot;CELL_FLOWDAYS&quot;: 2, &quot;BASIN_FLOWDAYS&quot;: 50})</span>
+
+<span class="sd">    params_dataset_level0.close()</span>
+<span class="sd">    params_dataset_level1.close()</span>
+
+<span class="sd">Dependencies:</span>
+<span class="sd">-------------</span>
+<span class="sd">    - `os`: For file and directory operations.</span>
+<span class="sd">    - `numpy`: For numerical operations.</span>
+<span class="sd">    - `pandas`: For handling tabular data (CSV files).</span>
+<span class="sd">    - `rasterio`: For reading and writing geospatial raster data.</span>
+<span class="sd">    - `copy`: For creating deep copies of objects.</span>
+<span class="sd">    - `logging`: For logging messages during file processing.</span>
+<span class="sd">    - `xarray`: For handling multidimensional arrays and NetCDF files.</span>
+<span class="sd">    - `.tools.params_func.createParametersDataset`: For creating flow direction files.</span>
+<span class="sd">    - `.tools.utilities`: For reading configuration files.</span>
+<span class="sd">    - `.tools.decoractors`: For timing function execution with `clock_decorator`.</span>
+<span class="sd">    - `.tools.uh_func`: For creating unit hydrographs (UH).</span>
+<span class="sd">    - `.tools.geo_func`.search_grids: For geospatial grid search functions.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">rasterio.transform</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">.tools.decoractors</span> <span class="kn">import</span> <span class="n">clock_decorator</span>
+<span class="kn">from</span> <span class="nn">.tools.geo_func.search_grids</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.tools.params_func.createParametersDataset</span> <span class="kn">import</span> <span class="n">createFlowDirectionFile</span>
+<span class="kn">from</span> <span class="nn">.tools.routing_func</span> <span class="kn">import</span> <span class="n">create_uh</span>
+<span class="kn">from</span> <span class="nn">.tools.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">read_cfg_to_dict</span><span class="p">,</span>
+                              <span class="n">read_rvic_conv_cfg_file_reference</span><span class="p">,</span>
+                              <span class="n">read_rvic_param_cfg_file_reference</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">rvic.parameters</span> <span class="kn">import</span> <span class="n">parameters</span> <span class="k">as</span> <span class="n">rvic_parameters</span>
+
+    <span class="n">HAS_RVIC</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">HAS_RVIC</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="buildRVICParam_basic">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildRVICParam_basic">[docs]</a>
+<span class="k">def</span> <span class="nf">buildRVICParam_basic</span><span class="p">(</span>
+    <span class="n">evb_dir</span><span class="p">,</span>
+    <span class="n">domain_dataset</span><span class="p">,</span>
+    <span class="n">ppf_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="n">uh_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;createUH_func&quot;</span><span class="p">:</span> <span class="n">create_uh</span><span class="o">.</span><span class="n">createGUH</span><span class="p">,</span>
+        <span class="s2">&quot;uh_dt&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+        <span class="s2">&quot;tp&quot;</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span>
+        <span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="s2">&quot;plot_bool&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_day&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;max_day_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="s2">&quot;max_day_converged_threshold&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">cfg_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;VELOCITY&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+        <span class="s2">&quot;DIFFUSION&quot;</span><span class="p">:</span> <span class="mf">800.0</span><span class="p">,</span>
+        <span class="s2">&quot;OUTPUT_INTERVAL&quot;</span><span class="p">:</span> <span class="mi">86400</span><span class="p">,</span>
+        <span class="s2">&quot;SUBSET_DAYS&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;CELL_FLOWDAYS&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;BASIN_FLOWDAYS&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate general RVIC parameter files before using `rvic_parameters`.</span>
+
+<span class="sd">    This function sequentially builds the required input files for the RVIC model, including:</span>
+<span class="sd">    - Flow direction file</span>
+<span class="sd">    - Pour point file</span>
+<span class="sd">    - Unit hydrograph (UH) file</span>
+<span class="sd">    - Parameter configuration file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    dpc_VIC_level1 : `dpc_VIC_level1`</span>
+<span class="sd">        An instance of the `dpc_VIC_level1` class to determine pour points..</span>
+
+<span class="sd">    params_dataset_level1 : `netCDF.Dataset`</span>
+<span class="sd">        The parameter dataset for level 1, containing flow direction and routing parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    ppf_kwargs : dict, optional</span>
+<span class="sd">        Keyword arguments for `buildPourPointFile`, by default an empty dictionary.</span>
+<span class="sd">        </span>
+<span class="sd">    uh_params : dict, optional</span>
+<span class="sd">        Parameters for `buildUHBOXFile`, including:</span>
+<span class="sd">        - createUH_func: Function to create UH.</span>
+<span class="sd">        - uh_dt: Time step for UH computation.</span>
+<span class="sd">        - tp, mu, m: Shape parameters for UH function.</span>
+<span class="sd">        - plot_bool: Whether to generate UH plots.</span>
+<span class="sd">        - max_day, max_day_range, max_day_converged_threshold: Parameters for convergence criteria.</span>
+<span class="sd">        </span>
+<span class="sd">    cfg_params : dict, optional</span>
+<span class="sd">        Configuration parameters for `buildParamCFGFile`, including:</span>
+<span class="sd">        - VELOCITY: Flow velocity.</span>
+<span class="sd">        - DIFFUSION: Diffusion parameter.</span>
+<span class="sd">        - OUTPUT_INTERVAL: Output time interval.</span>
+<span class="sd">        - SUBSET_DAYS: Days for subset computation.</span>
+<span class="sd">        - CELL_FLOWDAYS: Days for cell flow accumulation.</span>
+<span class="sd">        - BASIN_FLOWDAYS: Days for basin flow accumulation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        The function generates necessary RVIC parameter files and does not return any values.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function calls the following sub-functions in order:</span>
+<span class="sd">    - `buildRVICFlowDirectionFile`</span>
+<span class="sd">    - `buildPourPointFile`</span>
+<span class="sd">    - `buildUHBOXFile`</span>
+<span class="sd">    - `buildParamCFGFile`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Starting to generate RVIC parameter file without using rvic_parameters... ...&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># general RVICParam before using rvic_parameters</span>
+    <span class="c1"># buildRVICFlowDirectionFile</span>
+    <span class="n">buildRVICFlowDirectionFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">domain_dataset</span><span class="p">)</span>
+
+    <span class="c1"># buildPourPointFile</span>
+    <span class="n">buildPourPointFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">ppf_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># buildUHBOXFile</span>
+    <span class="n">max_day</span> <span class="o">=</span> <span class="n">buildUHBOXFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">uh_params</span><span class="p">)</span>
+
+    <span class="c1"># buildParamCFGFile</span>
+    <span class="k">if</span> <span class="n">cfg_params</span><span class="p">[</span><span class="s2">&quot;CELL_FLOWDAYS&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cfg_params</span><span class="p">[</span><span class="s2">&quot;CELL_FLOWDAYS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_day</span>
+        
+    <span class="n">buildParamCFGFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg_params</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;RVIC parameter file generation without using rvic_parameters successfully&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildRVICParam">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildRVICParam">[docs]</a>
+<span class="nd">@clock_decorator</span><span class="p">(</span><span class="n">print_arg_ret</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">buildRVICParam</span><span class="p">(</span>
+    <span class="n">evb_dir</span><span class="p">,</span>
+    <span class="n">domain_dataset</span><span class="p">,</span>
+    <span class="n">ppf_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="n">uh_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;createUH_func&quot;</span><span class="p">:</span> <span class="n">create_uh</span><span class="o">.</span><span class="n">createGUH</span><span class="p">,</span>
+        <span class="s2">&quot;uh_dt&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+        <span class="s2">&quot;tp&quot;</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span>
+        <span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="s2">&quot;plot_bool&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_day&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;max_day_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="s2">&quot;max_day_converged_threshold&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">cfg_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;VELOCITY&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+        <span class="s2">&quot;DIFFUSION&quot;</span><span class="p">:</span> <span class="mf">800.0</span><span class="p">,</span>
+        <span class="s2">&quot;OUTPUT_INTERVAL&quot;</span><span class="p">:</span> <span class="mi">86400</span><span class="p">,</span>
+        <span class="s2">&quot;SUBSET_DAYS&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;CELL_FLOWDAYS&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;BASIN_FLOWDAYS&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate RVIC parameter files and execute RVIC parameter computation.</span>
+
+<span class="sd">    This function first builds the necessary RVIC input files using `buildRVICParam_general`,</span>
+<span class="sd">    then reads the parameter configuration file and runs the RVIC parameter computation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    dpc_VIC_level1 : `dpc_VIC_level1`</span>
+<span class="sd">        An instance of the `dpc_VIC_level1` class to determine pour points..</span>
+
+<span class="sd">    params_dataset_level1 : `netCDF.Dataset`</span>
+<span class="sd">        The parameter dataset for level 1, containing flow direction and routing parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    ppf_kwargs : dict, optional</span>
+<span class="sd">        Keyword arguments for `buildPourPointFile`, by default an empty dictionary.</span>
+<span class="sd">        </span>
+<span class="sd">    uh_params : dict, optional</span>
+<span class="sd">        Parameters for `buildUHBOXFile`, including:</span>
+<span class="sd">        - createUH_func: Function to create UH.</span>
+<span class="sd">        - uh_dt: Time step for UH computation.</span>
+<span class="sd">        - tp, mu, m: Shape parameters for UH function.</span>
+<span class="sd">        - plot_bool: Whether to generate UH plots.</span>
+<span class="sd">        - max_day, max_day_range, max_day_converged_threshold: Parameters for convergence criteria.</span>
+<span class="sd">        </span>
+<span class="sd">    cfg_params : dict, optional</span>
+<span class="sd">        Configuration parameters for `buildParamCFGFile`, including:</span>
+<span class="sd">        - VELOCITY: Flow velocity.</span>
+<span class="sd">        - DIFFUSION: Diffusion parameter.</span>
+<span class="sd">        - OUTPUT_INTERVAL: Output time interval.</span>
+<span class="sd">        - SUBSET_DAYS: Days for subset computation.</span>
+<span class="sd">        - CELL_FLOWDAYS: Days for cell flow accumulation.</span>
+<span class="sd">        - BASIN_FLOWDAYS: Days for basin flow accumulation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        The function generates RVIC parameter files and executes the RVIC parameter computation.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ImportError</span>
+<span class="sd">        If the RVIC module is not available.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function performs the following steps:</span>
+<span class="sd">    1. Calls `buildRVICParam_general` to generate the required input files.</span>
+<span class="sd">    2. Reads the RVIC parameter configuration file.</span>
+<span class="sd">    3. Runs `rvic_parameters` if RVIC is available; otherwise, raises an ImportError.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to generate RVIC parameter file... ...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># buildRVICParam_general</span>
+    <span class="n">buildRVICParam_basic</span><span class="p">(</span>
+        <span class="n">evb_dir</span><span class="p">,</span>
+        <span class="n">domain_dataset</span><span class="p">,</span>
+        <span class="n">ppf_kwargs</span><span class="p">,</span>
+        <span class="n">uh_params</span><span class="p">,</span>
+        <span class="n">cfg_params</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># build rvic parameters</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Reading RVIC parameter configuration from </span><span class="si">{</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rvic_param_cfg_file_path</span><span class="si">}</span><span class="s2">... ...&quot;</span>
+    <span class="p">)</span>
+    <span class="n">param_cfg_file_dict</span> <span class="o">=</span> <span class="n">read_cfg_to_dict</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rvic_param_cfg_file_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">HAS_RVIC</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Executing RVIC parameter computation... ...&quot;</span><span class="p">)</span>
+        <span class="n">rvic_parameters</span><span class="p">(</span><span class="n">param_cfg_file_dict</span><span class="p">,</span> <span class="n">numofproc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;RVIC parameter computation completed&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;RVIC module is not available. Cannot proceed with buildRVICParam&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;no rvic for buildRVICParam&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;RVIC parameter file generation successfully&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildRVICFlowDirectionFile">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildRVICFlowDirectionFile">[docs]</a>
+<span class="k">def</span> <span class="nf">buildRVICFlowDirectionFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">domain_dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate an RVIC flow direction file in NetCDF format.</span>
+
+<span class="sd">    This function reads flow direction, flow accumulation, and flow distance data from GeoTIFF files,</span>
+<span class="sd">    applies a mask based on the VIC parameter dataset, and stores the processed data in a NetCDF file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    params_dataset_level1 : `netCDF.Dataset`</span>
+<span class="sd">        The parameter dataset for level 1, containing flow direction and routing parameters.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        The function creates a NetCDF file containing flow direction-related information.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function performs the following steps:</span>
+<span class="sd">    1. Sets paths for input and output files.</span>
+<span class="sd">    2. Reads general information from the VIC parameter dataset.</span>
+<span class="sd">    3. Reads flow direction, flow accumulation, and flow distance data from GeoTIFF files.</span>
+<span class="sd">    4. Combines the data into a NetCDF file, applying masks where necessary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to generate RVIC flow direction file... ...&quot;</span><span class="p">)</span>
+    <span class="c1"># ====================== set dir and path ======================</span>
+    <span class="c1"># set path</span>
+    <span class="n">flow_direction_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICParam_dir</span><span class="p">,</span> <span class="s2">&quot;flow_direction_file.nc&quot;</span>
+    <span class="p">)</span>
+    <span class="n">flow_direction_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">Hydroanalysis_dir</span><span class="p">,</span> <span class="s2">&quot;flow_direction.tif&quot;</span><span class="p">)</span>
+    <span class="n">flow_acc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">Hydroanalysis_dir</span><span class="p">,</span> <span class="s2">&quot;flow_acc.tif&quot;</span><span class="p">)</span>
+    <span class="n">flow_distance_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">Hydroanalysis_dir</span><span class="p">,</span> <span class="s2">&quot;flow_distance.tif&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== read general information ======================</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading latitude, longitude, and mask data from VIC parameters... ...&quot;</span><span class="p">)</span>
+    <span class="n">domain_lat</span> <span class="o">=</span> <span class="n">domain_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">][:]</span>
+    <span class="n">domain_lon</span> <span class="o">=</span> <span class="n">domain_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">][:]</span>
+    <span class="n">domain_mask</span> <span class="o">=</span> <span class="n">domain_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;mask&quot;</span><span class="p">][:,</span> <span class="p">:]</span>
+
+    <span class="c1"># ====================== read flow_direction and flow_acc ======================</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading flow direction data from </span><span class="si">{</span><span class="n">flow_direction_path</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">flow_direction_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;GTiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">flow_direction_array</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading flow accumulation data from </span><span class="si">{</span><span class="n">flow_acc_path</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">flow_acc_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;GTiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">flow_acc_array</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading flow distance data from </span><span class="si">{</span><span class="n">flow_distance_path</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">flow_distance_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;GTiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">flow_distance_array</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ====================== combine them into a nc file ======================</span>
+    <span class="c1"># create nc file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating NetCDF file: </span><span class="si">{</span><span class="n">flow_direction_file_path</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+    <span class="n">flow_direction_dataset</span> <span class="o">=</span> <span class="n">createFlowDirectionFile</span><span class="p">(</span>
+        <span class="n">flow_direction_file_path</span><span class="p">,</span> <span class="n">domain_lat</span><span class="p">,</span> <span class="n">domain_lon</span>
+    <span class="p">)</span>
+
+    <span class="c1"># change type</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Processing and masking data... ...&quot;</span><span class="p">)</span>
+    <span class="n">domain_mask_array</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">domain_mask</span><span class="p">)</span>
+    <span class="n">domain_mask_array</span> <span class="o">=</span> <span class="n">domain_mask_array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">flow_direction_array</span> <span class="o">=</span> <span class="n">flow_direction_array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">flow_distance_array</span> <span class="o">=</span> <span class="n">flow_distance_array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">flow_acc_array</span> <span class="o">=</span> <span class="n">flow_acc_array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># mask</span>
+    <span class="c1"># domain_mask_array[domain_mask == 0] = int(-9999)</span>
+    <span class="c1"># flow_direction_array[domain_mask == 0] = int(-9999)</span>
+    <span class="c1"># flow_distance_array[domain_mask == 0] = float(-9999.0)</span>
+    <span class="c1"># flow_acc_array[domain_mask == 0] = float(-9999.0)</span>
+
+    <span class="c1"># assign values</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">domain_lat</span><span class="p">)</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">domain_lon</span><span class="p">)</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;Basin_ID&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">domain_mask_array</span><span class="p">)</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;Flow_Direction&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="n">flow_direction_array</span>
+    <span class="p">)</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;Flow_Distance&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="n">flow_distance_array</span>
+    <span class="p">)</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;Source_Area&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flow_acc_array</span><span class="p">)</span>
+
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;RVIC flow direction file generation successfully, saved to: </span><span class="si">{</span><span class="n">flow_direction_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildPourPointFile">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildPourPointFile">[docs]</a>
+<span class="k">def</span> <span class="nf">buildPourPointFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lats</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a pour point CSV file for RVIC.</span>
+
+<span class="sd">    This function creates a CSV file containing longitude, latitude, and names of pour points.</span>
+<span class="sd">    If `dpc_VIC_level1` is provided, it extracts pour point coordinates from the basin shapefile;</span>
+<span class="sd">    otherwise, it uses the manually provided `lons`, `lats`, and `names` lists.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    dpc_VIC_level1 : `dpc_VIC_level1`</span>
+<span class="sd">        An instance of the `dpc_VIC_level1` class to determine pour points..</span>
+
+<span class="sd">    names : list, optional</span>
+<span class="sd">        List of names for the pour points.</span>
+<span class="sd">        </span>
+<span class="sd">    lons : list, optional</span>
+<span class="sd">        List of longitude coordinates for pour points.</span>
+<span class="sd">        </span>
+<span class="sd">    lats : list, optional</span>
+<span class="sd">        List of latitude coordinates for pour points.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        The function writes the pour point data to a CSV file.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - If `dpc_VIC_level1` is used, the function extracts pour point locations from the &quot;camels_topo&quot; attributes.</span>
+<span class="sd">    - If `dpc_VIC_level1` is not provided, manually specified coordinates must be supplied.</span>
+<span class="sd">    - Ensure that flow accumulation data is checked to verify pour point locations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#! you should check it with FlowAcc (source area)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to generate pour point file... ...&quot;</span><span class="p">)</span>
+    <span class="c1"># ====================== set dir and path ======================</span>
+    <span class="n">RVICParam_dir</span> <span class="o">=</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICParam_dir</span>
+    <span class="n">pourpoint_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">RVICParam_dir</span><span class="p">,</span> <span class="s2">&quot;pour_points.csv&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== build PourPointFile ======================</span>
+    <span class="c1"># df</span>
+    <span class="n">pourpoint_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lons&quot;</span><span class="p">,</span> <span class="s2">&quot;lats&quot;</span><span class="p">,</span> <span class="s2">&quot;names&quot;</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">lons</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">lats</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing longitude, latitude, or name data for pour points&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Longitude, latitude, and name lists must be provided when dpc_VIC_level1 is None&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">pourpoint_file</span><span class="o">.</span><span class="n">lons</span> <span class="o">=</span> <span class="n">lons</span>
+    <span class="n">pourpoint_file</span><span class="o">.</span><span class="n">lats</span> <span class="o">=</span> <span class="n">lats</span>
+    <span class="n">pourpoint_file</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+
+    <span class="c1"># ====================== Save pour point file ======================</span>
+    <span class="n">pourpoint_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">pourpoint_file_path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Pour point file generation successfully, saved to </span><span class="si">{</span><span class="n">pourpoint_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildUHBOXFile">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildUHBOXFile">[docs]</a>
+<span class="k">def</span> <span class="nf">buildUHBOXFile</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">createUH_func</span><span class="o">=</span><span class="n">create_uh</span><span class="o">.</span><span class="n">createGUH</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate and save the UHBOX (Unit Hydrograph Box) file.</span>
+
+<span class="sd">    This function creates a UHBOX file using a specified unit hydrograph creation function.</span>
+<span class="sd">    The resulting UHBOX data is then saved to a CSV file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    createUH_func : function, optional</span>
+<span class="sd">        Function used to generate the unit hydrograph, default is `create_uh.createGUH`.</span>
+<span class="sd">        </span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        Additional parameters to be passed to the `createUH_func`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    max_day : float</span>
+<span class="sd">        Maximum duration (in days) used in the unit hydrograph generation.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The function relies on `createUH_func` to generate the UHBOX data.</span>
+<span class="sd">    - The resulting UHBOX file is stored in `evb_dir.uhbox_file_path`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to generate UHBOX file... ...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># build</span>
+    <span class="n">max_day</span><span class="p">,</span> <span class="n">UHBOX_file</span> <span class="o">=</span> <span class="n">createUH_func</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># save</span>
+    <span class="n">UHBOX_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">uhbox_file_path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;UHBOX file generation successfully, saved to </span><span class="si">{</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">uhbox_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">max_day</span></div>
+
+
+
+<div class="viewcode-block" id="buildParamCFGFile">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildParamCFGFile">[docs]</a>
+<span class="k">def</span> <span class="nf">buildParamCFGFile</span><span class="p">(</span>
+    <span class="n">evb_dir</span><span class="p">,</span>
+    <span class="n">VELOCITY</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">DIFFUSION</span><span class="o">=</span><span class="mf">800.0</span><span class="p">,</span>
+    <span class="n">OUTPUT_INTERVAL</span><span class="o">=</span><span class="mi">86400</span><span class="p">,</span>
+    <span class="n">SUBSET_DAYS</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">CELL_FLOWDAYS</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">BASIN_FLOWDAYS</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate and save the RVIC parameter configuration file.</span>
+
+<span class="sd">    This function creates a configuration (CFG) file for RVIC parameter settings based on</span>
+<span class="sd">    a reference configuration file and specified routing parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    VELOCITY : float, optional</span>
+<span class="sd">        Flow velocity parameter, default is 1.5, and the acceptable range is 1.0 to 3.0 m/s.</span>
+<span class="sd">        </span>
+<span class="sd">    DIFFUSION : float, optional</span>
+<span class="sd">        Diffusion coefficient for routing, default is 800.0, and the acceptable range is 200 to 4000m3/s.</span>
+<span class="sd">        </span>
+<span class="sd">    OUTPUT_INTERVAL : int, optional</span>
+<span class="sd">        Time interval (seconds) for output, default is 86400 seconds (1 day), and should typically be set as a multiple of 60.</span>
+<span class="sd">        </span>
+<span class="sd">    SUBSET_DAYS : int, optional</span>
+<span class="sd">        Number of days used for subset processing, default is 10.</span>
+<span class="sd">        </span>
+<span class="sd">    CELL_FLOWDAYS : int, optional</span>
+<span class="sd">        Flow duration at the cell level (days), default is 2.</span>
+<span class="sd">        </span>
+<span class="sd">    BASIN_FLOWDAYS : int, optional</span>
+<span class="sd">        Flow duration at the basin level (days), default is 50.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Reads a reference configuration file and modifies key parameters.</span>
+<span class="sd">    - Saves the updated configuration file to `evb_dir.rvic_param_cfg_file_path`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to generate RVIC parameter configuration file... ...&quot;</span><span class="p">)</span>
+    <span class="c1"># ====================== build CFGFile ======================</span>
+    <span class="c1"># read reference cfg</span>
+    <span class="c1"># param_cfg_file = ConfigParser()</span>
+    <span class="c1"># param_cfg_file.optionxform = str  # import to keep case</span>
+    <span class="c1"># param_cfg_file.read(evb_dir.rvic_param_cfg_file_reference_path)</span>
+    <span class="n">param_cfg_file</span> <span class="o">=</span> <span class="n">read_rvic_param_cfg_file_reference</span><span class="p">()</span>
+
+    <span class="c1"># set cfg</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;CASEID&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">_case_name</span><span class="p">)</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE_DIR&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICParam_dir</span><span class="p">)</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;TEMP_DIR&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICTemp_dir</span><span class="p">)</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;SUBSET_DAYS&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">SUBSET_DAYS</span><span class="p">))</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;POUR_POINTS&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE_NAME&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">pourpoint_file_path</span><span class="p">)</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;UH_BOX&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE_NAME&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">uhbox_file_path</span><span class="p">)</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ROUTING&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE_NAME&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">flow_direction_file_path</span><span class="p">)</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ROUTING&quot;</span><span class="p">,</span> <span class="s2">&quot;VELOCITY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">VELOCITY</span><span class="p">))</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ROUTING&quot;</span><span class="p">,</span> <span class="s2">&quot;DIFFUSION&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">DIFFUSION</span><span class="p">))</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ROUTING&quot;</span><span class="p">,</span> <span class="s2">&quot;OUTPUT_INTERVAL&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">OUTPUT_INTERVAL</span><span class="p">))</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ROUTING&quot;</span><span class="p">,</span> <span class="s2">&quot;CELL_FLOWDAYS&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">CELL_FLOWDAYS</span><span class="p">))</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ROUTING&quot;</span><span class="p">,</span> <span class="s2">&quot;BASIN_FLOWDAYS&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">BASIN_FLOWDAYS</span><span class="p">))</span>
+    <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;DOMAIN&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE_NAME&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">domainFile_path</span><span class="p">)</span>
+
+    <span class="c1"># write cfg</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rvic_param_cfg_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+        <span class="n">param_cfg_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;RVIC parameter configuration file generation successfully, saved to </span><span class="si">{</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rvic_param_cfg_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildConvCFGFile">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.buildConvCFGFile">[docs]</a>
+<span class="k">def</span> <span class="nf">buildConvCFGFile</span><span class="p">(</span>
+    <span class="n">evb_dir</span><span class="p">,</span>
+    <span class="n">RUN_STARTDATE</span><span class="o">=</span><span class="s2">&quot;1979-09-01-00&quot;</span><span class="p">,</span>
+    <span class="n">DATL_FILE</span><span class="o">=</span><span class="s2">&quot;rasm_sample_runoff.nc&quot;</span><span class="p">,</span>
+    <span class="n">PARAM_FILE_PATH</span><span class="o">=</span><span class="s2">&quot;sample_rasm_parameters.nc&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate and save the RVIC convolution configuration file.</span>
+
+<span class="sd">    This function creates a configuration (CFG) file for RVIC convolution settings</span>
+<span class="sd">    based on a reference configuration file and specified parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    RUN_STARTDATE : str, optional</span>
+<span class="sd">        The start date for the RVIC run in &quot;YYYY-MM-DD-HH&quot; format.</span>
+<span class="sd">        </span>
+<span class="sd">    DATL_FILE : str, optional</span>
+<span class="sd">        The name of the input runoff file. Default is &quot;rasm_sample_runoff.nc&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">    PARAM_FILE_PATH : str, optional</span>
+<span class="sd">        The path to the RVIC parameter file. Default is &quot;sample_rasm_parameters.nc&quot;.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Reads a reference configuration file and modifies key parameters.</span>
+<span class="sd">    - Saves the updated configuration file to `evb_dir.rvic_conv_cfg_file_path`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to generate RVIC convolution configuration file... ...&quot;</span><span class="p">)</span>
+    <span class="c1"># ====================== build CFGFile ======================</span>
+    <span class="c1"># read reference cfg</span>
+    <span class="c1"># conv_cfg_file = ConfigParser()</span>
+    <span class="c1"># conv_cfg_file.optionxform = str  # import to keep case</span>
+    <span class="c1"># conv_cfg_file.read(evb_dir.rvic_conv_cfg_file_reference_path)</span>
+    <span class="n">conv_cfg_file</span> <span class="o">=</span> <span class="n">read_rvic_conv_cfg_file_reference</span><span class="p">()</span>
+
+    <span class="c1"># set cfg</span>
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;CASEID&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">_case_name</span><span class="p">)</span>
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE_DIR&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICConv_dir</span><span class="p">)</span>
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;RUN_STARTDATE&quot;</span><span class="p">,</span> <span class="n">RUN_STARTDATE</span><span class="p">)</span>
+
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;DOMAIN&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE_NAME&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">domainFile_path</span><span class="p">)</span>
+
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;PARAM_FILE&quot;</span><span class="p">,</span> <span class="s2">&quot;FILE_NAME&quot;</span><span class="p">,</span> <span class="n">PARAM_FILE_PATH</span><span class="p">)</span>
+
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;INPUT_FORCINGS&quot;</span><span class="p">,</span> <span class="s2">&quot;DATL_PATH&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">VICResults_dir</span><span class="p">)</span>
+    <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;INPUT_FORCINGS&quot;</span><span class="p">,</span> <span class="s2">&quot;DATL_FILE&quot;</span><span class="p">,</span> <span class="n">DATL_FILE</span><span class="p">)</span>
+
+    <span class="c1"># write cfg</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rvic_conv_cfg_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">configfile</span><span class="p">:</span>
+        <span class="n">conv_cfg_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;RVIC convolution configuration file generation successfully, saved to </span><span class="si">{</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rvic_conv_cfg_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="modifyRVICParam_for_pourpoint">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_RVIC_Param.html#easy_vic_build.build_RVIC_Param.modifyRVICParam_for_pourpoint">[docs]</a>
+<span class="k">def</span> <span class="nf">modifyRVICParam_for_pourpoint</span><span class="p">(</span>
+    <span class="n">evb_dir</span><span class="p">,</span>
+    <span class="n">pourpoint_lon</span><span class="p">,</span>
+    <span class="n">pourpoint_lat</span><span class="p">,</span>
+    <span class="n">pourpoint_direction_code</span><span class="p">,</span>
+    <span class="n">params_dataset_level1</span><span class="p">,</span>
+    <span class="n">domain_dataset</span><span class="p">,</span>
+    <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+    <span class="n">flow_direction_pkg</span><span class="o">=</span><span class="s2">&quot;wbw&quot;</span><span class="p">,</span>
+    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify RVIC parameters to integrate a specified pour point.</span>
+
+<span class="sd">    This function updates the pour point file and modifies the RVIC flow direction file</span>
+<span class="sd">    to adjust the direction of the pour point at the edge.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : `Evb_dir`</span>
+<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
+<span class="sd">    </span>
+<span class="sd">    pourpoint_lon : float</span>
+<span class="sd">        Longitude of the pour point.</span>
+<span class="sd">        </span>
+<span class="sd">    pourpoint_lat : float</span>
+<span class="sd">        Latitude of the pour point.</span>
+<span class="sd">        </span>
+<span class="sd">    pourpoint_direction_code : int</span>
+<span class="sd">        Flow direction code for the pour point (e.g., based on D8 direction encoding).</span>
+<span class="sd">        </span>
+<span class="sd">    params_dataset_level1 : Dataset</span>
+<span class="sd">        Parameter dataset at level 1, used to extract grid-based information.</span>
+<span class="sd">    </span>
+<span class="sd">    domain_dataset : `netCDF.Dataset`, optional</span>
+<span class="sd">        Domain dataset containing spatial attributes.</span>
+<span class="sd">    </span>
+<span class="sd">    reverse_lat : bool</span>
+<span class="sd">        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -&gt; small, set as True).</span>
+
+<span class="sd">    stream_acc_threshold : float, optional</span>
+<span class="sd">        The threshold value for stream accumulation. Default is 100.0. It affect the results generated by hydroanalysis_arcpy.</span>
+
+<span class="sd">    flow_direction_pkg : str, optional</span>
+<span class="sd">        The package used to calculate flow direction. Options are &quot;arcpy&quot; and &quot;wbw&quot;. Default is &quot;wbw&quot;.</span>
+
+<span class="sd">    crs_str : str, optional</span>
+<span class="sd">        Coordinate reference system (CRS) in EPSG format (default is &quot;EPSG:4326&quot;).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - First, the pour point file is created or updated.</span>
+<span class="sd">    - Then, the RVIC flow direction file is modified to include the pour point and adjust its flow direction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Starting to modifying RVIC parameters for pour point integration... ...&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ====================== Modify PourPointFile ======================</span>
+    <span class="n">buildPourPointFile</span><span class="p">(</span>
+        <span class="n">evb_dir</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pourpoint&quot;</span><span class="p">],</span> <span class="n">lons</span><span class="o">=</span><span class="p">[</span><span class="n">pourpoint_lon</span><span class="p">],</span> <span class="n">lats</span><span class="o">=</span><span class="p">[</span><span class="n">pourpoint_lat</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pourpoint is set to lon (</span><span class="si">{</span><span class="n">pourpoint_lon</span><span class="si">}</span><span class="s2">), lat (pourpoint_lat)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== Modify RVIC Flow Direction File ======================</span>
+    <span class="c1"># modify buildRVICFlowDirectionFile, modify 0 direction (edge) of pourpoint to pourpoint_direction_code</span>
+    <span class="n">buildRVICFlowDirectionFile</span><span class="p">(</span>
+        <span class="n">evb_dir</span><span class="p">,</span>
+        <span class="n">params_dataset_level1</span><span class="p">,</span>
+        <span class="n">domain_dataset</span><span class="p">,</span>
+        <span class="n">reverse_lat</span><span class="o">=</span><span class="n">reverse_lat</span><span class="p">,</span>
+        <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="n">stream_acc_threshold</span><span class="p">,</span>
+        <span class="n">flow_direction_pkg</span><span class="o">=</span><span class="n">flow_direction_pkg</span><span class="p">,</span>
+        <span class="n">crs_str</span><span class="o">=</span><span class="n">crs_str</span><span class="p">,</span>
+        <span class="n">pourpoint_lon</span><span class="o">=</span><span class="n">pourpoint_lon</span><span class="p">,</span>
+        <span class="n">pourpoint_lat</span><span class="o">=</span><span class="n">pourpoint_lat</span><span class="p">,</span>
+        <span class="n">pourpoint_direction_code</span><span class="o">=</span><span class="n">pourpoint_direction_code</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;RVIC parameter modification for pour point successfully&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
