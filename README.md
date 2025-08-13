@@ -1,7 +1,7 @@
 # easy_vic_build
 
 This is an open-source Python package for deploying the VIC model.  
-![EVB_Architecture](docs/evb_architecture.png)
+![EVB_Architecture](docs/evb_architecture.svg)
 
 ## Installation
 
