@@ -109,7 +109,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 If you use this package in your research, please cite it as follows:
 
 ```plaintext
-Xudong Zheng et al., (2025). An Open-Source Python Framework for Scalable Deployment and Advanced Applications of VIC Model. Retrieved from https://github.com/XudongZhengSteven/easy_vic_build
+Zheng, X., Liu, D., Tang, Q., Li, Q., & Wang, H. (under review). An open-source Python framework for the scalable deployment and advanced applications of the Variable Infiltration Capacity (VIC) model. *Environmental Modelling & Software*.
+
+Retrieved from https://github.com/XudongZhengSteven/easy_vic_build
 ```
 
 ## TODO
