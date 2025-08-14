@@ -64,6 +64,7 @@ import random
 
 from deap import algorithms, base, creator, tools
 from tqdm import *
+from copy import deepcopy
 
 from ... import logger
 from ..decoractors import clock_decorator
@@ -471,9 +472,9 @@ class NSGAII_Base:
         """
         state = {
             "current_generation": self.current_generation,
-            "population": self.population,
-            "initial_population": self.initial_population,
-            "history": self.history,
+            "population": deepcopy(self.population),
+            "initial_population": deepcopy(self.initial_population),
+            "history": deepcopy(self.history),
         }
 
         with open(self.save_path, "wb") as f:
@@ -526,7 +527,7 @@ class NSGAII_Base:
                 tools.emo.assignCrowdingDist(f)
 
             # save history (population and front)
-            self.history.append((self.population, front))
+            self.history.append((deepcopy(self.population), deepcopy(front)))
 
             # save state at the end of each gen
             self.save_state()
