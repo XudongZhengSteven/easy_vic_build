@@ -5,6 +5,15 @@
 import torch
 import torch.nn as nn
 
+import numpy as np
+
+
+class MuskingumGrid:
+    
+    def __init_(self, dt=1.0):
+        self.dt = dt
+        pass
+
 
 class DifferentiableMuskingumGrid(nn.Module):
     def __init__(self, grid_shape, dt=1.0):

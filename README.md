@@ -1,4 +1,4 @@
-# easy_vic_build
+# easy_vic_build[![easy_vic_build Logo](docs/logo_small_size.png)](https://github.com/XudongZhengSteven/easy_vic_build)
 
 This is an open-source Python package for deploying the VIC model.  
 ![EVB_Architecture](docs/evb_architecture.svg)

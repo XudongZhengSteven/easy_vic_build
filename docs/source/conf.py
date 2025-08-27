@@ -6,6 +6,13 @@ import sys
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+# logo
+html_logo = "_static/logo.png"
+html_theme_options = {
+    "logo_only": True,
+    "display_version": False,
+}
+
 # Add project to Python path
 sys.path.insert(0, os.path.abspath('../../src/easy_vic_build/'))
 
