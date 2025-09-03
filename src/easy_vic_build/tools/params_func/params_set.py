@@ -41,6 +41,7 @@ g_params = {
         "boundary": [[0.1], [4.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "soil_layers_breakpoints": {
@@ -48,6 +49,7 @@ g_params = {
         "boundary": [[1, 3], [3, 9]],
         "type": int,
         "optimal": [None, None],
+        "free": True,
     },
     
     "b_infilt": {
@@ -55,6 +57,7 @@ g_params = {
         "boundary": [[-2.0, 0.8], [1.0, 1.2]],
         "type": float,
         "optimal": [None, None],
+        "free": True,
     },
     
     "ksat": {
@@ -62,6 +65,7 @@ g_params = {
         "boundary": [[-0.66, 0.0113, -0.007], [-0.54, 0.0139, -0.0058]],  # +- 10%
         "type": float,
         "optimal": [None, None, None],
+        "free": True,
     },
     
     "phi_s": {
@@ -69,6 +73,7 @@ g_params = {
         "boundary": [[45.5, -0.3, -0.1], [55.5, -0.01, -0.01]],
         "type": float,
         "optimal": [None, None, None],
+        "free": True,
     },
     
     "psis": {
@@ -76,6 +81,7 @@ g_params = {
         "boundary": [[1.0, -0.01, 0.006], [2.0, -0.009, 0.0066]],
         "type": float,
         "optimal": [None, None, None],
+        "free": True,
     },
     
     "b_retcurve": {
@@ -83,6 +89,7 @@ g_params = {
         "boundary": [[2.5, 0.1, -0.005], [3.6, 0.2, -0.001]],
         "type": float,
         "optimal": [None, None, None],
+        "free": True,
     },
     
     "expt": {
@@ -90,6 +97,7 @@ g_params = {
         "boundary": [[2.8, 1.5], [3.2, 2.5]],
         "type": float,
         "optimal": [None, None],
+        "free": True,
     },
     
     "fc": {
@@ -97,6 +105,7 @@ g_params = {
         "boundary": [[0.8], [1.2]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "D4": {
@@ -104,6 +113,7 @@ g_params = {
         "boundary": [[1.5], [2.5]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "D1": {
@@ -111,6 +121,7 @@ g_params = {
         "boundary": [[1.75], [3.5]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "D2": {
@@ -118,6 +129,7 @@ g_params = {
         "boundary": [[1.75], [3.5]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "D3": {
@@ -125,6 +137,7 @@ g_params = {
         "boundary": [[0.001], [2.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "dp": {
@@ -132,6 +145,7 @@ g_params = {
         "boundary": [[0.9], [1.1]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "bubble": {
@@ -139,6 +153,7 @@ g_params = {
         "boundary": [[0.1, 0.0], [0.9, 10.0]],
         "type": float,
         "optimal": [None, None],
+        "free": True,
     },
     
     "quartz": {
@@ -146,6 +161,7 @@ g_params = {
         "boundary": [[0.7], [0.9]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "bulk_density": {
@@ -153,6 +169,7 @@ g_params = {
         "boundary": [[0.9], [1.1]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "soil_density": {
@@ -160,6 +177,7 @@ g_params = {
         "boundary": [[0.9, 0.9, 0.9], [1.1, 1.1, 1.1]],
         "type": float,
         "optimal": [None, None, None],
+        "free": True,
     },
     
     "Wcr_FRACT": {
@@ -167,6 +185,7 @@ g_params = {
         "boundary": [[0.8], [1.2]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "wp": {
@@ -174,6 +193,7 @@ g_params = {
         "boundary": [[0.8], [1.2]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "Wpwp_FRACT": {
@@ -181,6 +201,7 @@ g_params = {
         "boundary": [[0.8], [1.2]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "rough": {
@@ -188,6 +209,7 @@ g_params = {
         "boundary": [[0.9], [1.1]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "snow_rough": {
@@ -195,8 +217,34 @@ g_params = {
         "boundary": [[0.9], [1.1]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
 }
+
+# g params minimal version
+g_params_minimal = deepcopy(g_params)
+non_free_keys = [
+    "ksat",
+    "phi_s",
+    "psis",
+    "b_retcurve",
+    "expt",
+    "fc",
+    "D4",
+    "dp",
+    "bubble",
+    "quartz",
+    "bulk_density",
+    "soil_density",
+    "Wcr_FRACT",
+    "wp",
+    "Wpwp_FRACT",
+    "rough",
+    "snow_rough",
+]
+
+for key in non_free_keys:
+    g_params_minimal[key]["free"] = False
 
 # guh params
 guh_params = {
@@ -205,6 +253,7 @@ guh_params = {
         "boundary": [[1.0], [24.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "mu": {
@@ -212,6 +261,7 @@ guh_params = {
         "boundary": [[2.0], [10.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "m": {
@@ -219,6 +269,7 @@ guh_params = {
         "boundary": [[0.5], [6.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     }
 }
 
@@ -229,6 +280,7 @@ rvic_params = {
         "boundary": [[0.1], [3.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     },
     
     "DIFFUSION": {
@@ -236,6 +288,7 @@ rvic_params = {
         "boundary": [[10.0], [4000.0]],
         "type": float,
         "optimal": [None],
+        "free": True,
     }
 }
 
@@ -247,6 +300,15 @@ params = {
 }
 
 params_all = {**g_params, **guh_params, **rvic_params}
+
+# all params minimal version
+params_minimal = {
+    "g_params": g_params_minimal,
+    "guh_params": guh_params,
+    "rvic_params": rvic_params,
+}
+
+params_all_minimal = {**g_params_minimal, **guh_params, **rvic_params}
 
 # default params
 default_params = deepcopy(params)
@@ -293,10 +355,25 @@ class ParamManager:
             for param, meta in param_group.items():
                 dim = len(meta.get("default", []))
                 typ = meta.get("type", float)
-                index_map.append((group, param, dim, typ))
+                free = meta.get("free", False)
+                index_map.append((group, param, dim, typ, free))
         return index_map
+    
+    def vector_free_mask(self):
+        """
+        Get a boolean mask indicating which elements of the flattened vector
+        correspond to free parameters.
 
-    def to_vector(self, field='default'):
+        Returns
+        -------
+        list of bool
+        """
+        mask = []
+        for _, _, dim, _, free in self._index_map:
+            mask.extend([free] * dim)
+        return mask
+    
+    def to_vector(self, field='default', get_free=False):
         """
         Flatten parameters into a single list (vector) from specified field.
 
@@ -311,43 +388,18 @@ class ParamManager:
             Flattened parameter values.
         """
         vec = []
-        for group, param, dim, _ in self._index_map:
+        for group, param, dim, _, free in self._index_map:
+            if get_free and not free:
+                continue  # skip non-free parameters
+
             values = self.param_template[group][param].get(field)
             if values is None:
-                vec.extend([None] * dim)
-            else:
-                vec.extend(values)
+                values = [None] * dim
+            vec.extend(values)
+            
         return vec
-
-    def from_vector(self, vector, field='default'):
-        """
-        Restore nested parameter dict from a flat vector into specified field.
-
-        Parameters
-        ----------
-        vector : list
-            Flat list of parameter values.
-        field : str
-            The key inside parameter dict to update (e.g. 'default' or 'optimal').
-
-        Returns
-        -------
-        dict:
-            New nested parameter dictionary with updated values.
-        """
-        new_param = deepcopy(self.param_template)
-        idx = 0
-        for group, param, dim, typ in self._index_map:
-            vals = vector[idx:idx+dim]
-            if typ is int:
-                vals = [int(round(v)) for v in vals]
-            elif typ is float:
-                vals = [float(v) for v in vals]
-            new_param[group][param][field] = vals
-            idx += dim
-        return new_param
-    
-    def to_dict(self, vector=None, field="optimal"):
+        
+    def to_dict(self, vector=None, field="optimal", from_free=False):
         """
         Build and return a full parameter dictionary with values filled from:
         - the internal template (if vector is None), or
@@ -365,24 +417,53 @@ class ParamManager:
         dict:
             A new parameter dictionary with updated field values.
         """
-        result = deepcopy(self.param_template)
         
+        new_param = deepcopy(self.param_template)
+
         if vector is None:
-            return result  # use stored default structure
-        
+            return new_param  # use stored default structure
+
         idx = 0
-        for group, param, dim, typ in self._index_map:
+        for group, param, dim, typ, free in self._index_map:
+            if from_free and not free:
+                continue  # skip non-free parameters, use default
+
             values = vector[idx:idx+dim]
+            idx += dim
+
             if typ is int:
                 values = [int(round(v)) for v in values]
             elif typ is float:
                 values = [float(v) for v in values]
-            result[group][param][field] = values
+
+            new_param[group][param][field] = values
+
+        return new_param
+    
+    def format_vector(self, vector, from_free=False):
+        
+        formatted_vector = deepcopy(vector)
+        
+        idx = 0
+        for _, _, dim, typ, free in self._index_map:
+            if from_free and not free:
+                continue  # skip non-free parameters, use default
+
+            values = vector[idx:idx+dim]
             idx += dim
 
-        return result
+            if typ is int:
+                values = [int(round(v)) for v in values]
+            elif typ is float:
+                values = [float(v) for v in values]
+            else:
+                values = [typ(v) for v in values]
+                
+            formatted_vector[idx-dim:idx] = values
+            
+        return formatted_vector
         
-    def get_vector_info(self):
+    def get_vector_info(self, from_free=False):
         """
         Get combined information of parameters as vectors.
 
@@ -397,30 +478,46 @@ class ParamManager:
                 "names": list of parameter full names like "group.param"
             }
         """
+        defaults = self.to_vector(field='default')
+        optimal = self.to_vector(field='optimal')
+        types = self.vector_types()
+        bounds = self.vector_bounds()
+        names = self.vector_names()
+    
+        if from_free:
+            free_mask = self.vector_free_mask()
+            defaults = [d for d, f in zip(defaults, free_mask) if f]
+            optimal = [o for o, f in zip(optimal, free_mask) if f]
+            types = [t for t, f in zip(types, free_mask) if f]
+            bounds = [b for b, f in zip(bounds, free_mask) if f]
+            names = [n for n, f in zip(names, free_mask) if f]
+
         return {
-            "defaults": self.to_vector(field='default'),
-            "optimal": self.to_vector(field='optimal'),
-            "types": self.vector_types(),
-            "bounds": self.vector_bounds(),
-            "names": self.vector_names(),
+            "defaults": defaults,
+            "optimal": optimal,
+            "types": types,
+            "bounds": bounds,
+            "names": names,
         }
 
-    def vector_bounds(self):
+    def vector_bounds(self, get_free=True):
         """
         Return a flat list of (min, max) tuples for each scalar parameter.
 
         Each boundary must be specified as a list of two lists:
         e.g., boundary = [[min1, min2, ...], [max1, max2, ...]]
         """
+        
         bounds = []
-        for group, param, dim, _ in self._index_map:
-            b = self.param_template[group][param].get("boundary")
+        for group, param, dim, _, free in self._index_map:
+            if get_free and not free:
+                continue  # skip non-free parameters
 
+            b = self.param_template[group][param].get("boundary")
             if not (isinstance(b, list) and len(b) == 2):
                 raise ValueError(f"Boundary for {group}.{param} must be a list of [mins, maxs].")
 
             b_min, b_max = b
-
             if not (len(b_min) == len(b_max) == dim):
                 raise ValueError(
                     f"Boundary length mismatch in {group}.{param}: "
@@ -428,10 +525,10 @@ class ParamManager:
                 )
 
             bounds.extend([(minv, maxv) for minv, maxv in zip(b_min, b_max)])
-
+            
         return bounds
 
-    def vector_types(self):
+    def vector_types(self, get_free=True):
         """
         Get flattened list of parameter types.
 
@@ -439,9 +536,15 @@ class ParamManager:
         -------
         list of types
         """
-        return [typ for _, _, dim, typ in self._index_map for _ in range(dim)]
+        types = []
+        for _, _, dim, typ, free in self._index_map:
+            if get_free and not free:
+                continue  # skip non-free parameters
 
-    def vector_names(self):
+            types.extend([typ] * dim)
+        return types
+
+    def vector_names(self, get_free=False):
         """
         Get flattened list of parameter names as "group.param".
 
@@ -449,9 +552,15 @@ class ParamManager:
         -------
         list of str
         """
-        return [f"{group}.{param}" for group, param, dim, _ in self._index_map for _ in range(dim)]
+        names = []
+        for group, param, dim, _, free in self._index_map:
+            if get_free and not free:
+                continue  # skip non-free parameters
 
-    def save(self, filepath):
+            names.extend([f"{group}.{param}"] * dim)
+        return names
+
+    def save(self, filepath, param_dict=None):
         """
         Save current parameter structure to a JSON file.
 
@@ -469,7 +578,10 @@ class ParamManager:
             return d
 
         with open(filepath, "w") as f:
-            json.dump(serialize(self.param_template), f, indent=2)
+            if param_dict is None:
+                json.dump(serialize(self.param_template), f, indent=2)
+            else:
+                json.dump(serialize(param_dict), f, indent=2)
 
     @classmethod
     def load(cls, filepath):
@@ -502,10 +614,22 @@ class ParamManager:
 
 if __name__ == "__main__":
     # Example usage
-    pm = ParamManager(params)
-    pm.vector_bounds()
-    vector = pm.to_vector(field='default')
-    restored_params = pm.from_vector(vector, field='default')
+    pm = ParamManager(params_minimal)  # params
+    bounds = pm.vector_bounds(get_free=False)
+    bounds_free = pm.vector_bounds(get_free=True)
+    
+    vector = pm.to_vector(field='default', get_free=False)
+    vector_free = pm.to_vector(field='default', get_free=True)
+    
+    vector_free_modify = deepcopy(vector_free)
+    vector_free_modify[0] = 1.2
+    vector_free_modify[1] = 3.2
+    
+    formatted_vector = pm.format_vector(vector, from_free=False)
+    formatted_vector_free = pm.format_vector(vector_free_modify, from_free=True)
+    
+    restored_params = pm.to_dict(vector, field='default', from_free=False)
+    restored_params_from_free = pm.to_dict(vector_free_modify, field='optimal', from_free=True)
     
     print("Flattened vector:", vector)
     print("Restored parameters:", restored_params)
