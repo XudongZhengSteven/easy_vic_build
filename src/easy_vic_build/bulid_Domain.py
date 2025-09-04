@@ -519,3 +519,26 @@ def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
         )
 
     logger.info(f"Modifying domain sucessfully")
+
+
+def addElevIntoDomain(evb_dir, params_dataset_level1):
+    logger.info(
+        f"Starting to add elev (from param_level1) into domain... ..."
+    )
+    
+    # Open the existing domain file in append mode
+    with Dataset(evb_dir.domainFile_path, "a", format="NETCDF4") as src_dataset:
+        
+        # Create variables for elev
+        elev = src_dataset.createVariable("elev", "f8", ("lat", "lon"))
+        
+        # Add attributes to variables
+        elev.standard_name = "elevation"
+        elev.long_name = "elevation of grid cell"
+        elev.units = "m"
+        
+        # Assign values to elev variable
+        assert params_dataset_level1["elev"].shape == elev.shape, "Shape of elev from params_dataset_level1 does not match domain shape"
+        elev[:, :] = params_dataset_level1.variables["elev"][:, :]
+
+    logger.info(f"Adding elev into domain sucessfully")
