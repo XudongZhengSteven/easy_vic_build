@@ -405,6 +405,7 @@ def search_grids_nearest(
     search_num=4,
     move_src_lat=None,
     move_src_lon=None,
+    src_type="mesh",
     **tqdm_kwargs,
 ):
     """Search for the nearest source grids based on the number of neighbors.
@@ -478,18 +479,29 @@ def search_grids_nearest(
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
 
-    # Create 2D grid indices for source grid
-    src_lon_mesh_index, src_lat_mesh_index = np.meshgrid(
-        np.arange(len(src_lon)), np.arange(len(src_lat))
-    )
-    src_lon_flatten_index = src_lon_mesh_index.flatten()  # 1D array
-    src_lat_flatten_index = src_lat_mesh_index.flatten()
+    if src_type == "mesh":
+        # Create 2D grid indices for source grid
+        src_lon_mesh_index, src_lat_mesh_index = np.meshgrid(
+            np.arange(len(src_lon)), np.arange(len(src_lat))
+        )
+        src_lon_flatten_index = src_lon_mesh_index.flatten()  # 1D array
+        src_lat_flatten_index = src_lat_mesh_index.flatten()
 
-    # Create 2D coordinate grid from source grids
-    src_lon_mesh, src_lat_mesh = np.meshgrid(src_lon, src_lat)
-    src_lon_flatten = src_lon_mesh.flatten()  # 1D array
-    src_lat_flatten = src_lat_mesh.flatten()
+        # Create 2D coordinate grid from source grids
+        src_lon_mesh, src_lat_mesh = np.meshgrid(src_lon, src_lat)
+        src_lon_flatten = src_lon_mesh.flatten()  # 1D array
+        src_lat_flatten = src_lat_mesh.flatten()
 
+    elif src_type == "points":
+        # Station case: src_lat/src_lon already represent coordinates of points
+        src_lat_flatten = src_lat
+        src_lon_flatten = src_lon
+        src_lat_flatten_index = np.arange(len(src_lat))
+        src_lon_flatten_index = np.arange(len(src_lon))
+    
+    else:
+        raise ValueError("grid_type must be either 'mesh' or 'points'.")
+    
     # Apply optional shifts to source grid positions
     if move_src_lon:
         src_lon_flatten += move_src_lon
