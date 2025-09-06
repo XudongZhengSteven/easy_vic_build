@@ -31,74 +31,10 @@ Author:
 
 import numpy as np
 from collections import Counter
+from ..decoractors import resample_time_series_wrapper, resample_missing_wrapper
 
-
-def removeMissData(
-    searched_grids_data, searched_grids_lat, searched_grids_lon, missing_value=None
-):
-    """
-    Remove missing data from the input grids based on a specified missing value.
-
-    This function identifies and removes data entries that match the specified missing
-    value from the input data arrays. It also removes the corresponding latitude and
-    longitude values if available. The function returns the cleaned data and the indices
-    of the missing data for reference.
-
-    Parameters
-    ----------
-    searched_grids_data : array-like
-        The data array from which missing values will be removed.
-
-    searched_grids_lat : array-like, optional
-        The latitude values corresponding to the data array. Defaults to None if missing.
-
-    searched_grids_lon : array-like, optional
-        The longitude values corresponding to the data array. Defaults to None if missing.
-
-    missing_value : float
-        The value that represents missing data in the input arrays.
-
-    Returns
-    -------
-    tuple
-        - searched_grids_data : array
-          The data array with missing values removed.
-
-        - searched_grids_lat : array or None
-          The latitude array with missing values removed, or None if not provided.
-
-        - searched_grids_lon : array or None
-          The longitude array with missing values removed, or None if not provided.
-
-        - miss_index : array
-          A boolean array indicating the positions of the missing data.
-
-    Notes
-    -----
-    - The input arrays should be of the same length.
-    - If latitude and longitude arrays are not provided, they will be returned as None.
-    """
-    data_array = np.asarray(searched_grids_data, dtype=float)
-    
-    if missing_value is None:
-        miss_bool = np.isnan(data_array)
-    else:
-        miss_bool = (data_array == missing_value) | np.isnan(data_array)
-    
-    # remove missing data
-    data_clean = data_array[~miss_bool]
-    
-    lat_clean = None
-    lon_clean = None
-    if searched_grids_lat is not None and searched_grids_lon is not None:
-        lat_array = np.asarray(searched_grids_lat)
-        lon_array = np.asarray(searched_grids_lon)
-        lat_clean = lat_array[~miss_bool]
-        lon_clean = lon_array[~miss_bool]
-
-    return data_clean, lat_clean, lon_clean, miss_bool
-
-
+@resample_time_series_wrapper
+@resample_missing_wrapper
 def resampleMethod_SimpleAverage(
     searched_grids_data,
     searched_grids_lat,
@@ -131,24 +67,22 @@ def resampleMethod_SimpleAverage(
         The resampled data value obtained by simple averaging. If no valid data remains after
         removing missing values, returns `missing_value` or None.
     """
-    data, _, _, miss_bool = removeMissData(
-        searched_grids_data, searched_grids_lat, searched_grids_lon, missing_value
-    )
-
-    if len(data) == 0:
+    if len(searched_grids_data) == 0:
         return np.nan if missing_value is None else missing_value
     
-    return float(np.nanmean(data))
+    return float(np.nanmean(searched_grids_data))
 
 
+@resample_time_series_wrapper
+@resample_missing_wrapper
 def resampleMethod_IDW(
     searched_grids_data,
     searched_grids_lat,
     searched_grids_lon,
     dst_lat,
     dst_lon,
-    p=2,
     missing_value=None,
+    p=2,
 ):
     """
     Resamples the input grid data using Inverse Distance Weighting (IDW) interpolation.
@@ -176,16 +110,17 @@ def resampleMethod_IDW(
         The resampled data value obtained using IDW interpolation. If no valid data remains after
         removing missing values, returns `missing_value` or None.
     """
-    data, lat, lon, _ = removeMissData(
-        searched_grids_data, searched_grids_lat, searched_grids_lon, missing_value
-    )
+    data = searched_grids_data
+    lat = searched_grids_lat
+    lon = searched_grids_lon
     
     if len(data) == 0:
         return np.nan if missing_value is None else missing_value
     
-    data = np.array(data, dtype=float)
-    lat = np.array(lat, dtype=float)
-    lon = np.array(lon, dtype=float)
+    # get distance
+    dx = lon - dst_lon
+    dy = lat - dst_lat
+    d = np.sqrt(dx**2 + dy**2)
     
     # same location as target point
     if np.any(d == 0):
@@ -197,6 +132,8 @@ def resampleMethod_IDW(
     return float(np.sum(data * weights))
 
 
+@resample_time_series_wrapper
+@resample_missing_wrapper
 def resampleMethod_bilinear(
     searched_grids_data,
     searched_grids_lat,
@@ -250,9 +187,9 @@ def resampleMethod_bilinear(
     - 0 points: return missing_value
     """
     # remove missing data
-    data, lat, lon, _ = removeMissData(
-        searched_grids_data, searched_grids_lat, searched_grids_lon, missing_value
-    )
+    data = searched_grids_data
+    lat = searched_grids_lat
+    lon = searched_grids_lon
     
     n = len(data)
     
@@ -272,12 +209,27 @@ def resampleMethod_bilinear(
     
     else:
         points = np.array([lat, lon, data]).T
-        points = points[np.lexsort((points[:, 1], points[:, 0]))]  # 先按纬度，再按经度排序
+        points = points[np.lexsort((points[:, 1], points[:, 0]))]
 
         lat1, lon1, q11 = points[0]
         _,    lon2, q12 = points[1]
         lat2, _,    q21 = points[2]
         _,    _,    q22 = points[3]
+        
+        is_rectangle = (
+            np.isclose(lat1, points[1][0]) and
+            np.isclose(lat2, points[3][0]) and
+            np.isclose(lon1, points[2][1]) and
+            np.isclose(lon2, points[3][1])
+        )
+        
+        if not is_rectangle:
+            # return to IDW
+            distances = np.sqrt((lat - dst_lat)**2 + (lon - dst_lon)**2)
+            if np.any(distances == 0):
+                return float(data[np.argmin(distances)])
+            weights = 1 / distances
+            return float(np.sum(data * weights) / np.sum(weights))
         
         f_lon1 = (lon2 - dst_lon) / (lon2 - lon1) * q11 + (dst_lon - lon1) / (lon2 - lon1) * q12
         f_lon2 = (lon2 - dst_lon) / (lon2 - lon1) * q21 + (dst_lon - lon1) / (lon2 - lon1) * q22
@@ -286,6 +238,8 @@ def resampleMethod_bilinear(
         return f_lat
 
 
+@resample_time_series_wrapper
+@resample_missing_wrapper
 def resampleMethod_Majority(
     searched_grids_data,
     searched_grids_lat,
@@ -322,9 +276,9 @@ def resampleMethod_Majority(
         The most frequently occurring value in the searched grid data. If no valid data remains
         after removing missing values, returns `missing_value` or None.
     """
-    data, _, _, miss_bool = removeMissData(
-        searched_grids_data, searched_grids_lat, searched_grids_lon, missing_value
-    )
+    data = searched_grids_data
+    lat = searched_grids_lat
+    lon = searched_grids_lon
     
     data = np.array(data)
     
@@ -341,14 +295,16 @@ def resampleMethod_Majority(
     return dst_data
 
 
+@resample_time_series_wrapper
+@resample_missing_wrapper
 def resampleMethod_GeneralFunction(
     searched_grids_data,
     searched_grids_lat,
     searched_grids_lon,
     dst_lat=None,
     dst_lon=None,
-    general_function=np.mean,
     missing_value=None,
+    general_function=np.mean,
 ):
     """
     Resamples the input grid data using a general function, such as max(), min(), or a custom function.
@@ -381,9 +337,9 @@ def resampleMethod_GeneralFunction(
         The resampled data value obtained using the specified general function. If no valid data remains
         after removing missing values, returns `missing_value` or None.
     """
-    data, _, _, miss_bool = removeMissData(
-        searched_grids_data, searched_grids_lat, searched_grids_lon, missing_value
-    )
+    data = searched_grids_data
+    lat = searched_grids_lat
+    lon = searched_grids_lon
 
     data = np.array(data, dtype=float)
 

@@ -206,6 +206,83 @@ def apply_along_axis_decorator(axis=0):
     return decorator
 
 
+def resample_time_series_wrapper(resample_func):
+    """
+    Decorator to extend a spatial resampling function to handle time series data.
+
+    If `searched_grids_data` is 1D (single time point), the function is called directly.
+    If it is 2D (time x space), the function is applied to each time slice independently,
+    and an array of results is returned.
+
+    Parameters
+    ----------
+    resample_func : callable
+        A function that performs resampling on a single time point (1D spatial data).
+    
+    Returns
+    -------
+    callable
+        Wrapped function that can handle 1D or 2D time series inputs.
+    """
+    @functools.wraps(resample_func)
+    def wrapper(searched_grids_data, searched_grids_lat, searched_grids_lon,
+                dst_lat=None, dst_lon=None, missing_value=None, *args, **kwargs):
+        
+        data_array = np.array(searched_grids_data)
+        lat_array  = np.array(searched_grids_lat, dtype=float)
+        lon_array  = np.array(searched_grids_lon, dtype=float)
+        
+        # 1D, searched_grids
+        if data_array.ndim == 1:
+            return resample_func(data_array, lat_array, lon_array,
+                                 dst_lat, dst_lon, missing_value, *args, **kwargs)
+        
+        # 2D, time * space (searched_grids)
+        elif data_array.ndim == 2:
+            results = []
+            for t in range(data_array.shape[0]):
+                result = resample_func(data_array[t], lat_array, lon_array,
+                                       dst_lat, dst_lon, missing_value, *args, **kwargs)
+                results.append(result)
+                
+            return np.array(results)
+        
+        else:
+            raise ValueError("searched_grids_data must be 1D or 2D (time, space).")
+    
+    return wrapper
+
+
+def resample_missing_wrapper(resample_func):
+    """
+    Decorator to automatically handle missing values in the input grids
+    for a resampling function. Supports `missing_value=None` (np.nan) or
+    a specified missing value.
+    """
+    @functools.wraps(resample_func)
+    def wrapper(searched_grids_data, searched_grids_lat, searched_grids_lon,
+                dst_lat=None, dst_lon=None, missing_value=None, *args, **kwargs):
+        
+        data_array = np.asarray(searched_grids_data, dtype=float)
+        lat_array  = np.asarray(searched_grids_lat, dtype=float)
+        lon_array  = np.asarray(searched_grids_lon, dtype=float)
+
+        if missing_value is None:
+            miss_bool = np.isnan(data_array)
+        else:
+            miss_bool = (data_array == missing_value) | np.isnan(data_array)
+
+        data_clean = data_array[~miss_bool]
+        lat_clean  = lat_array[~miss_bool]
+        lon_clean  = lon_array[~miss_bool]
+
+        return resample_func(data_clean, lat_clean, lon_clean,
+                             dst_lat, dst_lon, missing_value, *args, **kwargs)
+
+    return wrapper
+
+
+
 @clock_decorator
 def test_func_clock_decorator():
     for i in range(5):
