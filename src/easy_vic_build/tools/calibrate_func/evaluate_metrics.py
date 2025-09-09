@@ -370,6 +370,72 @@ class EvaluationMetric:
         return pcc_array
 
 
+class CategoricalEvaluationMetric:
+    
+    def __init__(self, sim, obs):
+        """
+        Initializes the EvaluationMetric class with simulated and observed values.
+
+        Parameters
+        ----------
+        sim : array-like
+            Simulated values.
+        obs : array-like
+            Observed values.
+        """
+        self.sim = np.array(sim)
+        self.obs = np.array(obs)
+        self.sim_bin = None
+        self.obs_bin = None
+        self.H = self.M = self.F = self.CN = None
+    
+    def binarize(self, threshold=0.0):
+        """
+        Convert continuous values to binary events based on threshold
+        Values > threshold are considered 'event occurred' (1), else 'no event' (0).
+        
+        Parameters
+        ----------
+        threshold : float
+            Threshold for event occurrence.
+        """
+        self.sim_bin = (self.sim > threshold).astype(int)
+        self.obs_bin = (self.obs > threshold).astype(int)
+        self._compute_contingency()
+
+    def _compute_contingency(self):
+        """Compute Hit, Miss, False Alarm, Correct Negative counts """
+        self.H = np.sum((self.sim_bin == 1) & (self.obs_bin == 1))
+        self.M = np.sum((self.sim_bin == 0) & (self.obs_bin == 1))
+        self.F = np.sum((self.sim_bin == 1) & (self.obs_bin == 0))
+        self.CN = np.sum((self.sim_bin == 0) & (self.obs_bin == 0))
+        
+    def POD(self):
+        """ POD (Probability of Detection) """
+        return self.H / (self.H + self.M) if (self.H + self.M) > 0 else None
+
+    def FAR(self):
+        """ FAR (False Alarm Ratio) """
+        return self.F / (self.H + self.F) if (self.H + self.F) > 0 else None
+
+    def CSI(self):
+        """ CSI (Critical Success Index) """
+        return self.H / (self.H + self.M + self.F) if (self.H + self.M + self.F) > 0 else None
+
+    def HSS(self):
+        """ HSS (Heidke Skill Score) """
+        num = 2 * (self.H * self.CN - self.M * self.F)
+        den = (self.H + self.M) * (self.M + self.CN) + (self.H + self.F) * (self.F + self.CN)
+        return num / den if den > 0 else None
+
+    def ETS(self):
+        """ ETS (Equitable Threat Score) """
+        H_random = (self.H + self.M) * (self.H + self.F) / (self.H + self.M + self.F + self.CN)
+        den = self.H + self.M + self.F - H_random
+        return (self.H - H_random) / den if den > 0 else None
+        
+
+
 def create_test_data(seed=42):
     np.random.seed(seed)
     
