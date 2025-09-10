@@ -46,7 +46,7 @@ g_params = {
     
     "soil_layers_breakpoints": {
         "default": [3, 9],  # soil layer breakpoints, original layers -> modeling layers, note exclusive
-        "boundary": [[1, 3], [3, 9]],
+        "boundary": [[1, 3], [4, 9]],
         "type": int,
         "optimal": [None, None],
         "free": True,
@@ -426,6 +426,7 @@ class ParamManager:
         idx = 0
         for group, param, dim, typ, free in self._index_map:
             if from_free and not free:
+                new_param[group][param][field] = new_param[group][param]['default']
                 continue  # skip non-free parameters, use default
 
             values = vector[idx:idx+dim]

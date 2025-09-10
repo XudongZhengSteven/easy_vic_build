@@ -1034,6 +1034,10 @@ class SoilLayerResampler:
         """
         # Process breakpoints
         breakpoints = np.unique(np.concatenate(([0], breakpoints, [self.n_orig])))
+        
+        if not np.all(np.diff(breakpoints) > 0):
+            raise ValueError("Breakpoints must be strictly increasing and unique")
+
         if breakpoints[0] != 0 or breakpoints[-1] != self.n_orig:
             raise ValueError("Breakpoints must cover all layers from 0 to n_orig-1")
         
@@ -1164,7 +1168,8 @@ class SoilLayerResampler:
 
 
 if __name__ == "__main__":
-    # # Original 11 layers
+    
+    # Original 11 layers
     # original_depths = [10,10,10,20,20,30,30,40,50,50,50]
     # resampler = SoilLayerResampler(original_depths)
     # resampler.create_grouping([2, 6])
