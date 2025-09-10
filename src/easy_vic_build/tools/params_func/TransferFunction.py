@@ -1168,7 +1168,6 @@ class SoilLayerResampler:
 
 
 if __name__ == "__main__":
-    
     # Original 11 layers
     # original_depths = [10,10,10,20,20,30,30,40,50,50,50]
     # resampler = SoilLayerResampler(original_depths)
