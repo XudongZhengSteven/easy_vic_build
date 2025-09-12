@@ -503,13 +503,16 @@ def search_grids_nearest(
         raise ValueError("grid_type must be either 'mesh' or 'points'.")
     
     # Apply optional shifts to source grid positions
-    if move_src_lon:
+    if move_src_lon is not None:
         src_lon_flatten += move_src_lon
-    if move_src_lat:
+    if move_src_lat is not None:
         src_lat_flatten += move_src_lat
 
     searched_grids_index = []
 
+    # d_min = []
+    # dx_min = []
+    # dy_min = []
     for j in tqdm(
         range(len(dst_lat)), desc="search for dst grids", colour="green", **tqdm_kwargs
     ):
@@ -524,6 +527,10 @@ def search_grids_nearest(
             src_lat_flatten_index[min_index],
             src_lon_flatten_index[min_index],
         )
+        
+        # d_min.extend(d[min_index].tolist())
+        # dx_min.extend(dx[min_index].tolist())
+        # dy_min.extend(dy[min_index].tolist())
         searched_grids_index.append(searched_grids_index_)
 
     return searched_grids_index

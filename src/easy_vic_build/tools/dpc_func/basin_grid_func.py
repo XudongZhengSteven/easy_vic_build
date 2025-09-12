@@ -43,6 +43,7 @@ Author:
 
 import numpy as np
 from matplotlib import pyplot as plt
+from shapely.affinity import translate
 
 from ..geo_func.search_grids import *
 from ..params_func.params_set import *
@@ -85,6 +86,12 @@ def createGridForBasin(basin_shp, grid_res, **create_grid_kwargs):
     return grid_shp_lon, grid_shp_lat, grid_shp
 
 
+def shift_grids(grid_shp, dx, dy):
+    grid_shp["geometry"] = grid_shp["geometry"].apply(lambda g: translate(g, xoff=dx, yoff=dy))
+    grid_shp["point_geometry"] = grid_shp["point_geometry"].apply(lambda g: translate(g, xoff=dx, yoff=dy))
+    return grid_shp
+    
+    
 def createStand_grids_lat_lon_from_gridshp(grid_shp, grid_res=None, reverse_lat=True):
     """
     Generate sorted latitude and longitude arrays from grid shape.
@@ -490,6 +497,7 @@ def build_grid_shp(
 ):
     # build grid_shp (Grids) for level1 (modeling scale), expand_grids_num=1 to avoid 0 (edge) flow direction in hydroanalysis
     grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1, expand_grids_num=expand_grids_num)
+        
     _, _, _, boundary_grids_edge_x_y_level1 = grid_shp_level1.createBoundaryShp()
     
     # build grid_shp for level0 and level2 based on the boundary of level1

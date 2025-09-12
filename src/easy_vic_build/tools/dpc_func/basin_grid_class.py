@@ -145,90 +145,6 @@ class Grids(gpd.GeoDataFrame):
             boundary_grids_edge_x_y,
         )
 
-
-# class Basins_from_shapefile(Basins):
-#     """
-#     A class to initialize basins from a shapefile.
-
-#     Parameters
-#     ----------
-#     shapefile_path : str
-#         Path to the shapefile containing the basin geometries.
-#     data : optional
-#         Data associated with the basins.
-#     geometry : optional
-#         Geometry column name.
-#     crs : optional
-#         Coordinate Reference System (CRS) of the basins.
-#     """
-
-#     def __init__(
-#         self, shapefile_path=None, data=None, *args, geometry=None, crs=None, **kwargs
-#     ):
-#         if shapefile_path is not None:
-#             shp_gdf = gpd.read_file(shapefile_path)
-#         super().__init__(shp_gdf, *args, geometry=geometry, crs=crs, **kwargs)
-
-
-# class HCDNBasins(Basins):
-#     """
-#     A class to initialize basins for HCDN data.
-
-#     Parameters
-#     ----------
-#     home : str, optional
-#         Path to the home directory containing the HCDN shapefile. Default is "E:\\data\\hydrometeorology\\CAMELS".
-#     data : optional
-#         Data associated with the basins.
-#     geometry : optional
-#         Geometry column name.
-#     crs : optional
-#         Coordinate Reference System (CRS) of the basins.
-#     """
-
-#     def __init__(
-#         self,
-#         home="E:\\data\\hydrometeorology\\CAMELS",
-#         data=None,
-#         *args,
-#         geometry=None,
-#         crs=None,
-#         **kwargs,
-#     ):
-#         HCDN_shp_path = os.path.join(
-#             home, "basin_set_full_res", "HCDN_nhru_final_671.shp"
-#         )
-#         HCDN_shp = gpd.read_file(HCDN_shp_path)
-#         HCDN_shp["AREA_km2"] = HCDN_shp.AREA / 1000000  # m2 -> km2
-#         super().__init__(HCDN_shp, *args, geometry=geometry, crs=crs, **kwargs)
-
-
-# class HCDNGrids(Grids):
-#     """
-#     A class to initialize grids for HCDN data.
-
-#     Parameters
-#     ----------
-#     home : str
-#         Path to the home directory containing the grid shapefiles.
-#     data : optional
-#         Data associated with the grids.
-#     geometry : optional
-#         Geometry column name.
-#     crs : optional
-#         Coordinate Reference System (CRS) of the grids.
-#     """
-
-#     def __init__(self, home, *args, data=None, geometry=None, crs=None, **kwargs):
-#         grid_shp_label_path = os.path.join(home, "map", "grids_0_25_label.shp")
-#         grid_shp_label = gpd.read_file(grid_shp_label_path)
-#         grid_shp_path = os.path.join(home, "map", "grids_0_25.shp")
-#         grid_shp = gpd.read_file(grid_shp_path)
-#         grid_shp["point_geometry"] = grid_shp_label.geometry
-
-#         super().__init__(grid_shp, *args, geometry=geometry, crs=crs, **kwargs)
-
-
 class Grids_for_shp(Grids):
     def __init__(
         self, data=None, *args, geometry=None, crs=None, create_grid_kwargs=None, **kwargs
@@ -294,7 +210,7 @@ class Grids_for_shp(Grids):
             half_res = res / 2
             res_places = len(str(res).split('.')[-1])
             half_res_places = len(str(res/2).split('.')[-1])
-                
+            
             # construct grids based on given cen_lons: do not consider gshp boundary
             if cen_lons is not None:  # *note: len(cen_lons) == len(cen_lats)
                 grid_shp.loc[:, "geometry"] = [
@@ -379,24 +295,6 @@ class Grids_for_shp(Grids):
                 cen_lons = boundary_x_min + half_res - expand_grids_num * res + np.arange(n_x_fixed) * res
                 cen_lats = boundary_y_min + half_res - expand_grids_num * res + np.arange(n_y_fixed) * res
                 
-                # boundary_x_max = boundary_x_min + round(n_x_fixed * res, half_res_places) + res
-                # boundary_y_max = boundary_y_min + round(n_y_fixed * res, half_res_places) + res
-                
-                # cen_lons = np.arange(
-                #     (boundary_x_min + res / 2 - res * expand_grids_num),
-                #     (boundary_x_max - res / 2 + res * expand_grids_num),
-                #     res,
-                # )
-                
-                # cen_lats = np.arange(
-                #     (boundary_y_min + res / 2 - res * expand_grids_num),
-                #     (boundary_y_max - res / 2 + res * expand_grids_num),
-                #     res,
-                # )
-
-                # cen_lons = np.arange(math.floor((boundary_x_min + res/2) / (res/2)) * (res/2), math.ceil((boundary_x_max + res/2) / (res/2)) * (res/2), res)
-                # cen_lats = np.arange(math.floor((boundary_y_min + res/2) / (res/2)) * (res/2), math.ceil((boundary_y_max + res/2) / (res/2)) * (res/2), res)
-
                 cen_lons, cen_lats = np.meshgrid(cen_lons, cen_lats)
                 cen_lons = cen_lons.flatten()
                 cen_lats = cen_lats.flatten()
