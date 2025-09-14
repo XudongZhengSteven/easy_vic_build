@@ -61,10 +61,10 @@ class Evb_dir:
         logger.debug("Initializing Evb_dir class")
 
         # self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, "cases")
-        self._cases_dir = (
+        self._cases_home = (
             cases_home if cases_home is not None else os.path.join(os.getcwd(), "cases")
         )
-        logger.debug(f"Case directory set to: {self._cases_dir}")
+        logger.debug(f"Case directory set to: {self._cases_home}")
 
         # Initialize all paths for meteorological forcing, domain, parameters, etc.
         self._MeteForcing_src_dir = ""
@@ -109,12 +109,12 @@ class Evb_dir:
         logger.info(f"Starting to create directories for case: {case_name}")
 
         self._case_name = case_name
-
+        
         # Create base directories for the case
-        check_and_mkdir(self._cases_dir)
-        logger.debug(f"Base case directory created at: {self._cases_dir}")
-
-        self._case_dir = os.path.join(self._cases_dir, case_name)
+        check_and_mkdir(self._cases_home)
+        logger.debug(f"Base case directory created at: {self._cases_home}")
+        
+        self._case_dir = os.path.join(self._cases_home, case_name)
         check_and_mkdir(self._case_dir)
         logger.debug(f"Case directory created at: {self._case_dir}")
 

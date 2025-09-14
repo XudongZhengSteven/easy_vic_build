@@ -105,6 +105,7 @@ from . import logger
 
 try:
     from rvic.parameters import parameters as rvic_parameters
+    from rvic.convolution import convolution
 
     HAS_RVIC = True
 except:
@@ -731,7 +732,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return (fitness,)
 
     def simulate(self, ind, GlobalParam_dict):
-        logger.info("Starting VIC simulation... ...")
+        logger.info("Starting VIC-RVIC simulation... ...")
 
         # buildGlobalParam
         buildGlobalParam(self.evb_dir, GlobalParam_dict)
@@ -778,6 +779,71 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
         return sim
 
+    def simulate_vic(self, ind, GlobalParam_dict):
+        logger.info("Starting VIC simulation... ...")
+        
+        # buildGlobalParam
+        buildGlobalParam(self.evb_dir, GlobalParam_dict)
+
+        # =============== get ind ===============
+        # format dtype
+        ind_format = [t(v) for v, t in zip(ind, self.paramManager.vector_types())]
+        
+        # Extract parameter groups
+        param_dict = self.paramManager.to_dict(vector=ind_format, field="optimal")
+        
+        g_params = param_dict["g_params"]
+        
+        # =============== adjust vic params based on ind ===============
+        # adjust params_dataset_level0 based on g_params
+        logger.info("Adjusting params_dataset_level0... ...")
+        params_dataset_level0 = self.adjust_vic_params_level0(g_params)
+
+        # adjust params_dataset_level1 based on params_dataset_level0
+        logger.info("Adjusting params_dataset_level1... ...")
+        params_dataset_level1 = self.adjust_vic_params_level1(params_dataset_level0)
+
+        # close
+        params_dataset_level0.close()
+        params_dataset_level1.close()
+        
+        # =============== run vic ===============
+        logger.info("Running VIC simulation... ...")
+        remove_files(self.evb_dir.VICResults_dir)
+        remove_and_mkdir(self.evb_dir.VICLog_dir)
+        out_vic = self.run_vic()
+        
+        logger.info("VIC simulation successfully")
+        
+        return out_vic
+        
+
+    def simulate_rvic(self, ind, GlobalParam_dict):
+        logger.info("Starting RVIC simulation... ...")
+        
+        # buildGlobalParam
+        buildGlobalParam(self.evb_dir, GlobalParam_dict)
+        
+        # =============== get ind ===============
+        # format dtype
+        ind_format = [t(v) for v, t in zip(ind, self.paramManager.vector_types())]
+        
+        # Extract parameter groups
+        param_dict = self.paramManager.to_dict(vector=ind_format, field="optimal")
+        
+        guh_params = param_dict["guh_params"]
+        rvic_params = param_dict["rvic_params"]
+        
+        # =============== adjust rvic params based on ind ===============
+        logger.info("Adjusting RVIC parameters... ...")
+        self.adjust_rvic_params(guh_params, rvic_params)
+        
+        # =============== run rvic ===============
+        # build cfg file
+        conv_cfg_file_dict = self.adjust_rvic_conv_params()
+        
+        pass
+    
     def get_best_results(self):
         logger.info(
             "Starting to retrieve best results from optimization history... ..."
