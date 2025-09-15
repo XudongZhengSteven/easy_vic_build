@@ -222,6 +222,7 @@ def buildRVICParam(
         "CELL_FLOWDAYS": 2,
         "BASIN_FLOWDAYS": 50,
     },
+    numofproc=1,
 ):
     """
     Generate RVIC parameter files and execute RVIC parameter computation.
@@ -296,7 +297,7 @@ def buildRVICParam(
 
     if HAS_RVIC:
         logger.info("Executing RVIC parameter computation... ...")
-        rvic_parameters(param_cfg_file_dict, numofproc=1)
+        rvic_parameters(param_cfg_file_dict, numofproc)
         logger.info("RVIC parameter computation completed")
     else:
         logger.error("RVIC module is not available. Cannot proceed with buildRVICParam")
