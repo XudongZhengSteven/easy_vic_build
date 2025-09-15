@@ -589,6 +589,7 @@ def buildConvCFGFile(
     RUN_STARTDATE="1979-09-01-00",
     DATL_FILE="rasm_sample_runoff.nc",
     PARAM_FILE_PATH="sample_rasm_parameters.nc",
+    RVICHIST_MFILT=365,
 ):
     """
     Generate and save the RVIC convolution configuration file.
@@ -627,6 +628,7 @@ def buildConvCFGFile(
     conv_cfg_file.set("OPTIONS", "CASEID", evb_dir._case_name)
     conv_cfg_file.set("OPTIONS", "CASE_DIR", evb_dir.RVICConv_dir)
     conv_cfg_file.set("OPTIONS", "RUN_STARTDATE", RUN_STARTDATE)
+    conv_cfg_file.set("HISTORY", "RVICHIST_MFILT", str(RVICHIST_MFILT))
 
     conv_cfg_file.set("DOMAIN", "FILE_NAME", evb_dir.domainFile_path)
 

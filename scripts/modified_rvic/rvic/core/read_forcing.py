@@ -36,7 +36,7 @@ class DataModel(object):
         if isinstance(liq_flds, list):
             self.liq_flds = liq_flds
         else:
-            self.liq_flds = [liq_flds]
+            self.liq_flds = [item.strip() for item in liq_flds.split(',') if item.strip()] # [liq_flds]
         self.ice_flds = []
         self.files = []
         self.start_dates = []
