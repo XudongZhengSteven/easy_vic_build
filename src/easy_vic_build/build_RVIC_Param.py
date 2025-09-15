@@ -340,6 +340,11 @@ def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
     flow_direction_file_path = os.path.join(
         evb_dir.RVICParam_dir, "flow_direction_file.nc"
     )
+    
+    if os.path.exists(flow_direction_file_path):
+        logger.info(f"{flow_direction_file_path} already exists, skipping creation")
+        return
+    
     flow_direction_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_direction.tif")
     flow_acc_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_acc.tif")
     flow_distance_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_distance.tif")
