@@ -19,6 +19,7 @@ Now called from make_parameters.py
 import numpy as np
 import logging
 from scipy.interpolate import interp1d
+from scipy.signal import fftconvolve
 from .utilities import latlon2yx
 from .share import SECSPERDAY
 from .log import LOG_NAME
@@ -47,9 +48,9 @@ def rout(pour_point, uh_box, fdr_data, fdr_atts, rout_dict):
     basin_id = fdr_data[rout_dict['BASIN_ID_VAR']][pour_point.routy,
                                                    pour_point.routx]
 
-    log.info('Input Latitude: %f', pour_point.lat)
-    log.info('Input Longitude: %f', pour_point.lon)
-    log.info('Global Basid ID: %i', basin_id)
+    log.debug('Input Latitude: %f', pour_point.lat)
+    log.debug('Input Longitude: %f', pour_point.lon)
+    log.debug('Global Basid ID: %i', basin_id)
 
     y_inds, x_inds = \
         np.nonzero(fdr_data[rout_dict['BASIN_ID_VAR']] == basin_id)
@@ -161,9 +162,7 @@ def rout(pour_point, uh_box, fdr_data, fdr_atts, rout_dict):
     # ---------------------------------------------------------------- #
     # Make uh_s for each grid cell upstream of basin pour point
     # (combine IRFs for all grid cells in flow path)
-    uh_s = make_grid_uh(t_uh, t_cell, uh_river, uh_box, to_y, to_x,
-                        catchment['y_inds'], catchment['x_inds'],
-                        catchment['count_ds'])
+    uh_s = make_grid_uh(t_uh, t_cell, uh_river, uh_box, to_y, to_x, catchment['y_inds'], catchment['x_inds'], catchment['count_ds'])
     # ---------------------------------------------------------------- #
 
     # ---------------------------------------------------------------- #
@@ -367,7 +366,8 @@ def make_grid_uh_river(t_uh, t_cell, uh, to_y, to_x, pour_point, y_inds,
         if d > 0:
             yy = to_y[y, x]
             xx = to_x[y, x]
-            irf_temp = np.convolve(uh_river[:, yy, xx], uh[:, y, x])
+            # irf_temp = np.convolve(uh_river[:, yy, xx], uh[:, y, x])
+            irf_temp = fftconvolve(uh_river[:, yy, xx], uh[:, y, x])
 
             # Normalize
             uh_river[:, y, x] = irf_temp[:t_uh] / irf_temp[:t_uh].sum()
@@ -400,7 +400,9 @@ def make_grid_uh(t_uh, t_cell, uh_river, uh_box, to_y, to_x, y_inds, x_inds,
         if d > 0:
             yy = to_y[y, x]
             xx = to_x[y, x]
-            irf_temp = np.convolve(uh_box, uh_river[:, yy, xx])
+            # irf_temp = np.convolve(uh_box, uh_river[:, yy, xx])
+            irf_temp = fftconvolve(uh_box, uh_river[:, yy, xx])
+
             unit_hydrograph[:, y, x] = \
                 irf_temp[:t_uh] / np.sum(irf_temp[:t_uh])
         else:
