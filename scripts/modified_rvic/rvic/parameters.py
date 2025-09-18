@@ -254,19 +254,14 @@ def gen_uh_init(config):
 
         # ---------------------------------------------------------------- #
         # Add velocity and/or diffusion grids if not present yet
-        # if not isinstance(fdr_vel, str):
-        #     fdr_data['velocity'] = \
-        #         np.zeros(fdr_shape, dtype=np.float64) + fdr_vel
-        #     config_dict['ROUTING']['VELOCITY'] = 'velocity'
-        #     log.info('Added velocity grid to fdr_data')
-        # if not isinstance(fdr_dif, str):
-        #     fdr_data['diffusion'] = \
-        #         np.zeros(fdr_shape, dtype=np.float64) + fdr_dif
-        #     config_dict['ROUTING']['DIFFUSION'] = 'diffusion'
-        #     log.info('Added diffusion grid to fdr_data')
-        
-        fdr_data['velocity'] = np.zeros(fdr_shape, dtype=np.float64) + float(fdr_vel)
-        fdr_data['diffusion'] = np.zeros(fdr_shape, dtype=np.float64) + float(fdr_dif)
+        if not isinstance(fdr_vel, str):
+            fdr_data['velocity'] = np.zeros(fdr_shape, dtype=np.float64) + float(fdr_vel)
+            config_dict['ROUTING']['VELOCITY'] = 'velocity'
+            log.info('Added velocity grid to fdr_data')
+        if not isinstance(fdr_dif, str):
+            fdr_data['diffusion'] = np.zeros(fdr_shape, dtype=np.float64) + float(fdr_dif)
+            config_dict['ROUTING']['DIFFUSION'] = 'diffusion'
+            log.info('Added diffusion grid to fdr_data')
         
         if ('SOURCE_AREA_VAR' not in config_dict['ROUTING'] or
                 config_dict['ROUTING']['SOURCE_AREA_VAR'] not in fdr_data):

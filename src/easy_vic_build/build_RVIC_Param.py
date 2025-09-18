@@ -78,11 +78,13 @@ import numpy as np
 import pandas as pd
 import rasterio
 import rasterio.transform
+from netCDF4 import Dataset
 
 from . import logger
 from .tools.decoractors import clock_decorator
 from .tools.geo_func.search_grids import *
 from .tools.params_func.createParametersDataset import createFlowDirectionFile
+from .tools.params_func.TransferFunction import TF_VIC
 from .tools.routing_func import create_uh
 from .tools.utilities import (read_cfg_to_dict,
                               read_rvic_conv_cfg_file_reference,
@@ -112,13 +114,19 @@ def buildRVICParam_basic(
         "max_day_converged_threshold": 0.001,
     },
     cfg_params={
-        "VELOCITY": 1.5,
-        "DIFFUSION": 800.0,
+        "VELOCITY": 1.5,  # or variable name: velocity
+        "DIFFUSION": 800.0,  # or variable name: diffusion
         "OUTPUT_INTERVAL": 86400,
         "SUBSET_DAYS": 10,
         "CELL_FLOWDAYS": 2,
         "BASIN_FLOWDAYS": 50,
     },
+    fd_params={
+        "g_velocity": None,
+        "g_diffusion": None,
+        "slope": None,
+        "TF_VIC_class": TF_VIC
+    }
 ):
     """
     Generate general RVIC parameter files before using `rvic_parameters`.
@@ -179,7 +187,7 @@ def buildRVICParam_basic(
 
     # general RVICParam before using rvic_parameters
     # buildRVICFlowDirectionFile
-    buildRVICFlowDirectionFile(evb_dir, domain_dataset)
+    buildRVICFlowDirectionFile(evb_dir, domain_dataset, **fd_params)
 
     # buildPourPointFile
     buildPourPointFile(evb_dir, **ppf_kwargs)
@@ -221,6 +229,12 @@ def buildRVICParam(
         "SUBSET_DAYS": 10,
         "CELL_FLOWDAYS": 2,
         "BASIN_FLOWDAYS": 50,
+    },
+    fd_params={
+        "g_velocity": None,
+        "g_diffusion": None,
+        "slope": None,
+        "TF_VIC_class": TF_VIC
     },
     numofproc=1,
 ):
@@ -287,6 +301,7 @@ def buildRVICParam(
         ppf_kwargs,
         uh_params,
         cfg_params,
+        fd_params,
     )
 
     # build rvic parameters
@@ -306,7 +321,7 @@ def buildRVICParam(
     logger.info("RVIC parameter file generation successfully")
 
 
-def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
+def buildRVICFlowDirectionFile(evb_dir, domain_dataset, g_velocity=None, g_diffusion=None, slope=None, TF_VIC_class=TF_VIC):
     """
     Generate an RVIC flow direction file in NetCDF format.
 
@@ -320,6 +335,8 @@ def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
     
     params_dataset_level1 : `netCDF.Dataset`
         The parameter dataset for level 1, containing flow direction and routing parameters.
+        
+    g_velocity, g_diffusion: if not None, estimate spatial velocity and diffusion based on TF_VIC_class
 
     Returns
     -------
@@ -341,19 +358,53 @@ def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
         evb_dir.RVICParam_dir, "flow_direction_file.nc"
     )
     
-    if os.path.exists(flow_direction_file_path):
-        logger.info(f"{flow_direction_file_path} already exists, skipping creation")
-        return
-    
     flow_direction_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_direction.tif")
     flow_acc_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_acc.tif")
     flow_distance_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_distance.tif")
+    
+    if os.path.exists(flow_direction_file_path):
+        logger.info(f"{flow_direction_file_path} already exists, skipping creation")
+        
+        if g_velocity is not None:
+            logger.info("modify velocity... ...")
+            
+            # read
+            flow_direction_dataset = Dataset(flow_direction_file_path, "a")
+            domain_area_m2 = domain_dataset.variables["area"][:, :]
+            with rasterio.open(flow_acc_path, "r", driver="GTiff") as dataset:
+                flow_acc_array = dataset.read(1)
+                flow_acc_array = flow_acc_array.astype(float)
+            
+            with rasterio.open(flow_distance_path, "r", driver="GTiff") as dataset:
+                flow_distance_array = dataset.read(1)
+                flow_distance_array = flow_distance_array.astype(float)
+                
+            tf_VIC = TF_VIC_class()
+            
+            domain_area_km2 = domain_area_m2 * 1e-6
+            flow_acc_array_km2 = flow_acc_array * domain_area_km2
+            velocity_array = tf_VIC.velocity(flow_acc_array_km2, slope, *g_velocity)
+            
+            velocity_array = velocity_array.astype(float)
+            flow_direction_dataset.variables["velocity"][:, :] = np.array(velocity_array)
+            
+            if g_diffusion is not None:
+                logger.info("modify diffusion... ...")
+                diffusion_array = tf_VIC.diffusion(velocity_array, flow_distance_array, *g_diffusion)
+                
+                diffusion_array = diffusion_array.astype(float)
+                flow_direction_dataset.variables["diffusion"][:, :] = np.array(diffusion_array)
+            
+            flow_direction_dataset.close()
+            
+        return
 
     # ====================== read general information ======================
     logger.debug("Reading latitude, longitude, and mask data from VIC parameters... ...")
     domain_lat = domain_dataset.variables["lat"][:]
     domain_lon = domain_dataset.variables["lon"][:]
     domain_mask = domain_dataset.variables["mask"][:, :]
+    domain_area_m2 = domain_dataset.variables["area"][:, :]
 
     # ====================== read flow_direction and flow_acc ======================
     logger.debug(f"Reading flow direction data from {flow_direction_path}... ...")
@@ -367,7 +418,7 @@ def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
     logger.debug(f"Reading flow distance data from {flow_distance_path}... ...")
     with rasterio.open(flow_distance_path, "r", driver="GTiff") as dataset:
         flow_distance_array = dataset.read(1)
-
+        
     # ====================== combine them into a nc file ======================
     # create nc file
     logger.debug(f"Creating NetCDF file: {flow_direction_file_path}... ...")
@@ -382,25 +433,42 @@ def buildRVICFlowDirectionFile(evb_dir, domain_dataset):
     flow_direction_array = flow_direction_array.astype(int)
     flow_distance_array = flow_distance_array.astype(float)
     flow_acc_array = flow_acc_array.astype(float)
-
+    
+    # ====================== optional: cal velocity and diffusion ======================
+    if g_velocity is not None:
+        tf_VIC = TF_VIC_class()
+        
+        domain_area_km2 = domain_area_m2 * 1e-6
+        flow_acc_array_km2 = flow_acc_array * domain_area_km2
+        velocity_array = tf_VIC.velocity(flow_acc_array_km2, slope, *g_velocity)
+        
+        velocity_array = velocity_array.astype(float)
+        flow_direction_dataset.variables["velocity"][:, :] = np.array(velocity_array)
+        
+        if g_diffusion is not None:
+            diffusion_array = tf_VIC.diffusion(velocity_array, flow_distance_array, *g_diffusion)
+            
+            diffusion_array = diffusion_array.astype(float)
+            flow_direction_dataset.variables["diffusion"][:, :] = np.array(diffusion_array)
+            
     # mask
     # domain_mask_array[domain_mask == 0] = int(-9999)
     # flow_direction_array[domain_mask == 0] = int(-9999)
     # flow_distance_array[domain_mask == 0] = float(-9999.0)
     # flow_acc_array[domain_mask == 0] = float(-9999.0)
+    # if g_velocity is not None:
+    #     velocity_array[domain_mask == 0] = float(-9999.0)
+    #     if g_diffusion is not None:
+    #         diffusion_array[domain_mask == 0] = float(-9999.0)
 
     # assign values
     flow_direction_dataset.variables["lat"][:] = np.array(domain_lat)
     flow_direction_dataset.variables["lon"][:] = np.array(domain_lon)
     flow_direction_dataset.variables["Basin_ID"][:, :] = np.array(domain_mask_array)
-    flow_direction_dataset.variables["Flow_Direction"][:, :] = np.array(
-        flow_direction_array
-    )
-    flow_direction_dataset.variables["Flow_Distance"][:, :] = np.array(
-        flow_distance_array
-    )
+    flow_direction_dataset.variables["Flow_Direction"][:, :] = np.array(flow_direction_array)
+    flow_direction_dataset.variables["Flow_Distance"][:, :] = np.array(flow_distance_array)
     flow_direction_dataset.variables["Source_Area"][:, :] = np.array(flow_acc_array)
-
+    
     flow_direction_dataset.close()
 
     logger.info(
@@ -650,86 +718,3 @@ def buildConvCFGFile(
     logger.info(
         f"RVIC convolution configuration file generation successfully, saved to {evb_dir.rvic_conv_cfg_file_path}"
     )
-
-
-def modifyRVICParam_for_pourpoint(
-    evb_dir,
-    pourpoint_lon,
-    pourpoint_lat,
-    pourpoint_direction_code,
-    params_dataset_level1,
-    domain_dataset,
-    reverse_lat=True,
-    stream_acc_threshold=100.0,
-    flow_direction_pkg="wbw",
-    crs_str="EPSG:4326",
-):
-    """
-    Modify RVIC parameters to integrate a specified pour point.
-
-    This function updates the pour point file and modifies the RVIC flow direction file
-    to adjust the direction of the pour point at the edge.
-
-    Parameters
-    ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
-    
-    pourpoint_lon : float
-        Longitude of the pour point.
-        
-    pourpoint_lat : float
-        Latitude of the pour point.
-        
-    pourpoint_direction_code : int
-        Flow direction code for the pour point (e.g., based on D8 direction encoding).
-        
-    params_dataset_level1 : Dataset
-        Parameter dataset at level 1, used to extract grid-based information.
-    
-    domain_dataset : `netCDF.Dataset`, optional
-        Domain dataset containing spatial attributes.
-    
-    reverse_lat : bool
-        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
-
-    stream_acc_threshold : float, optional
-        The threshold value for stream accumulation. Default is 100.0. It affect the results generated by hydroanalysis_arcpy.
-
-    flow_direction_pkg : str, optional
-        The package used to calculate flow direction. Options are "arcpy" and "wbw". Default is "wbw".
-
-    crs_str : str, optional
-        Coordinate reference system (CRS) in EPSG format (default is "EPSG:4326").
-
-    Notes
-    -----
-    - First, the pour point file is created or updated.
-    - Then, the RVIC flow direction file is modified to include the pour point and adjust its flow direction.
-    """
-    logger.info(
-        "Starting to modifying RVIC parameters for pour point integration... ..."
-    )
-
-    # ====================== Modify PourPointFile ======================
-    buildPourPointFile(
-        evb_dir, None, names=["pourpoint"], lons=[pourpoint_lon], lats=[pourpoint_lat]
-    )
-    logger.info(f"Pourpoint is set to lon ({pourpoint_lon}), lat (pourpoint_lat)")
-
-    # ====================== Modify RVIC Flow Direction File ======================
-    # modify buildRVICFlowDirectionFile, modify 0 direction (edge) of pourpoint to pourpoint_direction_code
-    buildRVICFlowDirectionFile(
-        evb_dir,
-        params_dataset_level1,
-        domain_dataset,
-        reverse_lat=reverse_lat,
-        stream_acc_threshold=stream_acc_threshold,
-        flow_direction_pkg=flow_direction_pkg,
-        crs_str=crs_str,
-        pourpoint_lon=pourpoint_lon,
-        pourpoint_lat=pourpoint_lat,
-        pourpoint_direction_code=pourpoint_direction_code,
-    )
-
-    logger.info("RVIC parameter modification for pour point successfully")

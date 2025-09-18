@@ -938,7 +938,88 @@ class TF_VIC:
     # def resid_moist(): # set as 0
     #     ret = 0.0
     #     return ret
+    
+    @staticmethod
+    def velocity(acc_km2, slope_mean, g1, g2, g3, landcover=None):
+        """
+        Estimate spatially distributed velocity (m/s) for RVIC using a transfer function.
 
+        Parameters
+        ----------
+        acc : float
+            Flow accumulation / upstream area (km^2).
+        slope : float
+            Local slope (m/m).
+        g1 : float
+            Global calibration parameter (scale factor).
+        g2 : float
+            Exponent for flow accumulation.
+        g3 : float
+            Exponent for slope.
+
+        Returns
+        -------
+        float
+            Estimated flow velocity in m/s.
+        """
+        # Transfer function: v = g0 * acc^g1 * slope^g2 (ManningStrickler formula: v = n−1 · R2/3 · S1/2 [m/s])
+        # K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.
+        # acc: km2, slope: m/m
+        # g1, g2, g3: 1.5 (0.1, 3.0), 0.2 (0.1, 0.5), 0.5 (0.3, 0.7)
+        # Ensure slope > 0 to avoid zero or negative values
+        velocity_min = 0.1
+        velocity_max = 3.0
+        
+        unit_factor = 0.01
+        
+        slope_safe = np.maximum(slope_mean, 1e-6)
+        ret = g1 * (acc_km2 ** g2) * ((slope_safe * unit_factor) ** g3)
+        
+        if landcover is not None:
+            coef = np.ones_like(landcover, dtype=float)
+            # coef[landcover==1] = 1.2  # TODO
+            # coef[landcover==2] = 0.9
+            ret *= coef
+        
+        ret[ret > velocity_max] = velocity_max
+        ret[ret < velocity_min] = velocity_min
+        return ret
+    
+    @staticmethod
+    def diffusion(velocity, flow_distance_m, g):
+        """
+        Estimate diffusion coefficient matrix D from flow velocity and river segment length.
+        D=alpha*v*L
+        g: alpha, 0.1, (0.01, 0.5)
+        
+        Units: D in m^2/s, v in m/s, flow_distance in m.
+
+        Parameters
+        ----------
+        v : np.ndarray
+            Flow velocity matrix (m/s), same shape as the grid.
+        flow_distance_m : np.ndarray
+            River segment length or flow distance matrix (m), same shape as v.
+        alpha : float, optional
+            Scaling factor for diffusion coefficient, default 0.1.
+            
+        Returns
+        -------
+        D : np.ndarray
+            Diffusion coefficient matrix (m^2/s), same shape as input.
+        """
+        diffusion_min = 10
+        diffusion_max = 4000
+        
+        D = g * velocity * flow_distance_m
+        
+        ret = D
+        
+        ret[ret > diffusion_max] = diffusion_max
+        ret[ret < diffusion_min] = diffusion_min
+        
+        return ret
+    
 class SoilLayerResampler:
     """
     A class to resample soil layers with simplified continuous grouping.

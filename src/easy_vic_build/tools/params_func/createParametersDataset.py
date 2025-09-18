@@ -249,6 +249,14 @@ def createParametersDataset(dst_path, lat_list, lon_list):
             "lon",
         ),
     )
+    slope = params_dataset.createVariable(
+        "slope",
+        "f8",
+        (
+            "lat",
+            "lon",
+        ),
+    )
     depth = params_dataset.createVariable(
         "depth",
         "f8",
@@ -689,6 +697,10 @@ def createParametersDataset(dst_path, lat_list, lon_list):
     elev.long_name = "elev"
     elev.description = "Average elevation of grid cell"
     elev.units = "m"
+    
+    slope.long_name = "slope"
+    slope.description = "Slope of grid cell"
+    slope.units = "% (converted to m/m by *0.01)"
 
     depth.long_name = "depth"
     depth.description = "Thickness of each soil layer"
@@ -918,6 +930,24 @@ def createFlowDirectionFile(dst_path, lat_list, lon_list):
         ),
         fill_value=-9999.0,
     )
+    velocity = flow_direction_dataset.createVariable(
+        "velocity",
+        "f8",
+        (
+            "lat",
+            "lon",
+        ),
+        fill_value=-9999.0,
+    )
+    diffusion = flow_direction_dataset.createVariable(
+        "diffusion",
+        "f8",
+        (
+            "lat",
+            "lon",
+        ),
+        fill_value=-9999.0,
+    )
 
     # ===================== define variables attribute ======================
     lat_v.units = "degrees_north"
@@ -947,6 +977,14 @@ def createFlowDirectionFile(dst_path, lat_list, lon_list):
     Source_Area.description = "Source_Area, generated from Flow_Direction"
     Source_Area.units = "Grid cells"
 
+    velocity.long_name = "velocity (m/s)"
+    velocity.description = "velocity, generated from g params and transfer function"
+    velocity.units = "m/s"
+    
+    diffusion.long_name = "diffusion (m2/s)"
+    diffusion.description = "diffusion, generated from g params and transfer function"
+    diffusion.units = "m2/s"
+    
     # Global attributes
     flow_direction_dataset.title = "VIC5 image params dataset, for RVIC"
     flow_direction_dataset.note = (

@@ -435,6 +435,8 @@ class buildParam_level0_interface:
             self.rows_index_level0,
             self.cols_index_level0,
         )
+        
+        self.params_dataset_level0.variables["slope"][:, :] = self.grid_array_mean_slope
     
     def set_phi_s(self):
         # phi_s, m3/m3 or mm/mm

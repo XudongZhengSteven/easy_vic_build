@@ -594,6 +594,12 @@ def scaling_level0_to_level1(
         scaling_operator.Arithmetic_mean, "elev"
     )
     logger.debug("Scaling elev parameter completed")
+    
+    # slope, m/m
+    params_dataset_level1.variables["slope"][:, :] = search_and_resample_func_2d(
+        scaling_operator.Arithmetic_mean, "slope"
+    )
+    logger.debug("Scaling slope parameter completed")
 
     # dp, m, typically is 4m
     params_dataset_level1.variables["dp"][:, :] = search_and_resample_func_2d(

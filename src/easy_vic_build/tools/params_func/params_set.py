@@ -292,6 +292,24 @@ rvic_params = {
     }
 }
 
+rvic_params_spatial = {
+    "VELOCITY": {
+        "default": [1.5, 0.2, 0.5],
+        "boundary": [[0.1, 0.1, 0.3], [3.0, 0.5, 0.7]],
+        "type": float,
+        "optimal": [None],
+        "free": True,
+    },
+    
+    "DIFFUSION": {
+        "default": [0.1],
+        "boundary": [[0.01], [0.5]],
+        "type": float,
+        "optimal": [None],
+        "free": True,
+    }
+}
+
 # all params
 params = {
     "g_params": g_params,
@@ -301,6 +319,12 @@ params = {
 
 params_all = {**g_params, **guh_params, **rvic_params}
 
+# default params
+default_params = deepcopy(params)
+for key in default_params.keys():
+    for sub_key in default_params[key].keys():
+        default_params[key][sub_key]["optimal"] = default_params[key][sub_key]["default"]
+        
 # all params minimal version
 params_minimal = {
     "g_params": g_params_minimal,
@@ -310,11 +334,14 @@ params_minimal = {
 
 params_all_minimal = {**g_params_minimal, **guh_params, **rvic_params}
 
-# default params
-default_params = deepcopy(params)
-for key in default_params.keys():
-    for sub_key in default_params[key].keys():
-        default_params[key][sub_key]["optimal"] = default_params[key][sub_key]["default"]
+# all params minimal version + spatial rvic params
+params_minimal_rvic_spatial = {
+    "g_params": g_params_minimal,
+    "guh_params": guh_params,
+    "rvic_params": rvic_params_spatial,
+}
+
+params_all_minimal_rvic_spatial = {**g_params_minimal, **guh_params, **rvic_params_spatial}
 
 # ParamManager
 class ParamManager:
