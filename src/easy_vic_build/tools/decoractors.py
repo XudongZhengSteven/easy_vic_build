@@ -277,7 +277,7 @@ def resample_missing_wrapper(resample_func):
         lon_clean  = lon_array[~miss_bool]
 
         return resample_func(data_clean, lat_clean, lon_clean,
-                             dst_lat, dst_lon, missing_value, *args, **kwargs)
+                             dst_lat=dst_lat, dst_lon=dst_lon, missing_value=missing_value, *args, **kwargs)
 
     return wrapper
 

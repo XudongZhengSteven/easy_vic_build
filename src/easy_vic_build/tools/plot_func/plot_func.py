@@ -79,8 +79,8 @@ from netCDF4 import num2date
 import geopandas as gpd
 import os
 
-from easy_vic_build.tools.calibrate_func.evaluate_metrics import \
-    EvaluationMetric
+from ..calibrate_func.evaluate_metrics import EvaluationMetric
+from ..geo_func.create_gdf import CreateGDF
 
 from ..params_func.params_set import *
 
@@ -2617,3 +2617,61 @@ def plot_params(params_dataset):
     )
 
     return fig, axes
+
+
+def plot_check_search(
+    searched_grid_lat, searched_grid_lon,
+    target_grid_lat, target_grid_lon,
+    searched_grid_res=None,
+    target_grid_res=None,
+):
+    """ 
+    Usage:
+    i = 205
+    searched_grid_lon = [src_lon[l] for l in searched_grids_index[i][0]]
+    searched_grid_lat = [src_lat[l] for l in searched_grids_index[i][1]]
+    searched_grid_res = src_dlon
+    target_grid_lat = [dst_lat[i]]
+    target_grid_lon = [dst_lon[i]]
+    target_grid_res = dst_dlon
+    plot_check_search(
+        searched_grid_lat, searched_grid_lon,
+        target_grid_lat, target_grid_lon,
+        searched_grid_res,
+        target_grid_res,
+    )
+    """
+    cgdf = CreateGDF()
+    
+    # create searched_grids_gdf
+    if searched_grid_res is not None:
+        searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(
+            searched_grid_lon, searched_grid_lat, searched_grid_res
+        )
+    else:
+        searched_grids_gdf = cgdf.createGDF_points(
+            lon=searched_grid_lon,
+            lat=searched_grid_lat,
+        )
+    
+    # create target_grid
+    if target_grid_res is not None:
+        target_grids_gdf = cgdf.createGDF_rectangle_central_coord(
+            target_grid_lon, target_grid_lat, target_grid_res
+        )
+    else:
+        target_grids_gdf = cgdf.createGDF_points(
+            lon=target_grid_lon,
+            lat=target_grid_lat,
+        )
+    
+    # plot
+    fig, ax = plt.subplots()
+    target_grids_gdf.boundary.plot(ax=ax, edgecolor="r", linewidth=2)  # target
+    searched_grids_gdf.plot(
+        ax=ax, edgecolor="k", linewidth=0.2, facecolor="b", alpha=0.5
+    )
+    
+    ax.set_title("check search")
+    
+    plt.show(block=True)

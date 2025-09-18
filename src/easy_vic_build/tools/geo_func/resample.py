@@ -186,7 +186,6 @@ def resampleMethod_bilinear(
     - 1 point: return that value
     - 0 points: return missing_value
     """
-    # remove missing data
     data = searched_grids_data
     lat = searched_grids_lat
     lon = searched_grids_lon
@@ -353,3 +352,76 @@ def resampleMethod_GeneralFunction(
         dst_data = np.nan if missing_value is None else missing_value
 
     return dst_data
+
+
+@resample_time_series_wrapper
+@resample_missing_wrapper
+def resampleMethod_conservative(
+    searched_grids_data,
+    searched_grids_lat,
+    searched_grids_lon,
+    searched_grids_res=None,
+    dst_lat=None,
+    dst_lon=None,    
+    dst_res=None,
+    missing_value=None,
+):
+    data = searched_grids_data
+    lat = searched_grids_lat
+    lon = searched_grids_lon
+    
+    n = len(data)
+    
+    # all missing
+    if len(data) == 0:
+        return np.nan if missing_value is None else missing_value
+
+    if searched_grids_res is None or dst_res is None:
+        return np.nanmean(data)  # return to mean
+    
+    # source bounds
+    half_src = searched_grids_res / 2.0
+    lat1_src = searched_grids_lat - half_src
+    lat2_src = searched_grids_lat + half_src
+    lon1_src = searched_grids_lon - half_src
+    lon2_src = searched_grids_lon + half_src
+
+    # destination bounds
+    half_dst = dst_res / 2.0
+    lat1_dst = dst_lat - half_dst
+    lat2_dst = dst_lat + half_dst
+    lon1_dst = dst_lon - half_dst
+    lon2_dst = dst_lon + half_dst
+
+    # overlap lengths
+    lat_overlap = np.maximum(0, np.minimum(lat2_src, lat2_dst) - np.maximum(lat1_src, lat1_dst))
+    lon_overlap = np.maximum(0, np.minimum(lon2_src, lon2_dst) - np.maximum(lon1_src, lon1_dst))
+
+    overlap_area = lat_overlap * lon_overlap
+    total_overlap_area = np.sum(overlap_area)
+
+    if total_overlap_area <= 0:
+        return np.nan if missing_value is None else missing_value
+
+    # handle missing values
+    if missing_value is None:
+        valid_mask = np.isfinite(data)
+    else:
+        valid_mask = np.isfinite(data) & (data != missing_value)
+
+    if not np.any(valid_mask & (overlap_area > 0)):
+        return np.nan if missing_value is None else missing_value
+
+    # destination area (rectangle)
+    dst_area = (lat2_dst - lat1_dst) * (lon2_dst - lon1_dst)
+
+    # total "mass"
+    total_mass = np.sum(data[valid_mask] * overlap_area[valid_mask])
+    
+    dst_data = total_mass / dst_area
+    
+    return dst_data
+        
+    
+    
+    
