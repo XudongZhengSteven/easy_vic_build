@@ -295,7 +295,7 @@ rvic_params = {
 rvic_params_spatial = {
     "VELOCITY": {
         "default": [1.5, 0.2, 0.5],
-        "boundary": [[0.1, 0.1, 0.3], [3.0, 0.5, 0.7]],
+        "boundary": [[0.01, 0.1, 0.1], [5.0, 0.6, 0.9]],
         "type": float,
         "optimal": [None],
         "free": True,

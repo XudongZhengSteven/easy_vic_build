@@ -965,10 +965,10 @@ class TF_VIC:
         # Transfer function: v = g0 * acc^g1 * slope^g2 (ManningStrickler formula: v = n−1 · R2/3 · S1/2 [m/s])
         # K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.
         # acc: km2, slope: m/m
-        # g1, g2, g3: 1.5 (0.1, 3.0), 0.2 (0.1, 0.5), 0.5 (0.3, 0.7)
+        # g1, g2, g3: 1.5 (0.01, 5.0), 0.2 (0.1, 0.6), 0.5 (0.1, 0.9)
         # Ensure slope > 0 to avoid zero or negative values
-        velocity_min = 0.1
-        velocity_max = 3.0
+        velocity_min = 0.01
+        velocity_max = 5.0
         
         unit_factor = 0.01
         
@@ -990,7 +990,7 @@ class TF_VIC:
         """
         Estimate diffusion coefficient matrix D from flow velocity and river segment length.
         D=alpha*v*L
-        g: alpha, 0.1, (0.01, 0.5)
+        g: alpha, 0.1, (0.001, 0.5)
         
         Units: D in m^2/s, v in m/s, flow_distance in m.
 
