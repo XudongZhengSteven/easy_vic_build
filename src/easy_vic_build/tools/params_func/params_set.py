@@ -108,14 +108,6 @@ g_params = {
         "free": True,
     },
     
-    "d4": {
-        "default": [2.0],  # it can be set as 2
-        "boundary": [[1.5], [2.5]],
-        "type": float,
-        "optimal": [None],
-        "free": True,
-    },
-    
     "d1": {
         "default": [4.5],
         "boundary": [[4.0], [5.0]],
@@ -135,6 +127,14 @@ g_params = {
     "d3": {
         "default": [0.2],
         "boundary": [[0.05], [0.5]],
+        "type": float,
+        "optimal": [None],
+        "free": True,
+    },
+    
+    "d4": {
+        "default": [2.0],  # it can be set as 2
+        "boundary": [[1.5], [2.5]],
         "type": float,
         "optimal": [None],
         "free": True,
@@ -223,26 +223,22 @@ g_params = {
 
 # g params minimal version
 g_params_minimal = deepcopy(g_params)
-non_free_keys = [
-    "ksat",
-    "phi_s",
-    "psis",
-    "b_retcurve",
-    "expt",
-    "fc",
-    "d4",
-    "dp",
-    "bubble",
-    "quartz",
-    "bulk_density",
-    "soil_density",
-    "Wcr_FRACT",
-    "wp",
-    "Wpwp_FRACT",
-    "rough",
-    "snow_rough",
+all_keys = list(g_params.keys())
+
+free_keys = [
+    "total_depths",
+    "soil_layers_breakpoints",
+    "b_infilt",
+    "d1",
+    "d2",
+    "d3",
 ]
 
+non_free_keys = list(set(all_keys) - set(free_keys))
+
+for key in free_keys:
+    g_params_minimal[key]["free"] = True
+    
 for key in non_free_keys:
     g_params_minimal[key]["free"] = False
 
