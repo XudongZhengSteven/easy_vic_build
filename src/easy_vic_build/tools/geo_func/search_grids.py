@@ -208,7 +208,7 @@ def search_grids_radius_rectangle(
     searched_grids_index = [None] * N_dst
 
     if src_type == "mesh":
-        src_lat_mesh, src_lon_mesh = np.meshgrid(src_lat, src_lon)
+        src_lon_mesh, src_lat_mesh = np.meshgrid(src_lon, src_lat)  # 2D array
         for j in tqdm(range(N_dst), desc="search for dst grids", colour="green", **tqdm_kwargs):
             dx = abs(src_lon_mesh - dst_lon[j])
             dy = abs(src_lat_mesh - dst_lat[j])
