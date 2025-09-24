@@ -208,12 +208,12 @@ def search_grids_radius_rectangle(
     searched_grids_index = [None] * N_dst
 
     if src_type == "mesh":
-        src_lat, src_lon = np.meshgrid(src_lat, src_lon)
+        src_lat_mesh, src_lon_mesh = np.meshgrid(src_lat, src_lon)
         for j in tqdm(range(N_dst), desc="search for dst grids", colour="green", **tqdm_kwargs):
-            dx = np.abs(src_lon[None, :] - dst_lon[j])      # shape: (1, N_src_lon)
-            dy = np.abs(src_lat[:, None] - dst_lat[j])      # shape: (N_src_lat, 1)
-            combined_mask = (dx <= lon_radius) & (dy <= lat_radius)  # shape: (N_src_lat, N_src_lon)
-            searched_grids_index[j] = np.nonzero(combined_mask)
+            dx = abs(src_lon_mesh - dst_lon[j])
+            dy = abs(src_lat_mesh - dst_lat[j])
+            searched_grids_index_ = np.where((dx <= lon_radius) & (dy <= lat_radius))
+            searched_grids_index[j] = searched_grids_index_
     
     elif src_type == "points":
         for j in tqdm(range(N_dst), desc="search for dst grids", colour="green", **tqdm_kwargs):
