@@ -537,11 +537,11 @@ def scaling_level0_to_level1(
         )
     logger.debug("Scaling fc parameter completed")
 
-    # D4, /NA, same as c, typically is 2
-    params_dataset_level1.variables["D4"][:, :] = search_and_resample_func_2d(
-        scaling_operator.Arithmetic_mean, "D4"
+    # d4, /NA, same as c, typically is 2
+    params_dataset_level1.variables["d4"][:, :] = search_and_resample_func_2d(
+        scaling_operator.Arithmetic_mean, "d4"
     )
-    logger.debug("Scaling D4 parameter completed")
+    logger.debug("Scaling d4 parameter completed")
 
     # cexpt
     params_dataset_level1.variables["c"][:, :] = search_and_resample_func_2d(
@@ -549,20 +549,20 @@ def scaling_level0_to_level1(
     )
     logger.debug("Scaling c parameter completed")
 
-    # D1 ([day^-1]), D2 ([day^-D4])
-    params_dataset_level1.variables["D1"][:, :] = search_and_resample_func_2d(
-        scaling_operator.Harmonic_mean, "D1"
+    # d1 ([day^-1]), d2 ([day^-d4])
+    params_dataset_level1.variables["d1"][:, :] = search_and_resample_func_2d(
+        scaling_operator.Harmonic_mean, "d1"
     )
-    params_dataset_level1.variables["D2"][:, :] = search_and_resample_func_2d(
-        scaling_operator.Harmonic_mean, "D2"
+    params_dataset_level1.variables["d2"][:, :] = search_and_resample_func_2d(
+        scaling_operator.Harmonic_mean, "d2"
     )
-    logger.debug("Scaling D1/2 parameter completed")
+    logger.debug("Scaling d1/2 parameter completed")
 
-    # D3 ([mm])
-    params_dataset_level1.variables["D3"][:, :] = search_and_resample_func_2d(
-        scaling_operator.Arithmetic_mean, "D3"
+    # d3 ([mm])
+    params_dataset_level1.variables["d3"][:, :] = search_and_resample_func_2d(
+        scaling_operator.Arithmetic_mean, "d3"
     )
-    logger.debug("Scaling D3 parameter completed")
+    logger.debug("Scaling d3 parameter completed")
 
     # Dsmax, mm or mm/day
     params_dataset_level1.variables["Dsmax"][:, :] = search_and_resample_func_2d(
@@ -570,7 +570,7 @@ def scaling_level0_to_level1(
     )
     logger.debug("Scaling Dsmax parameter completed")
 
-    # Ds, [day^-D4] or fraction
+    # Ds, [day^-d4] or fraction
     params_dataset_level1.variables["Ds"][:, :] = search_and_resample_func_2d(
         scaling_operator.Harmonic_mean, "Ds"
     )

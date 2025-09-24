@@ -625,16 +625,16 @@ def buildParam_level0_by_g(
     logger.debug("fc parameters assigned")
 
     # D4, N/A, same as c, typically is 2
-    grid_array_D4 = createEmptyArray_from_gridshp(
+    grid_array_d4 = createEmptyArray_from_gridshp(
         stand_grids_lat, stand_grids_lon, dtype=float, missing_value=np.nan
     )
-    grid_array_D4 = assignValue_for_grid_array(
-        grid_array_D4,
+    grid_array_d4 = assignValue_for_grid_array(
+        grid_array_d4,
         np.full((grids_num,), fill_value=tf_VIC.D4(g_list[20])),
         rows_index,
         cols_index,
     )
-    params_dataset_level0.variables["D4"][:, :] = grid_array_D4
+    params_dataset_level0.variables["d4"][:, :] = grid_array_d4
     logger.debug("D4 parameters assigned.")
 
     # cexpt
@@ -642,16 +642,16 @@ def buildParam_level0_by_g(
     params_dataset_level0.variables["c"][:, :] = grid_array_cexpt
     logger.debug("c parameters assigned")
 
-    # D1 ([day^-1]), D2 ([day^-D4]), D3 ([mm])
-    grid_array_D1 = tf_VIC.D1(grid_array_ksat_layer3, grid_array_mean_slope, g_list[21])
-    grid_array_D2 = tf_VIC.D2(
-        grid_array_ksat_layer3, grid_array_mean_slope, grid_array_D4, g_list[22]
+    # d1 ([day^-1]), d2 ([day^-D4]), d3 ([mm])
+    grid_array_D1 = tf_VIC.d1(grid_array_ksat_layer3, grid_array_mean_slope, g_list[21])
+    grid_array_D2 = tf_VIC.d2(
+        grid_array_ksat_layer3, grid_array_mean_slope, grid_array_d4, g_list[22]
     )
-    grid_array_D3 = tf_VIC.D3(grid_array_fc_layer3, grid_array_depth_layer3, g_list[23])
-    params_dataset_level0.variables["D1"][:, :] = grid_array_D1
-    params_dataset_level0.variables["D2"][:, :] = grid_array_D2
-    params_dataset_level0.variables["D3"][:, :] = grid_array_D3
-    logger.debug("D1/2/3 parameters assigned")
+    grid_array_D3 = tf_VIC.d3(grid_array_fc_layer3, grid_array_depth_layer3, g_list[23])
+    params_dataset_level0.variables["d1"][:, :] = grid_array_D1
+    params_dataset_level0.variables["d2"][:, :] = grid_array_D2
+    params_dataset_level0.variables["d3"][:, :] = grid_array_D3
+    logger.debug("d1/2/3 parameters assigned")
 
     # Dsmax, mm or mm/day
     grid_array_Dsmax = tf_VIC.Dsmax(

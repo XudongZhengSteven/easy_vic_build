@@ -78,12 +78,12 @@ class buildParam_level0_interface:
             "set_b_retcurve",
             "set_expt",
             "set_fc",
-            "set_D4",
+            "set_d4",
             "set_cexpt",
             "set_arno_baseflow_layer_num",
-            "set_D1",
-            "set_D2",
-            "set_D3",
+            "set_d1",
+            "set_d2",
+            "set_d3",
             "set_Dsmax",
             "set_Ds",
             "set_Ws",
@@ -519,29 +519,29 @@ class buildParam_level0_interface:
             self.params_dataset_level0.variables["fc"][i, :, :] = grid_array_fc_layer_i
             self.grid_array_fc_layers.append(grid_array_fc_layer_i)
     
-    def set_D4(self):
-        # D4, N/A, same as c, typically is 2
-        self.logger.debug("setting D4... ...")
+    def set_d4(self):
+        # d4, N/A, same as c, typically is 2
+        self.logger.debug("setting d4... ...")
         
-        self.grid_array_D4 = createEmptyArray_from_gridshp(
+        self.grid_array_d4 = createEmptyArray_from_gridshp(
             self.stand_grids_lat_level0, self.stand_grids_lon_level0,
             dtype=float, missing_value=np.nan
         )
         
-        self.grid_array_D4 = assignValue_for_grid_array(
-            self.grid_array_D4,
-            np.full((self.grids_num_level0,), fill_value=self.tf_VIC.D4(*self.g_params["D4"]["optimal"])),
+        self.grid_array_d4 = assignValue_for_grid_array(
+            self.grid_array_d4,
+            np.full((self.grids_num_level0,), fill_value=self.tf_VIC.d4(*self.g_params["d4"]["optimal"])),
             self.rows_index_level0,
             self.cols_index_level0,
         )
         
-        self.params_dataset_level0.variables["D4"][:, :] = self.grid_array_D4
+        self.params_dataset_level0.variables["d4"][:, :] = self.grid_array_d4
             
     def set_cexpt(self):
         # cexpt
         self.logger.debug("setting cexpt... ...")
         
-        self.grid_array_cexpt = self.grid_array_D4
+        self.grid_array_cexpt = self.grid_array_d4
         self.params_dataset_level0.variables["c"][:, :] = self.grid_array_cexpt
     
     def set_arno_baseflow_layer_num(self):
@@ -549,41 +549,41 @@ class buildParam_level0_interface:
         
         self.arno_baseflow_layer_num = 2
     
-    def set_D1(self):
-        # D1 ([day^-1])
-        self.logger.debug("setting D1... ...")
+    def set_d1(self):
+        # d1 ([day^-1])
+        self.logger.debug("setting d1... ...")
         
-        self.grid_array_D1 = self.tf_VIC.D1(
-            self.grid_array_ksat_layers[self.arno_baseflow_layer_num], self.grid_array_mean_slope, *self.g_params["D1"]["optimal"]
+        self.grid_array_d1 = self.tf_VIC.d1(
+            self.grid_array_ksat_layers[self.arno_baseflow_layer_num], self.grid_array_mean_slope, *self.g_params["d1"]["optimal"]
         )
-        self.params_dataset_level0.variables["D1"][:, :] = self.grid_array_D1
+        self.params_dataset_level0.variables["d1"][:, :] = self.grid_array_d1
         
-    def set_D2(self):
-        # D2 ([day^-D4])
-        self.logger.debug("setting D2... ...")
+    def set_d2(self):
+        # d2 ([day^-d4])
+        self.logger.debug("setting d2... ...")
         
-        self.grid_array_D2 = self.tf_VIC.D2(
-            self.grid_array_ksat_layers[self.arno_baseflow_layer_num], self.grid_array_mean_slope, self.grid_array_D4, *self.g_params["D2"]["optimal"]
+        self.grid_array_d2 = self.tf_VIC.d2(
+            self.grid_array_ksat_layers[self.arno_baseflow_layer_num], self.grid_array_mean_slope, self.grid_array_d4, *self.g_params["d2"]["optimal"]
         )
-        self.params_dataset_level0.variables["D2"][:, :] = self.grid_array_D2
+        self.params_dataset_level0.variables["d2"][:, :] = self.grid_array_d2
     
-    def set_D3(self):
-        # D3 ([mm])
-        self.logger.debug("setting D3... ...")
+    def set_d3(self):
+        # d3 ([mm])
+        self.logger.debug("setting d3... ...")
         
-        self.grid_array_D3 = self.tf_VIC.D3(
-            self.grid_array_fc_layers[self.arno_baseflow_layer_num], self.grid_array_depth_layers[self.arno_baseflow_layer_num], *self.g_params["D3"]["optimal"]
+        self.grid_array_d3 = self.tf_VIC.d3(
+            self.grid_array_fc_layers[self.arno_baseflow_layer_num], self.grid_array_depth_layers[self.arno_baseflow_layer_num], *self.g_params["d3"]["optimal"]
         )
-        self.params_dataset_level0.variables["D3"][:, :] = self.grid_array_D3
+        self.params_dataset_level0.variables["d3"][:, :] = self.grid_array_d3
         
     def set_Dsmax(self):
         # Dsmax, mm or mm/day
         self.logger.debug("setting Dsmax... ...")
         
         self.grid_array_Dsmax = self.tf_VIC.Dsmax(
-            self.grid_array_D1,
-            self.grid_array_D2,
-            self.grid_array_D3,
+            self.grid_array_d1,
+            self.grid_array_d2,
+            self.grid_array_d3,
             self.grid_array_cexpt,
             self.grid_array_phi_s_layers[self.arno_baseflow_layer_num],
             self.grid_array_depth_layers[self.arno_baseflow_layer_num],
@@ -592,10 +592,10 @@ class buildParam_level0_interface:
         self.params_dataset_level0.variables["Dsmax"][:, :] = self.grid_array_Dsmax
     
     def set_Ds(self):
-        # Ds, [day^-D4] or fraction
+        # Ds, [day^-d4] or fraction
         self.logger.debug("setting Ds... ...")
         
-        grid_array_Ds = self.tf_VIC.Ds(self.grid_array_D1, self.grid_array_D3, self.grid_array_Dsmax)
+        grid_array_Ds = self.tf_VIC.Ds(self.grid_array_d1, self.grid_array_d3, self.grid_array_Dsmax)
         self.params_dataset_level0.variables["Ds"][:, :] = grid_array_Ds
         
     def set_Ws(self):
@@ -603,7 +603,7 @@ class buildParam_level0_interface:
         self.logger.debug("setting Ws... ...")
         
         grid_array_Ws = self.tf_VIC.Ws(
-            self.grid_array_D3, 
+            self.grid_array_d3, 
             self.grid_array_phi_s_layers[self.arno_baseflow_layer_num],
             self.grid_array_depth_layers[self.arno_baseflow_layer_num]
         )
@@ -647,7 +647,7 @@ class buildParam_level0_interface:
         )
         grid_array_dp = assignValue_for_grid_array(
             grid_array_dp,
-            np.full((self.grids_num_level0,), fill_value=self.tf_VIC.dp(*self.g_params["D4"]["optimal"])),
+            np.full((self.grids_num_level0,), fill_value=self.tf_VIC.dp(*self.g_params["d4"]["optimal"])),
             self.rows_index_level0,
             self.cols_index_level0,
         )

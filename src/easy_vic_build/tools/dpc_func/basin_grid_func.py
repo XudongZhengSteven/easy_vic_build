@@ -204,8 +204,6 @@ def gridshp_index_to_grid_array_index(grid_shp, stand_grids_lat, stand_grids_lon
     """
     grid_shp_point_lon = grid_shp.point_geometry.x.to_list()
     grid_shp_point_lat = grid_shp.point_geometry.y.to_list()
-    # grid_shp_point_lon = [grid_shp.loc[i, "point_geometry"].x for i in grid_shp.index]
-    # grid_shp_point_lat = [grid_shp.loc[i, "point_geometry"].y for i in grid_shp.index]
 
     searched_grids_index = search_grids_equal(
         dst_lat=grid_shp_point_lat,
@@ -497,7 +495,7 @@ def build_grid_shp(
 ):
     # build grid_shp (Grids) for level1 (modeling scale), expand_grids_num=1 to avoid 0 (edge) flow direction in hydroanalysis
     grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1, expand_grids_num=expand_grids_num)
-        
+    
     _, _, _, boundary_grids_edge_x_y_level1 = grid_shp_level1.createBoundaryShp()
     
     # build grid_shp for level0 and level2 based on the boundary of level1

@@ -231,7 +231,7 @@ def sampling_LHS_2(n_samples, bounds, seed=None):
     return scaled_samples
 
 
-def sampling_Sobol(n_samples, n_dimensions, bounds):
+def sampling_Sobol(n_samples, bounds):
     """
     Generate random samples using the Sobol sequence method within the specified bounds.
 
@@ -249,6 +249,7 @@ def sampling_Sobol(n_samples, n_dimensions, bounds):
     scaled_samples : numpy.ndarray
         The generated Sobol samples, scaled to the specified bounds.
     """
+    n_dimensions = len(bounds)
     sobol_sampler = qmc.Sobol(d=n_dimensions, scramble=True)
     samples = sobol_sampler.random(n=n_samples)
 
@@ -262,7 +263,7 @@ def sampling_Sobol(n_samples, n_dimensions, bounds):
     return scaled_samples
 
 
-def sampling_Halton(n_samples, n_dimensions, bounds):
+def sampling_Halton(n_samples, bounds):
     """
     Generate random samples using the Halton sequence method within the specified bounds.
 
@@ -280,6 +281,7 @@ def sampling_Halton(n_samples, n_dimensions, bounds):
     scaled_samples : numpy.ndarray
         The generated Halton samples, scaled to the specified bounds.
     """
+    n_dimensions = len(bounds)
     halton_sampler = qmc.Halton(d=n_dimensions, scramble=True)
     samples = halton_sampler.random(n=n_samples)
 

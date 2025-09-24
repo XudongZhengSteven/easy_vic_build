@@ -435,7 +435,95 @@ class CategoricalEvaluationMetric:
         return (self.H - H_random) / den if den > 0 else None
         
 
+class SignatureEvaluationMetric:
+    
+    def __init__(self, sim, obs):
+        """
+        Initializes the EvaluationMetric class with simulated and observed values.
 
+        Parameters
+        ----------
+        sim : array-like
+            Simulated values.
+        obs : array-like
+            Observed values.
+        """
+        self.sim = np.array(sim)
+        self.obs = np.array(obs)
+        
+    def FHVBias(self, q_high=0.9):
+        """
+        Flood High Volume error (relative).
+
+        Parameters
+        ----------
+        q_high : float, optional (default=0.9)
+            Quantile threshold to define high flows (e.g., top 10%).
+
+        Returns
+        -------
+        float
+            Relative error in high flows.
+        """
+        thresh = np.quantile(self.obs, q_high)
+        mask = self.obs >= thresh
+
+        sim_high = self.sim[mask]
+        obs_high = self.obs[mask]
+
+        return ((sim_high - obs_high).sum()) / obs_high.sum()
+    
+    def FLVBias(self, q_low=0.1):
+        """
+        Flood Low Volume error (relative).
+
+        Parameters
+        ----------
+        q_low : float, optional (default=0.1)
+            Quantile threshold to define low flows (e.g., bottom 10%).
+
+        Returns
+        -------
+        float
+            Relative error in low flows.
+        """
+        thresh = np.quantile(self.obs, q_low)
+        mask = self.obs <= thresh
+
+        sim_low = self.sim[mask]
+        obs_low = self.obs[mask]
+
+        return ((sim_low - obs_low).sum()) / obs_low.sum()
+    
+    def FMSPBias(self, mid_low=0.2, mid_high=0.7):
+        """
+        Flow Magnitude Skewness (FMS).
+        Relative error in the slope of the flow duration curve
+        (between Q20 and Q70, i.e. mid-range flows).
+
+        Returns
+        -------
+        float
+        """
+        q20_obs, q70_obs = np.quantile(self.obs, [mid_low, mid_high])
+        q20_sim, q70_sim = np.quantile(self.sim, [mid_low, mid_high])
+
+        slope_obs = (q20_obs - q70_obs) / (mid_high - mid_low)
+        slope_sim = (q20_sim - q70_sim) / (mid_high - mid_low)
+
+        fms = 100 * (slope_sim - slope_obs) / slope_obs
+        return fms
+    
+    def CVBias(self):
+        """
+        variability
+        Coefficient of Variation, relative error of CV
+        CV = std / mean
+        """
+        cv_obs = np.std(self.obs) / np.mean(self.obs)
+        cv_sim = np.std(self.sim) / np.mean(self.sim)
+        return (cv_sim - cv_obs) / cv_obs
+    
 def create_test_data(seed=42):
     np.random.seed(seed)
     

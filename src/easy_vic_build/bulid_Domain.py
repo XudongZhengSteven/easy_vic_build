@@ -101,7 +101,8 @@ UTM_proj_map = generate_utm_proj_map()
 
 @clock_decorator(print_arg_ret=False)
 def buildDomain(
-    evb_dir, dpc_VIC, reverse_lat=True
+    evb_dir, dpc_VIC,
+    reverse_lat=True, basin_shp=None,
 ):
     """
     Build the domain file for the VIC model, including variables like latitude, longitude, mask, area, and others.
@@ -237,6 +238,7 @@ def buildDomain(
             dpc_VIC,
             reverse_lat=reverse_lat,
             plot=False,
+            basin_shp=basin_shp,
         )
         mask[:, :] = mask_array
         area[:, :] = area_array
@@ -297,6 +299,7 @@ def cal_mask_frac_area_length(
     dpc_VIC,
     reverse_lat=True,
     plot=False,
+    basin_shp=None,
 ):
     """
     Calculate the mask, fractional area, and grid dimensions (x/y lengths) for the given VIC grid.
@@ -346,7 +349,7 @@ def cal_mask_frac_area_length(
 
     # get grid_shp and basin_shp from the dpc_VIC
     grid_shp = dpc_VIC.get_data_from_cache("grid_shp")[0]
-    basin_shp = dpc_VIC.get_data_from_cache("basin_shp")[0]
+    basin_shp = dpc_VIC.get_data_from_cache("basin_shp")[0] if basin_shp is None else basin_shp
 
     # Determine the UTM CRS based on the longitude of the basin center
     try:

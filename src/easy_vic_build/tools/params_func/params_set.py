@@ -19,10 +19,10 @@ g_list: global parameters
     [14, 15, 16]    b_retcurve (g1, g2, g3)
     [17, 18]        expt (g1, g2)
     [19]            fc (g)
-    [20]            D4 (g), it can be set as 2
-    [21]            D1 (g)
-    [22]            D2 (g)
-    [23]            D3 (g)
+    [20]            d4 (g), it can be set as 2
+    [21]            d1 (g)
+    [22]            d2 (g)
+    [23]            d3 (g)
     [24]            dp (g)
     [25, 26]        bubble (g1, g2)
     [27]            quartz (g)
@@ -53,8 +53,8 @@ g_params = {
     },
     
     "b_infilt": {
-        "default": [0.0, 1.0],
-        "boundary": [[-2.0, 0.8], [1.0, 1.2]],
+        "default": [1.0, 0.2],
+        "boundary": [[0.0, 0.1], [1.0, 0.5]],
         "type": float,
         "optimal": [None, None],
         "free": True,
@@ -108,7 +108,7 @@ g_params = {
         "free": True,
     },
     
-    "D4": {
+    "d4": {
         "default": [2.0],  # it can be set as 2
         "boundary": [[1.5], [2.5]],
         "type": float,
@@ -116,25 +116,25 @@ g_params = {
         "free": True,
     },
     
-    "D1": {
-        "default": [2.0],
-        "boundary": [[1.75], [3.5]],
+    "d1": {
+        "default": [4.5],
+        "boundary": [[4.0], [5.0]],
         "type": float,
         "optimal": [None],
         "free": True,
     },
     
-    "D2": {
-        "default": [2.0],
-        "boundary": [[1.75], [3.5]],
+    "d2": {
+        "default": [4.0],
+        "boundary": [[2.6], [5.6]],
         "type": float,
         "optimal": [None],
         "free": True,
     },
     
-    "D3": {
-        "default": [1.0],
-        "boundary": [[0.001], [2.0]],
+    "d3": {
+        "default": [0.2],
+        "boundary": [[0.05], [0.5]],
         "type": float,
         "optimal": [None],
         "free": True,
@@ -230,7 +230,7 @@ non_free_keys = [
     "b_retcurve",
     "expt",
     "fc",
-    "D4",
+    "d4",
     "dp",
     "bubble",
     "quartz",
@@ -277,7 +277,7 @@ guh_params = {
 rvic_params = {
     "VELOCITY": {
         "default": [1.5],  # velocity in m/s
-        "boundary": [[0.1], [3.0]],
+        "boundary": [[0.01], [3.0]],
         "type": float,
         "optimal": [None],
         "free": True,
@@ -294,8 +294,8 @@ rvic_params = {
 
 rvic_params_spatial = {
     "VELOCITY": {
-        "default": [1.5, 0.2, 0.5],
-        "boundary": [[0.01, 0.1, 0.1], [5.0, 0.6, 0.9]],
+        "default": [0.2, 0.15, 0.3],
+        "boundary": [[0.01, 0.1, 0.2], [0.5, 0.3, 0.4]],
         "type": float,
         "optimal": [None],
         "free": True,

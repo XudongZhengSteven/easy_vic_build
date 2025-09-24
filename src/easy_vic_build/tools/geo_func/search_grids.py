@@ -195,6 +195,7 @@ def search_grids_radius_rectangle(
     src_lon,
     lat_radius,
     lon_radius,
+    src_type="mesh",
     **tqdm_kwargs
 ):
     src_lon = np.array(src_lon)
@@ -206,11 +207,21 @@ def search_grids_radius_rectangle(
     
     searched_grids_index = [None] * N_dst
 
-    for j in tqdm(range(N_dst), desc="search for dst grids", colour="green", **tqdm_kwargs):
-        dx = np.abs(src_lon[None, :] - dst_lon[j])      # shape: (1, N_src_lon)
-        dy = np.abs(src_lat[:, None] - dst_lat[j])      # shape: (N_src_lat, 1)
-        combined_mask = (dx <= lon_radius) & (dy <= lat_radius)  # shape: (N_src_lat, N_src_lon)
-        searched_grids_index[j] = np.nonzero(combined_mask)
+    if src_type == "mesh":
+        src_lat, src_lon = np.meshgrid(src_lat, src_lon)
+        for j in tqdm(range(N_dst), desc="search for dst grids", colour="green", **tqdm_kwargs):
+            dx = np.abs(src_lon[None, :] - dst_lon[j])      # shape: (1, N_src_lon)
+            dy = np.abs(src_lat[:, None] - dst_lat[j])      # shape: (N_src_lat, 1)
+            combined_mask = (dx <= lon_radius) & (dy <= lat_radius)  # shape: (N_src_lat, N_src_lon)
+            searched_grids_index[j] = np.nonzero(combined_mask)
+    
+    elif src_type == "points":
+        for j in tqdm(range(N_dst), desc="search for dst grids", colour="green", **tqdm_kwargs):
+            dx = np.abs(src_lon - dst_lon[j])   # (N_points,)
+            dy = np.abs(src_lat - dst_lat[j])   # (N_points,)
+            mask = (dx <= lon_radius) & (dy <= lat_radius)    # (N_points,)
+            idx = np.nonzero(mask)[0]
+            searched_grids_index[j] = (idx, idx)
     
     return searched_grids_index
 
@@ -259,10 +270,10 @@ def search_grids_radius_rectangle_overlap(
     if src_type == "mesh":
         src_lat = np.asarray(src_lat)
         src_lon = np.asarray(src_lon)
-        if src_lat.shape != src_lon.shape:
-            raise ValueError("meshgrid source: src_lat and src_lon must have same shape")
-        nlat, nlon = src_lat.shape
-        lat_idx_grid, lon_idx_grid = np.meshgrid(np.arange(nlat), np.arange(nlon), indexing='ij')
+        src_lat_mesh, src_lon_mesh = np.meshgrid(src_lat, src_lon)
+        
+        nlon, nlat = src_lat_mesh.shape
+        lat_idx_grid, lon_idx_grid = np.meshgrid(np.arange(nlat), np.arange(nlon))
     
     elif src_type == "points":
         src_lat = np.asarray(src_lat)
@@ -281,13 +292,14 @@ def search_grids_radius_rectangle_overlap(
         lon_tol = (src_dlon + dst_dlon) / 2
 
         if src_type == "mesh":
-            lat_diff = np.abs(src_lat - dst_lat[j])
-            lon_diff = np.abs(src_lon - dst_lon[j])
+            lat_diff = np.abs(src_lat_mesh - dst_lat[j])
+            lon_diff = np.abs(src_lon_mesh - dst_lon[j])
             mask = (lat_diff <= lat_tol) & (lon_diff <= lon_tol)
             searched_grids_index.append((
                 lat_idx_grid[mask],
                 lon_idx_grid[mask]
             ))
+            
         else:  # points
             lat_diff = np.abs(src_lat - dst_lat[j])
             lon_diff = np.abs(src_lon - dst_lon[j])

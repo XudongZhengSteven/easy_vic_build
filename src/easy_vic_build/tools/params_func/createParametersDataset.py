@@ -103,32 +103,32 @@ def createParametersDataset(dst_path, lat_list, lon_list):
         ),
     )  # 2D array
 
-    D1 = params_dataset.createVariable(
-        "D1",
+    d1 = params_dataset.createVariable(
+        "d1",
         "f8",
         (
             "lat",
             "lon",
         ),
     )  # layer3
-    D2 = params_dataset.createVariable(
-        "D2",
+    d2 = params_dataset.createVariable(
+        "d2",
         "f8",
         (
             "lat",
             "lon",
         ),
     )  # layer3
-    D3 = params_dataset.createVariable(
-        "D3",
+    d3 = params_dataset.createVariable(
+        "d3",
         "f8",
         (
             "lat",
             "lon",
         ),
     )  # layer3
-    D4 = params_dataset.createVariable(
-        "D4",
+    d4 = params_dataset.createVariable(
+        "d4",
         "f8",
         (
             "lat",
@@ -151,7 +151,7 @@ def createParametersDataset(dst_path, lat_list, lon_list):
             "lat",
             "lon",
         ),
-    )  # based on D1/2/3/4
+    )  # based on d1/2/3/4
     Dsmax = params_dataset.createVariable(
         "Dsmax",
         "f8",
@@ -159,7 +159,7 @@ def createParametersDataset(dst_path, lat_list, lon_list):
             "lat",
             "lon",
         ),
-    )  # based on D1/2/3/4
+    )  # based on d1/2/3/4
     Ws = params_dataset.createVariable(
         "Ws",
         "f8",
@@ -167,7 +167,7 @@ def createParametersDataset(dst_path, lat_list, lon_list):
             "lat",
             "lon",
         ),
-    )  # based on D1/2/3/4
+    )  # based on d1/2/3/4
 
     cexpt = params_dataset.createVariable(
         "c",
@@ -265,7 +265,7 @@ def createParametersDataset(dst_path, lat_list, lon_list):
             "lat",
             "lon",
         ),
-    )  # *(percentile1/2/3 * Ztot(constant, soil datasets) + scaling(Arithmetic)), D1/2/3
+    )  # *(percentile1/2/3 * Ztot(constant, soil datasets) + scaling(Arithmetic)), d1/2/3
     avg_T = params_dataset.createVariable(
         "avg_T",
         "f8",
@@ -628,21 +628,21 @@ def createParametersDataset(dst_path, lat_list, lon_list):
     grid_cell.long_name = "grid cell"
     grid_cell.description = "Grid cell number"
 
-    D1.long_name = "D1"
-    D1.description = "D1 is coefficients of linear reservoirs, it is related to vertical water transmission in saturated soil due to the gravity as described by Darcy's law"
-    D1.units = "day^-1"
+    d1.long_name = "d1"
+    d1.description = "d1 is coefficients of linear reservoirs, it is related to vertical water transmission in saturated soil due to the gravity as described by Darcy's law"
+    d1.units = "day^-1"
 
-    D2.long_name = "D2"
-    D2.description = "D2 is coefficients of nonlinear reservoirs, it is related to vertical water transmission in saturated soil due to the gravity as described by Darcy's law"
-    D2.units = "day^-D4"
+    d2.long_name = "d2"
+    d2.description = "d2 is coefficients of nonlinear reservoirs, it is related to vertical water transmission in saturated soil due to the gravity as described by Darcy's law"
+    d2.units = "day^-d4"
 
-    D3.long_name = "D3"
-    D3.description = "The formulation of D3, the soil moisture at which the baseflow transitions from linear to nonlinear, is based on the assumption that soil moisture exceeding field capacity is more freely drained, as suggested by the SAC-SMA transfer function"
-    D3.units = "mm"
+    d3.long_name = "d3"
+    d3.description = "The formulation of d3, the soil moisture at which the baseflow transitions from linear to nonlinear, is based on the assumption that soil moisture exceeding field capacity is more freely drained, as suggested by the SAC-SMA transfer function"
+    d3.units = "mm"
 
-    D4.long_name = "D4"
-    D4.description = "D4, same as c, typically is 2"
-    D4.units = "N/A"
+    d4.long_name = "d4"
+    d4.description = "d4, same as c, typically is 2"
+    d4.units = "N/A"
 
     b_infilt.long_name = "infilt"
     b_infilt.description = "Variable infiltration curve parameter (binfilt)"

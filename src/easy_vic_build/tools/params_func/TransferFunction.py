@@ -61,10 +61,10 @@ class TF_VIC:
         """
         # Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.
         # Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.
-        # b_infilt, N/A, 0.01~0.5
-        # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)  # TODO recheck (ele_std - g1) / (ele_std + g2*10)
+        # b_infilt, N/A, 0.01~0.5 = log(ele_std) - ele_std_min / log(ele_std) + ele_std_max
+        # g1, g2: 1.0 (-1.0, 5.0), 0.2 (0.1, 0.5)  # TODO recheck (ele_std - g1) / (ele_std + g2*10)
         # Arithmetic mean
-        b_infilt_min = 0.01
+        b_infilt_min = 0.001
         b_infilt_max = 1.0  # 0.50  # check
         ret = (np.log(ele_std) - g1) / (np.log(ele_std) + g2 * 10)
 
@@ -342,9 +342,9 @@ class TF_VIC:
         return ret
 
     @staticmethod
-    def D1(Ks, slope_mean, g):
+    def d1(Ks, slope_mean, g):
         """
-        Calculate the D1 parameter, with units of day^-1.
+        Calculate the d1 parameter, with units of day^-1.
 
         Parameters
         ----------
@@ -358,27 +358,26 @@ class TF_VIC:
         Returns
         -------
         float
-            The D1 value in day^-1, bounded between a minimum and maximum range.
+            The d1 value in day^-1, bounded between a minimum and maximum range.
         """
         # Ks: layer3
-        # D1, [day^-1]
-        # g: 2.0 (1.75, 3.5)
+        # d1, [day^-1]
         # Harmonic mean
         Sf = 1.0
-        D1_min = 0.0001
-        D1_max = 1.0
+        d1_min = 0.0001
+        d1_max = 1.0
         unit_factor1 = 60 * 60 * 24
-        unit_factor2 = 0.01
+        unit_factor2 = 1.0  # 0.01
         ret = (Ks * unit_factor1) * (slope_mean * unit_factor2) / (10**g) / Sf
 
-        ret[ret > D1_max] = D1_max
-        ret[ret < D1_min] = D1_min
+        ret[ret > d1_max] = d1_max
+        ret[ret < d1_min] = d1_min
         return ret
 
     @staticmethod
-    def D2(Ks, slope_mean, D4, g):
+    def d2(Ks, slope_mean, d4, g):
         """
-        Calculate the D2 parameter with units of day^-D4.
+        Calculate the d2 parameter with units of day^-d4.
 
         Parameters
         ----------
@@ -386,36 +385,35 @@ class TF_VIC:
             Hydraulic conductivity at layer 3 (m/s).
         slope_mean : float
             Mean slope value.
-        D4 : float
-            Exponent for D4.
+        d4 : float
+            Exponent for d4.
         g : float
             Constant parameter for the model (2.0 (1.75, 3.5)).
 
         Returns
         -------
         float
-            The D2 value, bounded between a minimum and maximum range.
+            The d2 value, bounded between a minimum and maximum range.
         """
         # Ks: layer3
-        # D2, [day^-D4]
-        # g: 2.0 (1.75, 3.5)
+        # d2, [day^-d4]
         # Harmonic mean
         Sf = 1.0
-        D2_min = 0.0001
-        D2_max = 1.0
+        d2_min = 0.0001
+        d2_max = 1.0
         unit_factor1 = 60 * 60 * 24
-        unit_factor2 = 0.01
-        ret = (Ks * unit_factor1) * (slope_mean * unit_factor2) / (10**g) / (Sf**D4)
+        unit_factor2 = 1.0  # 0.01
+        ret = (Ks * unit_factor1) * (slope_mean * unit_factor2) / (10**g) / (Sf**d4)
 
-        ret[ret > D2_max] = D2_max
-        ret[ret < D2_min] = D2_min
+        ret[ret > d2_max] = d2_max
+        ret[ret < d2_min] = d2_min
 
         return ret
 
     @staticmethod
-    def D3(fc, depth, g):
+    def d3(fc, depth, g):
         """
-        Calculate the D3 parameter in mm.
+        Calculate the d3 parameter in mm.
 
         Parameters
         ----------
@@ -429,25 +427,25 @@ class TF_VIC:
         Returns
         -------
         float
-            The D3 value in mm, bounded between a minimum and maximum range.
+            The d3 value in mm, bounded between a minimum and maximum range.
         """
         # depth: layer3, m
-        # D3, [mm]
-        # g: 1.0 (0.001, 2.0)
+        # d3, [mm]
+        # g: 0.2 (0.05, 0.5)
         # Arithmetic mean
-        D3_min = 0.0001
-        D3_max = 1000.0
+        d3_min = 0.0001
+        d3_max = 1000.0
         unit_factor1 = 1000
         ret = fc * (depth * unit_factor1) * g
 
-        ret[ret > D3_max] = D3_max
-        ret[ret < D3_min] = D3_min
+        ret[ret > d3_max] = d3_max
+        ret[ret < d3_min] = d3_min
         return ret
 
     @staticmethod
-    def D4(g=2):  # set to 2
+    def d4(g=2):  # set to 2
         """
-        Return the value for D4, typically set to 2.
+        Return the value for d4, typically set to 2.
 
         Parameters
         ----------
@@ -457,7 +455,7 @@ class TF_VIC:
         Returns
         -------
         float
-            The value of D4.
+            The value of d4.
         """
         # g: 2.0 (1.2, 2.5)
         # Arithmetic mean
@@ -465,14 +463,14 @@ class TF_VIC:
         return ret
 
     @staticmethod
-    def cexpt(D4):  # set to D4
+    def cexpt(d4):  # set to d4
         """
-        Return the value for cexpt, which is equal to D4.
+        Return the value for cexpt, which is equal to d4.
 
         Parameters
         ----------
-        D4 : float
-            Exponent value for the D4 parameter.
+        d4 : float
+            Exponent value for the d4 parameter.
 
         Returns
         -------
@@ -481,24 +479,24 @@ class TF_VIC:
         """
         # cexpt is c
         # Arithmetic mean
-        ret = D4
+        ret = d4
         return ret
 
     @staticmethod
-    def Dsmax(D1, D2, D3, cexpt, phi_s, depth):
+    def Dsmax(d1, d2, d3, cexpt, phi_s, depth):
         """
         Calculate the maximum soil moisture (Dsmax).
 
         Parameters
         ----------
-        D1 : float
-            The D1 parameter value.
-        D2 : float
-            The D2 parameter value.
-        D3 : float
-            The D3 parameter value.
+        d1 : float
+            The d1 parameter value.
+        d2 : float
+            The d2 parameter value.
+        d3 : float
+            The d3 parameter value.
         cexpt : float
-            The cexpt parameter value, typically equal to D4.
+            The cexpt parameter value, typically equal to d4.
         phi_s : float
             The saturated soil water content (m³/m³).
         depth : float
@@ -516,26 +514,24 @@ class TF_VIC:
         Dsmax_min = 0.1
         Dsmax_max = 30.0
         unit_factor1 = 1000
-        ret = D2 + D1 * (phi_s * (depth * unit_factor1))
-        # ret = D2 * (phi_s * (depth * unit_factor1) - D3) ** cexpt + D1*(phi_s * (depth * unit_factor1))
+        ret = d2 + d1 * (phi_s * (depth * unit_factor1))
+        # ret = d2 * (phi_s * (depth * unit_factor1) - d3) ** cexpt + d1*(phi_s * (depth * unit_factor1))
 
         ret[ret > Dsmax_max] = Dsmax_max
         ret[ret < Dsmax_min] = Dsmax_min
-        # ret = ret if ret < Dsmax_max else Dsmax_max
-        # ret = ret if ret > Dsmax_min else Dsmax_min
         return ret
 
     @staticmethod
-    def Ds(D1, D3, Dsmax):
+    def Ds(d1, d3, Dsmax):
         """
         Calculate the Ds parameter, typically used as a fraction.
 
         Parameters
         ----------
-        D1 : float
-            The D1 parameter value.
-        D3 : float
-            The D3 parameter value.
+        d1 : float
+            The d1 parameter value.
+        d3 : float
+            The d3 parameter value.
         Dsmax : float
             The maximum soil moisture (Dsmax).
 
@@ -544,27 +540,25 @@ class TF_VIC:
         float
             The Ds value, bounded between a minimum and maximum range.
         """
-        # [day^-D4] or fraction, 0.0001~1, 0.02 is a common value
+        # [day^-d4] or fraction, 0.0001~1, 0.02 is a common value
         # Harmonic mean
         Ds_min = 0.0001
         Ds_max = 1.0
-        ret = D1 * D3 / Dsmax
+        ret = d1 * d3 / Dsmax
 
         ret[ret > Ds_max] = Ds_max
         ret[ret < Ds_min] = Ds_min
-        # ret = ret if ret < Ds_max else Ds_max
-        # ret = ret if ret > Ds_min else Ds_min
         return ret
 
     @staticmethod
-    def Ws(D3, phi_s, depth):
+    def Ws(d3, phi_s, depth):
         """
         Calculate the fraction of water available in the soil (Ws).
 
         Parameters
         ----------
-        D3 : float
-            The D3 parameter value (mm).
+        d3 : float
+            The d3 parameter value (mm).
         phi_s : float
             The saturated soil water content (m³/m³).
         depth : float
@@ -580,7 +574,7 @@ class TF_VIC:
         Ws_min = 0.0001
         Ws_max = 1.0
         unit_factor1 = 1000
-        ret = D3 / (phi_s * depth * unit_factor1)
+        ret = d3 / (phi_s * depth * unit_factor1)
 
         ret[ret > Ws_max] = Ws_max
         ret[ret < Ws_min] = Ws_min
@@ -965,10 +959,10 @@ class TF_VIC:
         # Transfer function: v = g0 * acc^g1 * slope^g2 (ManningStrickler formula: v = n−1 · R2/3 · S1/2 [m/s])
         # K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.
         # acc: km2, slope: m/m
-        # g1, g2, g3: 1.5 (0.01, 5.0), 0.2 (0.1, 0.6), 0.5 (0.1, 0.9)
+        #g1, g2, g3: 0.2 (0.01, 0.5), 0.15 (0.1, 0.3), 0.3 (0.2, 0.4)
         # Ensure slope > 0 to avoid zero or negative values
         velocity_min = 0.01
-        velocity_max = 5.0
+        velocity_max = 3.0
         
         unit_factor = 0.01
         

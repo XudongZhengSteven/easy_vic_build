@@ -206,7 +206,7 @@ class Grids_for_shp(Grids):
         # create grid_shp
         grid_shp = gpd.GeoDataFrame()
 
-        if res:
+        if res is not None:
             half_res = res / 2
             res_places = len(str(res).split('.')[-1])
             half_res_places = len(str(res/2).split('.')[-1])
@@ -275,22 +275,33 @@ class Grids_for_shp(Grids):
                         offset = ((boundary_min + half_res) % res)
                         adjusted = boundary_min - offset
                         return round(adjusted, half_res_places)
-                    
+                
                 if adjust_boundary:
-                    boundary_x_min = round(adjust_down(boundary_x_min / half_res) * half_res, half_res_places)
-                    boundary_x_max = round(adjust_up(boundary_x_max / half_res) * half_res, half_res_places)
-                    boundary_y_min = round(adjust_down(boundary_y_min / half_res) * half_res, half_res_places)
-                    boundary_y_max = round(adjust_up(boundary_y_max / half_res) * half_res, half_res_places)
+                    tol = 1e-10
+                    boundary_x_min_o = copy.deepcopy(boundary_x_min)
+                    boundary_y_min_o = copy.deepcopy(boundary_y_min)
+                    
+                    boundary_x_min = round(adjust_down(boundary_x_min / half_res, tol) * half_res, half_res_places)
+                    boundary_x_max = round(adjust_up(boundary_x_max / half_res, tol) * half_res, half_res_places)
+                    boundary_y_min = round(adjust_down(boundary_y_min / half_res, tol) * half_res, half_res_places)
+                    boundary_y_max = round(adjust_up(boundary_y_max / half_res, tol) * half_res, half_res_places)
                     
                     # offset: make center (start from) to res
-                    boundary_x_min = adjust_offset(boundary_x_min, half_res, res)
-                    boundary_y_min = adjust_offset(boundary_y_min, half_res, res)
+                    boundary_x_min = adjust_offset(boundary_x_min, half_res, res, tol)
+                    boundary_y_min = adjust_offset(boundary_y_min, half_res, res, tol)
+                    
+                    # adjust
+                    if (boundary_x_min + res - boundary_x_min_o) <= tol:
+                        boundary_x_min += res
+                    
+                    if (boundary_y_min + res - boundary_y_min_o) <= tol:
+                        boundary_y_min += res
                 
                 n_x = (boundary_x_max - boundary_x_min) / res
                 n_y = (boundary_y_max - boundary_y_min) / res
                 
-                n_x_fixed = adjust_up(n_x/1) + 2 * expand_grids_num
-                n_y_fixed = adjust_up(n_y/1) + 2 * expand_grids_num
+                n_x_fixed = adjust_up(n_x/1, tol) + 2 * expand_grids_num
+                n_y_fixed = adjust_up(n_y/1, tol) + 2 * expand_grids_num
                 
                 cen_lons = boundary_x_min + half_res - expand_grids_num * res + np.arange(n_x_fixed) * res
                 cen_lats = boundary_y_min + half_res - expand_grids_num * res + np.arange(n_y_fixed) * res
