@@ -57,11 +57,14 @@ import os
 import shutil
 
 import rasterio
+from netCDF4 import Dataset
 
 from . import logger
 from .tools.geo_func.search_grids import *
 from .tools.hydroanalysis_func import (create_dem, create_flow_distance)
 from .tools.utilities import remove_and_mkdir
+from .tools.routing_func.river_network import create_river_network_graph, find_river_paths, sort_river_paths_by_lengths
+from .tools.plot_func.plot_func import plot_river_network
 
 
 def buildHydroanalysis_level0(
@@ -228,3 +231,44 @@ def buildHydroanalysis_level1(
     # logger.debug(f"Workspace directory cleaned: {working_directory}")
 
     logger.info(f"Building hydroanalysis successfully, the results have been saved to {evb_dir.Hydroanalysis_dir}")
+
+
+def buildRivernetwork_level1(
+    evb_dir,
+    threshold=None,
+    flow_direction_dataset=None,
+    domain_dataset=None,
+    plot_bool=False,
+):
+    # read flow_direction, domain dataset
+    if flow_direction_dataset is None:
+        with Dataset(evb_dir.flow_direction_file_path, "r") as flow_direction_dataset:
+            flow_direction = flow_direction_dataset.variables["Flow_Direction"][:, :]
+            flow_acc = flow_direction_dataset.variables["Source_Area"][:, :]
+            
+    if domain_dataset is None:
+        with Dataset(evb_dir.domainFile_path, "r") as domain_dataset:
+            domain_mask = domain_dataset.variables["mask"][:, :]
+        
+    # create graph
+    river_network_graph, node_positions, threshold = create_river_network_graph(flow_direction, flow_acc, threshold=threshold, mask=domain_mask)
+    
+    # find river
+    river_paths = find_river_paths(river_network_graph)
+    sorted_river_paths, length_info = sort_river_paths_by_lengths(river_paths, descending=True)
+    
+    # plot
+    if plot_bool:
+        fig, ax = plot_river_network(river_network_graph, mask_by="both", threshold=threshold)  # sorted_river_paths[:2], "both"
+    else:
+        fig, ax = None, None
+    
+    river_network = {
+        "river_network_graph": river_network_graph,
+        "node_positions": node_positions,
+        "threshold": threshold,
+        "sorted_river_paths": sorted_river_paths,
+        "length_info": length_info
+    }
+    
+    return river_network, fig, ax

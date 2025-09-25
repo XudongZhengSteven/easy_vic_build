@@ -75,6 +75,8 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.ticker import FuncFormatter, MultipleLocator
+from matplotlib.lines import Line2D
+
 from netCDF4 import num2date
 import geopandas as gpd
 import os
@@ -2675,3 +2677,163 @@ def plot_check_search(
     ax.set_title("check search")
     
     plt.show(block=True)
+    
+
+def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, threshold=None):
+    import networkx as nx
+    from ..routing_func.river_network import get_display_positions
+    
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    # plot set
+    color_scheme = {
+        'river_node': '#fde725', # '#440154',
+        'hillslope_node': '#9E9E9E',
+        'sink_node': 'k',
+        'river_edge': 'r',
+        'normal_edge': '#E0E0E0',
+        'background': '#F8F8F8'
+    }
+
+    basic_node_size = 50
+    basic_edge_width = 0.8
+    
+    # background
+    fig.patch.set_facecolor('white')
+    ax.set_facecolor(color_scheme['background'])
+    
+    #* pos
+    pos = get_display_positions(G)
+    
+    if not pos:
+        print("no pos founded, using spring layout")
+        pos = nx.spring_layout(G)
+    
+    # nodes
+    all_nodes = list(G.nodes())
+    if mask_by is not None:
+        all_nodes = [n for n in all_nodes if G.nodes[n].get("mask", 0) == 1]
+    river_nodes = [n for n in all_nodes if G.nodes[n].get("node_type", "hillslope") == "river"]
+    hillslope_sink_nodes = [n for n in all_nodes if n not in river_nodes]
+    
+    nx.draw_networkx_nodes(
+        G, pos, nodelist=hillslope_sink_nodes, 
+        node_color=[color_scheme['hillslope_node'] if G.nodes[n].get('node_type') != 'sink' else color_scheme['sink_node'] for n in hillslope_sink_nodes],
+        node_size=[basic_node_size-30 if G.nodes[n].get('node_type') != 'sink' else basic_node_size+30 for n in hillslope_sink_nodes],
+        alpha=0.5, ax=ax
+    )
+    
+    river_nodes_cmap = plt.cm.viridis_r
+    original_acc_values = [G.nodes[node].get('flow_acc', 0) for node in river_nodes]
+    log_acc_values = np.log1p(original_acc_values)
+    river_nodes_norm = mcolors.Normalize(vmin=min(log_acc_values), vmax=max(log_acc_values))
+    vmin_adjusted = min(log_acc_values) + 0.5 * (max(log_acc_values) - min(log_acc_values))
+    river_nodes_norm = mcolors.Normalize(vmin=vmin_adjusted, vmax=max(log_acc_values))
+    
+    nx.draw_networkx_nodes(
+        G, pos, nodelist=river_nodes,
+        node_color=river_nodes_cmap(river_nodes_norm(log_acc_values)),
+        node_size=[basic_node_size + min(G.nodes[n].get('flow_acc', 0)/100, 100) for n in river_nodes],
+        edgecolors='darkblue',
+        alpha=0.8, ax=ax
+    )
+    
+    # normal edges
+    all_edges = list(G.edges())
+    if mask_by is not None:
+        if mask_by == "from":
+            all_edges = [e for e in all_edges if G.edges[e].get('from_mask') == 1]
+        elif mask_by == "to":
+            all_edges = [e for e in all_edges if G.edges[e].get('to_mask') == 1]
+        elif mask_by == "both":
+            all_edges = [e for e in all_edges if G.edges[e].get('from_mask') == 1 and G.edges[e].get('to_mask') == 1]
+        elif mask_by == "either":
+            all_edges = [e for e in all_edges if G.edges[e].get('from_mask') == 1 or G.edges[e].get('to_mask') == 1]
+    
+    normal_edges = [e for e in all_edges if not 
+                    (G.nodes[e[0]].get('is_river', False) and 
+                     G.nodes[e[1]].get('is_river', False))]
+    
+    nx.draw_networkx_edges(
+        G, pos, edgelist=normal_edges,
+        edge_color=color_scheme['normal_edge'],
+        width=basic_edge_width, alpha=0.8, arrows=False, ax=ax
+    )
+    
+    # river edges (river paths)
+    river_edges = []
+    if river_paths is not None:
+        for path in river_paths:
+            for i in range(len(path) - 1):
+                if G.has_edge(path[i], path[i+1]) and (path[i], path[i+1]) not in river_edges:
+                    edge = (path[i], path[i+1])
+                    
+                    if mask_by is not None:
+                        edge_data = G.edges[edge]
+                        from_mask = edge_data.get('from_mask', 0)
+                        to_mask = edge_data.get('to_mask', 0)
+                        
+                        if mask_by == "from" and from_mask != 1:
+                            continue
+                        elif mask_by == "to" and to_mask != 1:
+                            continue
+                        elif mask_by == "both" and (from_mask != 1 or to_mask != 1):
+                            continue
+                        elif mask_by == "either" and (from_mask != 1 and to_mask != 1):
+                            continue
+                        
+                    river_edges.append((path[i], path[i+1]))
+    else:
+        river_edges = [e for e in all_edges if 
+                      G.nodes[e[0]].get('is_river', False) and 
+                      G.nodes[e[1]].get('is_river', False)]
+    
+    nx.draw_networkx_edges(
+        G, pos, edgelist=river_edges,
+        edge_color=color_scheme["river_edge"], width=basic_edge_width+0.5, alpha=0.8,
+        arrows=True, arrowsize=10, arrowstyle="->",
+        node_size=20,
+    )
+    
+    legend_handles = [
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_scheme['river_node'], markersize=10, markeredgecolor='darkblue', label='River Node'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_scheme['hillslope_node'], markersize=8, label='Hillslope Node'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_scheme['sink_node'], markersize=10, alpha=0.5, label='Sink Node'),
+        Line2D([0], [0], color=color_scheme['river_edge'], linewidth=2, label='River Edge'),
+        Line2D([0], [0], color=color_scheme['normal_edge'], linewidth=2, label='Normal Edge')
+    ]
+    
+    ax.legend(
+        handles=legend_handles, loc='best', frameon=True, facecolor='white', edgecolor='black',
+        prop={'family': 'Arial', 'size': 12}
+    )
+    
+    for spine in ax.spines.values():
+        spine.set_visible(True)
+        spine.set_color('black')
+        spine.set_linewidth(1.5)
+    
+    cbar_norm = mcolors.Normalize(vmin=np.expm1(vmin_adjusted), vmax=max(original_acc_values))
+    sm = plt.cm.ScalarMappable(cmap=river_nodes_cmap, norm=cbar_norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax, shrink=0.8)
+    cbar.set_label(
+        'Flow Accumulation', rotation=270, labelpad=15,
+        fontfamily="Arial", fontsize=14,
+    )
+    
+    title = "River network topology" if threshold is None else f"River network topology (threshold {threshold})"
+    ax.set_title(
+        title,
+        fontdict={
+            "fontfamily": 'Arial',
+            "fontweight": 'bold',
+            "fontsize": 16,
+        },
+        pad=10.0
+    )
+    
+    plt.tight_layout(pad=3.0)
+    plt.show(block=True)
+    
+    return fig, ax
