@@ -554,7 +554,11 @@ class buildParam_level0_interface:
         self.logger.debug("setting d1... ...")
         
         self.grid_array_d1 = self.tf_VIC.d1(
-            self.grid_array_ksat_layers[self.arno_baseflow_layer_num], self.grid_array_mean_slope, *self.g_params["d1"]["optimal"]
+            self.grid_array_ksat_layers[self.arno_baseflow_layer_num],
+            self.grid_array_mean_slope,
+            self.grid_array_phi_s_layers[self.arno_baseflow_layer_num],
+            self.grid_array_depth_layers[self.arno_baseflow_layer_num],
+            *self.g_params["d1"]["optimal"]
         )
         self.params_dataset_level0.variables["d1"][:, :] = self.grid_array_d1
         
@@ -572,8 +576,12 @@ class buildParam_level0_interface:
         self.logger.debug("setting d3... ...")
         
         self.grid_array_d3 = self.tf_VIC.d3(
-            self.grid_array_fc_layers[self.arno_baseflow_layer_num], self.grid_array_depth_layers[self.arno_baseflow_layer_num], *self.g_params["d3"]["optimal"]
+            self.grid_array_fc_layers[self.arno_baseflow_layer_num],
+            self.grid_array_phi_s_layers[self.arno_baseflow_layer_num],
+            self.grid_array_depth_layers[self.arno_baseflow_layer_num],
+            *self.g_params["d3"]["optimal"]
         )
+        
         self.params_dataset_level0.variables["d3"][:, :] = self.grid_array_d3
         
     def set_Dsmax(self):

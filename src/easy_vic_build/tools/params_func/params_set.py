@@ -53,8 +53,8 @@ g_params = {
     },
     
     "b_infilt": {
-        "default": [1.0, 0.2],
-        "boundary": [[0.0, 0.1], [1.0, 0.5]],
+        "default": [0.0, 1.0],
+        "boundary": [[-2.0, 0.8], [1.0, 1.2]],
         "type": float,
         "optimal": [None, None],
         "free": True,
@@ -109,24 +109,24 @@ g_params = {
     },
     
     "d1": {
-        "default": [4.5],
-        "boundary": [[4.0], [5.0]],
+        "default": [2.0],
+        "boundary": [[1.75], [3.5]],
         "type": float,
         "optimal": [None],
         "free": True,
     },
     
     "d2": {
-        "default": [4.0],
-        "boundary": [[2.6], [5.6]],
+        "default": [2.0],
+        "boundary": [[1.75], [3.5]],
         "type": float,
         "optimal": [None],
         "free": True,
     },
     
     "d3": {
-        "default": [0.2],
-        "boundary": [[0.05], [0.5]],
+        "default": [1.0],
+        "boundary": [[0.001], [2.0]],
         "type": float,
         "optimal": [None],
         "free": True,

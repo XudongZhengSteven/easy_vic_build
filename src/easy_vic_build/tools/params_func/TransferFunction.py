@@ -62,10 +62,10 @@ class TF_VIC:
         # Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.
         # Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.
         # b_infilt, N/A, 0.01~0.5 = log(ele_std) - ele_std_min / log(ele_std) + ele_std_max
-        # g1, g2: 1.0 (-1.0, 5.0), 0.2 (0.1, 0.5)  # TODO recheck (ele_std - g1) / (ele_std + g2*10)
+        # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)
         # Arithmetic mean
         b_infilt_min = 0.001
-        b_infilt_max = 1.0  # 0.50  # check
+        b_infilt_max = 0.50
         ret = (np.log(ele_std) - g1) / (np.log(ele_std) + g2 * 10)
 
         ret[ret > b_infilt_max] = b_infilt_max
@@ -342,9 +342,9 @@ class TF_VIC:
         return ret
 
     @staticmethod
-    def d1(Ks, slope_mean, g):
+    def d1(Ks, slope_mean, phi_s, depth, g):
         """
-        Calculate the d1 parameter, with units of day^-1.
+        Calculate the d1 parameter, with units of day^-1, the coefficient of the linear reservoir (baseflow, bottom layer).
 
         Parameters
         ----------
@@ -363,11 +363,11 @@ class TF_VIC:
         # Ks: layer3
         # d1, [day^-1]
         # Harmonic mean
-        Sf = 1.0
         d1_min = 0.0001
         d1_max = 1.0
         unit_factor1 = 60 * 60 * 24
-        unit_factor2 = 1.0  # 0.01
+        unit_factor2 = 0.01
+        Sf = 1.0  # Sf is a normalization factor of soil moisture [L] set to one
         ret = (Ks * unit_factor1) * (slope_mean * unit_factor2) / (10**g) / Sf
 
         ret[ret > d1_max] = d1_max
@@ -377,7 +377,7 @@ class TF_VIC:
     @staticmethod
     def d2(Ks, slope_mean, d4, g):
         """
-        Calculate the d2 parameter with units of day^-d4.
+        Calculate the d2 parameter with units of day^-d4, the coefficient of the nonlinear reservoir (baseflow, bottom layer).
 
         Parameters
         ----------
@@ -398,11 +398,11 @@ class TF_VIC:
         # Ks: layer3
         # d2, [day^-d4]
         # Harmonic mean
-        Sf = 1.0
         d2_min = 0.0001
         d2_max = 1.0
         unit_factor1 = 60 * 60 * 24
-        unit_factor2 = 1.0  # 0.01
+        unit_factor2 = 0.01
+        Sf = 1.0  # Sf is a normalization factor of soil moisture [L] set to one
         ret = (Ks * unit_factor1) * (slope_mean * unit_factor2) / (10**g) / (Sf**d4)
 
         ret[ret > d2_max] = d2_max
@@ -411,9 +411,9 @@ class TF_VIC:
         return ret
 
     @staticmethod
-    def d3(fc, depth, g):
+    def d3(fc, phi_s, depth, g):
         """
-        Calculate the d3 parameter in mm.
+        Calculate the d3 parameter in mm, the soil mois-ture level at which the baseflow transitions from linear to nonlinear.
 
         Parameters
         ----------
@@ -431,21 +431,23 @@ class TF_VIC:
         """
         # depth: layer3, m
         # d3, [mm]
-        # g: 0.2 (0.05, 0.5)
         # Arithmetic mean
-        d3_min = 0.0001
-        d3_max = 1000.0
         unit_factor1 = 1000
-        ret = fc * (depth * unit_factor1) * g
+        depth_mm = depth * unit_factor1
 
-        ret[ret > d3_max] = d3_max
-        ret[ret < d3_min] = d3_min
+        d3_min = 0.0001
+        d3_max = phi_s * 0.8 * depth_mm  # <= 80% phi_s * depth_mm
+
+        ret = fc * depth_mm * g
+        ret = np.minimum(ret, d3_max)
+        ret = np.maximum(ret, d3_min)
+        
         return ret
 
     @staticmethod
     def d4(g=2):  # set to 2
         """
-        Return the value for d4, typically set to 2.
+        Return the value for d4, typically set to 2, the exponent of the nonlinear part of the outflow curve (note that d4>=1).
 
         Parameters
         ----------
