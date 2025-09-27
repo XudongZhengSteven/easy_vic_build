@@ -61,6 +61,8 @@ Author:
 import os
 import pickle
 import random
+import matplotlib.pyplot as plt
+import numpy as np
 
 from deap import algorithms, base, creator, tools
 from tqdm import *
@@ -480,8 +482,56 @@ class NSGAII_Base:
         with open(self.save_path, "wb") as f:
             pickle.dump(state, f)
 
+    def plot_front_pairwise(self, population, front, gen, names_plot=None, plot_dir="pareto_progress", transform_func=None):
+        if not os.path.exists(plot_dir):
+            os.makedirs(plot_dir)
+
+        # default names if not provided
+        n_obj = len(population[0].fitness.values)
+        
+        if names_plot is None:
+            names_plot = [f"obj{i+1}" for i in range(n_obj)]
+
+        # extract population and front values
+        pop_vals = np.array([ind.fitness.values for ind in population])
+        front_vals = np.array([ind.fitness.values for ind in front])
+        if transform_func is not None:
+            pop_vals = transform_func(pop_vals)
+            front_vals = transform_func(front_vals)
+            
+        # create subplots
+        f, axes = plt.subplots(nrows=n_obj, ncols=n_obj, figsize=(2*n_obj, 2*n_obj),
+                               gridspec_kw={"wspace": 0.25, "hspace": 0.25,
+                                            "left":0.1, "right": 0.95,
+                                            "bottom": 0.1, "top": 0.95}
+                               )
+
+        for i in range(n_obj):
+            for j in range(n_obj):
+                ax = axes[i, j]
+                
+                ax.scatter(pop_vals[:, j], pop_vals[:, i], color='grey', s=10, alpha=0.5, zorder=5)
+                ax.scatter(front_vals[:, j], front_vals[:, i], color='red', s=15, zorder=10)
+
+                # set axis labels
+                if i == n_obj - 1:
+                    ax.set_xlabel(names_plot[j], fontdict={'weight':'bold'})
+                if j == 0:
+                    ax.set_ylabel(names_plot[i], fontdict={'weight':'bold'})
+
+        plt.suptitle(f'Generation {gen}', fontsize=14, weight='bold')
+        plt.tight_layout(rect=[0, 0, 1, 0.97])
+        plt.savefig(os.path.join(plot_dir, f'NSGAII_process.png'))
+        plt.close()
+
     @clock_decorator(print_arg_ret=False)
-    def run(self):
+    def run(
+        self,
+        plot_progress=False,
+        plot_dir="pareto_progress",
+        names_plot=None,
+        transform_func=None
+    ):
         """
         Runs the NSGA-II algorithm for the specified number of generations.
 
@@ -517,20 +567,34 @@ class NSGAII_Base:
             # combine population and offspring
             combined = self.population + offspring
 
-            # sortNondominated to get fronts and front
-            front = tools.sortNondominated(
-                combined, len(combined), first_front_only=True
+            # sortNondominated to get fronts (first_front_only=True, only get the first front, else all front, namely fronts)
+            fronts = tools.sortNondominated(
+                combined, len(combined), first_front_only=False
             )
-
-            # cal crowding
-            for f in front:
-                tools.emo.assignCrowdingDist(f)
+            
+            # calculate crowding distance only for first front for history
+            first_front = fronts[0]
+            tools.emo.assignCrowdingDist(first_front)
 
             # save history (population and front)
-            self.history.append((deepcopy(self.population), deepcopy(front)))
-
+            self.history.append({
+                "population": deepcopy(self.population),
+                "combined_population": deepcopy(combined),
+                "fronts": deepcopy(fronts),
+                "first_front": deepcopy(first_front),
+            })
+            
             # save state at the end of each gen
             self.save_state()
+            
+            # plot
+            if plot_progress:
+                self.plot_front_pairwise(
+                    combined, first_front, gen,
+                    names_plot=names_plot,
+                    plot_dir=plot_dir,
+                    transform_func=transform_func
+                )
 
             # update population: select next generation
             self.population[:] = self.select_next_generation(combined)
@@ -538,3 +602,5 @@ class NSGAII_Base:
         self.print_results(self.population)
 
         return self.population
+
+
