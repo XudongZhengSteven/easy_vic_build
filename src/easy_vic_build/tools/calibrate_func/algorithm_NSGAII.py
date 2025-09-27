@@ -483,18 +483,22 @@ class NSGAII_Base:
             pickle.dump(state, f)
 
     def plot_front_pairwise(self, population, front, gen, names_plot=None, plot_dir="pareto_progress", transform_func=None):
+        # check plot_dir
         if not os.path.exists(plot_dir):
             os.makedirs(plot_dir)
 
         # default names if not provided
         n_obj = len(population[0].fitness.values)
-        
         if names_plot is None:
             names_plot = [f"obj{i+1}" for i in range(n_obj)]
 
         # extract population and front values
         pop_vals = np.array([ind.fitness.values for ind in population])
         front_vals = np.array([ind.fitness.values for ind in front])
+        all_vals = np.vstack([pop_vals, front_vals])
+        valid_mask = (all_vals != -9999.0) & (all_vals != 9999.0)
+        all_vals_clean = all_vals[valid_mask].reshape(-1, all_vals.shape[1])
+
         if transform_func is not None:
             pop_vals = transform_func(pop_vals)
             front_vals = transform_func(front_vals)
@@ -505,12 +509,10 @@ class NSGAII_Base:
                                             "left":0.1, "right": 0.95,
                                             "bottom": 0.1, "top": 0.95}
                                )
-
         for i in range(n_obj):
             for j in range(n_obj):
                 ax = axes[i, j]
-                
-                ax.scatter(pop_vals[:, j], pop_vals[:, i], color='grey', s=10, alpha=0.5, zorder=5)
+                ax.scatter(pop_vals[:, j], pop_vals[:, i], color='gray', s=10, alpha=0.7, zorder=5)
                 ax.scatter(front_vals[:, j], front_vals[:, i], color='red', s=15, zorder=10)
 
                 # set axis labels
@@ -518,6 +520,15 @@ class NSGAII_Base:
                     ax.set_xlabel(names_plot[j], fontdict={'weight':'bold'})
                 if j == 0:
                     ax.set_ylabel(names_plot[i], fontdict={'weight':'bold'})
+
+                x_min, x_max = np.percentile(all_vals_clean[:, j], [2, 100])
+                y_min, y_max = np.percentile(all_vals_clean[:, i], [2, 100])
+
+                pad_x = (x_max - x_min) * 0.05
+                pad_y = (y_max - y_min) * 0.05
+
+                ax.set_xlim((x_min-pad_x, x_max+pad_x))
+                ax.set_ylim((y_min-pad_y, y_max+pad_y))
 
         plt.suptitle(f'Generation {gen}', fontsize=14, weight='bold')
         plt.tight_layout(rect=[0, 0, 1, 0.97])
