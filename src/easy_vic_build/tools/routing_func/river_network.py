@@ -4,6 +4,7 @@
 
 import numpy as np
 import networkx as nx
+from collections import deque
 
 direction_mapping_num = {
     1: (0, 1),  # (lat/row: 1 sourth, -1 north, lon/column: 1 east, -1 west)
@@ -229,6 +230,80 @@ def sort_river_paths_by_lengths(river_paths, descending=True):
         })
         
     return sorted_river_paths, length_info
+
+
+def extract_connected_river_network(G, min_size=10, mask=False):
+    if mask:
+        river_nodes = [n for n, d in G.nodes(data=True) if d.get("is_river", False) and d.get("mask")]
+    else:
+        river_nodes = [n for n, d in G.nodes(data=True) if d.get("is_river", False)]
+    
+    H = G.subgraph(river_nodes).copy()
+
+    components = list(nx.weakly_connected_components(H))
+
+    components = [c for c in components if len(c) >= min_size]
+
+    if len(components) > 0:
+        largest_component = max(components, key=len)
+        H_main = H.subgraph(largest_component).copy()
+    else:
+        H_main = nx.DiGraph()
+    
+    return H_main
+
+
+def build_node_features(G, matrix_features):
+    node_features = [[] for _ in range(len(matrix_features))]
+    
+    for node_name in G.nodes:
+        i, j = G.nodes[node_name]["matrix_pos"]
+        
+        for n in range(len(matrix_features)):
+            matrix_feature = matrix_features[n]
+            if len(matrix_feature.shape) == 3:
+                node_features[n].append(matrix_feature[:, i, j])
+            else:
+                node_features[n].append(matrix_feature[i, j])
+    
+    node_features = [np.array(node_feature) for node_feature in node_features]
+    
+    return node_features
+
+
+def build_upstream_subgraph_for_node(
+    G, target_node, khop=None, cutoff_node=None
+):
+    new_edges = []
+    visited = set()
+    queue = deque()
+    queue.append((target_node, 0))
+
+    while queue:
+        node, hop = queue.popleft()
+
+        if khop is not None and hop >= khop:
+            continue
+
+        for source_node in G.predecessors(node):
+            new_edges.append((source_node, node))
+            
+            if source_node == cutoff_node:
+                continue  # cutoff
+            
+            if (source_node, target_node) in visited:
+                continue
+            
+            if source_node not in visited:
+                visited.add(source_node)
+                queue.append((source_node, hop + 1))
+
+    # create subgraph
+    sub_nodes = set([target_node] + [u for u, _ in new_edges])
+    new_G = G.subgraph(sub_nodes).copy()
+    new_G.add_edges_from(new_edges)
+
+    return new_G, new_edges
 
 
 if __name__ == "__main__":

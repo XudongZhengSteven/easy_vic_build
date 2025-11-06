@@ -210,7 +210,7 @@ class dataProcess_base(ABC):
             
             elif isinstance(data, pd.DataFrame):
                 cols_to_join = data.columns.difference(merged_grid_shp.columns)
-                logger.info(f"below columns will be added to the merged_grid_shp:\n\nAdded {cols_to_join}\n\n")
+                logger.debug(f"below columns will be added to the merged_grid_shp:\n\nAdded {cols_to_join}\n\n")
 
             else:
                 logger.warning(f"Expected DataFrame for {save_name}, got {type(data)}, will not be added to the merged_grid_shp")

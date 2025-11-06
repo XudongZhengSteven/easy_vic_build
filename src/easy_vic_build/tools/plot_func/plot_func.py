@@ -2679,7 +2679,7 @@ def plot_check_search(
     plt.show(block=True)
     
 
-def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, threshold=None):
+def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, threshold=None, labeled_nodes=None):
     import networkx as nx
     from ..routing_func.river_network import get_display_positions
     
@@ -2737,6 +2737,28 @@ def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, thres
         edgecolors='darkblue',
         alpha=0.8, ax=ax
     )
+    
+    if labeled_nodes is not None:
+        if not isinstance(labeled_nodes, list):
+            labeled_nodes = [labeled_nodes]
+        
+        nx.draw_networkx_nodes(
+            G, pos, nodelist=labeled_nodes,
+            node_color='none',
+            node_shape='^',
+            node_size=basic_node_size*2.5,
+            edgecolors='blue',  # royalblue
+            linewidths=1.8,
+            alpha=1, ax=ax
+        )
+        
+        label_offset = 0.025
+        for n in labeled_nodes:
+            x, y = pos[n]
+            ax.text(x + label_offset, y + label_offset, str(n),
+                    fontsize=9, fontweight='bold', color='darkblue',
+                    ha='left', va='bottom',
+                    bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.6))
     
     # normal edges
     all_edges = list(G.edges())
