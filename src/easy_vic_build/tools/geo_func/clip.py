@@ -28,6 +28,11 @@ Author:
 """
 
 import numpy as np
+import os
+import rasterio
+from rasterio.mask import mask
+from rasterio import windows
+import geopandas as gpd
 
 
 def clip(dst_lat, dst_lon, dst_res, src_lat, src_lon, src_data, reverse_lat=True):
@@ -111,3 +116,98 @@ def clip(dst_lat, dst_lon, dst_res, src_lat, src_lon, src_data, reverse_lat=True
     #                                                                     lat_radius=grid_shp_res/2, lon_radius=grid_shp_res/2)
 
     return src_data_clip, src_lon_clip, src_lat_clip
+
+
+def clip_tiff(
+    input_tiff: str,
+    output_tiff: str,
+    bbox: tuple = None,
+    shp_path: str = None
+):
+    """
+    Clip a GeoTIFF file using either a geographic bounding box or a shapefile.
+
+    Parameters
+    ----------
+    input_tiff : str
+        Path to the input GeoTIFF file.
+    output_tiff : str
+        Path to the output clipped GeoTIFF file.
+    bbox : tuple, optional
+        Geographic extent (xmin, ymin, xmax, ymax), e.g. (105.2, 33.5, 106.8, 34.9).
+    shp_path : str, optional
+        Path to a shapefile used as the clipping boundary.
+
+    Examples
+    ----------
+    # Clip by bounding box
+    clip_tiff(
+        input_tiff="input.tif",
+        output_tiff="clipped_bbox.tif",
+        bbox=(105.2, 33.5, 106.8, 34.9)
+    )
+
+    # Clip by shapefile
+    clip_tiff(
+        input_tiff="input.tif",
+        output_tiff="clipped_shp.tif",
+        shp_path="basin_boundary.shp"
+    )
+    """
+    # ---------------- Check input validity ----------------
+    if not os.path.exists(input_tiff):
+        raise FileNotFoundError(f"Input file not found: {input_tiff}")
+
+    if bbox is None and shp_path is None:
+        raise ValueError("Either 'bbox' or 'shp_path' must be provided.")
+
+    with rasterio.open(input_tiff) as src:
+        # ---------------- Clip by shapefile ----------------
+        if shp_path is not None:
+            if not os.path.exists(shp_path):
+                raise FileNotFoundError(f"Shapefile not found: {shp_path}")
+
+            # Read shapefile and convert CRS to match raster
+            gdf = gpd.read_file(shp_path)
+            gdf = gdf.to_crs(src.crs)
+
+            # Extract geometry
+            geoms = [feature["geometry"] for feature in gdf.__geo_interface__["features"]]
+
+            # Perform masking and cropping
+            out_image, out_transform = mask(src, geoms, crop=True)
+            out_meta = src.meta.copy()
+            out_meta.update({
+                "driver": "GTiff",
+                "height": out_image.shape[1],
+                "width": out_image.shape[2],
+                "transform": out_transform
+            })
+
+        # ---------------- Clip by bounding box ----------------
+        elif bbox is not None:
+            xmin, ymin, xmax, ymax = bbox
+            # Compute the pixel window corresponding to the bbox
+            window = windows.from_bounds(xmin, ymin, xmax, ymax, src.transform)
+
+            # Read data within the window
+            out_image = src.read(window=window)
+            out_transform = windows.transform(window, src.transform)
+
+            out_meta = src.meta.copy()
+            out_meta.update({
+                "driver": "GTiff",
+                "height": out_image.shape[1],
+                "width": out_image.shape[2],
+                "transform": out_transform
+            })
+
+    # ---------------- Write clipped raster ----------------
+    os.makedirs(os.path.dirname(output_tiff), exist_ok=True)
+    with rasterio.open(output_tiff, "w", **out_meta) as dest:
+        dest.write(out_image)
+
+    print(f"Clipping completed. Output saved to: {output_tiff}")
+
+    
+    

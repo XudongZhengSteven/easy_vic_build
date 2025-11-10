@@ -286,6 +286,7 @@ def hydroanalysis_for_level1(
     crs_str="EPSG:4326",
     esri_pointer=True,
     outlets_with_reference_coords=None,
+    fill_dem_bool=True,
 ):
     """
     Performs hydrological analysis at Level 1 (modeling scale) to generate files for runoff routing modeling.
@@ -377,13 +378,16 @@ def hydroanalysis_for_level1(
     wbe = set_workenv.setWorkenv(working_directory)
 
     # fill dem
-    logger.info("Filling DEM... ...")
-    dst_filled_dem = fill_dem.filldem(
-        wbe,
-        dem_path=dem_level1_path,
-        output_file="filled_dem.tif",
-        **filldem_kwargs
-    )
+    if fill_dem_bool:
+        logger.info("Filling DEM... ...")
+        dst_filled_dem = fill_dem.filldem(
+            wbe,
+            dem_path=dem_level1_path,
+            output_file="filled_dem.tif",
+            **filldem_kwargs
+        )
+    else:
+        dst_filled_dem = wbe.read_raster(dem_level1_path)
     
     # flow direction
     logger.info("Calculating flow direction... ...")

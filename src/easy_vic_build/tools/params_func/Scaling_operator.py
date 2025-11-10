@@ -131,7 +131,17 @@ class Scaling_operator:
         """
         data = np.array(data)
         return np.nanmean(data)
+    
+    @staticmethod
+    def Arithmetic_max(data):
+        data = np.array(data)
+        return np.nanmax(data)
 
+    @staticmethod
+    def Arithmetic_min(data):
+        data = np.array(data)
+        return np.nanmin(data)
+    
     @staticmethod
     def Geometric_mean(data):
         """

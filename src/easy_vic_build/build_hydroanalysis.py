@@ -63,7 +63,7 @@ from . import logger
 from .tools.geo_func.search_grids import *
 from .tools.hydroanalysis_func import (create_dem, create_flow_distance)
 from .tools.utilities import remove_and_mkdir
-from .tools.routing_func.river_network import create_river_network_graph, find_river_paths, sort_river_paths_by_lengths
+from .tools.routing_func.river_network import create_river_network_graph, find_river_paths, sort_river_paths_by_lengths, extract_connected_river_network
 from .tools.plot_func.plot_func import plot_river_network
 
 
@@ -236,39 +236,54 @@ def buildHydroanalysis_level1(
 def buildRivernetwork_level1(
     evb_dir,
     threshold=None,
-    flow_direction_dataset=None,
     domain_dataset=None,
     plot_bool=False,
+    labeled_nodes=None,
 ):
     # read flow_direction, domain dataset
-    if flow_direction_dataset is None:
-        with Dataset(evb_dir.flow_direction_file_path, "r") as flow_direction_dataset:
-            flow_direction = flow_direction_dataset.variables["Flow_Direction"][:, :]
-            flow_acc = flow_direction_dataset.variables["Source_Area"][:, :]
-            
+    flow_direction_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_direction.tif")
+    flow_acc_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_acc.tif")
+    
+    with rasterio.open(flow_direction_path, "r", driver="GTiff") as dataset:
+        flow_direction = dataset.read(1)
+    
+    with rasterio.open(flow_acc_path, "r", driver="GTiff") as dataset:
+        flow_acc = dataset.read(1)
+    
     if domain_dataset is None:
-        with Dataset(evb_dir.domainFile_path, "r") as domain_dataset:
-            domain_mask = domain_dataset.variables["mask"][:, :]
+        domain_dataset = Dataset(evb_dir.domainFile_path, "r")
+
+    domain_mask = domain_dataset.variables["mask"][:, :]
+    domain_dataset.close()
         
     # create graph
     river_network_graph, node_positions, threshold = create_river_network_graph(flow_direction, flow_acc, threshold=threshold, mask=domain_mask)
+    
+    # create graph full
+    river_network_graph_full, *_ = create_river_network_graph(flow_direction, flow_acc, threshold=0, mask=None)
     
     # find river
     river_paths = find_river_paths(river_network_graph)
     sorted_river_paths, length_info = sort_river_paths_by_lengths(river_paths, descending=True)
     
+    # get river network graph connected
+    river_network_graph_connected = extract_connected_river_network(river_network_graph, min_size=10, mask=True)
+    
     # plot
     if plot_bool:
-        fig, ax = plot_river_network(river_network_graph, mask_by="both", threshold=threshold)  # sorted_river_paths[:2], "both"
-    else:
-        fig, ax = None, None
+        fig_river_network, ax_river_network = plot_river_network(river_network_graph, mask_by="both", threshold_label=threshold, labeled_nodes=labeled_nodes)  # sorted_river_paths[:2], "both"
+        fig_river_network_full, ax_river_network_full = plot_river_network(river_network_graph_full, mask_by=None, threshold_label=0, labeled_nodes=labeled_nodes)  # sorted_river_paths[:2], "both"
+        fig_river_network_connected, ax_river_network_connected = plot_river_network(river_network_graph_connected, mask_by="both", threshold_label=threshold, labeled_nodes=labeled_nodes)
+
     
     river_network = {
         "river_network_graph": river_network_graph,
+        "river_network_graph_full": river_network_graph_full,
+        "river_network_graph_connected": river_network_graph_connected,
         "node_positions": node_positions,
         "threshold": threshold,
         "sorted_river_paths": sorted_river_paths,
         "length_info": length_info
     }
     
-    return river_network, fig, ax
+    return river_network

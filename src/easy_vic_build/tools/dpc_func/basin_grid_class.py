@@ -281,14 +281,20 @@ class Grids_for_shp(Grids):
                     boundary_x_min_o = copy.deepcopy(boundary_x_min)
                     boundary_y_min_o = copy.deepcopy(boundary_y_min)
                     
-                    boundary_x_min = round(adjust_down(boundary_x_min / half_res, tol) * half_res, half_res_places)
-                    boundary_x_max = round(adjust_up(boundary_x_max / half_res, tol) * half_res, half_res_places)
-                    boundary_y_min = round(adjust_down(boundary_y_min / half_res, tol) * half_res, half_res_places)
-                    boundary_y_max = round(adjust_up(boundary_y_max / half_res, tol) * half_res, half_res_places)
+                    # boundary_x_min = round(adjust_down(boundary_x_min / half_res, tol) * half_res, half_res_places)
+                    # boundary_x_max = round(adjust_up(boundary_x_max / half_res, tol) * half_res, half_res_places)
+                    # boundary_y_min = round(adjust_down(boundary_y_min / half_res, tol) * half_res, half_res_places)
+                    # boundary_y_max = round(adjust_up(boundary_y_max / half_res, tol) * half_res, half_res_places)
+                    boundary_x_min = round(adjust_down((boundary_x_min + half_res) / half_res, tol) * half_res - half_res, half_res_places)
+                    boundary_x_max = round(adjust_up((boundary_x_max + half_res) / half_res, tol) * half_res - half_res, half_res_places)
+                    boundary_y_min = round(adjust_down((boundary_y_min + half_res) / half_res, tol) * half_res - half_res, half_res_places)
+                    boundary_y_max = round(adjust_up((boundary_y_max + half_res) / half_res, tol) * half_res - half_res, half_res_places)
                     
                     # offset: make center (start from) to res
-                    boundary_x_min = adjust_offset(boundary_x_min, half_res, res, tol)
-                    boundary_y_min = adjust_offset(boundary_y_min, half_res, res, tol)
+                    # boundary_x_min = adjust_offset(boundary_x_min, half_res, res, tol)
+                    # boundary_y_min = adjust_offset(boundary_y_min, half_res, res, tol)
+                    boundary_x_min = adjust_offset((boundary_x_min + half_res), half_res, res, tol) - half_res
+                    boundary_y_min = adjust_offset((boundary_y_min + half_res), half_res, res, tol) - half_res
                     
                     # adjust
                     if (boundary_x_min + res - boundary_x_min_o) <= tol:

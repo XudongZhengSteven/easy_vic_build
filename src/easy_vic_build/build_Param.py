@@ -394,7 +394,7 @@ def scaling_level0_to_level1_search_grids(params_dataset_level0, params_dataset_
 @clock_decorator(print_arg_ret=False)
 def scaling_level0_to_level1(
     params_dataset_level0, params_dataset_level1, searched_grids_bool_index=None,
-    nlayer_list=[1, 2, 3],
+    nlayer_list=[1, 2, 3], elev_scaling=None,
 ):
     """
     Scaling the parameters from level 0 to level 1 based on matching grids.
@@ -589,10 +589,18 @@ def scaling_level0_to_level1(
         )
     logger.debug("Scaling init_moist parameter completed")
 
-    # elev, m
-    params_dataset_level1.variables["elev"][:, :] = search_and_resample_func_2d(
-        scaling_operator.Arithmetic_mean, "elev"
-    )
+    # elev, m]
+    if elev_scaling is not None:
+        if elev_scaling == "Arithmetic_min":
+            params_dataset_level1.variables["elev"][:, :] = search_and_resample_func_2d(
+                scaling_operator.Arithmetic_min, "elev"
+            )
+        else:
+            raise ValueError(f"elev_scaling {elev_scaling} not recognized.")
+    else:
+        params_dataset_level1.variables["elev"][:, :] = search_and_resample_func_2d(
+            scaling_operator.Arithmetic_mean, "elev"
+        )
     logger.debug("Scaling elev parameter completed")
     
     # slope, m/m

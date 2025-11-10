@@ -2679,7 +2679,7 @@ def plot_check_search(
     plt.show(block=True)
     
 
-def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, threshold=None, labeled_nodes=None):
+def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, threshold_label=None, labeled_nodes=None):
     import networkx as nx
     from ..routing_func.river_network import get_display_positions
     
@@ -2844,7 +2844,7 @@ def plot_river_network(G, river_paths=None, figsize=(12, 8), mask_by=None, thres
         fontfamily="Arial", fontsize=14,
     )
     
-    title = "River network topology" if threshold is None else f"River network topology (threshold {threshold})"
+    title = "River network topology" if threshold_label is None else f"River network topology (threshold {threshold_label})"
     ax.set_title(
         title,
         fontdict={
