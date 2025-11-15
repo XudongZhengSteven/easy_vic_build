@@ -422,7 +422,7 @@ class ParamManager:
             
         return vec
         
-    def to_dict(self, vector=None, field="optimal", from_free=False):
+    def to_dict(self, vector=None, field="optimal", get_free=False):
         """
         Build and return a full parameter dictionary with values filled from:
         - the internal template (if vector is None), or
@@ -448,7 +448,7 @@ class ParamManager:
 
         idx = 0
         for group, param, dim, typ, free in self._index_map:
-            if from_free and not free:
+            if get_free and not free:
                 new_param[group][param][field] = new_param[group][param]['default']
                 continue  # skip non-free parameters, use default
 
@@ -464,13 +464,13 @@ class ParamManager:
 
         return new_param
     
-    def format_vector(self, vector, from_free=False):
+    def format_vector(self, vector, get_free=False):
         
         formatted_vector = deepcopy(vector)
         
         idx = 0
         for _, _, dim, typ, free in self._index_map:
-            if from_free and not free:
+            if get_free and not free:
                 continue  # skip non-free parameters, use default
 
             values = vector[idx:idx+dim]
@@ -487,7 +487,7 @@ class ParamManager:
             
         return formatted_vector
         
-    def get_vector_info(self, from_free=False):
+    def get_vector_info(self, get_free=False):
         """
         Get combined information of parameters as vectors.
 
@@ -508,7 +508,7 @@ class ParamManager:
         bounds = self.vector_bounds()
         names = self.vector_names()
     
-        if from_free:
+        if get_free:
             free_mask = self.vector_free_mask()
             defaults = [d for d, f in zip(defaults, free_mask) if f]
             optimal = [o for o, f in zip(optimal, free_mask) if f]
@@ -649,11 +649,11 @@ if __name__ == "__main__":
     vector_free_modify[0] = 1.2
     vector_free_modify[1] = 3.2
     
-    formatted_vector = pm.format_vector(vector, from_free=False)
-    formatted_vector_free = pm.format_vector(vector_free_modify, from_free=True)
+    formatted_vector = pm.format_vector(vector, get_free=False)
+    formatted_vector_free = pm.format_vector(vector_free_modify, get_free=True)
     
-    restored_params = pm.to_dict(vector, field='default', from_free=False)
-    restored_params_from_free = pm.to_dict(vector_free_modify, field='optimal', from_free=True)
+    restored_params = pm.to_dict(vector, field='default', get_free=False)
+    restored_params_get_free = pm.to_dict(vector_free_modify, field='optimal', get_free=True)
     
     print("Flattened vector:", vector)
     print("Restored parameters:", restored_params)
