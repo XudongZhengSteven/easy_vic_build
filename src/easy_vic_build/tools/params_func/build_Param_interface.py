@@ -28,7 +28,19 @@ class buildParam_level0_interface:
         stand_grids_lon_level0=None,
         rows_index_level0=None,
         cols_index_level0=None,
+        basin_hierarchy=None,
     ):
+        """ 
+        basin_hierarchy: dict, optional, if given, build multi-level parameters for "total_depths" and "soil_layers_breakpoints"
+            The hierarchy of basins for multi-level parameter building.
+            Default is None.
+            basin_hierarchy = {
+                "station_names": ...,
+                "nest_upstream_map": ...,
+                "subbasin_masks": ...,
+            }
+            
+        """
         self.evb_dir = evb_dir
         self.logger = logger
         self.dpc_VIC_level0 = dpc_VIC_level0
@@ -36,6 +48,7 @@ class buildParam_level0_interface:
         self.g_params = g_params
         self.tf_VIC = TF_VIC()
         self.soillayerresampler = soillayerresampler
+        self.basin_hierarchy = basin_hierarchy
         
         if self.dpc_VIC_level0.get_data_from_cache("merged_grid_shp")[0] is None:
             self.dpc_VIC_level0.merge_grid_data()
@@ -163,28 +176,64 @@ class buildParam_level0_interface:
         # depth, m
         self.logger.debug("setting depths and vertical aggregation... ...")
         
-        # total_dpth
-        total_depth = self.tf_VIC.total_depth(self.soillayerresampler.orig_total, *self.g_params["total_depths"]["optimal"])
-        
-        # resample based on g_params["soil_layers_breakpoints"], get self.grouping attribute (inplace = True)
-        depths = self.tf_VIC.depth(total_depth, self.soillayerresampler, self.g_params["soil_layers_breakpoints"]["optimal"])  # do not uppack, cuz the third params is a list
-        
-        self.grid_array_depth_layers = []
-        for i in range(len(self.nlayer_list)):
-            grid_array_depth_layer_i = createEmptyArray_from_gridshp(
-                self.stand_grids_lat_level0, self.stand_grids_lon_level0, dtype=float, missing_value=np.nan
+        if self.basin_hierarchy is not None:
+            station_names  = self.basin_hierarchy["station_names"]
+            subbasin_masks = self.basin_hierarchy["subbasin_masks_level0"]
+            
+            self.grid_array_depth_layers = [
+                createEmptyArray_from_gridshp(
+                    self.stand_grids_lat_level0,
+                    self.stand_grids_lon_level0,
+                    dtype=float,
+                    missing_value=np.nan,
                 )
+                for _ in range(len(self.nlayer_list))
+            ]
             
-            grid_array_depth_layer_i = assignValue_for_grid_array(
-                grid_array_depth_layer_i,
-                np.full((self.grids_num_level0,), fill_value=depths[i]),
-                self.rows_index_level0,
-                self.cols_index_level0,
-            )
+            for s in station_names:
+                i = station_names.index(s)
+                
+                total_depth_s = self.tf_VIC.total_depth(
+                    self.soillayerresampler.orig_total,
+                    *self.g_params[f"total_depths_{i}"]["optimal"]
+                )
+                depths_s = self.tf_VIC.depth(
+                    total_depth_s,
+                    self.soillayerresampler,
+                    self.g_params[f"soil_layers_breakpoints_{i}"]["optimal"]
+                )
+                
+                mask_s = subbasin_masks[s]
+                
+                for layer_idx in range(len(self.nlayer_list)):
+                    self.grid_array_depth_layers[layer_idx][mask_s == 1] = depths_s[layer_idx]
             
-            self.params_dataset_level0.variables["depth"][i, :, :] = grid_array_depth_layer_i
+            for layer_idx in range(len(self.nlayer_list)):
+                self.params_dataset_level0.variables["depth"][layer_idx, :, :] = self.grid_array_depth_layers[layer_idx]
+                
+        else:
+            # total_dpth
+            total_depth = self.tf_VIC.total_depth(self.soillayerresampler.orig_total, *self.g_params["total_depths"]["optimal"])
             
-            self.grid_array_depth_layers.append(grid_array_depth_layer_i)
+            # resample based on g_params["soil_layers_breakpoints"], get self.grouping attribute (inplace = True)
+            depths = self.tf_VIC.depth(total_depth, self.soillayerresampler, self.g_params["soil_layers_breakpoints"]["optimal"])  # do not uppack, cuz the third params is a list
+            
+            self.grid_array_depth_layers = []
+            for i in range(len(self.nlayer_list)):
+                grid_array_depth_layer_i = createEmptyArray_from_gridshp(
+                    self.stand_grids_lat_level0, self.stand_grids_lon_level0, dtype=float, missing_value=np.nan
+                    )
+                
+                grid_array_depth_layer_i = assignValue_for_grid_array(
+                    grid_array_depth_layer_i,
+                    np.full((self.grids_num_level0,), fill_value=depths[i]),
+                    self.rows_index_level0,
+                    self.cols_index_level0,
+                )
+                
+                self.params_dataset_level0.variables["depth"][i, :, :] = grid_array_depth_layer_i
+                
+                self.grid_array_depth_layers.append(grid_array_depth_layer_i)
         
     def set_ele_std(self):
         # ele_std, m (same as StrmDem)
@@ -940,13 +989,13 @@ class buildParam_level1_interface:
         # run_cell, bool, same as mask in DomainFile
         self.logger.debug("setting run_cell... ...")
         
-        if self.domain_dataset is None:
-            from ...bulid_Domain import cal_mask_frac_area_length
-            mask, *_ = cal_mask_frac_area_length(
-                self.dpc_VIC_level1, reverse_lat=self.reverse_lat, plot=False
-            )  # * all lat set as reverse
-        else:
-            mask = self.domain_dataset.variables["mask"][:, :]  # * note the reverse_lat should be same
+        # if self.domain_dataset is None:
+        #     from ...bulid_Domain import cal_mask_frac_area_length
+        #     mask, *_ = cal_mask_frac_area_length(
+        #         self.dpc_VIC_level1, reverse_lat=self.reverse_lat, plot=False
+        #     )  # * all lat set as reverse
+        # else:
+        mask = self.domain_dataset.variables["mask"][:, :]  # * note the reverse_lat should be same
 
         mask = mask.astype(int)
         self.mask = mask

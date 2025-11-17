@@ -196,6 +196,9 @@ class Scaling_operator:
         The most frequent value in the dataset.
         """
         data = np.array(data)
+        data = data[~np.isnan(data)]
+        if len(data) == 0:
+            return np.nan
         counter = Counter(data)
         return max(counter.keys(), key=counter.get)
 

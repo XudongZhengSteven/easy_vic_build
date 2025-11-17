@@ -53,10 +53,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from netCDF4 import Dataset
 from tqdm import *
+import geopandas as gpd
 
 from . import logger
 from .tools.decoractors import clock_decorator
-from .tools.dpc_func.basin_grid_func import grids_array_coord_map
+from .tools.dpc_func.basin_grid_func import grids_array_coord_map, createStand_grids_lat_lon_from_gridshp, gridshp_index_to_grid_array_index
 from .tools.geo_func.search_grids import *
 
 # UTM_proj_map = {
@@ -103,6 +104,7 @@ UTM_proj_map = generate_utm_proj_map()
 def buildDomain(
     evb_dir, dpc_VIC,
     reverse_lat=True, basin_shp=None,
+    prefine_mask=None
 ):
     """
     Build the domain file for the VIC model, including variables like latitude, longitude, mask, area, and others.
@@ -240,7 +242,8 @@ def buildDomain(
             plot=False,
             basin_shp=basin_shp,
         )
-        mask[:, :] = mask_array
+        
+        mask[:, :] = mask_array if prefine_mask is None else prefine_mask
         area[:, :] = area_array
         frac[:, :] = frac_grid_in_basin_array
         frac_full_one[:, :] = frac_full_one_array
@@ -293,7 +296,7 @@ def buildDomain(
     logger.info(
         f"Building domain sucessfully, domain file has been saved to {evb_dir.domainFile_path}"
     )
-
+    
 
 def cal_mask_frac_area_length(
     dpc_VIC,
@@ -367,85 +370,125 @@ def cal_mask_frac_area_length(
     # Convert grid shapefile to the chosen projection
     grid_shp_projection = deepcopy(grid_shp)
     grid_shp_projection = grid_shp_projection.to_crs(proj_crs)
-
+    basin_shp_projection = deepcopy(basin_shp)
+    basin_shp_projection = basin_shp_projection.to_crs(proj_crs)
+    
     # lon/lat grid map into index to construct array
-    lon_list, lat_list, lon_map_index, lat_map_index = grids_array_coord_map(
-        grid_shp, reverse_lat=reverse_lat
+    # lon_list, lat_list, lon_map_index, lat_map_index = grids_array_coord_map(
+    #     grid_shp, reverse_lat=reverse_lat
+    # )
+    stand_grids_lat, stand_grids_lon = createStand_grids_lat_lon_from_gridshp(grid_shp, reverse_lat=reverse_lat)
+    rows_index, cols_index = gridshp_index_to_grid_array_index(
+        grid_shp, stand_grids_lat, stand_grids_lon
     )
 
     # Initialize arrays for mask, frac, and frac_grid_in_basin
-    mask = np.empty((len(lat_list), len(lon_list)), dtype=int)
-    frac_full_one = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
-    frac_grid_in_basin = np.empty((len(lat_list), len(lon_list)), dtype=float)
+    # mask = np.empty((len(lat_list), len(lon_list)), dtype=int)
+    # frac_full_one = np.full((len(lat_list), len(lon_list)), fill_value=1.0, dtype=float)
+    # frac_grid_in_basin = np.empty((len(lat_list), len(lon_list)), dtype=float)
+    mask = np.empty((len(stand_grids_lat), len(stand_grids_lon)), dtype=int)
+    frac_full_one = np.full((len(stand_grids_lat), len(stand_grids_lon)), fill_value=1.0, dtype=float)
+    frac_grid_in_basin = np.empty((len(stand_grids_lat), len(stand_grids_lon)), dtype=float)
+    area = np.empty((len(stand_grids_lat), len(stand_grids_lon)), dtype=float)
+    x_length = np.empty((len(stand_grids_lat), len(stand_grids_lon)), dtype=float)
+    y_length = np.empty((len(stand_grids_lat), len(stand_grids_lon)), dtype=float)
+    
+    logger.debug("Calculating variables for grid cells...")
+    
+    # overlay
+    inter = gpd.overlay(
+        grid_shp_projection.reset_index().rename(columns={'index': 'grid_idx'}),
+        basin_shp_projection,
+        how='intersection'
+    )
+    
+    # cal variables
+    grid_area = grid_shp_projection.geometry.area.values
+    bounds = grid_shp_projection.geometry.bounds 
+    
+    area_overlay = np.zeros((len(grid_shp_projection),), dtype=float)
+    for grid_id, group in inter.groupby('grid_idx'):
+        area_overlay[grid_id] = group.geometry.area.sum()
+    
+    frac_matrix = area_overlay / grid_area
+    frac_matrix[frac_matrix > 1.0] = 1.0
+    frac_matrix[frac_matrix <= 0.0] = np.nan
+    
+    mask[rows_index, cols_index] = frac_matrix > 0
+    frac_grid_in_basin[rows_index, cols_index] = frac_matrix
+    area[rows_index, cols_index] = grid_area
+    x_length[rows_index, cols_index] = (bounds['maxx'] - bounds['minx']).to_numpy()
+    y_length[rows_index, cols_index] = (bounds['maxy'] - bounds['miny']).to_numpy()
+    
+    # for i in tqdm(
+    #     grid_shp.index, colour="green", desc="loop for grids to cal mask, frac"
+    # ):
+    #     center = grid_shp.loc[i, "point_geometry"]
+    #     cen_lon = center.x
+    #     cen_lat = center.y
 
-    logger.debug("Calculating mask and fraction for grid cells...")
-    for i in tqdm(
-        grid_shp.index, colour="green", desc="loop for grids to cal mask, frac"
-    ):
-        center = grid_shp.loc[i, "point_geometry"]
-        cen_lon = center.x
-        cen_lat = center.y
+    #     # Get the grid at the current index
+    #     grid_i = grid_shp.loc[[i], :]
+    #     # fig, ax = plt.subplots()  # plot for testing
+    #     # grid_i.plot(ax=ax)
+    #     # basin_shp.plot(ax=ax, alpha=0.5)
 
-        # Get the grid at the current index
-        grid_i = grid_shp.loc[[i], :]
-        # fig, ax = plt.subplots()  # plot for testing
-        # grid_i.plot(ax=ax)
-        # basin_shp.plot(ax=ax, alpha=0.5)
+    #     # intersection
+    #     overlay_gdf = grid_i.overlay(basin_shp, how="intersection")
 
-        # intersection
-        overlay_gdf = grid_i.overlay(basin_shp, how="intersection")
-
-        # Update mask and fraction based on intersection
-        if len(overlay_gdf) == 0:
-            mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
-            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.nan  # 0
-            frac_full_one[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.nan  # 0
-        else:
-            mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 1
-            frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
-                overlay_gdf.area.values[0] / grid_i.area.values[0]
-            )
+    #     # Update mask and fraction based on intersection
+    #     if len(overlay_gdf) == 0:
+    #         mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 0
+    #         frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.nan  # 0
+    #         frac_full_one[lat_map_index[cen_lat], lon_map_index[cen_lon]] = np.nan  # 0
+    #     else:
+    #         mask[lat_map_index[cen_lat], lon_map_index[cen_lon]] = 1
+    #         frac_grid_in_basin[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
+    #             overlay_gdf.area.values[0] / grid_i.area.values[0]
+    #         )
 
     logger.debug("Calculating mask and fraction successfully")
 
     # Initialize arrays for area and grid cell dimensions
-    area = np.empty((len(lat_list), len(lon_list)), dtype=float)
-    x_length = np.empty((len(lat_list), len(lon_list)), dtype=float)
-    y_length = np.empty((len(lat_list), len(lon_list)), dtype=float)
+    # area = np.empty((len(lat_list), len(lon_list)), dtype=float)
+    # x_length = np.empty((len(lat_list), len(lon_list)), dtype=float)
+    # y_length = np.empty((len(lat_list), len(lon_list)), dtype=float)
 
-    logger.debug("Calculating area and grid dimensions...")
-    for i in tqdm(
-        grid_shp_projection.index,
-        colour="green",
-        desc="loop for grids to cal area, x(y)_length",
-    ):
-        center = grid_shp_projection.loc[i, "point_geometry"]
-        cen_lon = center.x
-        cen_lat = center.y
-        area[lat_map_index[cen_lat], lon_map_index[cen_lon]] = grid_shp_projection.loc[
-            i, "geometry"
-        ].area
-        x_length[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
-            grid_shp_projection.loc[i, "geometry"].bounds[2]
-            - grid_shp_projection.loc[i, "geometry"].bounds[0]
-        )
-        y_length[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
-            grid_shp_projection.loc[i, "geometry"].bounds[3]
-            - grid_shp_projection.loc[i, "geometry"].bounds[1]
-        )
+    # logger.debug("Calculating area and grid dimensions...")
+    # for i in tqdm(
+    #     grid_shp_projection.index,
+    #     colour="green",
+    #     desc="loop for grids to cal area, x(y)_length",
+    # ):
+    #     center = grid_shp_projection.loc[i, "point_geometry"]
+    #     cen_lon = center.x
+    #     cen_lat = center.y
+    #     area[lat_map_index[cen_lat], lon_map_index[cen_lon]] = grid_shp_projection.loc[
+    #         i, "geometry"
+    #     ].area
+    #     x_length[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
+    #         grid_shp_projection.loc[i, "geometry"].bounds[2]
+    #         - grid_shp_projection.loc[i, "geometry"].bounds[0]
+    #     )
+    #     y_length[lat_map_index[cen_lat], lon_map_index[cen_lon]] = (
+    #         grid_shp_projection.loc[i, "geometry"].bounds[3]
+    #         - grid_shp_projection.loc[i, "geometry"].bounds[1]
+    #     )
 
     # Optionally flip arrays based on latitude orientation
     if not reverse_lat:
         mask_flip = np.flip(mask, axis=0)
         frac_grid_in_basin_flip = np.flip(frac_grid_in_basin, axis=0)
         area_flip = np.flip(area, axis=0)
-        extent = [lon_list[0], lon_list[-1], lat_list[0], lat_list[-1]]
+        # extent = [lon_list[0], lon_list[-1], lat_list[0], lat_list[-1]]
+        extent = [stand_grids_lon[0], stand_grids_lon[-1], stand_grids_lat[0], stand_grids_lat[-1]]
     else:
         mask_flip = mask
         frac_grid_in_basin_flip = frac_grid_in_basin
         area_flip = area
-        extent = [lon_list[0], lon_list[-1], lat_list[-1], lat_list[0]]
-
+        # extent = [lon_list[0], lon_list[-1], lat_list[-1], lat_list[0]]
+        extent = [stand_grids_lon[0], stand_grids_lon[-1], stand_grids_lat[0], stand_grids_lat[-1]]
+        
     # Plot the results if requested
     if plot:
         fig, axes = plt.subplots(2, 2)
@@ -545,3 +588,55 @@ def addElevIntoDomain(evb_dir, params_dataset_level1):
         elev[:, :] = params_dataset_level1.variables["elev"][:, :]
 
     logger.info(f"Adding elev into domain sucessfully")
+    
+    
+def centers_to_edges(centers):
+    """Compute grid edges from center coordinates."""
+    centers = np.array(centers)
+    diffs = np.diff(centers)
+    left = centers[0] - diffs[0] / 2
+    right = centers[-1] + diffs[-1] / 2
+    mid = centers[:-1] + diffs / 2
+    edges = np.concatenate(([left], mid, [right]))
+    return edges
+
+
+def remap_level1_to_level0_mask(lon_level1, lat_level1, mask_level1,
+                                lon_level0, lat_level0):
+    """
+    Map level1-grid mask (level1) to level0-grid (level0).
+
+    Each level0 grid cell inherits the mask value of the level1 cell
+    in which its center falls.
+    """
+
+    lon_level1 = np.array(lon_level1)
+    lat_level1 = np.array(lat_level1)
+    lon_level0   = np.array(lon_level0)
+    lat_level0   = np.array(lat_level0)
+
+    lon_edges = centers_to_edges(lon_level1)
+    lat_edges = centers_to_edges(lat_level1)
+
+    # flip if descending
+    if lon_edges[1] < lon_edges[0]:
+        lon_edges = lon_edges[::-1]
+        lon_level1 = lon_level1[::-1]
+        mask_level1 = mask_level1[:, ::-1]
+
+    if lat_edges[1] < lat_edges[0]:
+        lat_edges = lat_edges[::-1]
+        lat_level1 = lat_level1[::-1]
+        mask_level1 = mask_level1[::-1, :]
+
+    # For each level0 cell, locate its level1 parent cell
+    xi = np.searchsorted(lon_edges, lon_level0) - 1
+    yi = np.searchsorted(lat_edges, lat_level0) - 1
+
+    xi = np.clip(xi, 0, mask_level1.shape[1] - 1)
+    yi = np.clip(yi, 0, mask_level1.shape[0] - 1)
+
+    XI, YI = np.meshgrid(xi, yi)
+    mask_level0 = mask_level1[YI, XI]
+
+    return mask_level0

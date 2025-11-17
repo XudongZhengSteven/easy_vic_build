@@ -304,7 +304,8 @@ def createEmptyArray_and_assignValue_from_gridshp(
 
 def createArray_from_gridshp(
     grid_shp,
-    value_column,
+    value_column=None,
+    values_list=None,
     grid_res=None,
     dtype=float,
     missing_value=np.nan,
@@ -356,8 +357,11 @@ def createArray_from_gridshp(
     )
 
     # assign values
+    if value_column is not None:
+        values_list = grid_shp.loc[:, value_column]
+        
     grid_array = assignValue_for_grid_array(
-        grid_array, grid_shp.loc[:, value_column], rows_index, cols_index
+        grid_array, values_list, rows_index, cols_index
     )
     
     # plot

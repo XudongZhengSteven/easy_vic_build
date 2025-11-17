@@ -636,6 +636,45 @@ class ParamManager:
         return cls(deserialize(raw))
 
 
+def expand_station_wise_params(g_params: dict, station_num: int):
+    gp = deepcopy(g_params)
+    expand_keys = ["total_depths", "soil_layers_breakpoints"]
+
+    new_gp = deepcopy(gp)
+    for key in expand_keys:
+        if key not in gp:
+            continue
+
+        default = gp[key]["default"]
+        low, high = gp[key]["boundary"]
+        typ = gp[key]["type"]
+        free = gp[key].get("free", True)
+
+        new_gp.pop(key)
+
+        for i in range(station_num):
+            key_i = f"{key}_{i}"
+            if isinstance(default, list):
+                default_i = default[:] if all(isinstance(d, (int,float)) for d in default) else deepcopy(default)
+            else:
+                default_i = [default]
+
+            optimal_i = [None for _ in default_i]
+            low_i = low[:] if isinstance(low, list) else [low]
+            high_i = high[:] if isinstance(high, list) else [high]
+            boundary_i = [low_i, high_i]
+
+            new_gp[key_i] = {
+                "default": default_i,
+                "optimal": optimal_i,
+                "boundary": boundary_i,
+                "type": typ,
+                "free": free,
+            }
+
+    return new_gp
+
+
 if __name__ == "__main__":
     # Example usage
     pm = ParamManager(params_minimal)  # params
@@ -663,3 +702,12 @@ if __name__ == "__main__":
     loaded_pm = ParamManager.load("params.json")
     
     print("Loaded parameters:", loaded_pm.param_template)
+    
+    # expand station-wise params example
+    g_params_minimal_expand = expand_station_wise_params(g_params_minimal, station_num=5)
+    params_minimal_expand = {
+        "g_params": g_params_minimal_expand,
+        "guh_params": guh_params,
+        "rvic_params": rvic_params,
+    }
+    pm = ParamManager(params_minimal_expand)

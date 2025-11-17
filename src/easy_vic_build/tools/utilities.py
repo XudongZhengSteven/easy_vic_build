@@ -498,7 +498,7 @@ def readdpc(
     return dpc_instance
 
 
-def readDomain(evb_dir):
+def readDomain(evb_dir, name=None):
     """
     Reads the domain data from a NetCDF file.
 
@@ -513,7 +513,12 @@ def readDomain(evb_dir):
         The domain dataset loaded from the NetCDF file.
     """
     # read
-    domain_dataset = Dataset(evb_dir.domainFile_path, "r", format="NETCDF4")
+    if name is not None:
+        domain_path = evb_dir.domainFile_path.replace(".nc", f"_{name}.nc")
+    else:
+        domain_path = evb_dir.domainFile_path
+        
+    domain_dataset = Dataset(domain_path, "r", format="NETCDF4")
 
     return domain_dataset
 

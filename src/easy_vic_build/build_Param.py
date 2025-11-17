@@ -92,6 +92,7 @@ def buildParam_level0(
     stand_grids_lon_level0=None,
     rows_index_level0=None,
     cols_index_level0=None,
+    basin_hierarchy=None,
 ):
     """
     Build the parameter dataset for level 0, consisting of two components: `buildParam_level0_basic` and `buildParam_level0_by_g`.
@@ -164,7 +165,8 @@ def buildParam_level0(
         stand_grids_lat_level0,
         stand_grids_lon_level0,
         rows_index_level0,
-        cols_index_level0
+        cols_index_level0,
+        basin_hierarchy
     )
     
     ## ======================= buildParam_level0_basic =======================
@@ -485,7 +487,7 @@ def scaling_level0_to_level1(
     # depth, m
     for i in range(len(nlayer_list)):
         params_dataset_level1.variables["depth"][i, :, :] = search_and_resample_func_3d(
-            scaling_operator.Arithmetic_mean, "depth", i
+            scaling_operator.Majority, "depth", i
         )
     logger.debug("Scaling depth parameter completed")
 
