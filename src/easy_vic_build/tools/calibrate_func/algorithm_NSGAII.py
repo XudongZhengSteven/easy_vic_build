@@ -210,8 +210,35 @@ class NSGAII_Base:
 
         # try to load state (if exist)
         self.load_state()
+        
+    # -----------------------------
+    #  set algorithm parameters
+    # ----------------------------- 
+    def set_algorithm_params(
+        self, popSize=None, maxGen=None, cxProb=None, mutateProb=None, **kwargs
+    ):
+        """
+        Sets the parameters for the genetic algorithm.
 
-    # * Design for your own situation
+        Parameters
+        ----------
+        popSize : int, optional
+            The population size for each generation (default is 40).
+        maxGen : int, optional
+            The maximum number of generations to run the algorithm (default is 250).
+        cxProb : float, optional
+            The crossover probability (default is 0.7).
+        mutateProb : float, optional
+            The mutation probability (default is 0.2).
+        """
+        self.toolbox.popSize = 40 if not popSize else popSize
+        self.toolbox.maxGen = 250 if not maxGen else maxGen
+        self.toolbox.cxProb = 0.7 if not cxProb else cxProb
+        self.toolbox.mutateProb = 0.2 if not mutateProb else mutateProb
+        
+    # -----------------------------
+    #  User should define these
+    # -----------------------------
     def get_obs(self):
         """
         Placeholder function to get observed values (to be designed for specific use cases).
@@ -232,29 +259,6 @@ class NSGAII_Base:
         """
         self.sim = 0
 
-    def set_algorithm_params(
-        self, popSize=None, maxGen=None, cxProb=None, mutateProb=None
-    ):
-        """
-        Sets the parameters for the genetic algorithm.
-
-        Parameters
-        ----------
-        popSize : int, optional
-            The population size for each generation (default is 40).
-        maxGen : int, optional
-            The maximum number of generations to run the algorithm (default is 250).
-        cxProb : float, optional
-            The crossover probability (default is 0.7).
-        mutateProb : float, optional
-            The mutation probability (default is 0.2).
-        """
-        self.toolbox.popSize = 40 if not popSize else popSize
-        self.toolbox.maxGen = 250 if not maxGen else maxGen
-        self.toolbox.cxProb = 0.7 if not cxProb else cxProb
-        self.toolbox.mutateProb = 0.2 if not mutateProb else mutateProb
-
-    # * Design for your own situation
     def createFitness(self):
         """Creates the fitness function for individuals."""
         creator.create("Fitness", base.Fitness, weights=(-1.0,))
@@ -263,7 +267,6 @@ class NSGAII_Base:
         """Creates an individual representation (a list)."""
         creator.create("Individual", list, fitness=creator.Fitness)
 
-    # * Design for your own situation
     def samplingInd(self):
         """
         Samples a new individual by generating random values for its elements.
@@ -277,17 +280,6 @@ class NSGAII_Base:
         ind_elements = [random.uniform(-10, 10) for _ in range(5)]
         return creator.Individual(ind_elements)
 
-    def registerInd(self):
-        """Registers the individual sampling function with the toolbox."""
-        self.toolbox.register("individual", self.samplingInd)
-
-    def registerPop(self):
-        """Registers the population initialization function with the toolbox."""
-        self.toolbox.register(
-            "population", tools.initRepeat, list, self.toolbox.individual
-        )
-
-    # * Design for your own situation
     def evaluate(self, ind):
         """
         A placeholder function for evaluating an individual's fitness.
@@ -304,25 +296,10 @@ class NSGAII_Base:
         """
         x, y = ind
         return (x**2 + y**2,)
-
-    def registerEvaluate(self):
-        """Registers the evaluation function with the toolbox."""
-        self.toolbox.register("evaluate", self.evaluate)
-
-    def evaluatePop(self, population):
-        """
-        Evaluates the fitness of the entire population.
-
-        Parameters
-        ----------
-        population : list of Individual
-            The population to evaluate.
-        """
-        fitnesses = list(map(self.toolbox.evaluate, population))
-        for ind, fit in zip(population, fitnesses):
-            ind.fitness.values = fit
-
-    # * Design for your own situation
+    
+    # -----------------------------
+    #  NSGAII operator
+    # -----------------------------
     @staticmethod
     def operatorMate(parent1, parent2):
         """
@@ -344,7 +321,6 @@ class NSGAII_Base:
         kwargs = {}
         return tools.cxTwoPoint(parent1, parent2, **kwargs)
 
-    # * Design for your own situation
     @staticmethod
     def operatorMutate(ind):
         """
@@ -363,7 +339,6 @@ class NSGAII_Base:
         kwargs = {}
         return tools.mutFlipBit(ind, kwargs)
 
-    # * Design for your own situation
     @staticmethod
     def operatorSelect(population):
         """
@@ -382,11 +357,44 @@ class NSGAII_Base:
         kwargs = {}
         return tools.selTournament(population, **kwargs)
 
+    # -----------------------------
+    #  Registering DEAP components
+    # -----------------------------        
+    def registerInd(self):
+        """Registers the individual sampling function with the toolbox."""
+        self.toolbox.register("individual", self.samplingInd)
+
+    def registerPop(self):
+        """Registers the population initialization function with the toolbox."""
+        self.toolbox.register(
+            "population", tools.initRepeat, list, self.toolbox.individual
+        )
+
+    def registerEvaluate(self):
+        """Registers the evaluation function with the toolbox."""
+        self.toolbox.register("evaluate", self.evaluate)
+
     def registerOperators(self):
         """Registers the genetic operators (mate, mutate, and select) with the toolbox."""
         self.toolbox.register("mate", self.operatorMate)
         self.toolbox.register("mutate", self.operatorMutate)
         self.toolbox.register("select", self.operatorSelect)
+        
+    # -----------------------------
+    #  Generation in NSGAII
+    # -----------------------------
+    def evaluatePop(self, population):
+        """
+        Evaluates the fitness of the entire population.
+
+        Parameters
+        ----------
+        population : list of Individual
+            The population to evaluate.
+        """
+        fitnesses = list(map(self.toolbox.evaluate, population))
+        for ind, fit in zip(population, fitnesses):
+            ind.fitness.values = fit
 
     def apply_genetic_operators(self, offspring):
         """
@@ -439,19 +447,9 @@ class NSGAII_Base:
 
         return next_generation
 
-    def print_results(self, population):
-        """
-        Prints the results of the best individual from the final population.
-
-        Parameters
-        ----------
-        population : list of Individual
-            The final population.
-        """
-        best_ind = tools.selBest(population, k=1)[0]
-        logger.info("best_ind:", best_ind)
-        logger.info("fitness:", best_ind.fitness.values)
-
+    # -----------------------------
+    #  Save & Load
+    # -----------------------------
     def load_state(self):
         """
         Loads the algorithm state from the specified save path if a saved state exists.
@@ -482,6 +480,22 @@ class NSGAII_Base:
         with open(self.save_path, "wb") as f:
             pickle.dump(state, f)
 
+    # -----------------------------
+    #  Print and Plot
+    # -----------------------------
+    def print_results(self, population):
+        """
+        Prints the results of the best individual from the final population.
+
+        Parameters
+        ----------
+        population : list of Individual
+            The final population.
+        """
+        best_ind = tools.selBest(population, k=1)[0]
+        logger.info("best_ind:", best_ind)
+        logger.info("fitness:", best_ind.fitness.values)
+        
     def plot_front_pairwise(self, population, front, gen, names_plot=None, plot_dir="pareto_progress", transform_func=None):
         # check plot_dir
         if not os.path.exists(plot_dir):
@@ -535,6 +549,9 @@ class NSGAII_Base:
         plt.savefig(os.path.join(plot_dir, f'NSGAII_process.png'))
         plt.close()
 
+    # -----------------------------
+    #  Run
+    # -----------------------------
     @clock_decorator(print_arg_ret=False)
     def run(
         self,

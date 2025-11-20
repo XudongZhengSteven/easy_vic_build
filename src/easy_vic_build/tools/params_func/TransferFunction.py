@@ -47,12 +47,12 @@ class TF_VIC:
         pass
 
     @staticmethod
-    def b_infilt(ele_std, g1, g2):
+    def b_infilt(elev_std, g1, g2):
         """
         Calculate base infiltration rate.
 
         Parameters:
-        ele_std (ndarray): Standard elevation values.
+        elev_std (ndarray): Standard elevation values.
         g1 (float): Coefficient for the elevation standard.
         g2 (float): Coefficient for the elevation standard.
 
@@ -61,12 +61,12 @@ class TF_VIC:
         """
         # Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.
         # Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.
-        # b_infilt, N/A, 0.01~0.5 = log(ele_std) - ele_std_min / log(ele_std) + ele_std_max
+        # b_infilt, N/A, 0.01~0.5 = log(elev_std) - elev_std_min / log(elev_std) + elev_std_max
         # g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)
         # Arithmetic mean
         b_infilt_min = 0.001
         b_infilt_max = 0.50
-        ret = (np.log(ele_std) - g1) / (np.log(ele_std) + g2 * 10)
+        ret = (np.log(elev_std) - g1) / (np.log(elev_std) + g2 * 10)
 
         ret[ret > b_infilt_max] = b_infilt_max
         ret[ret < b_infilt_min] = b_infilt_min

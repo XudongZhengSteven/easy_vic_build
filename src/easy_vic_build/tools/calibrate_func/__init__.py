@@ -27,7 +27,7 @@ Author:
 """
 
 # Importing submodules for ease of access
-from . import algorithm_NSGAII, evaluate_metrics, sampling
+from . import algorithm_CMA_ES, algorithm_NSGAII, evaluate_metrics, sampling
 
 # Define the package's public API and version
-__all__ = ["algorithm_NSGAII", "evaluate_metrics", "sampling"]
+__all__ = ["algorithm_NSGAII", "algorithm_CMA_ES", "evaluate_metrics", "sampling"]
