@@ -158,7 +158,7 @@ class CMA_ES_Base:
         logger.info(f"Best individual: {best_ind}")
         logger.info(f"Fitness: {best_ind.fitness.values[0]}")
         
-    def plot_progress(self, plot_dir="cmaes_progress"):
+    def plot_progress(self, plot_dir="cmaes_progress", ylim=None):
         # check plot_dir
         if not os.path.exists(plot_dir):
             os.makedirs(plot_dir)
@@ -188,6 +188,15 @@ class CMA_ES_Base:
         plt.scatter(generations, all_best_ind_fitness, c="red", s=25, zorder=5)
         plt.plot(generations, all_best_ind_fitness, c="blue", linewidth=1.5, zorder=4, label="Best fitness curve")
         
+        if ylim is not None:
+            if isinstance(ylim, (int, float)):  
+                # only bottom is given
+                plt.ylim(bottom=ylim)
+            elif isinstance(ylim, (list, tuple)) and len(ylim) == 2:
+                plt.ylim(ylim[0], ylim[1])
+            else:
+                raise ValueError("ylim must be a number or a tuple/list of two numbers")
+            
         plt.xlabel("Generation")
         plt.ylabel("Fitness")
         plt.title("CMA-ES Fitness Convergence Curve", fontsize=14, weight='bold')
@@ -205,6 +214,7 @@ class CMA_ES_Base:
         self,
         plot_progress=False,
         plot_dir="cmaes_progress",
+        plot_ylim=None,
     ):
         # evaluate initial
         self.evaluatePop(self.population)
@@ -242,6 +252,7 @@ class CMA_ES_Base:
             if plot_progress:
                 self.plot_progress(
                     plot_dir=plot_dir,
+                    ylim=plot_ylim,
                 )
 
         self.print_results(self.population)

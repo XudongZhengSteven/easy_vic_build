@@ -1516,3 +1516,63 @@ class buildParam_level1_interface:
                     i, j - 1, :, :
                 ] = grid_array_i_veg_j_month_fcanopy  # j-1: month_list start from 1
     
+    
+class buildParam_level0_interface_ARNO_spatially_uniform(buildParam_level0_interface):
+    """ 
+    only change several sensitive parameters to keep them spatially uniform: total_depths, soil_layers_breakpoints, bi, ds, dsmax, ws
+    remove d1, d2, d3 
+    
+    if use this, please modify in params_set (remove d1/2/3, add Ds/Dsmax/Ws) and GlobalParam (use ARNO baseflow scheme rather NIJSSEN2001)
+    """
+    def set_depths_vertical_aggregation(self):
+        # total_dpth
+        total_depth = self.tf_VIC.total_depth(self.soillayerresampler.orig_total, *self.g_params["total_depths"]["optimal"])
+        
+        # resample based on g_params["soil_layers_breakpoints"], get self.grouping attribute (inplace = True)
+        depths = self.tf_VIC.depth(total_depth, self.soillayerresampler, self.g_params["soil_layers_breakpoints"]["optimal"])  # do not uppack, cuz the third params is a list
+        
+        self.grid_array_depth_layers = []
+        for i in range(len(self.nlayer_list)):
+            grid_array_depth_layer_i = createEmptyArray_from_gridshp(
+                self.stand_grids_lat_level0, self.stand_grids_lon_level0, dtype=float, missing_value=np.nan
+                )
+            
+            grid_array_depth_layer_i = assignValue_for_grid_array(
+                grid_array_depth_layer_i,
+                np.full((self.grids_num_level0,), fill_value=depths[i]),
+                self.rows_index_level0,
+                self.cols_index_level0,
+            )
+            
+            self.params_dataset_level0.variables["depth"][i, :, :] = grid_array_depth_layer_i
+            
+            self.grid_array_depth_layers.append(grid_array_depth_layer_i)
+    
+    def set_b_infilt(self):
+        # b_infilt, N/A
+        self.logger.debug("setting b_infilt... ...")
+        self.params_dataset_level0.variables["infilt"][:, :] = np.full_like(self.grid_array_ele_std, fill_value=self.g_params["b_infilt"]["optimal"])
+    
+    def set_d1(self):
+        pass
+    
+    def set_d2(self):
+        pass
+    
+    def set_d3(self):
+        pass
+    
+    def set_Dsmax(self):
+        # Dsmax, mm or mm/day
+        self.logger.debug("setting Dsmax... ...")
+        self.params_dataset_level0.variables["Dsmax"][:, :] = np.full_like(self.grid_array_ele_std, fill_value=self.g_params["Dsmax"]["optimal"])
+    
+    def set_Ds(self):
+        # Ds, [day^-d4] or fraction
+        self.logger.debug("setting Ds... ...")
+        self.params_dataset_level0.variables["Ds"][:, :] = np.full_like(self.grid_array_ele_std, fill_value=self.g_params["Ds"]["optimal"])
+
+    def set_Ws(self):
+        # Ws, fraction
+        self.logger.debug("setting Ws... ...")
+        self.params_dataset_level0.variables["Ws"][:, :] = np.full_like(self.grid_array_ele_std, fill_value=self.g_params["Ws"]["optimal"])

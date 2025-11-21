@@ -221,26 +221,79 @@ g_params = {
     },
 }
 
+# ARNO_spatially_uniform, without MPR
+g_params_ARNO_spatially_uniform = deepcopy(g_params)
+_ = [g_params_ARNO_spatially_uniform.pop(k) for k in ["d1", "d2", "d3"]]
+
+g_params_ARNO_spatially_uniform["b_infilt"] = {
+    "default": [0.25],
+    "boundary": [[0.001], [0.50]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+g_params_ARNO_spatially_uniform["Dsmax"] = {
+    "default": [10.0],
+    "boundary": [[0.1], [30.0]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+g_params_ARNO_spatially_uniform["Ds"] = {
+    "default": [0.02],
+    "boundary": [[0.0001], [1.0]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+g_params_ARNO_spatially_uniform["Ws"] = {
+    "default": [0.8],
+    "boundary": [[0.0001], [1.0]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
 # g params minimal version
-g_params_minimal = deepcopy(g_params)
-all_keys = list(g_params.keys())
+def set_g_params_minimal(g_params, free_keys):
+    all_keys = list(g_params.keys())
+    non_free_keys = list(set(all_keys) - set(free_keys))
 
-free_keys = [
-    "total_depths",
-    "soil_layers_breakpoints",
-    "b_infilt",
-    "d1",
-    "d2",
-    "d3",
-]
-
-non_free_keys = list(set(all_keys) - set(free_keys))
-
-for key in free_keys:
-    g_params_minimal[key]["free"] = True
+    for key in free_keys:
+        g_params[key]["free"] = True
+        
+    for key in non_free_keys:
+        g_params[key]["free"] = False
     
-for key in non_free_keys:
-    g_params_minimal[key]["free"] = False
+    return g_params
+
+g_params_minimal = deepcopy(g_params)
+g_params_minimal = set_g_params_minimal(
+    g_params_minimal,
+    free_keys=[
+        "total_depths",
+        "soil_layers_breakpoints",
+        "b_infilt",
+        "d1",
+        "d2",
+        "d3",
+    ]
+)
+
+g_params_ARNO_spatially_uniform_minimal = set_g_params_minimal(
+    g_params_ARNO_spatially_uniform,
+    free_keys=[
+        "total_depths",
+        "soil_layers_breakpoints",
+        "b_infilt",
+        "Ds",
+        "Dsmax",
+        "Ws",
+    ]
+)
 
 # guh params
 guh_params = {
@@ -316,11 +369,15 @@ params = {
 params_all = {**g_params, **guh_params, **rvic_params}
 
 # default params
-default_params = deepcopy(params)
-for key in default_params.keys():
-    for sub_key in default_params[key].keys():
-        default_params[key][sub_key]["optimal"] = default_params[key][sub_key]["default"]
-        
+def set_default_params(params):
+    default_params = deepcopy(params)
+    for key in default_params.keys():
+        for sub_key in default_params[key].keys():
+            default_params[key][sub_key]["optimal"] = default_params[key][sub_key]["default"]
+    return default_params
+
+default_params = set_default_params(params)
+
 # all params minimal version
 params_minimal = {
     "g_params": g_params_minimal,
