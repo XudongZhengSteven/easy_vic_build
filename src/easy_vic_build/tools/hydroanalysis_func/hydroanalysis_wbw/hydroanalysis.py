@@ -247,7 +247,7 @@ def hydroanalysis_for_level0(
     
     dst_clipped_stream_vector_basin_vector_main_outlet = stream_network.clip_stream_for_basin(
         wbe,
-        "stream_vector.shp",
+        "stream_raster_vector.shp", # "stream_vector.shp",  stream_raster_vector
         "basin_vector_main_outlet.shp",
         output_file_clipped_stream_vector="clipped_stream_vector_basin_vector_main_outlet.shp"
     )
@@ -256,7 +256,7 @@ def hydroanalysis_for_level0(
         logger.info("Clipping streams within basins for outlets with reference... ...")
         dst_clipped_stream_vector_basins_vector_outlets_with_reference = stream_network.clip_stream_for_basin(
             wbe,
-            "stream_vector.shp",
+            "stream_raster_vector.shp",
             "basins_vector_outlets_with_reference.shp",
             output_file_clipped_stream_vector="clipped_stream_vector_basins_vector_outlets_with_reference.shp"
         )
@@ -265,7 +265,7 @@ def hydroanalysis_for_level0(
             for i in range(len(outlets_with_reference_coords[0])):
                 stream_network.clip_stream_for_basin(
                     wbe,
-                    "stream_vector.shp",
+                    "stream_raster_vector.shp",
                     f"basin_vector_outlet_with_reference_{i}.shp",
                     output_file_clipped_stream_vector=f"clipped_stream_vector_basin_vector_outlet_with_reference_{i}.shp"
                 )

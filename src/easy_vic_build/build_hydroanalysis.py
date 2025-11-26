@@ -64,7 +64,7 @@ from .tools.geo_func.search_grids import *
 from .tools.hydroanalysis_func import (create_dem, create_flow_distance)
 from .tools.utilities import remove_and_mkdir
 from .tools.routing_func.river_network import create_river_network_graph, find_river_paths, sort_river_paths_by_lengths, extract_connected_river_network
-from .tools.plot_func.plot_func import plot_river_network
+from .tools.plot_func.plot_map import plot_river_network
 
 
 def buildHydroanalysis_level0(

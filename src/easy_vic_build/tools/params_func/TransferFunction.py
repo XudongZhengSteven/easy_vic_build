@@ -345,6 +345,8 @@ class TF_VIC:
     def d1(Ks, slope_mean, phi_s, depth, g):
         """
         Calculate the d1 parameter, with units of day^-1, the coefficient of the linear reservoir (baseflow, bottom layer).
+        Darcy law.
+        Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.
 
         Parameters
         ----------
@@ -378,6 +380,8 @@ class TF_VIC:
     def d2(Ks, slope_mean, d4, g):
         """
         Calculate the d2 parameter with units of day^-d4, the coefficient of the nonlinear reservoir (baseflow, bottom layer).
+        Darcy law.
+        Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.
 
         Parameters
         ----------
@@ -414,6 +418,8 @@ class TF_VIC:
     def d3(fc, phi_s, depth, g):
         """
         Calculate the d3 parameter in mm, the soil mois-ture level at which the baseflow transitions from linear to nonlinear.
+        Darcy law.
+        Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.
 
         Parameters
         ----------
@@ -939,7 +945,10 @@ class TF_VIC:
     def velocity(acc_km2, slope_mean, g1, g2, g3, landcover=None):
         """
         Estimate spatially distributed velocity (m/s) for RVIC using a transfer function.
-
+        Chen, Y., Shi, P., Ji, X., Qu, S., Zhao, L., and Dong, F.: New method to calculate the dynamic factor-flow velocity in Geomorphologic instantaneous unit hydrograph, Scientific Reports, 9, 10.1038/s41598-019-50723-x, 2019.
+        Duc, N., Oki, T., and Kanae, S.: A variable streamflow velocity method for global river routing model: Model description and preliminary results, Hydrology and Earth System Sciences Discussions, 4, 10.5194/hessd-4-4389-2007, 2007.
+        K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.
+        
         Parameters
         ----------
         acc : float
@@ -985,6 +994,7 @@ class TF_VIC:
     def diffusion(velocity, flow_distance_m, g):
         """
         Estimate diffusion coefficient matrix D from flow velocity and river segment length.
+        Yang, Y., Endreny, T. A., and Nowak, D. J. J. J. o. E. s.: Application of advection-diffusion routing model to flood wave propagation: A case study on Big Piney River, Missouri USA, 27, 9-14, 2016.
         D=alpha*v*L
         g: alpha, 0.1, (0.001, 0.5)
         

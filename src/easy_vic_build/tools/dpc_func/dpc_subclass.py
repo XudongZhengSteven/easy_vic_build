@@ -7,7 +7,6 @@ from typing import Any
 import matplotlib.pyplot as plt
 
 from ... import logger
-from ..plot_func.plot_func import *
 from ..utilities import *
 from ..decoractors import processing_step
 from .basin_grid_class import *
