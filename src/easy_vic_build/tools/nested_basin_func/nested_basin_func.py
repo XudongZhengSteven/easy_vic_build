@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
 from ...bulid_Domain import UTM_proj_map
-from ..dpc_func.basin_grid_func import createStand_grids_lat_lon_from_gridshp, createEmptyArray_from_gridshp, assignValue_for_grid_array, gridshp_index_to_grid_array_index
+from ..dpc_func.basin_grid_func import createStand_grids_lat_lon_from_gridshp, createEmptyArray_from_gridshp, assignValue_for_grid_array, gridshp_index_to_grid_array_index, retriveArray_to_gridshp_values_list
 from copy import deepcopy
 from tqdm import *
 
@@ -124,6 +124,10 @@ def cal_unique_mask_nested_basin(
         cols_index,
     )
     
+    grid_shp_unique_mask = deepcopy(grid_shp)
+    unique_mask_list = retriveArray_to_gridshp_values_list(unique_mask, rows_index, cols_index)
+    grid_shp_unique_mask["unique_mask_list"] = unique_mask_list
+    
     unique_masks = {s: np.empty((ny, nx), dtype=float) for s in station_names}
     for j, s in enumerate(station_names):
         unique_masks[s][:] = 0
@@ -157,7 +161,7 @@ def cal_unique_mask_nested_basin(
         plt.tight_layout()
         plt.show(block=True)
         
-    return unique_masks
+    return unique_masks, grid_shp_unique_mask
 
 if __name__ == "__main__":
     station_names = ["hanzhong", "yangxian", "youshui", "lianghekou", "shiquan"]

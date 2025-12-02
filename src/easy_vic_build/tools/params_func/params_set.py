@@ -221,6 +221,42 @@ g_params = {
     },
 }
 
+# Nijssen_spatially_uniform, without MPR
+g_params_Nijssen_spatially_uniform = deepcopy(g_params)
+
+g_params_Nijssen_spatially_uniform["b_infilt"] = {
+    "default": [0.25],
+    "boundary": [[0.001], [0.50]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+g_params_Nijssen_spatially_uniform["d1"] = {
+    "default": [0.5],
+    "boundary": [[0.0001], [1.0]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+g_params_Nijssen_spatially_uniform["d2"] = {
+    "default": [0.5],
+    "boundary": [[0.0001], [1.0]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+g_params_Nijssen_spatially_uniform["d3"] = {  # percentile of the third layer tickness
+    "default": [0.5],
+    "boundary": [[0.0001], [1.0]],
+    "type": float,
+    "optimal": [None],
+    "free": True,
+}
+
+
 # ARNO_spatially_uniform, without MPR
 g_params_ARNO_spatially_uniform = deepcopy(g_params)
 _ = [g_params_ARNO_spatially_uniform.pop(k) for k in ["d1", "d2", "d3"]]
@@ -292,6 +328,18 @@ g_params_ARNO_spatially_uniform_minimal = set_g_params_minimal(
         "Ds",
         "Dsmax",
         "Ws",
+    ]
+)
+
+g_params_Nijssen_spatially_uniform_minimal = set_g_params_minimal(
+    g_params_Nijssen_spatially_uniform,
+    free_keys=[
+        "total_depths",
+        "soil_layers_breakpoints",
+        "b_infilt",
+        "d1",
+        "d2",
+        "d3",
     ]
 )
 

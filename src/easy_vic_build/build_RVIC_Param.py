@@ -591,6 +591,7 @@ def buildParamCFGFile(
     SUBSET_DAYS=10,
     CELL_FLOWDAYS=2,
     BASIN_FLOWDAYS=50,
+    CONSTRAIN_FRACTIONS=True,
 ):
     """
     Generate and save the RVIC parameter configuration file.
@@ -620,6 +621,8 @@ def buildParamCFGFile(
         
     BASIN_FLOWDAYS : int, optional
         Flow duration at the basin level (days), default is 50.
+        
+    CONSTRAIN_FRACTIONS: bool, default True, if used in a neasted basin, use False
 
     Notes
     -----
@@ -639,6 +642,7 @@ def buildParamCFGFile(
     param_cfg_file.set("OPTIONS", "CASE_DIR", evb_dir.RVICParam_dir)
     param_cfg_file.set("OPTIONS", "TEMP_DIR", evb_dir.RVICTemp_dir)
     param_cfg_file.set("OPTIONS", "SUBSET_DAYS", str(SUBSET_DAYS))
+    param_cfg_file.set("OPTIONS", "CONSTRAIN_FRACTIONS", str(CONSTRAIN_FRACTIONS))
     param_cfg_file.set("POUR_POINTS", "FILE_NAME", evb_dir.pourpoint_file_path)
     param_cfg_file.set("UH_BOX", "FILE_NAME", evb_dir.uhbox_file_path)
     param_cfg_file.set("ROUTING", "FILE_NAME", evb_dir.flow_direction_file_path)
