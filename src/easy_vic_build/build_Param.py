@@ -418,7 +418,9 @@ def scaling_level0_to_level1(
     searched_grids_bool_index : array-like, optional, default=None
         Boolean indices indicating which grids from level 0 match the grids from level 1.
         If not provided, it is calculated within the function.
-
+        
+    elev_scaling: can be "Arithmetic_min" to keep connectivity of river network, default is None
+    
     Returns
     -------
     params_dataset_level1 : `netCDF.Dataset`
