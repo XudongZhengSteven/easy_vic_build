@@ -568,6 +568,9 @@ def clearParam(evb_dir):
 
     if os.path.isfile(evb_dir.params_dataset_level1_path):
         os.remove(evb_dir.params_dataset_level1_path)
+        
+    if os.path.isfile(os.path.join(evb_dir.RVICParam_dir, "flow_direction_file.nc")):
+        os.remove(os.path.join(evb_dir.RVICParam_dir, "flow_direction_file.nc"))
 
 
 def readRVICParam(evb_dir):

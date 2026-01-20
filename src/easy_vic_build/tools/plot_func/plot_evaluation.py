@@ -312,9 +312,11 @@ def taylor_diagram(
     names_ha,
     names_va,
     model_colors=None,
+    model_markers=None,
     title="Standard Taylor Diagram",
     fig=None,
     ax=None,
+    add_text=True,
 ):
     """
     Create a Taylor diagram to compare multiple models against observations.
@@ -356,6 +358,33 @@ def taylor_diagram(
     - Contour lines representing the RMSD (Root Mean Square Deviation).
     - Arcs for standard deviation levels and radial lines for correlation levels.
 
+    examples:
+    
+    simulated_datasets = [simulated_dataset_12km, simulated_dataset_8km, simulated_dataset_6km]
+    params_dataset_level0_sets = [params_dataset_level0_12km, params_dataset_level0_8km, params_dataset_level0_6km]
+    params_dataset_level1_sets = [params_dataset_level1_12km, params_dataset_level1_8km, params_dataset_level1_6km]
+    model_names = ["12km ", "8km ", "6km "]
+    model_colors = ["red", "blue", "green"]
+    cali_names_ha = ["left", "right", "left"]  # {'center', 'right', 'left'}
+    cali_names_va = ["bottom", "top", "bottom"]  # {'center', 'top', 'bottom', 'baseline', 'center_baseline'}
+    verify_names_ha = ["left", "right", "left"]
+    verify_names_va = ["bottom", "top", "bottom"]
+    
+    obs_cali = cali_result_12km["obs_cali discharge(m3/s)"].values
+    obs_verify = verify_result_12km["obs_verify discharge(m3/s)"].values
+    obs_total = np.concatenate([obs_cali, obs_verify])
+    models_cali = [cali_result["sim_cali discharge(m3/s)"].values for cali_result in cali_results]
+    models_verify = [verify_result["sim_verify discharge(m3/s)"].values for verify_result in verify_results]
+    models_total = [np.concatenate([models_cali[i], models_verify[i]]) for i in range(len(models_cali))]
+    
+    fig_taylor = plt.figure(figsize=(12, 6))
+    fig_taylor.subplots_adjust(left=0.08, right=0.92, bottom=0.01, top=0.9, wspace=0.3)
+    ax1 = fig_taylor.add_subplot(121, projection='polar')
+    ax2 = fig_taylor.add_subplot(122, projection='polar')
+    
+    fig_taylor, ax1 = taylor_diagram(obs_cali, models_cali, model_names, cali_names_ha, cali_names_va, model_colors=model_colors, title="(a) Calibration", fig=fig_taylor, ax=ax1)
+    fig_taylor, ax2 = taylor_diagram(obs_verify, models_verify, model_names, verify_names_ha, verify_names_va, model_colors=model_colors, title="(b) Verification", fig=fig_taylor, ax=ax2)
+    
     """
     # Normalize data: Set the standard deviation of observed data to 1
     obs_std = np.std(obs)
@@ -402,6 +431,9 @@ def taylor_diagram(
     if model_colors is None:
         model_colors = plt.cm.tab10(np.linspace(0, 1, len(models)))
 
+    if model_markers is None:
+        model_markers = ['o' for _ in range(len(models))]
+        
     pad_theta = 0.01
     pad_r = 0.01
     for i, (corr, std) in enumerate(zip(model_corrs, model_stds)):
@@ -415,17 +447,22 @@ def taylor_diagram(
             zorder=5,
             alpha=0.8,
             edgecolors="white",
+            marker=model_markers[i],
         )
-        ax.text(
-            theta + pad_theta,
-            std + pad_r,
-            model_names[i],
-            ha=names_ha[i],
-            va=names_va[i],
-            color=model_colors[i],
-            fontdict={"family": "Arial", "size": 12, "weight": "bold"},
-            zorder=10,
-        )
+        
+        if add_text:
+            ax.text(
+                theta + pad_theta,
+                std + pad_r,
+                model_names[i],
+                ha=names_ha[i],
+                va=names_va[i],
+                color=model_colors[i],
+                fontdict={"family": "Arial", "size": 12, "weight": "bold"},
+                zorder=10,
+            )
+        else:
+            plt.legend()
 
     # Draw standard deviation arcs
     for r in np.arange(0, r_max, r_interval):

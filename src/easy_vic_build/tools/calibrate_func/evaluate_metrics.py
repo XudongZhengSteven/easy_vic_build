@@ -64,6 +64,7 @@ import numpy as np
 from scipy.stats import pearsonr
 from eofs.standard import Eof
 from scipy.spatial.distance import cosine
+import matplotlib.pyplot as plt
 
 
 class EvaluationMetric:
@@ -243,7 +244,7 @@ class EvaluationMetric:
         pbias = sum(self.obs - self.sim) / sum(self.obs) * 100
         return pbias
 
-    def KGE(self):
+    def KGE(self, components=False):
         """
         Computes the Kling-Gupta Efficiency (KGE) metric between the simulated and observed values.
 
@@ -260,9 +261,13 @@ class EvaluationMetric:
         gamma = np.std(self.sim) / np.std(self.obs)
 
         kge = 1 - ((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2) ** 0.5
-        return kge
+        
+        if components:
+            return kge, r, beta, gamma
+        else:
+            return kge
 
-    def KGE_m(self):
+    def KGE_m(self, components=False):
         """
         Computes the modified Kling-Gupta Efficiency (KGE-m) metric between the simulated and observed values.
 
@@ -281,7 +286,11 @@ class EvaluationMetric:
         )
 
         kge = 1 - ((r - 1) ** 2 + (beta - 1) ** 2 + (gamma - 1) ** 2) ** 0.5
-        return kge
+        
+        if components:
+            return kge, r, beta, gamma
+        else:
+            return kge
     
     def ESS(self, lats=None, n_modes=None, remove_mean=True, mask=None):
         assert self.obs.shape == self.sim.shape, "sim and obs must have identical dimensions"
@@ -451,78 +460,213 @@ class SignatureEvaluationMetric:
         self.sim = np.array(sim)
         self.obs = np.array(obs)
         
-    def FHVBias(self, q_high=0.9):
+    def BiasRR(self, precip):
+        rr_obs = self.obs.sum() / precip.sum()
+        rr_sim = self.sim.sum() / precip.sum()
+        return (rr_sim - rr_obs) / rr_obs * 100
+        
+    def BiasFHV(self, q_high=0.02):
         """
-        Flood High Volume error (relative).
+        High-flow volume bias (FHV), computed from the upper segment
+        of the flow duration curve.
+        """
+        obs_sorted = np.sort(self.obs)[::-1]
+        sim_sorted = np.sort(self.sim)[::-1]
+
+        n = len(obs_sorted)
+        p = np.arange(1, n + 1) / (n + 1)
+
+        mask = p <= q_high
+
+        return (
+            sim_sorted[mask].sum() - obs_sorted[mask].sum()
+        ) / obs_sorted[mask].sum() * 100
+    
+    def BiasFLV(self, q_low=0.7, eps=1e-6):
+        """
+        Low-flow volume bias (FLV), computed in log space.
 
         Parameters
         ----------
-        q_high : float, optional (default=0.9)
-            Quantile threshold to define high flows (e.g., top 10%).
+        q_low : float, optional (default=0.7)
+            Quantile threshold defining low flows on the FDC
+            (e.g., q_low=0.7 corresponds to the lowest 30% flows).
+        eps : float, optional
+            Small constant added to avoid log(0).
 
         Returns
         -------
         float
-            Relative error in high flows.
+            Relative bias of low flows in log space.
         """
-        thresh = np.quantile(self.obs, q_high)
-        mask = self.obs >= thresh
+        # sort flows in descending order (FDC)
+        obs_sorted = np.sort(self.obs)[::-1]
+        sim_sorted = np.sort(self.sim)[::-1]
+        
+        n = len(obs_sorted)
+        p = np.arange(1, n + 1) / (n + 1)
 
-        sim_high = self.sim[mask]
-        obs_high = self.obs[mask]
+        mask = p >= q_low
 
-        return ((sim_high - obs_high).sum()) / obs_high.sum()
+        log_obs = np.log(obs_sorted[mask] + eps)
+        log_sim = np.log(sim_sorted[mask] + eps)
+        
+        log_obs_min = log_obs.min()
+        log_sim_min = log_sim.min()
+        
+        obs_area = (log_obs - log_obs_min).sum()
+        sim_area = (log_sim - log_sim_min).sum()
+
+        return (sim_area - obs_area) / obs_area * 100
     
-    def FLVBias(self, q_low=0.1):
+    def BiasFMS(self, p1=0.2, p2=0.7, eps=1e-6):
         """
-        Flood Low Volume error (relative).
+        Flow duration curve mid-segment slope bias (BiasFMS).
 
         Parameters
         ----------
-        q_low : float, optional (default=0.1)
-            Quantile threshold to define low flows (e.g., bottom 10%).
+        p1, p2 : float
+            Exceedance probability bounds defining the mid-segment
+            of the FDC (default: 0.2-0.7).
+        eps : float
+            Small constant to avoid log(0).
 
         Returns
         -------
         float
-            Relative error in low flows.
+            Relative bias of the FDC mid-segment slope.
         """
-        thresh = np.quantile(self.obs, q_low)
-        mask = self.obs <= thresh
+        obs_sorted = np.sort(self.obs)[::-1]
+        sim_sorted = np.sort(self.sim)[::-1]
 
-        sim_low = self.sim[mask]
-        obs_low = self.obs[mask]
+        n = len(obs_sorted)
+        p = np.arange(1, n + 1) / (n + 1)
 
-        return ((sim_low - obs_low).sum()) / obs_low.sum()
+        def _slope(q_sorted):
+            q1 = np.interp(p1, p, q_sorted)
+            q2 = np.interp(p2, p, q_sorted)
+            return np.log(q1 + eps) - np.log(q2 + eps)
+
+        s_obs = _slope(obs_sorted)
+        s_sim = _slope(sim_sorted)
+
+        return (s_sim - s_obs) / s_obs * 100
     
-    def FMSPBias(self, mid_low=0.2, mid_high=0.7):
+    def BiasFMM(self):
         """
-        Flow Magnitude Skewness (FMS).
-        Relative error in the slope of the flow duration curve
-        (between Q20 and Q70, i.e. mid-range flows).
+        Flow duration curve median magnitude bias (BiasFMM).
+
+        Defined as:
+            (median(FDC_sim) - median(FDC_obs)) / median(FDC_obs)
+        """
+        fmm_obs = np.median(self.obs)
+        fmm_sim = np.median(self.sim)
+
+        return (fmm_sim - fmm_obs) / fmm_obs * 100
+    
+    @staticmethod
+    def _compute_fdc(series):
+        """
+        Compute flow duration curve (FDC) for a given series.
+
+        Parameters
+        ----------
+        series : array-like
+            Streamflow series.
 
         Returns
         -------
-        float
+        p : ndarray
+            Exceedance probability (0-1).
+        q : ndarray
+            Sorted flow values (descending).
         """
-        q20_obs, q70_obs = np.quantile(self.obs, [mid_low, mid_high])
-        q20_sim, q70_sim = np.quantile(self.sim, [mid_low, mid_high])
+        # remove NaN and non-positive values
+        series = series[np.isfinite(series)]
+        series = series[series > 0]
 
-        slope_obs = (q20_obs - q70_obs) / (mid_high - mid_low)
-        slope_sim = (q20_sim - q70_sim) / (mid_high - mid_low)
+        if series.size == 0:
+            raise ValueError("Input series contains no valid positive values.")
 
-        fms = 100 * (slope_sim - slope_obs) / slope_obs
-        return fms
-    
-    def CVBias(self):
+        # sort in descending order
+        q = np.sort(series)[::-1]
+        n = q.size
+
+        # exceedance probability
+        p = np.arange(1, n + 1) / (n + 1)
+
+        return p, q
+
+    def get_fdc(self, plot_bool=False):
         """
-        variability
-        Coefficient of Variation, relative error of CV
-        CV = std / mean
+        Compute FDC curves for observed and simulated series.
+
+        Returns
+        -------
+        fdc : dict
+            Dictionary containing FDC data:
+            {
+                'obs': {'p': p_obs, 'q': q_obs},
+                'sim': {'p': p_sim, 'q': q_sim}
+            }
+        
+        example:
+            plt.plot(r["obs"]["p"], r["obs"]["q"], "r-", label="Observed")
+            plt.plot(r["sim"]["p"], r["sim"]["q"], "b-", label="sim")
+            xs = [0.02, 0.2, 0.7]
+            for x in xs:
+                plt.axvline(x, color="gray", linestyle="--", linewidth=1.0, alpha=0.7)
+                plt.text(
+                    x+0.01,
+                    plt.ylim()[1],
+                    f"{x:.2f}",
+                    rotation=90,
+                    va="top",
+                    ha="left",
+                    fontsize=9,
+                    color="gray",
+                    weight="bold",
+                )
+            plt.yscale("log")
+            plt.legend()
+            plt.xlim(0, 1)
+            plt.ylabel("Discharge (m$^3$/s)")
+            plt.xlabel("Flow exceedance probability [-]")
+            plt.show(block=True)
+        
         """
-        cv_obs = np.std(self.obs) / np.mean(self.obs)
-        cv_sim = np.std(self.sim) / np.mean(self.sim)
-        return (cv_sim - cv_obs) / cv_obs
+        p_obs, q_obs = self._compute_fdc(self.obs)
+        p_sim, q_sim = self._compute_fdc(self.sim)
+
+        if plot_bool:
+            plt.plot(p_obs, q_obs, "r-", label="Observed")
+            plt.plot(p_sim, q_sim, "b-", label="sim")
+            xs = [0.02, 0.2, 0.7]
+            for x in xs:
+                plt.axvline(x, color="gray", linestyle="--", linewidth=1.0, alpha=0.7)
+                plt.text(
+                    x+0.01,
+                    plt.ylim()[1],
+                    f"{x:.2f}",
+                    rotation=90,
+                    va="top",
+                    ha="left",
+                    fontsize=9,
+                    color="gray",
+                    weight="bold",
+                )
+            plt.yscale("log")
+            plt.legend()
+            plt.xlim(0, 1)
+            plt.ylabel("Discharge (m$^3$/s)")
+            plt.xlabel("Flow exceedance probability [-]")
+            plt.show(block=True)
+            
+        return {
+            "obs": {"p": p_obs, "q": q_obs},
+            "sim": {"p": p_sim, "q": q_sim},
+        }
+        
     
 def create_test_data(seed=42):
     np.random.seed(seed)

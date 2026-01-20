@@ -37,7 +37,7 @@ dependencies = [
     "cartopy>=0.23.0",  # Spatial plotting and spatial reference
     "shapely>=2.0.6",  # Geometric operations
     "cdo>=1.6.1",  # cdo for rvic
-    "networkx>=3.2.1"  # river network
+    "networkx>=3.2.1",  # river network
 
     # Hydrological analysis
     "whitebox-workflows>=1.3.3",  # Hydrological analysis

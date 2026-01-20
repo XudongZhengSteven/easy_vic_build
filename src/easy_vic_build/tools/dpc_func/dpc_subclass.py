@@ -12,7 +12,7 @@ from ..decoractors import processing_step
 from .basin_grid_class import *
 from .dpc_base import dataProcess_base
 from .extractData_func import *
-
+from copy import deepcopy
 
 class dataProcess_VIC_level0(dataProcess_base):
     
