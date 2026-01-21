@@ -1256,15 +1256,15 @@ class SoilLayerResampler:
 
 if __name__ == "__main__":
     # Original 11 layers
-    # original_depths = [10,10,10,20,20,30,30,40,50,50,50]
-    # resampler = SoilLayerResampler(original_depths)
-    # resampler.create_grouping([2, 6])
+    original_depths = [10,10,10,20,20,30,30,40,50,50,50]
+    resampler = SoilLayerResampler(original_depths)
+    resampler.create_grouping([2, 6])
     
-    # # Create grouping
-    # grouping = resampler.grouping
-    # print("Original grouping:")
-    # print("Depths:", grouping['depths'])
-    # print("Depth percentages:", grouping['depth_percentages'])
+    # Create grouping
+    grouping = resampler.grouping
+    print("Original grouping:")
+    print("Depths:", grouping['depths'])
+    print("Depth percentages:", grouping['depth_percentages'])
     
     # # Scale to new total depth
     # scaled_grouping = resampler.scale_grouping(grouping, 500)  # Scale to 500cm total
@@ -1278,4 +1278,4 @@ if __name__ == "__main__":
     # grouped_values = resampler.convert_to_grouping(orig_values, grouping, method='mean')
     # print("Original:", orig_values)
     # print("Grouped (mean):", grouped_values)
-    pass
+    # pass

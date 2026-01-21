@@ -249,7 +249,7 @@ def ExtractData(
     grid_shp.rename(
         columns={
             "TMP": "tmp_avg_C",  # C
-            "APCP": "pre_mm_per_day",  # mm/day
+            "APCP": "pre_mm_per_step",  # mm/step (1h)
             "PRES": "prs_kPa",  # kPa
             "DSWRF": "swd_W_per_m2",  # W m-2
             "DLWRF": "lwd_W_per_m2",  # W m-2

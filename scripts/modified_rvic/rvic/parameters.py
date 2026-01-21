@@ -362,7 +362,7 @@ def gen_uh_init(config):
         for i in pyrange(len(lats)):
             if 'names' in list(pour_points.keys()):
                 name = pour_points['names'].values[i]
-                name = name.replace("'", '').replace(' ', '_')
+                name = str(name).strip().replace("'", '').replace(' ', '_')
             else:
                 # fill name filed with p-outlet_num
                 name = 'p-{0}'.format(i)

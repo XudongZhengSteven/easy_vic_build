@@ -33,6 +33,16 @@ CONUS_layers_depths = [
 
 CONUS_soillayerresampler = SoilLayerResampler(CONUS_layers_depths)
 
+def set_g_params_CONUS_layer(g_params):
+    g_params["soil_layers_breakpoints"] = {
+        "default": [1, 5],
+        "boundary": [[1, 3], [4, 9]],
+        "type": int,
+        "optimal": [None, None],
+        "free": True,
+    }
+    return g_params
+
 
 def ExtractData(
     grid_shp, grid_shp_res=0.125, plot_layer=1, save_original=False, check_search=False

@@ -288,7 +288,7 @@ class dataProcess_VIC_level3(dataProcess_base):
             basin_shp,
             read_dates=date_period
         )
-            
+        
         logger.info("CAMELS streamflow data successfully loaded into basins")
         
         ret = {"streamflow": basin_shp_with_streamflow}
@@ -301,7 +301,7 @@ class dataProcess_VIC_level3(dataProcess_base):
         data_level="basin_level",
         deps=["load_basin_shp"]
     )
-    def load_streamflow(self):
+    def load_basin_attribute(self):
         basin_shp = self.loaddata_kwargs["basin_shp"]
         k_list = self.loaddata_kwargs["k_list"]
         

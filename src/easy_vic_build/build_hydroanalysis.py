@@ -283,7 +283,12 @@ def buildRivernetwork_level1(
         "node_positions": node_positions,
         "threshold": threshold,
         "sorted_river_paths": sorted_river_paths,
-        "length_info": length_info
+        "length_info": length_info,
+        "figs": {
+            "fig_river_network": fig_river_network,
+            "fig_river_network_full": fig_river_network_full,
+            "fig_river_network_connected": fig_river_network_connected
+        }
     }
     
     return river_network
