@@ -113,7 +113,7 @@ LAKE_PROFILE    FALSE
 #LAKE_NODES
 
 # [Routing]
-ROUT_PARAM  ./RVIC_params.nc
+#ROUT_PARAM  ./RVIC_params.nc
 
 # [Output]
 LOG_DIR VICLog

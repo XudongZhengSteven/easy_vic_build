@@ -85,13 +85,13 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
     logger.info("Starting to generate global parameter file... ...")
     ## ====================== set dir and path ======================
     # get rout_param
-    try:
-        rout_param_path = os.path.join(
-            evb_dir.rout_param_dir, os.listdir(evb_dir.rout_param_dir)[0]
-        )
-    except Exception as e:
-        rout_param_path = ""
-        logger.warning(f"Routing parameter path could not be determined: {e}")
+    # try:
+    #     rout_param_path = os.path.join(
+    #         evb_dir.rout_param_dir, os.listdir(evb_dir.rout_param_dir)[0]
+    #     )
+    # except Exception as e:
+    #     rout_param_path = ""
+    #     logger.warning(f"Routing parameter path could not be determined: {e}")
 
     ## ====================== build GlobalParam ======================
     # read GlobalParam_reference parser
@@ -109,7 +109,7 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
     globalParam.set("Param", "PARAMETERS", evb_dir.params_dataset_level1_path)
     globalParam.set("Output", "LOG_DIR", evb_dir.VICLog_dir + "/")
     globalParam.set("Output", "RESULT_DIR", evb_dir.VICResults_dir)
-    globalParam.set("Routing", "ROUT_PARAM", rout_param_path)
+    # globalParam.set("Routing", "ROUT_PARAM", rout_param_path)
 
     # set based on GlobalParam_dict (override the default param)
     for section_name in GlobalParam_dict.keys():
