@@ -40,8 +40,10 @@ Dependencies:
 """
 
 import os
+from .Logger import logging, Default_log_format, RotatingFileHandler
 from . import logger
 from .tools.utilities import check_and_mkdir, remove_and_mkdir
+from typing import Optional
 
 
 # Class to manage directories and paths for the easy_vic_build package
@@ -230,6 +232,47 @@ class Evb_dir:
         )
 
         logger.info(f"Directories for case '{case_name}' created successfully")
+
+    def attach_logger_file(
+        self,
+        logger: logging.Logger,
+        log_file: Optional[str] = None,
+        log_level: Optional[int] = None,
+        log_format: Optional[str] = None,
+        max_bytes: int = 10 * 1024 * 1024,  # 10 MB
+        backup_count: int = 5,
+    ):
+        """
+        Enable file logging for an existing logger.
+        """
+        if log_level is not None:
+            logger.setLevel(log_level)
+
+        formatter = logging.Formatter(
+            log_format if log_format is not None else Default_log_format
+        )
+
+        # avoid duplicate file handlers
+        for h in logger.handlers:
+            if isinstance(h, logging.FileHandler):
+                return logger
+
+        if log_file is None:
+            log_file = os.path.join(self.VICLog_dir, "evb.log")
+
+        file_handler = RotatingFileHandler(
+            log_file,
+            maxBytes=max_bytes,
+            backupCount=backup_count,
+        )
+        
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        
+        logger.info(f"---------------------------------------------------------------")
+        logger.info(f"logger has been attached to {log_file}")
+
+        return logger
 
     # define property and setter
     @property

@@ -48,6 +48,7 @@ Dependencies
 
 
 import logging
+from logging.handlers import RotatingFileHandler
 
 Default_log_format = "%(asctime)s - %(levelname)s - %(message)s"
 

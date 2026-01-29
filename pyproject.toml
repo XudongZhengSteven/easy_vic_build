@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "easy_vic_build"
-version = "0.1.0"
+version = "0.2.0"
 description = "An open-source Python package for VIC model deployment."
 authors = [
     { name = "XudongZheng", email = "zhengxd@sehemodel.club" }
