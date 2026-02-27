@@ -384,3 +384,9 @@ def createNashUH(
     UHBOX_file["UHBOX"] = UHBOX_file["UHBOX"].fillna(0)
 
     return max_day, UHBOX_file
+
+
+if __name__ == "__main__":
+    max_day, UHBOX_file = createGUH(None, uh_dt=60, tp=5, mu=3, m=4, plot_bool=True, max_day=3)
+    plt.show(block=True)
+    # GUH_uh_dt60_tp5_mu3_m4.png
