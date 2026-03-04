@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.build_Param &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.build_Param &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -41,21 +41,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -94,67 +82,18 @@
 <span class="c1"># author: Xudong Zheng</span>
 <span class="c1"># email: z786909151@163.com</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">build_Param - A Python module for building VIC parameter file.</span>
+<span class="sd">&quot;&quot;&quot;Build VIC parameter datasets and scale level-0 parameters to level-1.</span>
 
-<span class="sd">This module provides functions for constructing the Parameter file of the VIC model.</span>
-<span class="sd">It includes capabilities to:</span>
-<span class="sd">- Build the basic params_dataset_level0</span>
-<span class="sd">- Build the params_dataset_level0 by g parameters and TF</span>
-<span class="sd">- Build the params_dataset_level1</span>
-<span class="sd">- Searching grids for scaling grids from level 0 to level 1</span>
-<span class="sd">- Scaling params_dataset_level0 to params_dataset_level1</span>
-
-<span class="sd">Functions:</span>
-<span class="sd">----------</span>
-<span class="sd">    - `buildParam_level0`: Build the parameter dataset for level 0, consisting of two components: `buildParam_level0_basic` and `buildParam_level0_by_g`.</span>
-<span class="sd">    - `buildParam_level0_basic`: Build the basic parameter dataset for level 0.</span>
-<span class="sd">    - `buildParam_level0_by_g`: Use global parameter lists and TF to generate the parameter dataset.</span>
-<span class="sd">    - `buildParam_level1`: Build Level 1 parameters based on TF and dpc information.</span>
-<span class="sd">    - `scaling_level0_to_level1_search_grids`: Searching grids for scaling grids from level 0 to level 1 (Matching).</span>
-<span class="sd">    - `scaling_level0_to_level1`: Scaling the grid parameters from level 0 to level 1 based on matching grids.</span>
-
-<span class="sd">Usage:</span>
-<span class="sd">------</span>
-<span class="sd">    1. Call `buildParam_level0` and provide g_list as well as dpc instances to generate basic params_dataset_level0.</span>
-<span class="sd">    2. Call `buildParam_level1` to generate params_dataset_level1.</span>
-<span class="sd">    3. Call `scaling_level0_to_level1_search_grids` to search grids for match grids at level 0 and level 1.</span>
-<span class="sd">    4. Call `scaling_level0_to_level1` to scale params_dataset_level0 to params_dataset_level1.</span>
-<span class="sd">    Note: The Transfer function and scaling operator is set in params_func.TransferFunction and params_func.Scaling_operator module.</span>
-
-<span class="sd">Example:</span>
-<span class="sd">--------</span>
-<span class="sd">    basin_index = 213</span>
-<span class="sd">    model_scale = &quot;6km&quot;</span>
-<span class="sd">    date_period = [&quot;19980101&quot;, &quot;19981231&quot;]</span>
-<span class="sd">    case_name = f&quot;{basin_index}_{model_scale}&quot;</span>
-
-<span class="sd">    evb_dir = Evb_dir(cases_home=&quot;./examples&quot;)  # cases_home=&quot;/home/xdz/code/VIC_xdz/cases&quot;</span>
-<span class="sd">    evb_dir.builddir(case_name)</span>
-
-<span class="sd">    dpc_VIC_level0, dpc_VIC_level1, dpc_level2 = readdpc(evb_dir)</span>
-
-<span class="sd">    domain_dataset = readDomain(evb_dir)</span>
-
-<span class="sd">    params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(evb_dir, default_g_list, dpc_VIC_level0, reverse_lat=True)</span>
-<span class="sd">    params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=domain_dataset)</span>
-<span class="sd">    params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1)</span>
-
-<span class="sd">    domain_dataset.close()</span>
-<span class="sd">    params_dataset_level0.close()</span>
-<span class="sd">    params_dataset_level1.close()</span>
-
-<span class="sd">Dependencies:</span>
-<span class="sd">-------------</span>
-<span class="sd">    - `numpy`: For numerical computations and array manipulations.</span>
-<span class="sd">    - `bulid_Domain.cal_mask_frac_area_length`: For calculating mask fraction, area, and length within a domain.</span>
-<span class="sd">    - `tools.decoractors`: For measuring function execution time.</span>
-<span class="sd">    - `tools.dpc_func`: For data processing and computation functions.</span>
-<span class="sd">    - `tools.geo_func`: For geometric calculations and spatial operations.</span>
-<span class="sd">    - `tools.params_func`: Custom utility functions for parameter handling.</span>
-<span class="sd">    - `tools.utilities`: Custom utility functions.</span>
-<span class="sd">    - `tools.decoractors`: For measuring function execution time (duplicate entry, consider consolidating).</span>
-
+<span class="sd">Public functions</span>
+<span class="sd">----------------</span>
+<span class="sd">``buildParam_level0``</span>
+<span class="sd">    Build and update level-0 parameter dataset through interface methods.</span>
+<span class="sd">``buildParam_level1``</span>
+<span class="sd">    Build and update level-1 parameter dataset through interface methods.</span>
+<span class="sd">``scaling_level0_to_level1_search_grids``</span>
+<span class="sd">    Create level-0 to level-1 grid mapping.</span>
+<span class="sd">``scaling_level0_to_level1``</span>
+<span class="sd">    Resample level-0 parameters onto level-1 grids.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -186,58 +125,37 @@
     <span class="n">stand_grids_lon_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">rows_index_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">cols_index_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">basin_hierarchy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Build the parameter dataset for level 0, consisting of two components: `buildParam_level0_basic` and `buildParam_level0_by_g`.</span>
+<span class="sd">    Build level-0 parameter dataset using the configured interface class.</span>
 
-<span class="sd">    Parameters:</span>
-<span class="sd">    -----------</span>
-<span class="sd">    evb_dir : `Evb_dir`</span>
-<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
-<span class="sd">        </span>
-<span class="sd">    g_list : list</span>
-<span class="sd">        A list of global parameters (g-parameters).</span>
-<span class="sd">        </span>
-<span class="sd">    dpc_VIC_level0 : `dpc_VIC_level0`</span>
-<span class="sd">        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+<span class="sd">    g_params : dict</span>
+<span class="sd">        Parameter vector/group used by transfer functions at level-0.</span>
+<span class="sd">    soillayerresampler : object</span>
+<span class="sd">        Soil-layer resampler used by the level-0 interface.</span>
+<span class="sd">    dpc_VIC_level0 : object</span>
+<span class="sd">        DPC instance for level-0 processing.</span>
+<span class="sd">    TF_VIC_class : type, optional</span>
+<span class="sd">        Transfer-function class used by the interface.</span>
+<span class="sd">    buildParam_level0_interface_class : type, optional</span>
+<span class="sd">        Interface class implementing ``buildParam_level0_basic`` and</span>
+<span class="sd">        ``buildParam_level0_by_g_tf``.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        Whether latitude axis is arranged north-to-south.</span>
+<span class="sd">    stand_grids_lat_level0, stand_grids_lon_level0, rows_index_level0, cols_index_level0 : optional</span>
+<span class="sd">        Precomputed grid metadata to reuse for faster repeated runs.</span>
+<span class="sd">    basin_hierarchy : optional</span>
+<span class="sd">        Optional basin hierarchy information passed to interface constructor.</span>
 
-<span class="sd">    reverse_lat : bool</span>
-<span class="sd">        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -&gt; small, set as True).</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lat : list, optional</span>
-<span class="sd">        A list of standard latitudes. If not provided, will be calculated based on the grid shape.</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lon : list, optional</span>
-<span class="sd">        A list of standard longitudes. If not provided, will be calculated based on the grid shape.</span>
-<span class="sd">        </span>
-<span class="sd">    rows_index : list, optional</span>
-<span class="sd">        A list of row indices for the grid. If not provided, will be calculated based on the grid shape.</span>
-<span class="sd">        </span>
-<span class="sd">    cols_index : list, optional</span>
-<span class="sd">        A list of column indices for the grid. If not provided, will be calculated based on the grid shape.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    --------</span>
-<span class="sd">    params_dataset_level0 : `netCDF.Dataset`</span>
-<span class="sd">        The parameter dataset for level 0.</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lat : list</span>
-<span class="sd">        A list of standard latitudes.</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lon : list</span>
-<span class="sd">        A list of standard longitudes.</span>
-<span class="sd">        </span>
-<span class="sd">    rows_index : list</span>
-<span class="sd">        A list of row indices for the grid.</span>
-<span class="sd">        </span>
-<span class="sd">    cols_index : list</span>
-<span class="sd">        A list of column indices for the grid.</span>
-
-<span class="sd">    Notes:</span>
-<span class="sd">    ------</span>
-<span class="sd">    The function generates the parameter dataset for level 0, integrating two sub-components:</span>
-<span class="sd">    `buildParam_level0_basic` for basic parameter generation and `buildParam_level0_by_g`</span>
-<span class="sd">    for parameter adjustments based on global parameters.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        The created level-0 interface instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Start of the parameter building process, log an info message</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to building params_dataset_level0... ...&quot;</span><span class="p">)</span>
@@ -258,7 +176,8 @@
         <span class="n">stand_grids_lat_level0</span><span class="p">,</span>
         <span class="n">stand_grids_lon_level0</span><span class="p">,</span>
         <span class="n">rows_index_level0</span><span class="p">,</span>
-        <span class="n">cols_index_level0</span>
+        <span class="n">cols_index_level0</span><span class="p">,</span>
+        <span class="n">basin_hierarchy</span>
     <span class="p">)</span>
     
     <span class="c1">## ======================= buildParam_level0_basic =======================</span>
@@ -301,50 +220,30 @@
     <span class="n">cols_index_level1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Build Level 1 parameters.</span>
+<span class="sd">    Build level-1 parameter dataset using the configured interface class.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    evb_dir : `Evb_dir`</span>
-<span class="sd">        An instance of the `Evb_dir` class, containing paths for VIC deployment.</span>
-<span class="sd">    </span>
-<span class="sd">    dpc_VIC_level1 : `dpc_VIC_level1`</span>
-<span class="sd">        An instance of the `dpc_VIC_level1` class to process data at level 0 of the VIC model.</span>
-<span class="sd">    </span>
-<span class="sd">    reverse_lat : bool</span>
-<span class="sd">        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -&gt; small, set as True).</span>
-
-<span class="sd">    domain_dataset : `netCDF.Dataset`, optional</span>
-<span class="sd">        Domain dataset containing terrain and mask information. If not provided, mask will be computed based on `dpc_VIC_level1`.</span>
-<span class="sd">    </span>
-<span class="sd">    stand_grids_lat : list of float, optional</span>
-<span class="sd">        A list of standard grid latitudes. If not provided, will be calculated based on the grid shape.</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lon : list of float, optional</span>
-<span class="sd">        A list of standard grid longitudes. If not provided, will be calculated based on the grid shape.</span>
-<span class="sd">        </span>
-<span class="sd">    rows_index : list of int, optional</span>
-<span class="sd">        A list of row indices specifying grid positions. If not provided, will be calculated based on the grid shape.</span>
-<span class="sd">    </span>
-<span class="sd">    cols_index : list of int, optional</span>
-<span class="sd">        A list of column indices specifying grid positions. If not provided, will be calculated based on the grid shape.</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+<span class="sd">    dpc_VIC_level1 : object</span>
+<span class="sd">        DPC instance for level-1 processing.</span>
+<span class="sd">    TF_VIC_class : type, optional</span>
+<span class="sd">        Transfer-function class used by the interface.</span>
+<span class="sd">    buildParam_level1_interface_class : type, optional</span>
+<span class="sd">        Interface class implementing ``buildParam_level1_basic`` and</span>
+<span class="sd">        ``buildParam_level1_by_tf``.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        Whether latitude axis is arranged north-to-south.</span>
+<span class="sd">    domain_dataset : netCDF4.Dataset, optional</span>
+<span class="sd">        Domain dataset used by level-1 interface.</span>
+<span class="sd">    stand_grids_lat_level1, stand_grids_lon_level1, rows_index_level1, cols_index_level1 : optional</span>
+<span class="sd">        Precomputed grid metadata to reuse for faster repeated runs.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    params_dataset_level1 : `netCDF.Dataset`</span>
-<span class="sd">        The parameter dataset for level 1.</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lat : list of float</span>
-<span class="sd">        The list of standard grid latitudes used in the dataset.</span>
-<span class="sd">        </span>
-<span class="sd">    stand_grids_lon : list of float</span>
-<span class="sd">        The list of standard grid longitudes used in the dataset.</span>
-<span class="sd">        </span>
-<span class="sd">    rows_index : list of int</span>
-<span class="sd">        The list of row indices used in the grid.</span>
-<span class="sd">        </span>
-<span class="sd">    cols_index : list of int</span>
-<span class="sd">        The list of column indices used in the grid.</span>
+<span class="sd">    object</span>
+<span class="sd">        The created level-1 interface instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Start of the parameter building process, log an info message</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to build params_dataset_level1... ...&quot;</span><span class="p">)</span>
@@ -374,7 +273,7 @@
     
     <span class="c1">## ======================= buildParam_level1_by_tf =======================</span>
     <span class="c1"># Call buildParam_level1_by_tf to further refine the parameters based on tf</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calling buildParam_level0_by_tf... ...&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calling buildParam_level1_by_tf... ...&quot;</span><span class="p">)</span>
     <span class="n">buildParam_level1_interface_instance</span><span class="o">.</span><span class="n">buildParam_level1_by_tf</span><span class="p">()</span>
 
     <span class="c1"># Log the successful completion of the parameter building</span>
@@ -397,28 +296,19 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.build_Param.html#easy_vic_build.build_Param.scaling_level0_to_level1_search_grids">[docs]</a>
 <span class="k">def</span> <span class="nf">scaling_level0_to_level1_search_grids</span><span class="p">(</span><span class="n">params_dataset_level0</span><span class="p">,</span> <span class="n">params_dataset_level1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Searching grids for scaling grids from level 0 to level 1 (Matching grids at different levels).</span>
-
-<span class="sd">    This function reads longitude and latitude values from the parameter datasets of level 0 and level 1,</span>
-<span class="sd">    calculates the grid resolutions, creates 2D mesh grids for level 1, and searches for the closest</span>
-<span class="sd">    matching grid indices between level 0 and level 1 with `search_grids.search_grids_radius_rectangle`.</span>
-<span class="sd">    The function then converts the results into boolean indices for the corresponding grids.</span>
+<span class="sd">    Build level-0 to level-1 grid mapping by rectangular neighborhood search.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    params_dataset_level0 : object</span>
-<span class="sd">        The parameter dataset for level 0, containing the longitude and latitude values of the original grid.</span>
-<span class="sd">        </span>
-<span class="sd">    params_dataset_level1 : object</span>
-<span class="sd">        The parameter dataset for level 1, containing the longitude and latitude values of the target grid.</span>
+<span class="sd">    params_dataset_level0 : netCDF4.Dataset</span>
+<span class="sd">        Source level-0 parameter dataset.</span>
+<span class="sd">    params_dataset_level1 : netCDF4.Dataset</span>
+<span class="sd">        Target level-1 parameter dataset.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    searched_grids_index : array</span>
-<span class="sd">        The indices of the grids from level 0 that correspond to the grids of level 1.</span>
-<span class="sd">        </span>
-<span class="sd">    searched_grids_bool_index : array</span>
-<span class="sd">        Boolean indices indicating which grids from level 0 match the grids from level 1.</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(searched_grids_index, searched_grids_bool_index)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="s2">&quot;Starting to searching grids for scaling grids from level 0 to level 1... ...&quot;</span>
@@ -497,41 +387,29 @@
 <span class="nd">@clock_decorator</span><span class="p">(</span><span class="n">print_arg_ret</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">scaling_level0_to_level1</span><span class="p">(</span>
     <span class="n">params_dataset_level0</span><span class="p">,</span> <span class="n">params_dataset_level1</span><span class="p">,</span> <span class="n">searched_grids_bool_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">nlayer_list</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="n">nlayer_list</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">elev_scaling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Scaling the parameters from level 0 to level 1 based on matching grids.</span>
-
-<span class="sd">    This function takes the parameters from the level 0 and level 1 datasets, and scales the grid</span>
-<span class="sd">    parameters from the level 0 resolution to the level 1 resolution. It searches for the matching</span>
-<span class="sd">    grids between the two levels and then returns the level 1 dataset with the corresponding data</span>
-<span class="sd">    mapped from level 0, along with a boolean index indicating which grids in level 0 correspond</span>
-<span class="sd">    to the grids in level 1. The scaling operators are applied.</span>
+<span class="sd">    Scaling level-0 parameters onto level-1 grid cells.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    params_dataset_level0 : `netCDF.Dataset`</span>
-<span class="sd">        The parameter dataset for level 0.</span>
-<span class="sd">        </span>
-<span class="sd">    params_dataset_level1 : `netCDF.Dataset`</span>
-<span class="sd">        The parameter dataset for level 1.</span>
-<span class="sd">        </span>
-<span class="sd">    searched_grids_bool_index : array-like, optional, default=None</span>
-<span class="sd">        Boolean indices indicating which grids from level 0 match the grids from level 1.</span>
-<span class="sd">        If not provided, it is calculated within the function.</span>
-
+<span class="sd">    params_dataset_level0 : netCDF4.Dataset</span>
+<span class="sd">        Source level-0 dataset.</span>
+<span class="sd">    params_dataset_level1 : netCDF4.Dataset</span>
+<span class="sd">        Target level-1 dataset to be updated in place.</span>
+<span class="sd">    searched_grids_bool_index : array-like, optional</span>
+<span class="sd">        Precomputed level-0 search masks for each level-1 cell.</span>
+<span class="sd">    nlayer_list : list, optional</span>
+<span class="sd">        Soil-layer indices used for 3D variables.</span>
+<span class="sd">    elev_scaling : str, optional</span>
+<span class="sd">        If set to ``&quot;Arithmetic_min&quot;``, elevation uses min aggregation;</span>
+<span class="sd">        otherwise arithmetic mean is used.</span>
+<span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    params_dataset_level1 : `netCDF.Dataset`</span>
-<span class="sd">        The parameter dataset for level 1, with values from level 0 mapped onto the grids of level 1.</span>
-<span class="sd">        </span>
-<span class="sd">    searched_grids_bool_index : array</span>
-<span class="sd">        Boolean indices indicating which grids from level 0 correspond to grids from level 1.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    ------</span>
-<span class="sd">    - This function performs a search for the closest grids between level 0 and level 1.</span>
-<span class="sd">    - The mapping process takes into account the resolution of both grids and the spatial alignment.</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(params_dataset_level1, searched_grids_bool_index)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -588,7 +466,7 @@
     <span class="c1"># depth, m</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nlayer_list</span><span class="p">)):</span>
         <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_3d</span><span class="p">(</span>
-            <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">i</span>
+            <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Majority</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">i</span>
         <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling depth parameter completed&quot;</span><span class="p">)</span>
 
@@ -640,11 +518,11 @@
         <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling fc parameter completed&quot;</span><span class="p">)</span>
 
-    <span class="c1"># D4, /NA, same as c, typically is 2</span>
-    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;D4&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
-        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span>
+    <span class="c1"># d4, /NA, same as c, typically is 2</span>
+    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;d4&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;d4&quot;</span>
     <span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling D4 parameter completed&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling d4 parameter completed&quot;</span><span class="p">)</span>
 
     <span class="c1"># cexpt</span>
     <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
@@ -652,20 +530,20 @@
     <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling c parameter completed&quot;</span><span class="p">)</span>
 
-    <span class="c1"># D1 ([day^-1]), D2 ([day^-D4])</span>
-    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;D1&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
-        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Harmonic_mean</span><span class="p">,</span> <span class="s2">&quot;D1&quot;</span>
+    <span class="c1"># d1 ([day^-1]), d2 ([day^-d4])</span>
+    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;d1&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Harmonic_mean</span><span class="p">,</span> <span class="s2">&quot;d1&quot;</span>
     <span class="p">)</span>
-    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;D2&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
-        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Harmonic_mean</span><span class="p">,</span> <span class="s2">&quot;D2&quot;</span>
+    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;d2&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Harmonic_mean</span><span class="p">,</span> <span class="s2">&quot;d2&quot;</span>
     <span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling D1/2 parameter completed&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling d1/2 parameter completed&quot;</span><span class="p">)</span>
 
-    <span class="c1"># D3 ([mm])</span>
-    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;D3&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
-        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;D3&quot;</span>
+    <span class="c1"># d3 ([mm])</span>
+    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;d3&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;d3&quot;</span>
     <span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling D3 parameter completed&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling d3 parameter completed&quot;</span><span class="p">)</span>
 
     <span class="c1"># Dsmax, mm or mm/day</span>
     <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;Dsmax&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
@@ -673,7 +551,7 @@
     <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling Dsmax parameter completed&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Ds, [day^-D4] or fraction</span>
+    <span class="c1"># Ds, [day^-d4] or fraction</span>
     <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;Ds&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
         <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Harmonic_mean</span><span class="p">,</span> <span class="s2">&quot;Ds&quot;</span>
     <span class="p">)</span>
@@ -692,11 +570,25 @@
         <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling init_moist parameter completed&quot;</span><span class="p">)</span>
 
-    <span class="c1"># elev, m</span>
-    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;elev&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
-        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;elev&quot;</span>
-    <span class="p">)</span>
+    <span class="c1"># elev, m]</span>
+    <span class="k">if</span> <span class="n">elev_scaling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">elev_scaling</span> <span class="o">==</span> <span class="s2">&quot;Arithmetic_min&quot;</span><span class="p">:</span>
+            <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;elev&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+                <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_min</span><span class="p">,</span> <span class="s2">&quot;elev&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;elev_scaling </span><span class="si">{</span><span class="n">elev_scaling</span><span class="si">}</span><span class="s2"> not recognized.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;elev&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+            <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;elev&quot;</span>
+        <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling elev parameter completed&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># slope, m/m</span>
+    <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;slope&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
+        <span class="n">scaling_operator</span><span class="o">.</span><span class="n">Arithmetic_mean</span><span class="p">,</span> <span class="s2">&quot;slope&quot;</span>
+    <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scaling slope parameter completed&quot;</span><span class="p">)</span>
 
     <span class="c1"># dp, m, typically is 4m</span>
     <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;dp&quot;</span><span class="p">][:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">search_and_resample_func_2d</span><span class="p">(</span>
@@ -780,7 +672,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

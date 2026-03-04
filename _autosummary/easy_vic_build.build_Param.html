@@ -6,22 +6,22 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.build_Param &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.build_Param &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="easy_vic_build.build_hydroanalysis" href="easy_vic_build.build_hydroanalysis.html" />
-    <link rel="prev" title="easy_vic_build.Evb_dir_class" href="easy_vic_build.Evb_dir_class.html" /> 
+    <link rel="next" title="easy_vic_build.build_RVIC_Param" href="easy_vic_build.build_RVIC_Param.html" />
+    <link rel="prev" title="easy_vic_build.build_MeteForcing" href="easy_vic_build.build_MeteForcing.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,41 +44,32 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.html">easy_vic_build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">easy_vic_build.build_Param</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#functions">Functions:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#example">Example:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.build_Param.buildParam_level0"><code class="docutils literal notranslate"><span class="pre">buildParam_level0()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.build_Param.buildParam_level1"><code class="docutils literal notranslate"><span class="pre">buildParam_level1()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.build_Param.scaling_level0_to_level1"><code class="docutils literal notranslate"><span class="pre">scaling_level0_to_level1()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.build_Param.scaling_level0_to_level1_search_grids"><code class="docutils literal notranslate"><span class="pre">scaling_level0_to_level1_search_grids()</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#core-package">Core Package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.html">easy_vic_build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_GlobalParam.html">easy_vic_build.build_GlobalParam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">easy_vic_build.build_Param</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#public-functions">Public functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.build_Param.buildParam_level0"><code class="docutils literal notranslate"><span class="pre">buildParam_level0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.build_Param.buildParam_level1"><code class="docutils literal notranslate"><span class="pre">buildParam_level1()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.build_Param.scaling_level0_to_level1_search_grids"><code class="docutils literal notranslate"><span class="pre">scaling_level0_to_level1_search_grids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.build_Param.scaling_level0_to_level1"><code class="docutils literal notranslate"><span class="pre">scaling_level0_to_level1()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.bulid_Domain.html">easy_vic_build.bulid_Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.warmup.html">easy_vic_build.warmup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
@@ -104,6 +95,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
       <li class="breadcrumb-item active">easy_vic_build.build_Param</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.build_Param.rst" class="fa fa-github"> Edit on GitHub</a>
@@ -116,222 +108,137 @@
              
   <section id="module-easy_vic_build.build_Param">
 <span id="easy-vic-build-build-param"></span><h1>easy_vic_build.build_Param<a class="headerlink" href="#module-easy_vic_build.build_Param" title="Link to this heading"></a></h1>
-<p>build_Param - A Python module for building VIC parameter file.</p>
-<p>This module provides functions for constructing the Parameter file of the VIC model.
-It includes capabilities to:
-- Build the basic params_dataset_level0
-- Build the params_dataset_level0 by g parameters and TF
-- Build the params_dataset_level1
-- Searching grids for scaling grids from level 0 to level 1
-- Scaling params_dataset_level0 to params_dataset_level1</p>
-<section id="functions">
-<h2>Functions:<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p><cite>buildParam_level0</cite>: Build the parameter dataset for level 0, consisting of two components: <cite>buildParam_level0_basic</cite> and <cite>buildParam_level0_by_g</cite>.</p></li>
-<li><p><cite>buildParam_level0_basic</cite>: Build the basic parameter dataset for level 0.</p></li>
-<li><p><cite>buildParam_level0_by_g</cite>: Use global parameter lists and TF to generate the parameter dataset.</p></li>
-<li><p><cite>buildParam_level1</cite>: Build Level 1 parameters based on TF and dpc information.</p></li>
-<li><p><cite>scaling_level0_to_level1_search_grids</cite>: Searching grids for scaling grids from level 0 to level 1 (Matching).</p></li>
-<li><p><cite>scaling_level0_to_level1</cite>: Scaling the grid parameters from level 0 to level 1 based on matching grids.</p></li>
-</ul>
-</div></blockquote>
-</section>
-<section id="usage">
-<h2>Usage:<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>Call <cite>buildParam_level0</cite> and provide g_list as well as dpc instances to generate basic params_dataset_level0.</p></li>
-<li><p>Call <cite>buildParam_level1</cite> to generate params_dataset_level1.</p></li>
-<li><p>Call <cite>scaling_level0_to_level1_search_grids</cite> to search grids for match grids at level 0 and level 1.</p></li>
-</ol>
-<p>4. Call <cite>scaling_level0_to_level1</cite> to scale params_dataset_level0 to params_dataset_level1.
-Note: The Transfer function and scaling operator is set in params_func.TransferFunction and params_func.Scaling_operator module.</p>
-</div></blockquote>
-</section>
-<section id="example">
-<h2>Example:<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
-<blockquote>
-<div><p>basin_index = 213
-model_scale = “6km”
-date_period = [“19980101”, “19981231”]
-case_name = f”{basin_index}_{model_scale}”</p>
-<p>evb_dir = Evb_dir(cases_home=”./examples”)  # cases_home=”/home/xdz/code/VIC_xdz/cases”
-evb_dir.builddir(case_name)</p>
-<p>dpc_VIC_level0, dpc_VIC_level1, dpc_level2 = readdpc(evb_dir)</p>
-<p>domain_dataset = readDomain(evb_dir)</p>
-<p>params_dataset_level0, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level0(evb_dir, default_g_list, dpc_VIC_level0, reverse_lat=True)
-params_dataset_level1, stand_grids_lat, stand_grids_lon, rows_index, cols_index = buildParam_level1(evb_dir, dpc_VIC_level1, reverse_lat=True, domain_dataset=domain_dataset)
-params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(params_dataset_level0, params_dataset_level1)</p>
-<p>domain_dataset.close()
-params_dataset_level0.close()
-params_dataset_level1.close()</p>
-</div></blockquote>
-</section>
-<section id="dependencies">
-<h2>Dependencies:<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p><cite>numpy</cite>: For numerical computations and array manipulations.</p></li>
-<li><p><cite>bulid_Domain.cal_mask_frac_area_length</cite>: For calculating mask fraction, area, and length within a domain.</p></li>
-<li><p><cite>tools.decoractors</cite>: For measuring function execution time.</p></li>
-<li><p><cite>tools.dpc_func</cite>: For data processing and computation functions.</p></li>
-<li><p><cite>tools.geo_func</cite>: For geometric calculations and spatial operations.</p></li>
-<li><p><cite>tools.params_func</cite>: Custom utility functions for parameter handling.</p></li>
-<li><p><cite>tools.utilities</cite>: Custom utility functions.</p></li>
-<li><p><cite>tools.decoractors</cite>: For measuring function execution time (duplicate entry, consider consolidating).</p></li>
-</ul>
-</div></blockquote>
+<p>Build VIC parameter datasets and scale level-0 parameters to level-1.</p>
+<section id="public-functions">
+<h2>Public functions<a class="headerlink" href="#public-functions" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">buildParam_level0</span></code></dt><dd><p>Build and update level-0 parameter dataset through interface methods.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">buildParam_level1</span></code></dt><dd><p>Build and update level-1 parameter dataset through interface methods.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">scaling_level0_to_level1_search_grids</span></code></dt><dd><p>Create level-0 to level-1 grid mapping.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">scaling_level0_to_level1</span></code></dt><dd><p>Resample level-0 parameters onto level-1 grids.</p>
+</dd>
+</dl>
 </section>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.build_Param.buildParam_level0" title="easy_vic_build.build_Param.buildParam_level0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildParam_level0</span></code></a>(evb_dir, g_params, ...[, ...])</p></td>
-<td><p>Build the parameter dataset for level 0, consisting of two components: <cite>buildParam_level0_basic</cite> and <cite>buildParam_level0_by_g</cite>.</p></td>
+<td><p>Build level-0 parameter dataset using the configured interface class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.build_Param.buildParam_level1" title="easy_vic_build.build_Param.buildParam_level1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildParam_level1</span></code></a>(evb_dir, dpc_VIC_level1[, ...])</p></td>
-<td><p>Build Level 1 parameters.</p></td>
+<td><p>Build level-1 parameter dataset using the configured interface class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.build_Param.scaling_level0_to_level1" title="easy_vic_build.build_Param.scaling_level0_to_level1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scaling_level0_to_level1</span></code></a>(...[, ...])</p></td>
-<td><p>Scaling the parameters from level 0 to level 1 based on matching grids.</p></td>
+<td><p>Scaling level-0 parameters onto level-1 grid cells.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.build_Param.scaling_level0_to_level1_search_grids" title="easy_vic_build.build_Param.scaling_level0_to_level1_search_grids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scaling_level0_to_level1_search_grids</span></code></a>(...)</p></td>
-<td><p>Searching grids for scaling grids from level 0 to level 1 (Matching grids at different levels).</p></td>
+<td><p>Build level-0 to level-1 grid mapping by rectangular neighborhood search.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="easy_vic_build.build_Param.buildParam_level0">
-<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">buildParam_level0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC_class=&lt;class</span> <span class="pre">'easy_vic_build.tools.params_func.TransferFunction.TF_VIC'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buildParam_level0_interface_class=&lt;class</span> <span class="pre">'easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#buildParam_level0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.buildParam_level0" title="Link to this definition"></a></dt>
-<dd><p>Build the parameter dataset for level 0, consisting of two components: <cite>buildParam_level0_basic</cite> and <cite>buildParam_level0_by_g</cite>.</p>
-<section id="parameters">
-<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
-<dl>
-<dt>evb_dir<span class="classifier"><cite>Evb_dir</cite></span></dt><dd><p>An instance of the <cite>Evb_dir</cite> class, containing paths for VIC deployment.</p>
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">buildParam_level0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC_class=&lt;class</span> <span class="pre">'easy_vic_build.tools.params_func.TransferFunction.TF_VIC'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buildParam_level0_interface_class=&lt;class</span> <span class="pre">'easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#buildParam_level0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.buildParam_level0" title="Link to this definition"></a></dt>
+<dd><p>Build level-0 parameter dataset using the configured interface class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter vector/group used by transfer functions at level-0.</p></li>
+<li><p><strong>soillayerresampler</strong> (<em>object</em>) – Soil-layer resampler used by the level-0 interface.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – DPC instance for level-0 processing.</p></li>
+<li><p><strong>TF_VIC_class</strong> (<em>type</em><em>, </em><em>optional</em>) – Transfer-function class used by the interface.</p></li>
+<li><p><strong>buildParam_level0_interface_class</strong> (<em>type</em><em>, </em><em>optional</em>) – Interface class implementing <code class="docutils literal notranslate"><span class="pre">buildParam_level0_basic</span></code> and
+<code class="docutils literal notranslate"><span class="pre">buildParam_level0_by_g_tf</span></code>.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether latitude axis is arranged north-to-south.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>optional</em>) – Optional basin hierarchy information passed to interface constructor.</p></li>
+</ul>
 </dd>
-<dt>g_list<span class="classifier">list</span></dt><dd><p>A list of global parameters (g-parameters).</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The created level-0 interface instance.</p>
 </dd>
-<dt>dpc_VIC_level0<span class="classifier"><cite>dpc_VIC_level0</cite></span></dt><dd><p>An instance of the <cite>dpc_VIC_level0</cite> class to process data at level 0 of the VIC model.</p>
-</dd>
-<dt>reverse_lat<span class="classifier">bool</span></dt><dd><p>Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -&gt; small, set as True).</p>
-</dd>
-<dt>stand_grids_lat<span class="classifier">list, optional</span></dt><dd><p>A list of standard latitudes. If not provided, will be calculated based on the grid shape.</p>
-</dd>
-<dt>stand_grids_lon<span class="classifier">list, optional</span></dt><dd><p>A list of standard longitudes. If not provided, will be calculated based on the grid shape.</p>
-</dd>
-<dt>rows_index<span class="classifier">list, optional</span></dt><dd><p>A list of row indices for the grid. If not provided, will be calculated based on the grid shape.</p>
-</dd>
-<dt>cols_index<span class="classifier">list, optional</span></dt><dd><p>A list of column indices for the grid. If not provided, will be calculated based on the grid shape.</p>
-</dd>
-</dl>
-</section>
-<section id="returns">
-<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
-<dl>
-<dt>params_dataset_level0<span class="classifier"><cite>netCDF.Dataset</cite></span></dt><dd><p>The parameter dataset for level 0.</p>
-</dd>
-<dt>stand_grids_lat<span class="classifier">list</span></dt><dd><p>A list of standard latitudes.</p>
-</dd>
-<dt>stand_grids_lon<span class="classifier">list</span></dt><dd><p>A list of standard longitudes.</p>
-</dd>
-<dt>rows_index<span class="classifier">list</span></dt><dd><p>A list of row indices for the grid.</p>
-</dd>
-<dt>cols_index<span class="classifier">list</span></dt><dd><p>A list of column indices for the grid.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
 </dd>
 </dl>
-</section>
-<section id="notes">
-<h2>Notes:<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
-<p>The function generates the parameter dataset for level 0, integrating two sub-components:
-<cite>buildParam_level0_basic</cite> for basic parameter generation and <cite>buildParam_level0_by_g</cite>
-for parameter adjustments based on global parameters.</p>
-</section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="easy_vic_build.build_Param.buildParam_level1">
 <span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">buildParam_level1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC_class=&lt;class</span> <span class="pre">'easy_vic_build.tools.params_func.TransferFunction.TF_VIC'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buildParam_level1_interface_class=&lt;class</span> <span class="pre">'easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_dataset=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level1=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level1=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level1=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level1=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#buildParam_level1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.buildParam_level1" title="Link to this definition"></a></dt>
-<dd><p>Build Level 1 parameters.</p>
+<dd><p>Build level-1 parameter dataset using the configured interface class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>evb_dir</strong> (<cite>Evb_dir</cite>) – An instance of the <cite>Evb_dir</cite> class, containing paths for VIC deployment.</p></li>
-<li><p><strong>dpc_VIC_level1</strong> (<cite>dpc_VIC_level1</cite>) – An instance of the <cite>dpc_VIC_level1</cite> class to process data at level 0 of the VIC model.</p></li>
-<li><p><strong>reverse_lat</strong> (<em>bool</em>) – Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -&gt; small, set as True).</p></li>
-<li><p><strong>domain_dataset</strong> (<cite>netCDF.Dataset</cite>, optional) – Domain dataset containing terrain and mask information. If not provided, mask will be computed based on <cite>dpc_VIC_level1</cite>.</p></li>
-<li><p><strong>stand_grids_lat</strong> (<em>list</em><em> of </em><em>float</em><em>, </em><em>optional</em>) – A list of standard grid latitudes. If not provided, will be calculated based on the grid shape.</p></li>
-<li><p><strong>stand_grids_lon</strong> (<em>list</em><em> of </em><em>float</em><em>, </em><em>optional</em>) – A list of standard grid longitudes. If not provided, will be calculated based on the grid shape.</p></li>
-<li><p><strong>rows_index</strong> (<em>list</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – A list of row indices specifying grid positions. If not provided, will be calculated based on the grid shape.</p></li>
-<li><p><strong>cols_index</strong> (<em>list</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – A list of column indices specifying grid positions. If not provided, will be calculated based on the grid shape.</p></li>
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>dpc_VIC_level1</strong> (<em>object</em>) – DPC instance for level-1 processing.</p></li>
+<li><p><strong>TF_VIC_class</strong> (<em>type</em><em>, </em><em>optional</em>) – Transfer-function class used by the interface.</p></li>
+<li><p><strong>buildParam_level1_interface_class</strong> (<em>type</em><em>, </em><em>optional</em>) – Interface class implementing <code class="docutils literal notranslate"><span class="pre">buildParam_level1_basic</span></code> and
+<code class="docutils literal notranslate"><span class="pre">buildParam_level1_by_tf</span></code>.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether latitude axis is arranged north-to-south.</p></li>
+<li><p><strong>domain_dataset</strong> (<em>netCDF4.Dataset</em><em>, </em><em>optional</em>) – Domain dataset used by level-1 interface.</p></li>
+<li><p><strong>stand_grids_lat_level1</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>stand_grids_lon_level1</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>rows_index_level1</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
+<li><p><strong>cols_index_level1</strong> (<em>optional</em>) – Precomputed grid metadata to reuse for faster repeated runs.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>params_dataset_level1</strong> (<cite>netCDF.Dataset</cite>) – The parameter dataset for level 1.</p></li>
-<li><p><strong>stand_grids_lat</strong> (<em>list of float</em>) – The list of standard grid latitudes used in the dataset.</p></li>
-<li><p><strong>stand_grids_lon</strong> (<em>list of float</em>) – The list of standard grid longitudes used in the dataset.</p></li>
-<li><p><strong>rows_index</strong> (<em>list of int</em>) – The list of row indices used in the grid.</p></li>
-<li><p><strong>cols_index</strong> (<em>list of int</em>) – The list of column indices used in the grid.</p></li>
+<dd class="field-even"><p>The created level-1 interface instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.build_Param.scaling_level0_to_level1_search_grids">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">scaling_level0_to_level1_search_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_dataset_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_dataset_level1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#scaling_level0_to_level1_search_grids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.scaling_level0_to_level1_search_grids" title="Link to this definition"></a></dt>
+<dd><p>Build level-0 to level-1 grid mapping by rectangular neighborhood search.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params_dataset_level0</strong> (<em>netCDF4.Dataset</em>) – Source level-0 parameter dataset.</p></li>
+<li><p><strong>params_dataset_level1</strong> (<em>netCDF4.Dataset</em>) – Target level-1 parameter dataset.</p></li>
 </ul>
-</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(searched_grids_index,</span> <span class="pre">searched_grids_bool_index)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="easy_vic_build.build_Param.scaling_level0_to_level1">
-<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">scaling_level0_to_level1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_dataset_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_dataset_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_bool_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlayer_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#scaling_level0_to_level1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.scaling_level0_to_level1" title="Link to this definition"></a></dt>
-<dd><p>Scaling the parameters from level 0 to level 1 based on matching grids.</p>
-<p>This function takes the parameters from the level 0 and level 1 datasets, and scales the grid
-parameters from the level 0 resolution to the level 1 resolution. It searches for the matching
-grids between the two levels and then returns the level 1 dataset with the corresponding data
-mapped from level 0, along with a boolean index indicating which grids in level 0 correspond
-to the grids in level 1. The scaling operators are applied.</p>
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">scaling_level0_to_level1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_dataset_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_dataset_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_bool_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlayer_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#scaling_level0_to_level1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.scaling_level0_to_level1" title="Link to this definition"></a></dt>
+<dd><p>Scaling level-0 parameters onto level-1 grid cells.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params_dataset_level0</strong> (<cite>netCDF.Dataset</cite>) – The parameter dataset for level 0.</p></li>
-<li><p><strong>params_dataset_level1</strong> (<cite>netCDF.Dataset</cite>) – The parameter dataset for level 1.</p></li>
-<li><p><strong>searched_grids_bool_index</strong> (<em>array-like</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – Boolean indices indicating which grids from level 0 match the grids from level 1.
-If not provided, it is calculated within the function.</p></li>
+<li><p><strong>params_dataset_level0</strong> (<em>netCDF4.Dataset</em>) – Source level-0 dataset.</p></li>
+<li><p><strong>params_dataset_level1</strong> (<em>netCDF4.Dataset</em>) – Target level-1 dataset to be updated in place.</p></li>
+<li><p><strong>searched_grids_bool_index</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed level-0 search masks for each level-1 cell.</p></li>
+<li><p><strong>nlayer_list</strong> (<em>list</em><em>, </em><em>optional</em>) – Soil-layer indices used for 3D variables.</p></li>
+<li><p><strong>elev_scaling</strong> (<em>str</em><em>, </em><em>optional</em>) – If set to <code class="docutils literal notranslate"><span class="pre">&quot;Arithmetic_min&quot;</span></code>, elevation uses min aggregation;
+otherwise arithmetic mean is used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>params_dataset_level1</strong> (<cite>netCDF.Dataset</cite>) – The parameter dataset for level 1, with values from level 0 mapped onto the grids of level 1.</p></li>
-<li><p><strong>searched_grids_bool_index</strong> (<em>array</em>) – Boolean indices indicating which grids from level 0 correspond to grids from level 1.</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(params_dataset_level1,</span> <span class="pre">searched_grids_bool_index)</span></code>.</p>
 </dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>This function performs a search for the closest grids between level 0 and level 1.</p></li>
-<li><p>The mapping process takes into account the resolution of both grids and the spatial alignment.</p></li>
-</ul>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="easy_vic_build.build_Param.scaling_level0_to_level1_search_grids">
-<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_Param.</span></span><span class="sig-name descname"><span class="pre">scaling_level0_to_level1_search_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_dataset_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_dataset_level1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_Param.html#scaling_level0_to_level1_search_grids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_Param.scaling_level0_to_level1_search_grids" title="Link to this definition"></a></dt>
-<dd><p>Searching grids for scaling grids from level 0 to level 1 (Matching grids at different levels).</p>
-<p>This function reads longitude and latitude values from the parameter datasets of level 0 and level 1,
-calculates the grid resolutions, creates 2D mesh grids for level 1, and searches for the closest
-matching grid indices between level 0 and level 1 with <cite>search_grids.search_grids_radius_rectangle</cite>.
-The function then converts the results into boolean indices for the corresponding grids.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>params_dataset_level0</strong> (<em>object</em>) – The parameter dataset for level 0, containing the longitude and latitude values of the original grid.</p></li>
-<li><p><strong>params_dataset_level1</strong> (<em>object</em>) – The parameter dataset for level 1, containing the longitude and latitude values of the target grid.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>searched_grids_index</strong> (<em>array</em>) – The indices of the grids from level 0 that correspond to the grids of level 1.</p></li>
-<li><p><strong>searched_grids_bool_index</strong> (<em>array</em>) – Boolean indices indicating which grids from level 0 match the grids from level 1.</p></li>
-</ul>
-</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -342,14 +249,14 @@ The function then converts the results into boolean indices for the correspondin
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="easy_vic_build.Evb_dir_class.html" class="btn btn-neutral float-left" title="easy_vic_build.Evb_dir_class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="easy_vic_build.build_hydroanalysis.html" class="btn btn-neutral float-right" title="easy_vic_build.build_hydroanalysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="easy_vic_build.build_MeteForcing.html" class="btn btn-neutral float-left" title="easy_vic_build.build_MeteForcing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.build_RVIC_Param.html" class="btn btn-neutral float-right" title="easy_vic_build.build_RVIC_Param" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,15 +6,15 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notes &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>Notes &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=43f6a66f" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -44,26 +44,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Notes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rvic-and-parallel-runs">RVIC and parallel runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#project-status">Project status</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 </ul>
@@ -94,22 +86,22 @@
              
   <section id="notes">
 <h1>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h1>
-<ol class="arabic">
-<li><p><strong>Testing GitHub Workflow</strong>
-This section is to test the GitHub Actions workflow.</p></li>
-<li><p><strong>RVIC Compilation Note</strong>
-Please note that <strong>RVIC</strong> should not be compiled with <strong>VIC</strong> if you wish to use parallel processing (e.g., <cite>mpiexec</cite>).</p>
-<p>There are two types of compilation:</p>
+<section id="rvic-and-parallel-runs">
+<h2>RVIC and parallel runs<a class="headerlink" href="#rvic-and-parallel-runs" title="Link to this heading"></a></h2>
+<p>When VIC is compiled with RVIC coupling, parallel execution behavior may differ
+from standalone VIC runs. In some workflows, users run VIC in parallel first
+and then run RVIC convolution separately.</p>
+<p>If using separate RVIC convolution, ensure:</p>
 <ul class="simple">
-<li><p><strong>Compile VIC with RVIC</strong>:
-You can run VIC with RVIC and set different timesteps.</p></li>
-<li><p><strong>Compile VIC without RVIC</strong>:
-You can run VIC in parallel, but you will need to run RVIC separately (<cite>rvic.convolution.convolution</cite>).
-Make sure to prepare the <cite>rvic.convolution.cfg</cite> configuration file.
-Additionally, ensure that the VIC output timestep (daily or hourly) matches the UHBOX timestep (86400 seconds for daily, 3600 seconds for hourly).</p></li>
+<li><p>VIC output timestep matches UHBOX timestep.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rvic.convolution.cfg</span></code> is configured with consistent temporal settings.</p></li>
 </ul>
-</li>
-</ol>
+</section>
+<section id="project-status">
+<h2>Project status<a class="headerlink" href="#project-status" title="Link to this heading"></a></h2>
+<p>The project is under active development. APIs and workflow defaults may evolve
+across versions.</p>
+</section>
 </section>
 
 
@@ -123,7 +115,7 @@ Additionally, ensure that the VIC output timestep (daily or hourly) matches the 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

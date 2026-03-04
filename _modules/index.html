@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview: module code &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>Overview: module code &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -41,21 +41,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -91,11 +79,85 @@
   <h1>All modules for which code is available</h1>
 <ul><li><a href="easy_vic_build/Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
 <li><a href="easy_vic_build/Logger.html">easy_vic_build.Logger</a></li>
+<li><a href="easy_vic_build/build_GlobalParam.html">easy_vic_build.build_GlobalParam</a></li>
 <li><a href="easy_vic_build/build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
 <li><a href="easy_vic_build/build_Param.html">easy_vic_build.build_Param</a></li>
 <li><a href="easy_vic_build/build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
 <li><a href="easy_vic_build/build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li><a href="easy_vic_build/bulid_Domain.html">easy_vic_build.bulid_Domain</a></li>
 <li><a href="easy_vic_build/calibrate.html">easy_vic_build.calibrate</a></li>
+<li><a href="easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</a></li>
+<li><a href="easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</a></li>
+<li><a href="easy_vic_build/tools/calibrate_func/evaluate_metrics.html">easy_vic_build.tools.calibrate_func.evaluate_metrics</a></li>
+<li><a href="easy_vic_build/tools/calibrate_func/sampling.html">easy_vic_build.tools.calibrate_func.sampling</a></li>
+<li><a href="easy_vic_build/tools/decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/aggregate.html">easy_vic_build.tools.dpc_func.aggregate</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/basin_grid_class.html">easy_vic_build.tools.dpc_func.basin_grid_class</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/basin_grid_func.html">easy_vic_build.tools.dpc_func.basin_grid_func</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/dpc_base.html">easy_vic_build.tools.dpc_func.dpc_base</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/dpc_subclass.html">easy_vic_build.tools.dpc_func.dpc_subclass</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_CAMELS_Attribute.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_CAMELS_ForcingDaymet.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_ForcingDaymet</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_CAMELS_Streamflow.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Streamflow</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_CONUS_SOIL.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_ERA5_SM.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_ERA5_SM</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_ERA5_SoilTemperature.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_ERA5_SoilTemperature</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_GLDAS.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_GLDAS</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_GLEAM_E.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_GLEAM_E</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_GlobalSnow_SWE.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_GlobalSnow_SWE</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_HWSD.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_HWSD</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_MODIS_BSA.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_MODIS_BSA</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_MODIS_LAI.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_MODIS_LAI</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_MODIS_NDVI.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_MODIS_NDVI</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_NLDAS.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_NLDAS_annual_P.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_annual_P</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_NLDAS_forcing.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_SrtmDEM.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_SrtmDEM</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_TRMM_P.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_UMDLandCover.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_UMDLandCover</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/extractData_func/Extract_UMD_1km.html">easy_vic_build.tools.dpc_func.extractData_func.Extract_UMD_1km</a></li>
+<li><a href="easy_vic_build/tools/dpc_func/select_basin_shp.html">easy_vic_build.tools.dpc_func.select_basin_shp</a></li>
+<li><a href="easy_vic_build/tools/geo_func/clip.html">easy_vic_build.tools.geo_func.clip</a></li>
+<li><a href="easy_vic_build/tools/geo_func/create_gdf.html">easy_vic_build.tools.geo_func.create_gdf</a></li>
+<li><a href="easy_vic_build/tools/geo_func/fill_gap.html">easy_vic_build.tools.geo_func.fill_gap</a></li>
+<li><a href="easy_vic_build/tools/geo_func/format_conversion.html">easy_vic_build.tools.geo_func.format_conversion</a></li>
+<li><a href="easy_vic_build/tools/geo_func/reproject.html">easy_vic_build.tools.geo_func.reproject</a></li>
+<li><a href="easy_vic_build/tools/geo_func/resample.html">easy_vic_build.tools.geo_func.resample</a></li>
+<li><a href="easy_vic_build/tools/geo_func/search_grids.html">easy_vic_build.tools.geo_func.search_grids</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/backup/hydroanalysis.html">easy_vic_build.tools.hydroanalysis_func.backup.hydroanalysis</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/create_dem.html">easy_vic_build.tools.hydroanalysis_func.create_dem</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/create_flow_distance.html">easy_vic_build.tools.hydroanalysis_func.create_flow_distance</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/basin_delineation.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/fill_dem.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/flow_accumulation.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.flow_accumulation</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/flow_direction.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.flow_direction</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/hydroanalysis.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/outlet_detection.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/set_workenv.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.set_workenv</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network</a></li>
+<li><a href="easy_vic_build/tools/hydroanalysis_func/mosaic_dem.html">easy_vic_build.tools.hydroanalysis_func.mosaic_dem</a></li>
+<li><a href="easy_vic_build/tools/mete_func/build_MeteForcing_interface.html">easy_vic_build.tools.mete_func.build_MeteForcing_interface</a></li>
+<li><a href="easy_vic_build/tools/mete_func/createMeteForcingDataset.html">easy_vic_build.tools.mete_func.createMeteForcingDataset</a></li>
+<li><a href="easy_vic_build/tools/mete_func/mete_func.html">easy_vic_build.tools.mete_func.mete_func</a></li>
+<li><a href="easy_vic_build/tools/mete_func/resampleTimeForcing.html">easy_vic_build.tools.mete_func.resampleTimeForcing</a></li>
+<li><a href="easy_vic_build/tools/nc_func/create_nc.html">easy_vic_build.tools.nc_func.create_nc</a></li>
+<li><a href="easy_vic_build/tools/nc_func/mask_nc.html">easy_vic_build.tools.nc_func.mask_nc</a></li>
+<li><a href="easy_vic_build/tools/nested_basin_func/nested_basin_func.html">easy_vic_build.tools.nested_basin_func.nested_basin_func</a></li>
+<li><a href="easy_vic_build/tools/params_func/GlobalParamParser.html">easy_vic_build.tools.params_func.GlobalParamParser</a></li>
+<li><a href="easy_vic_build/tools/params_func/Scaling_operator.html">easy_vic_build.tools.params_func.Scaling_operator</a></li>
+<li><a href="easy_vic_build/tools/params_func/TransferFunction.html">easy_vic_build.tools.params_func.TransferFunction</a></li>
+<li><a href="easy_vic_build/tools/params_func/build_Param_interface.html">easy_vic_build.tools.params_func.build_Param_interface</a></li>
+<li><a href="easy_vic_build/tools/params_func/createParametersDataset.html">easy_vic_build.tools.params_func.createParametersDataset</a></li>
+<li><a href="easy_vic_build/tools/params_func/params_set.html">easy_vic_build.tools.params_func.params_set</a></li>
+<li><a href="easy_vic_build/tools/params_func/veg_type_attributes_umd_prepare.html">easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare</a></li>
+<li><a href="easy_vic_build/tools/plot_func/plot_evaluation.html">easy_vic_build.tools.plot_func.plot_evaluation</a></li>
+<li><a href="easy_vic_build/tools/plot_func/plot_map.html">easy_vic_build.tools.plot_func.plot_map</a></li>
+<li><a href="easy_vic_build/tools/plot_func/plot_utilities.html">easy_vic_build.tools.plot_func.plot_utilities</a></li>
+<li><a href="easy_vic_build/tools/routing_func/Muskingum_routing.html">easy_vic_build.tools.routing_func.Muskingum_routing</a></li>
+<li><a href="easy_vic_build/tools/routing_func/create_uh.html">easy_vic_build.tools.routing_func.create_uh</a></li>
+<li><a href="easy_vic_build/tools/routing_func/river_network.html">easy_vic_build.tools.routing_func.river_network</a></li>
+<li><a href="easy_vic_build/tools/utilities.html">easy_vic_build.tools.utilities</a></li>
+<li><a href="easy_vic_build/warmup.html">easy_vic_build.warmup</a></li>
 </ul>
 
            </div>
@@ -105,7 +167,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

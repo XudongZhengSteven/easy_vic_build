@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.Logger &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.Logger &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -41,21 +41,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -94,52 +82,19 @@
 <span class="c1"># author: Xudong Zheng</span>
 <span class="c1"># email: z786909151@163.com</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Logger - A Python module for configuring and managing logging.</span>
+<span class="sd">&quot;&quot;&quot;Logging setup utilities used across ``easy_vic_build``.</span>
 
-<span class="sd">This module provides a flexible and user-friendly interface to configure logger</span>
-<span class="sd">for Python applications. It allows users to dynamically set the logging level,</span>
-<span class="sd">format, and output destination (console or file). The module is designed to be</span>
-<span class="sd">easy to use while providing advanced customization options.</span>
-
-<span class="sd">Functions</span>
-<span class="sd">---------</span>
-<span class="sd">    - `setup_logger`: Configure the logger with user-defined settings.</span>
-
-<span class="sd">Usage:</span>
-<span class="sd">------</span>
-<span class="sd">    1. Call the `setup_logger` to get logger instance.</span>
-<span class="sd">    2. Use the `logger` method (logger.info(&#39;...&#39;), logger.debug(&#39;...&#39;)).</span>
-
-<span class="sd">Example</span>
-<span class="sd">-------</span>
-<span class="sd">To use the default logger configuration:</span>
-<span class="sd">    &gt;&gt;&gt; from Logger import logger</span>
-<span class="sd">    &gt;&gt;&gt; logger.info(&quot;This is an info message with the default setup.&quot;)</span>
-
-<span class="sd">To customize the logger configuration:</span>
-<span class="sd">    &gt;&gt;&gt; from Logger import setup_logger</span>
-<span class="sd">    &gt;&gt;&gt; setup_logger(</span>
-<span class="sd">    ...     log_level=logging.DEBUG,</span>
-<span class="sd">    ...     log_format=&quot;%(asctime)s - %(levelname)s - %(message)s&quot;,</span>
-<span class="sd">    ...     log_to_file=True,</span>
-<span class="sd">    ...     log_file=&quot;custom_log.log&quot;</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; logger.debug(&quot;This is a debug message with custom configuration.&quot;)</span>
-
-<span class="sd">Notes</span>
-<span class="sd">-----</span>
-<span class="sd">- The default log format is &quot;%(asctime)s - %(levelname)s - %(message)s&quot;.</span>
-<span class="sd">- If no parameters are passed to `setup_logger`, the default configuration is used.</span>
-
-<span class="sd">Dependencies</span>
-<span class="sd">------------</span>
-<span class="sd">    - `logging` : Python standard library, Provides the core logging functionality.</span>
-
+<span class="sd">Public API</span>
+<span class="sd">----------</span>
+<span class="sd">``setup_logger``</span>
+<span class="sd">    Configure and return the module logger.</span>
+<span class="sd">``logger``</span>
+<span class="sd">    Preconfigured logger instance created at import time.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">logging.handlers</span> <span class="kn">import</span> <span class="n">RotatingFileHandler</span>
 
 <span class="n">Default_log_format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
 
@@ -147,40 +102,23 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.Logger.html#easy_vic_build.setup_logger">[docs]</a>
 <span class="k">def</span> <span class="nf">setup_logger</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_to_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Configure the logger with user-defined settings.</span>
+<span class="sd">    Configure and return the module logger.</span>
 
-<span class="sd">    This function allows users to dynamically modify the logger&#39;s configuration,</span>
-<span class="sd">    including the logging level, format, and output destination (console or file).</span>
-<span class="sd">    If no parameters are provided, the default configuration is used.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    -----------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    log_level : int, optional</span>
-<span class="sd">        The logging level to set. Default is None (no change).</span>
-
+<span class="sd">        Logger level override.</span>
 <span class="sd">    log_format : str, optional</span>
-<span class="sd">        The log format to set. Default is None (no change).</span>
-
+<span class="sd">        Formatter pattern. Uses ``Default_log_format`` when omitted.</span>
 <span class="sd">    log_to_file : bool, optional</span>
-<span class="sd">        Whether to log to a file. Default is None (no change).</span>
-
+<span class="sd">        If ``True``, also attach a file handler.</span>
 <span class="sd">    log_file : str, optional</span>
-<span class="sd">        If logging to a file, specify the file path. Default is None (no change).</span>
+<span class="sd">        Log file path used when ``log_to_file=True``.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">    --------</span>
-<span class="sd">    Logging.Logger</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    logging.Logger</span>
 <span class="sd">        The configured logger instance.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">    --------</span>
-<span class="sd">    To customize the logger configuration:</span>
-<span class="sd">        &gt;&gt;&gt; setup_logger(</span>
-<span class="sd">        ...     log_level=logging.DEBUG,</span>
-<span class="sd">        ...     log_format=&quot;%(asctime)s - %(levelname)s - %(message)s&quot;,</span>
-<span class="sd">        ...     log_to_file=True,</span>
-<span class="sd">        ...     log_file=&quot;custom_log.log&quot;</span>
-<span class="sd">        ... )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get the logger instance</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -231,7 +169,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

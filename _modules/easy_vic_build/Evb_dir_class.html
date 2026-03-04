@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.Evb_dir_class &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.Evb_dir_class &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -41,21 +41,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -94,46 +82,23 @@
 <span class="c1"># author: Xudong Zheng</span>
 <span class="c1"># email: z786909151@163.com</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Evb_dir_class - A Python module for managing directory structures in the EVB.</span>
+<span class="sd">&quot;&quot;&quot;Directory and path manager for ``easy_vic_build`` cases.</span>
 
-<span class="sd">This module provides a class for managing directory structures related to different case scenarios in the VIC</span>
-<span class="sd">model. The `Evb_dir` class simplifies the creation, organization, and retrieval of directories required for</span>
-<span class="sd">storing input, output, and parameter files used in VIC simulations. It ensures that necessary directories are</span>
-<span class="sd">properly structured and accessible.</span>
-
-<span class="sd">Class:</span>
-<span class="sd">------</span>
-<span class="sd">    - `Evb_dir`: A class to handle the creation and management of directory structures for different case</span>
-<span class="sd">                 scenarios in the VIC model. The `Evb_dir` class defines methods and properties for managing</span>
-<span class="sd">                 directories and paths related to the VIC model&#39;s operations.</span>
-<span class="sd">                 It helps automate the creation of necessary directories for model configuration, calibration, and execution.</span>
-
-<span class="sd">Usage:</span>
-<span class="sd">------</span>
-<span class="sd">    1. Instantiate `Evb_dir` and pass parameters into it.</span>
-<span class="sd">    2. Call `Evb_dir.builddir` to build file tree structure.</span>
-<span class="sd">    3. Get and use the attributes of the `Evb_dir`.</span>
+<span class="sd">The :class:`Evb_dir` class centralizes case-folder creation and stores the</span>
+<span class="sd">canonical file paths used by the build pipeline.</span>
 
 <span class="sd">Example</span>
 <span class="sd">-------</span>
-<span class="sd">To use the Evb_dir</span>
-<span class="sd">    &gt;&gt;&gt; from Evb_dir_class import Evb_dir</span>
-<span class="sd">    &gt;&gt;&gt; project = Evb_dir(case_name=&quot;baseline_scenario&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; project.builddir()  # Creates ./baseline_scenario/...</span>
-<span class="sd">    &gt;&gt;&gt; print(project.dpcFile_dir)  # Outputs &quot;/abs/path/baseline_scenario/dpcFile&quot;</span>
-
-
-<span class="sd">Dependencies:</span>
-<span class="sd">-------------</span>
-<span class="sd">    - `os`: Provides functions for interacting with the operating system, such as creating directories.</span>
-<span class="sd">    - `shutil`: Used for high-level file and directory operations, including copying and moving files.</span>
-
+<span class="sd">&gt;&gt;&gt; project = Evb_dir(cases_home=&quot;./cases&quot;)</span>
+<span class="sd">&gt;&gt;&gt; project.builddir(&quot;baseline_scenario&quot;)</span>
+<span class="sd">&gt;&gt;&gt; project.dpcFile_dir</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.Logger</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">Default_log_format</span><span class="p">,</span> <span class="n">RotatingFileHandler</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">.tools.utilities</span> <span class="kn">import</span> <span class="n">check_and_mkdir</span><span class="p">,</span> <span class="n">remove_and_mkdir</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 
 <span class="c1"># Class to manage directories and paths for the easy_vic_build package</span>
@@ -141,7 +106,7 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir">[docs]</a>
 <span class="k">class</span> <span class="nc">Evb_dir</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class to handle the creation and management of directory structures for different case scenarios in the VIC model deployment process.</span>
+<span class="sd">    Manage directory layout and key file paths for one VIC case.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Initialize the base directory paths</span>
@@ -152,15 +117,21 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cases_home</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the directory paths for a given case name or set the default to current working directory.</span>
+<span class="sd">        Initialize the root folder and path placeholders.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cases_home : str, optional</span>
+<span class="sd">            Root directory that stores all cases. If ``None``, defaults to</span>
+<span class="sd">            ``os.path.join(os.getcwd(), &quot;cases&quot;)``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing Evb_dir class&quot;</span><span class="p">)</span>
 
         <span class="c1"># self._cases_dir = cases_home if cases_home is not None else os.path.join(Evb_dir.__package_dir__, &quot;cases&quot;)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cases_dir</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cases_home</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">cases_home</span> <span class="k">if</span> <span class="n">cases_home</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;cases&quot;</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Case directory set to: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Case directory set to: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_home</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Initialize all paths for meteorological forcing, domain, parameters, etc.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_MeteForcing_src_dir</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -203,17 +174,26 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir.builddir">[docs]</a>
     <span class="k">def</span> <span class="nf">builddir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create directories and set paths for a specific case name.</span>
+<span class="sd">        Create the case directory tree and assign standard file paths.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        case_name : str</span>
+<span class="sd">            Case identifier used as the folder name under ``cases_home``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting to create directories for case: </span><span class="si">{</span><span class="n">case_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_case_name</span> <span class="o">=</span> <span class="n">case_name</span>
-
+        
         <span class="c1"># Create base directories for the case</span>
-        <span class="n">check_and_mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_dir</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base case directory created at: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_case_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_dir</span><span class="p">,</span> <span class="n">case_name</span><span class="p">)</span>
+        <span class="n">check_and_mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_home</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base case directory created at: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_home</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_case_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cases_home</span><span class="p">,</span> <span class="n">case_name</span><span class="p">)</span>
         <span class="n">check_and_mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_case_dir</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Case directory created at: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_case_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -329,6 +309,72 @@
         <span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directories for case &#39;</span><span class="si">{</span><span class="n">case_name</span><span class="si">}</span><span class="s2">&#39; created successfully&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Evb_dir.attach_logger_file">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir.attach_logger_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">attach_logger_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span>
+        <span class="n">log_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 10 MB</span>
+        <span class="n">backup_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attach a rotating file handler to an existing logger.</span>
+
+<span class="sd">        If a file handler already exists, the logger is returned unchanged.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logger : logging.Logger</span>
+<span class="sd">            Logger instance to update.</span>
+<span class="sd">        log_file : str, optional</span>
+<span class="sd">            Target log file path. Defaults to ``&lt;case&gt;/VICLog/evb.log``.</span>
+<span class="sd">        log_level : int, optional</span>
+<span class="sd">            Logger level override.</span>
+<span class="sd">        log_format : str, optional</span>
+<span class="sd">            Custom formatter string. Uses ``Default_log_format`` when omitted.</span>
+<span class="sd">        max_bytes : int, optional</span>
+<span class="sd">            Maximum log size before rotation.</span>
+<span class="sd">        backup_count : int, optional</span>
+<span class="sd">            Number of rotated log files to keep.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        logging.Logger</span>
+<span class="sd">            The same logger instance after handler setup.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">log_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+            <span class="n">log_format</span> <span class="k">if</span> <span class="n">log_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Default_log_format</span>
+        <span class="p">)</span>
+
+        <span class="c1"># avoid duplicate file handlers</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">logger</span>
+
+        <span class="k">if</span> <span class="n">log_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VICLog_dir</span><span class="p">,</span> <span class="s2">&quot;evb.log&quot;</span><span class="p">)</span>
+
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">RotatingFileHandler</span><span class="p">(</span>
+            <span class="n">log_file</span><span class="p">,</span>
+            <span class="n">maxBytes</span><span class="o">=</span><span class="n">max_bytes</span><span class="p">,</span>
+            <span class="n">backupCount</span><span class="o">=</span><span class="n">backup_count</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+        
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;---------------------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;logger has been attached to </span><span class="si">{</span><span class="n">log_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logger</span></div>
 
 
     <span class="c1"># define property and setter</span>
@@ -551,7 +597,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

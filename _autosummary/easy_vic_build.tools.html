@@ -6,21 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.tools &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.tools &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Contributing" href="../contributing.html" />
+    <link rel="next" title="easy_vic_build.tools.calibrate_func" href="easy_vic_build.tools.calibrate_func.html" />
     <link rel="prev" title="easy_vic_build.calibrate" href="easy_vic_build.calibrate.html" /> 
 </head>
 
@@ -44,33 +44,39 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.html">easy_vic_build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">easy_vic_build.tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#modules">Modules:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#direct-modules">Direct Modules:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">easy_vic_build.tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -98,6 +104,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
       <li class="breadcrumb-item active">easy_vic_build.tools</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.rst" class="fa fa-github"> Edit on GitHub</a>
@@ -110,66 +117,51 @@
              
   <section id="module-easy_vic_build.tools">
 <span id="easy-vic-build-tools"></span><h1>easy_vic_build.tools<a class="headerlink" href="#module-easy_vic_build.tools" title="Link to this heading"></a></h1>
-<p>Subpackage: tools</p>
-<p>A Subpackage of easy_vic_build</p>
-<p>This subpackage contains a collection of modules that provide functions for calibration,
-data preprocessing, geospatial analysis, hydrological analysis, meteorological data
-processing, and more. It includes utility functions and decorators for various tasks
-related to the VIC model’s operation and data handling.</p>
-<section id="modules">
-<h2>Modules:<a class="headerlink" href="#modules" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p>calibrate_func:</p></li>
-</ul>
-<p>Functions related to model calibration.</p>
-<ul class="simple">
-<li><p>dpc_func:</p></li>
-</ul>
-<p>Functions for data preprocessing class.</p>
-<ul class="simple">
-<li><p>geo_func:</p></li>
-</ul>
-<p>Geospatial functions for analysis and data handling.</p>
-<ul class="simple">
-<li><p>hydroanalysis_func:</p></li>
-</ul>
-<p>Functions for hydrological analysis.</p>
-<ul class="simple">
-<li><p>mete_func:</p></li>
-</ul>
-<p>Meteorological data processing functions.</p>
-<ul class="simple">
-<li><p>nc_func:</p></li>
-</ul>
-<p>Functions for handling NetCDF files.</p>
-<ul class="simple">
-<li><p>params_func:</p></li>
-</ul>
-<p>Functions related to parameter estimation and handling.</p>
-<ul class="simple">
-<li><p>plot_func:</p></li>
-</ul>
-<p>Functions for generating plots and visualizations.</p>
-<ul class="simple">
-<li><p>uh_func:</p></li>
-</ul>
-<p>Functions related to unit hydrograph analysis.</p>
-</div></blockquote>
-</section>
-<section id="direct-modules">
-<h2>Direct Modules:<a class="headerlink" href="#direct-modules" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p>decorators:</p></li>
-</ul>
-<p>Utility functions for defining reusable decorators.</p>
-<ul class="simple">
-<li><p>utilities:</p></li>
-</ul>
-<p>General utility functions for various purposes.</p>
-</div></blockquote>
-</section>
+<p>Utility subpackages used by <code class="docutils literal notranslate"><span class="pre">easy_vic_build</span></code>.</p>
+<p>This namespace groups tools for calibration, preprocessing, geospatial
+operations, hydrological analysis, meteorological forcing, parameter handling,
+routing, plotting, and NetCDF utilities.</p>
+<p class="rubric">Modules</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html#module-easy_vic_build.tools.calibrate_func" title="easy_vic_build.tools.calibrate_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrate_func</span></code></a></p></td>
+<td><p>Calibration routines, metrics, and sampling strategies.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.decoractors.html#module-easy_vic_build.tools.decoractors" title="easy_vic_build.tools.decoractors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decoractors</span></code></a></p></td>
+<td><p>decorators - A Python module providing utility decorators.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.tools.dpc_func.html#module-easy_vic_build.tools.dpc_func" title="easy_vic_build.tools.dpc_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dpc_func</span></code></a></p></td>
+<td><p>Data-processing modules for basin and grid workflows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.geo_func.html#module-easy_vic_build.tools.geo_func" title="easy_vic_build.tools.geo_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geo_func</span></code></a></p></td>
+<td><p>Geospatial utility modules.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html#module-easy_vic_build.tools.hydroanalysis_func" title="easy_vic_build.tools.hydroanalysis_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hydroanalysis_func</span></code></a></p></td>
+<td><p>Hydrological analysis modules.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.mete_func.html#module-easy_vic_build.tools.mete_func" title="easy_vic_build.tools.mete_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mete_func</span></code></a></p></td>
+<td><p>Meteorological forcing processing modules.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.tools.nc_func.html#module-easy_vic_build.tools.nc_func" title="easy_vic_build.tools.nc_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_func</span></code></a></p></td>
+<td><p>NetCDF file creation and masking utilities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html#module-easy_vic_build.tools.nested_basin_func" title="easy_vic_build.tools.nested_basin_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nested_basin_func</span></code></a></p></td>
+<td><p>Nested-basin processing utilities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.tools.params_func.html#module-easy_vic_build.tools.params_func" title="easy_vic_build.tools.params_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_func</span></code></a></p></td>
+<td><p>Parameter-generation and transformation modules.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.plot_func.html#module-easy_vic_build.tools.plot_func" title="easy_vic_build.tools.plot_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_func</span></code></a></p></td>
+<td><p>Plotting modules for maps, evaluation metrics, and shared plot utilities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.tools.routing_func.html#module-easy_vic_build.tools.routing_func" title="easy_vic_build.tools.routing_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">routing_func</span></code></a></p></td>
+<td><p>Routing-related modules, including unit-hydrograph generation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.utilities.html#module-easy_vic_build.tools.utilities" title="easy_vic_build.tools.utilities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utilities</span></code></a></p></td>
+<td><p>General utility functions for path handling, resource loading, dataset I/O, and so on</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -177,13 +169,13 @@ related to the VIC model’s operation and data handling.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="easy_vic_build.calibrate.html" class="btn btn-neutral float-left" title="easy_vic_build.calibrate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="easy_vic_build.tools.calibrate_func.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.calibrate_func" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

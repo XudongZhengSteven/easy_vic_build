@@ -6,15 +6,15 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>Usage &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=43f6a66f" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -44,21 +44,27 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#plot">11. <strong>Plot</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-configuration-general-info-py">General Configuration (<code class="docutils literal notranslate"><span class="pre">general_info.py</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-this-usage-page-is-derived">How This Usage Page Is Derived</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-overview">Workflow Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-to-source-links">Step-to-Source Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-modeling-directory">1. Build Modeling Directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-basin-and-grids">2. Build Basin and Grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-dpc-objects">3. Build DPC Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-domain">4. Build Domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-parameters">5. Build Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-hydroanalysis">6. Build Hydroanalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-meteorological-forcing">7. Build Meteorological Forcing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-global-parameter-file">8. Build Global Parameter File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-rvic-parameters-optional">9. Build RVIC Parameters (Optional)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calibration-and-evaluation">10. Calibration and Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#script-entry-points">Script Entry Points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
@@ -94,284 +100,483 @@
              
   <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
-<p>After installation, you can use the package in the following sequence:</p>
-<p>This deployment process adheres to the guidelines outlined in the official VIC documentation (<a class="reference external" href="https://vic.readthedocs.io/">https://vic.readthedocs.io/</a>) and focuses primarily on the image driver version of VIC-5</p>
+<p>This page summarizes the HRB workflow using runnable scripts in
+<code class="docutils literal notranslate"><span class="pre">examples/HRB_modeling</span></code>. The section order follows the current EVB usage
+sequence, while code snippets map directly to the HRB example implementation.</p>
+<p>Before running, update local data paths in:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/HRB_modeling/general_info.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/HRB_modeling/HRB_extractData_func/*.py</span></code></p></li>
+</ul>
+<section id="general-configuration-general-info-py">
+<h2>General Configuration (<code class="docutils literal notranslate"><span class="pre">general_info.py</span></code>)<a class="headerlink" href="#general-configuration-general-info-py" title="Link to this heading"></a></h2>
+<p>The file <code class="docutils literal notranslate"><span class="pre">examples/HRB_modeling/general_info.py</span></code> is the shared configuration
+entry for the HRB workflow. It is intended to be prepared first and then
+imported by all build/calibration scripts to provide required modeling context.</p>
+<p>In practice, this file centralizes:</p>
+<ul class="simple">
+<li><p>case directories (<code class="docutils literal notranslate"><span class="pre">evb_dir_hydroanalysis</span></code>, <code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>)</p></li>
+<li><p>basin/station metadata (station names, coordinates, nested upstream map)</p></li>
+<li><p>spatial settings (model scale and level-0/1/2 grid resolutions)</p></li>
+<li><p>temporal settings (simulation/warm-up/calibration/verification periods)</p></li>
+<li><p>common flags (for example <code class="docutils literal notranslate"><span class="pre">reverse_lat</span></code>)</p></li>
+</ul>
+<p>After editing <code class="docutils literal notranslate"><span class="pre">general_info.py</span></code> for your environment, the remaining HRB
+scripts can run without repeatedly redefining the same configuration.</p>
+</section>
+<section id="how-this-usage-page-is-derived">
+<h2>How This Usage Page Is Derived<a class="headerlink" href="#how-this-usage-page-is-derived" title="Link to this heading"></a></h2>
+<p>The workflow and notes below are derived from the executable HRB entry scripts
+in <code class="docutils literal notranslate"><span class="pre">examples/HRB_modeling</span></code> and their inline comments/docstrings, mainly:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">general_info.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_evb_dir.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_hydroanalysis.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_dpc.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_domain.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_Param.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_MeteForcing.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_GlobalParam.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_RVIC_Param.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_calibrate.py</span></code></p></li>
+</ul>
+</section>
+<section id="workflow-overview">
+<h2>Workflow Overview<a class="headerlink" href="#workflow-overview" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Build case directories with <code class="docutils literal notranslate"><span class="pre">Evb_dir</span></code>.</p></li>
+<li><p>Prepare basin and grid shapefiles.</p></li>
+<li><p>Build data-processing classes (DPC) for each data level.</p></li>
+<li><p>Build domain.</p></li>
+<li><p>Build parameter datasets.</p></li>
+<li><p>Build hydroanalysis outputs (level 1 / river network).</p></li>
+<li><p>Build meteorological forcing.</p></li>
+<li><p>Build global parameter file.</p></li>
+<li><p>Build RVIC parameters (optional).</p></li>
+<li><p>Calibrate, evaluate, and plot diagnostics/maps.</p></li>
+</ol>
+</section>
+<section id="step-to-source-links">
+<h2>Step-to-Source Links<a class="headerlink" href="#step-to-source-links" title="Link to this heading"></a></h2>
+<p>The following links point to the HRB reference scripts used in this page
+(GitHub <code class="docutils literal notranslate"><span class="pre">main</span></code> branch):</p>
+<ol class="arabic simple">
+<li><p>Build modeling directories:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_evb_dir.py">HRB_build_evb_dir.py</a></p></li>
+<li><p>Build basin and grids:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_hydroanalysis.py">HRB_hydroanalysis.py</a>,
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_dpc.py">HRB_build_dpc.py</a></p></li>
+<li><p>Build DPC objects:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_dpc.py">HRB_build_dpc.py</a></p></li>
+<li><p>Build domain:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_domain.py">HRB_build_domain.py</a></p></li>
+<li><p>Build parameters:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_Param.py">HRB_build_Param.py</a></p></li>
+<li><p>Build hydroanalysis (level-1/river network):
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_hydroanalysis.py">HRB_hydroanalysis.py</a></p></li>
+<li><p>Build meteorological forcing:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_MeteForcing.py">HRB_build_MeteForcing.py</a></p></li>
+<li><p>Build global parameter file:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_GlobalParam.py">HRB_build_GlobalParam.py</a></p></li>
+<li><p>Build RVIC parameters:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_RVIC_Param.py">HRB_build_RVIC_Param.py</a></p></li>
+<li><p>Calibration and evaluation:</p></li>
+</ol>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_calibrate.py">HRB_calibrate.py</a>,
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_plot_results.py">HRB_plot_results.py</a>,
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_plot_Basinmap.py">HRB_plot_Basinmap.py</a></p>
+</div></blockquote>
 </section>
 <section id="build-modeling-directory">
-<h1>1. <strong>Build Modeling Directory</strong><a class="headerlink" href="#build-modeling-directory" title="Link to this heading"></a></h1>
-<p>Use the <cite>Evb_dir</cite> class to build the modeling directory.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.Evb_dir_class</span> <span class="kn">import</span> <span class="n">Evb_dir</span>
-<span class="n">case_name</span> <span class="o">=</span> <span class="s2">&quot;example_case&quot;</span>
-<span class="n">evb_dir</span> <span class="o">=</span> <span class="n">Evb_dir</span><span class="p">(</span><span class="n">cases_home</span><span class="o">=</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
-<span class="n">evb_dir</span><span class="o">.</span><span class="n">builddir</span><span class="p">(</span><span class="n">case_name</span><span class="p">)</span>
+<h2>1. Build Modeling Directory<a class="headerlink" href="#build-modeling-directory" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">HRB_build_evb_dir</span> <span class="kn">import</span> <span class="n">build_modeling_dir</span>
+
+<span class="n">evb_dir_hydroanalysis</span> <span class="o">=</span> <span class="n">build_modeling_dir</span><span class="p">(</span><span class="n">subname</span><span class="o">=</span><span class="s2">&quot;hydroanalysis&quot;</span><span class="p">)</span>
+<span class="n">evb_dir_modeling</span> <span class="o">=</span> <span class="n">build_modeling_dir</span><span class="p">(</span><span class="n">subname</span><span class="o">=</span><span class="s2">&quot;shiquan_6km&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This will create a new modeling directory under <cite>../example_case</cite> and automatically manage file paths.</p>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build_modeling_dir</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_evb_dir.py#L10">HRB_build_evb_dir.py#L10</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build_modeling_dir</span></code> creates an <code class="docutils literal notranslate"><span class="pre">Evb_dir</span></code> under
+<code class="docutils literal notranslate"><span class="pre">examples/modeling</span></code> and calls <code class="docutils literal notranslate"><span class="pre">Evb_dir.builddir</span></code> with case name
+<code class="docutils literal notranslate"><span class="pre">HRB_&lt;subname&gt;</span></code>.</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">general_info.py</span></code>, this function is called twice (inside <code class="docutils literal notranslate"><span class="pre">try</span></code> blocks)
+to initialize both hydroanalysis and modeling case directories.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">general_info.py</span></code> also attaches a file logger to <code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code> and
+logs a summary of spatial/temporal configuration.</p></li>
+</ul>
 </section>
-<section id="build-basins-and-grids">
-<h1>2. <strong>Build Basins and Grids</strong><a class="headerlink" href="#build-basins-and-grids" title="Link to this heading"></a></h1>
-<p>Build the required basin extents for the model from a shapefile or a custom shapefile using the <cite>Basins</cite> module.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.tools.dpc_func.basin_grid_class</span> <span class="kn">import</span> <span class="n">Basins</span>
+<section id="build-basin-and-grids">
+<h2>2. Build Basin and Grids<a class="headerlink" href="#build-basin-and-grids" title="Link to this heading"></a></h2>
+<p>HRB uses level-0 hydroanalysis outputs to derive basin polygons, then creates
+multi-level grids.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">evb_dir_hydroanalysis</span><span class="p">,</span> <span class="n">station_name</span><span class="p">,</span>
+    <span class="n">grid_res_level0</span><span class="p">,</span> <span class="n">grid_res_level1</span><span class="p">,</span> <span class="n">grid_res_level2</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">HRB_hydroanalysis</span> <span class="kn">import</span> <span class="n">hydroanalysis_level0_HRB</span>
+<span class="kn">from</span> <span class="nn">HRB_build_dpc</span> <span class="kn">import</span> <span class="n">build_basin_shp_JRB</span>
+<span class="kn">from</span> <span class="nn">easy_vic_build.tools.dpc_func.basin_grid_func</span> <span class="kn">import</span> <span class="n">build_grid_shp</span>
 
-<span class="n">basin_shp</span> <span class="o">=</span> <span class="n">Basins</span><span class="o">.</span><span class="n">from_shapefile</span><span class="p">(</span><span class="n">basin_shp_path</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Based on the basin extents and custom grid resolutions, use the <cite>Grids</cite> module or <cite>dpc_func</cite> module to build the spatial partitions needed for the model.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.tools.dpc_func.basin_grid_func</span> <span class="kn">import</span> <span class="n">build_grid_shp</span>
+<span class="n">hydroanalysis_level0_HRB</span><span class="p">(</span><span class="n">evb_dir_hydroanalysis</span><span class="p">)</span>
 
+<span class="n">basin_shps</span> <span class="o">=</span> <span class="n">build_basin_shp_JRB</span><span class="p">(</span><span class="n">evb_dir_hydroanalysis</span><span class="p">)</span>
 <span class="n">grid_shp_level0</span><span class="p">,</span> <span class="n">grid_shp_level1</span><span class="p">,</span> <span class="n">grid_shp_level2</span><span class="p">,</span> <span class="n">grid_shp_level3</span> <span class="o">=</span> <span class="n">build_grid_shp</span><span class="p">(</span>
-    <span class="n">basin_shp</span><span class="p">,</span>
+    <span class="n">basin_shps</span><span class="p">[</span><span class="n">station_name</span><span class="p">],</span>
     <span class="n">grid_res_level0</span><span class="p">,</span>
     <span class="n">grid_res_level1</span><span class="p">,</span>
     <span class="n">grid_res_level2</span><span class="p">,</span>
     <span class="n">expand_grids_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="build-dpc-data-processing-class">
-<h1>3. <strong>Build DPC (Data Processing Class)</strong><a class="headerlink" href="#build-dpc-data-processing-class" title="Link to this heading"></a></h1>
-<p>Inherit from <cite>dataProcess_base</cite> to create subclasses for levels 0-3, overriding the <cite>processing_step</cite> method to handle different data sources.</p>
+<p>Imported symbols and source anchors:</p>
 <ul class="simple">
-<li><p><cite>dpc_level0</cite> handles and stores data such as DEM and soil.</p></li>
-<li><p><cite>dpc_level1</cite> handles and stores soil temperature, annual precipitation, LULC, BSA, NDVI, LAI.</p></li>
-<li><p><cite>dpc_level2</cite> handles and stores forcing data, including average air temperature, total precipitation (rain and snow), atmospheric pressure, incoming shortwave radiation, incoming longwave radiation, vapor pressure, and wind speed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_hydroanalysis</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L97">general_info.py#L97</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">station_name</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L31">general_info.py#L31</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid_res_level0</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L90">general_info.py#L90</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid_res_level1</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L91">general_info.py#L91</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid_res_level2</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L92">general_info.py#L92</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hydroanalysis_level0_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_hydroanalysis.py#L33">HRB_hydroanalysis.py#L33</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_basin_shp_JRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_dpc.py#L373">HRB_build_dpc.py#L373</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_grid_shp</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/src/easy_vic_build/tools/dpc_func/basin_grid_func.py#L537">basin_grid_func.py#L537</a></p></li>
 </ul>
-<p>Refer to <cite>examples/JRB_modeling/JRB_build_dpc.py</cite> for implementation details.
-This process should be combined with functions from the <cite>JRB_extractData_func</cite> module.</p>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hydroanalysis_level0_HRB</span></code> calls <code class="docutils literal notranslate"><span class="pre">buildHydroanalysis_level0</span></code> with the
+clipped ASTGTM2 DEM, Whitebox-based flow direction (<code class="docutils literal notranslate"><span class="pre">flow_direction_pkg=&quot;wbw&quot;</span></code>),
+and outlet reference coordinates from <code class="docutils literal notranslate"><span class="pre">station_coords_df</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_basin_shp_JRB</span></code> reads
+<code class="docutils literal notranslate"><span class="pre">basin_vector_outlet_with_reference_&lt;id&gt;.shp</span></code> files from the level-0
+hydroanalysis working directory and loads them as <code class="docutils literal notranslate"><span class="pre">Basins</span></code> objects.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_grid_shp</span></code> returns four grid levels (0/1/2/3) for the target basin
+and is used as the shared spatial basis for DPC, parameter, and forcing steps.</p></li>
+</ul>
+</section>
+<section id="build-dpc-objects">
+<h2>3. Build DPC Objects<a class="headerlink" href="#build-dpc-objects" title="Link to this heading"></a></h2>
+<p>HRB defines customized DPC subclasses in <code class="docutils literal notranslate"><span class="pre">HRB_build_dpc.py</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dataProcess_VIC_level0_HRB</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataProcess_VIC_level1_HRB</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataProcess_VIC_level2_CMFD_HRB</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataProcess_VIC_level3_HRB</span></code></p></li>
+</ul>
+<p>Use the wrapper function below to build and cache DPC data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_hydroanalysis</span><span class="p">,</span> <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">date_period</span>
+<span class="kn">from</span> <span class="nn">HRB_build_dpc</span> <span class="kn">import</span> <span class="n">build_dpc_VIC_HRB</span>
+
+<span class="n">build_dpc_VIC_HRB</span><span class="p">(</span><span class="n">evb_dir_hydroanalysis</span><span class="p">,</span> <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">date_period</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_hydroanalysis</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L97">general_info.py#L97</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">date_period</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L72">general_info.py#L72</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_dpc_VIC_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_dpc.py#L389">HRB_build_dpc.py#L389</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p>The DPC classes use <code class="docutils literal notranslate"><span class="pre">&#64;processing_step</span></code> declarations with explicit
+dependencies to build/cache variables by level.</p></li>
+<li><p>Implemented loaders are:</p>
+<ul>
+<li><p>Level-0: DEM and SoilGrids attributes.</p></li>
+<li><p>Level-1: soil temperature, annual precipitation, UMD land cover, MODIS
+BSA/NDVI/LAI.</p></li>
+<li><p>Level-2: CMFD meteorological forcing.</p></li>
+<li><p>Level-3: streamflow and gauge metadata.</p></li>
+</ul>
+</li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">build_dpc_VIC_HRB</span></code>, each build block is controlled by a local switch
+(<code class="docutils literal notranslate"><span class="pre">build_dpc_VIC_level0</span></code> / <code class="docutils literal notranslate"><span class="pre">build_dpc_VIC_level1</span></code> / …). In the current
+script, the active block is <code class="docutils literal notranslate"><span class="pre">build_dpc_VIC_level3_load_level1</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">load_level1=True</span></code> in Level-3, <code class="docutils literal notranslate"><span class="pre">load_gauge_info</span></code> reads snapped
+outlets from both level-0 and level-1 hydroanalysis directories.</p></li>
+</ul>
 </section>
 <section id="build-domain">
-<h1>4. <strong>Build Domain</strong><a class="headerlink" href="#build-domain" title="Link to this heading"></a></h1>
-<p>Use the <cite>buildDomain</cite> function to construct the domain file.
-The <cite>reverse_lat</cite> parameter indicates whether to reverse latitudes (usually <cite>True</cite> for Northern Hemisphere: large to small).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.bulid_Domain</span> <span class="kn">import</span> <span class="n">buildDomain</span>
-<span class="n">buildDomain</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">dpc_VIC_level1</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="p">)</span>
+<h2>4. Build Domain<a class="headerlink" href="#build-domain" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span>
+<span class="kn">from</span> <span class="nn">HRB_build_domain</span> <span class="kn">import</span> <span class="n">build_domain_HRB</span>
+
+<span class="n">build_domain_HRB</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reverse_lat</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L87">general_info.py#L87</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_domain_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_domain.py#L12">HRB_build_domain.py#L12</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build_domain_HRB</span></code> loads level-0/1/3 DPC files, retrieves <code class="docutils literal notranslate"><span class="pre">basin_shps</span></code>,
+loops over <code class="docutils literal notranslate"><span class="pre">station_names</span></code>, and writes one domain file per station as
+<code class="docutils literal notranslate"><span class="pre">domain_&lt;station&gt;.nc</span></code>.</p></li>
+<li><p>The function updates <code class="docutils literal notranslate"><span class="pre">evb_dir_modeling.domainFile_path</span></code> before each
+<code class="docutils literal notranslate"><span class="pre">buildDomain</span></code> call so each station domain is written to a separate target.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_elev_into_domain</span></code> is an optional helper that reads parameter datasets
+and calls <code class="docutils literal notranslate"><span class="pre">addElevIntoDomain</span></code>.</p></li>
+</ul>
 </section>
 <section id="build-parameters">
-<h1>5. <strong>Build Parameters</strong><a class="headerlink" href="#build-parameters" title="Link to this heading"></a></h1>
-<p>Inherit from <cite>buildParam_level0_interface</cite> to define customized subclasses based on data sources.
-Read <cite>dpc</cite> instances and pass them to <cite>buildParam_level0</cite> to build effective parameters at level 0 scale.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.build_Param</span> <span class="kn">import</span> <span class="n">buildParam_level0</span><span class="p">,</span> <span class="n">buildParam_level1</span><span class="p">,</span> <span class="n">scaling_level0_to_level1</span>
+<h2>5. Build Parameters<a class="headerlink" href="#build-parameters" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_hydroanalysis</span><span class="p">,</span> <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span>
+<span class="kn">from</span> <span class="nn">HRB_build_Param</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_params_HRB</span><span class="p">,</span>
+    <span class="n">build_params_nested_HRB_basin_hierarchy</span><span class="p">,</span>
+    <span class="n">build_params_HRB_spatially_uniform</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">buildParam_level0_interface_instance</span> <span class="o">=</span> <span class="n">buildParam_level0</span><span class="p">(</span>
-    <span class="n">evb_dir_modeling</span><span class="p">,</span>
-    <span class="n">default_params_JRB</span><span class="p">[</span><span class="s2">&quot;g_params&quot;</span><span class="p">],</span>
-    <span class="n">SoilGrids_soillayerresampler</span><span class="p">,</span>
-    <span class="n">dpc_VIC_level0</span><span class="p">,</span>
-    <span class="n">TF_VIC_class</span><span class="o">=</span><span class="n">TF_VIC</span><span class="p">,</span>
-    <span class="n">buildParam_level0_interface_class</span><span class="o">=</span><span class="n">buildParam_level0_interface_JRB</span><span class="p">,</span>
-    <span class="n">reverse_lat</span><span class="o">=</span><span class="n">reverse_lat</span><span class="p">,</span>
-    <span class="n">stand_grids_lat_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">stand_grids_lon_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">rows_index_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">cols_index_level0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="c1"># Option A: default HRB parameter build</span>
+<span class="n">build_params_HRB</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="p">)</span>
+
+<span class="c1"># Option B: nested-basin hierarchy parameterization</span>
+<span class="n">build_params_nested_HRB_basin_hierarchy</span><span class="p">(</span>
+    <span class="n">evb_dir_hydroanalysis</span><span class="p">,</span> <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span>
+<span class="p">)</span>
+
+<span class="c1"># Option C: spatially uniform baseflow scheme</span>
+<span class="n">build_params_HRB_spatially_uniform</span><span class="p">(</span>
+    <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="p">,</span> <span class="n">baseflow_scheme</span><span class="o">=</span><span class="s2">&quot;Nijssen&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Similarly, pass <cite>dpc_level1</cite> to <cite>buildParam_level1</cite> to build parameters at level 1 scale.
-Note that some parameters are left blank here and need to be scaled up from level 0.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">buildParam_level1_interface_instance</span> <span class="o">=</span> <span class="n">buildParam_level1</span><span class="p">(</span>
-    <span class="n">evb_dir_modeling</span><span class="p">,</span>
-    <span class="n">dpc_VIC_level1</span><span class="p">,</span>
-    <span class="n">TF_VIC_class</span><span class="o">=</span><span class="n">TF_VIC</span><span class="p">,</span>
-    <span class="n">buildParam_level1_interface_class</span><span class="o">=</span><span class="n">buildParam_level1_interface_JRB</span><span class="p">,</span>
-    <span class="n">reverse_lat</span><span class="o">=</span><span class="n">reverse_lat</span><span class="p">,</span>
-    <span class="n">domain_dataset</span><span class="o">=</span><span class="n">domain_dataset</span><span class="p">,</span>
-    <span class="n">stand_grids_lat_level1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">stand_grids_lon_level1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">rows_index_level1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">cols_index_level1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>The scaling process converts parameters from level 0 scale to level 1.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params_dataset_level1</span><span class="p">,</span> <span class="n">searched_grids_bool_index</span> <span class="o">=</span> <span class="n">scaling_level0_to_level1</span><span class="p">(</span>
-    <span class="n">params_dataset_level0</span><span class="p">,</span> <span class="n">params_dataset_level1</span><span class="p">,</span>
-    <span class="n">searched_grids_bool_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">nlayer_list</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_hydroanalysis</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L97">general_info.py#L97</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reverse_lat</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L87">general_info.py#L87</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_params_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_Param.py#L104">HRB_build_Param.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_params_nested_HRB_basin_hierarchy</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_Param.py#L180">HRB_build_Param.py#L180</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_params_HRB_spatially_uniform</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_Param.py#L321">HRB_build_Param.py#L321</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">build_params_HRB</span></code> performs the standard three-stage flow:
+<code class="docutils literal notranslate"><span class="pre">buildParam_level0</span> <span class="pre">-&gt;</span> <span class="pre">buildParam_level1</span> <span class="pre">-&gt;</span> <span class="pre">scaling_level0_to_level1</span></code>.</p></li>
+<li><p>In this HRB implementation, custom interfaces extend the defaults to set
+topography-related fields (for example elevation/slope/<code class="docutils literal notranslate"><span class="pre">ele_std</span></code>) and
+<code class="docutils literal notranslate"><span class="pre">annual_prec</span></code> from <code class="docutils literal notranslate"><span class="pre">annual_P_CMFD_mm</span></code>.</p></li>
+<li><p>The scaling call uses <code class="docutils literal notranslate"><span class="pre">nlayer_list=[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">elev_scaling=&quot;Arithmetic_min&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_params_nested_HRB_basin_hierarchy</span></code> computes unique nested-basin
+masks (level-1), remaps them to level-0, and passes
+<code class="docutils literal notranslate"><span class="pre">basin_hierarchy</span></code> into level-0 parameter construction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_params_HRB_spatially_uniform</span></code> switches to spatially uniform
+baseflow parameter sets and interface classes (<code class="docutils literal notranslate"><span class="pre">ARNO</span></code> or <code class="docutils literal notranslate"><span class="pre">Nijssen</span></code>).</p></li>
+</ul>
 </section>
-<section id="perform-hydroanalysis">
-<h1>6. <strong>Perform Hydroanalysis</strong><a class="headerlink" href="#perform-hydroanalysis" title="Link to this heading"></a></h1>
-<p>You may need to perform hydrological analysis at the level 0 scale to provide high-resolution basin maps.
-By passing the level 0 scale DEM data, use the <cite>buildHydroanalysis_level0</cite> function to generate hydrological analysis data.
-This will create data such as flow direction, flow accumulation, basin boundaries, outlet points, and streamlines under the <cite>Hydroanalysis</cite> directory.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.build_hydroanalysis</span> <span class="kn">import</span> <span class="n">buildHydroanalysis_level0</span><span class="p">,</span> <span class="n">buildHydroanalysis_level1</span>
+<section id="build-hydroanalysis">
+<h2>6. Build Hydroanalysis<a class="headerlink" href="#build-hydroanalysis" title="Link to this heading"></a></h2>
+<p>After parameters/domain are available, run level-1 hydroanalysis and (optional)
+river-network graph construction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span>
+<span class="kn">from</span> <span class="nn">HRB_hydroanalysis</span> <span class="kn">import</span> <span class="n">hydroanalysis_level1_HRB</span><span class="p">,</span> <span class="n">buildRivernetwork_level1_HRB</span>
 
-<span class="n">buildHydroanalysis_level0</span><span class="p">(</span>
-    <span class="n">evb_dir_hydroanalysis_level0</span><span class="p">,</span>
-    <span class="n">dem_level0_path</span><span class="p">,</span>
-    <span class="n">flow_direction_pkg</span><span class="o">=</span><span class="s2">&quot;wbw&quot;</span><span class="p">,</span>
-    <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">calculate_streamnetwork_threshold_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;drainage_area&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;drainage_area_km2&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="n">d8_streamnetwork_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;snap_dist&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="n">snap_outlet_to_stream_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;snap_dist&quot;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
-    <span class="n">esri_pointer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">outlets_with_reference_coords</span><span class="o">=</span><span class="p">[</span><span class="n">hydroStation_coord_combined</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">hydroStation_coord_combined</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">to_list</span><span class="p">()]</span>
-<span class="p">)</span>
+<span class="n">hydroanalysis_level1_HRB</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="p">)</span>
+<span class="n">buildRivernetwork_level1_HRB</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>By passing parameter files containing DEM information at level 1 scale along with the domain file,
-use the <cite>buildHydroanalysis_level1</cite> function to generate hydrological analysis data at level 1 scale.
-This will also produce flow direction, flow accumulation, basin boundaries, outlet points, and streamlines under the <cite>Hydroanalysis</cite> directory.</p>
-<p>Note that this step is essential for the routing model, as RVIC parameter preparation requires hydrological analysis data at level 1 scale.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.build_hydroanalysis</span> <span class="kn">import</span> <span class="n">buildHydroanalysis_level0</span><span class="p">,</span> <span class="n">buildHydroanalysis_level1</span>
-
-<span class="n">evb_dir_modeling</span> <span class="o">=</span> <span class="n">build_modeling_dir</span><span class="p">(</span><span class="n">subname</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">station_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_scale</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="n">params_dataset_level0</span><span class="p">,</span> <span class="n">params_dataset_level1</span> <span class="o">=</span> <span class="n">readParam</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">)</span>
-
-<span class="n">domain_dataset</span> <span class="o">=</span> <span class="n">readDomain</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">)</span>
-
-<span class="n">buildHydroanalysis_level1</span><span class="p">(</span>
-    <span class="n">evb_dir_modeling</span><span class="p">,</span>
-    <span class="n">params_dataset_level1</span><span class="p">,</span>
-    <span class="n">domain_dataset</span><span class="p">,</span>
-    <span class="n">reverse_lat</span><span class="p">,</span>
-    <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">flow_direction_pkg</span><span class="o">=</span><span class="s2">&quot;wbw&quot;</span><span class="p">,</span>
-    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
-    <span class="n">d8_streamnetwork_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;snap_dist&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="n">snap_outlet_to_stream_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;snap_dist&quot;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="n">outlets_with_reference_coords</span><span class="o">=</span><span class="p">[</span><span class="n">hydroStation_coord_combined</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">hydroStation_coord_combined</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">to_list</span><span class="p">()]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reverse_lat</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L87">general_info.py#L87</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hydroanalysis_level1_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_hydroanalysis.py#L74">HRB_hydroanalysis.py#L74</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">buildRivernetwork_level1_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_hydroanalysis.py#L143">HRB_hydroanalysis.py#L143</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hydroanalysis_level1_HRB</span></code> reads gauge information from Level-3 DPC,
+loads params/domain, and calls <code class="docutils literal notranslate"><span class="pre">buildHydroanalysis_level1</span></code> with Whitebox
+flow direction and <code class="docutils literal notranslate"><span class="pre">stream_acc_threshold=2</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">buildRivernetwork_level1_HRB</span></code> maps outlet coordinates to domain cell
+nodes, passes them as <code class="docutils literal notranslate"><span class="pre">labeled_nodes</span></code>, and writes:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">river_network_graph.pkl</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">river_network_graph_full.pkl</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">river_network_graph_connected.pkl</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fig_river_network*.tiff</span></code> figures</p></li>
+</ul>
+</li>
+</ul>
 </section>
 <section id="build-meteorological-forcing">
-<h1>7. <strong>Build Meteorological Forcing</strong><a class="headerlink" href="#build-meteorological-forcing" title="Link to this heading"></a></h1>
-<p>Read the processed forcing data contained in <cite>dpc_level2</cite>, and merge all data into a single DataFrame using <cite>merge_grid_data</cite>.
-Then pass the merged data to <cite>buildMeteForcing</cite> to prepare meteorological forcing data.
-This will generate annual NetCDF files under the <cite>MeteForcing</cite> directory.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dpc_VIC_level2_CDMet</span> <span class="o">=</span> <span class="n">dataProcess_VIC_level2_CDMet_JRB</span><span class="p">(</span>
-    <span class="n">evb_dir_modeling</span><span class="o">.</span><span class="n">_dpc_VIC_level2_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;_CDMet.pkl&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+<h2>7. Build Meteorological Forcing<a class="headerlink" href="#build-meteorological-forcing" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_modeling</span>
+<span class="kn">from</span> <span class="nn">HRB_build_MeteForcing</span> <span class="kn">import</span> <span class="n">HRB_build_MeteForcing</span>
 
-<span class="n">dpc_VIC_level2_CDMet</span><span class="o">.</span><span class="n">merge_grid_data</span><span class="p">()</span>
-
-<span class="n">buildMeteForcing_interface_instance</span> <span class="o">=</span> <span class="n">build_MeteForcing</span><span class="o">.</span><span class="n">buildMeteForcing</span><span class="p">(</span>
-    <span class="n">evb_dir_modeling</span><span class="p">,</span>
-    <span class="n">dpc_VIC_level2_CDMet</span><span class="p">,</span>
-    <span class="n">date_period</span><span class="p">,</span>
-    <span class="n">date_period</span><span class="p">,</span>
-    <span class="n">buildMeteForcing_interface</span><span class="p">,</span>
-    <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">stand_grids_lat_level2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">stand_grids_lon_level2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">rows_index_level2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">cols_index_level2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="n">HRB_build_MeteForcing</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_MeteForcing</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_MeteForcing.py#L11">HRB_build_MeteForcing.py#L11</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_MeteForcing</span></code> loads the CMFD Level-2 DPC cache and runs
+<code class="docutils literal notranslate"><span class="pre">merge_grid_data()</span></code> before forcing construction.</p></li>
+<li><p>It then calls <code class="docutils literal notranslate"><span class="pre">build_MeteForcing.buildMeteForcing</span></code> with
+<code class="docutils literal notranslate"><span class="pre">buildMeteForcing_interface</span></code>, <code class="docutils literal notranslate"><span class="pre">file_format=&quot;NETCDF4&quot;</span></code>, and the
+<code class="docutils literal notranslate"><span class="pre">timestep</span></code> defined in <code class="docutils literal notranslate"><span class="pre">general_info.py</span></code>.</p></li>
+</ul>
 </section>
-<section id="build-global-parameters">
-<h1>8. <strong>Build Global Parameters</strong><a class="headerlink" href="#build-global-parameters" title="Link to this heading"></a></h1>
-<p>Create the global parameter file by passing a parameter dictionary to <cite>buildGlobalParam</cite>.
-This will generate the global parameter file <cite>global_param.txt</cite> in the <cite>GlobalParam</cite> directory.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.build_GlobalParam</span> <span class="kn">import</span> <span class="n">buildGlobalParam</span>
+<section id="build-global-parameter-file">
+<h2>8. Build Global Parameter File<a class="headerlink" href="#build-global-parameter-file" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_modeling</span>
+<span class="kn">from</span> <span class="nn">HRB_build_GlobalParam</span> <span class="kn">import</span> <span class="n">HRB_build_GlobalParam</span>
 
-<span class="n">GlobalParam_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Simulation&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;MODEL_STEPS_PER_DAY&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;SNOW_STEPS_PER_DAY&#39;</span><span class="p">:</span> <span class="s1">&#39;24&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;RUNOFF_STEPS_PER_DAY&#39;</span><span class="p">:</span> <span class="s1">&#39;24&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;STARTYEAR&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">4</span><span class="p">]),</span>
-                                   <span class="s1">&#39;STARTMONTH&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">])),</span>
-                                   <span class="s1">&#39;STARTDAY&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">])),</span>
-                                   <span class="s1">&#39;ENDYEAR&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">4</span><span class="p">]),</span>
-                                   <span class="s1">&#39;ENDMONTH&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">])),</span>
-                                   <span class="s1">&#39;ENDDAY&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">])),</span>
-                                   <span class="s1">&#39;OUT_TIME_UNITS&#39;</span><span class="p">:</span> <span class="s1">&#39;DAYS&#39;</span><span class="p">},</span>
-                     <span class="s1">&#39;Output&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;AGGFREQ&#39;</span><span class="p">:</span> <span class="s1">&#39;NDAYS   1&#39;</span><span class="p">},</span>
-                     <span class="s1">&#39;OUTVAR1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;OUTVAR&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;OUT_RUNOFF&#39;</span><span class="p">,</span> <span class="s1">&#39;OUT_BASEFLOW&#39;</span><span class="p">,</span> <span class="s1">&#39;OUT_DISCHARGE&#39;</span><span class="p">]}</span>
-                     <span class="p">}</span>
-
-<span class="n">buildGlobalParam</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">)</span>
+<span class="n">HRB_build_GlobalParam</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_GlobalParam</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_GlobalParam.py#L7">HRB_build_GlobalParam.py#L7</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_GlobalParam</span></code> defines <code class="docutils literal notranslate"><span class="pre">GlobalParam_dict</span></code> inline and writes
+<code class="docutils literal notranslate"><span class="pre">global_param.txt</span></code> via <code class="docutils literal notranslate"><span class="pre">buildGlobalParam</span></code>.</p></li>
+<li><p>The dictionary sets simulation start/end from <code class="docutils literal notranslate"><span class="pre">date_period</span></code>, output
+aggregation, output variables (<code class="docutils literal notranslate"><span class="pre">OUT_RUNOFF</span></code>, <code class="docutils literal notranslate"><span class="pre">OUT_BASEFLOW</span></code>,
+<code class="docutils literal notranslate"><span class="pre">OUT_DISCHARGE</span></code>), and baseflow scheme (<code class="docutils literal notranslate"><span class="pre">NIJSSEN2001</span></code> in the script).</p></li>
+</ul>
 </section>
-<section id="build-rvic-parameters">
-<h1>9. <strong>Build RVIC Parameters</strong><a class="headerlink" href="#build-rvic-parameters" title="Link to this heading"></a></h1>
-<p>Building the complete RVIC parameters requires calling the <cite>rvic</cite> package.
-Use the <cite>buildRVICParam</cite> function to generate RVIC parameters, and then specify the <cite>ROUT_PARAM</cite> path
-in the global parameter file using the <cite>GlobalParamParser</cite> class.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easy_vic_build.build_RVIC_Param</span> <span class="kn">import</span> <span class="n">buildRVICParam</span>
-<span class="kn">from</span> <span class="nn">rvic.parameters</span> <span class="kn">import</span> <span class="n">parameters</span> <span class="k">as</span> <span class="n">rvic_parameters</span>
-<span class="kn">from</span> <span class="nn">easy_vic_build.tools.params_func.GlobalParamParser</span> <span class="kn">import</span> <span class="n">GlobalParamParser</span>
+<section id="build-rvic-parameters-optional">
+<h2>9. Build RVIC Parameters (Optional)<a class="headerlink" href="#build-rvic-parameters-optional" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_modeling</span>
+<span class="kn">from</span> <span class="nn">HRB_build_RVIC_Param</span> <span class="kn">import</span> <span class="n">HRB_build_RVIC_Param</span>
 
-<span class="c1"># build rvic_params</span>
-<span class="n">buildRVICParam</span><span class="p">(</span>
-    <span class="n">evb_dir</span><span class="p">,</span>
-    <span class="n">domain_dataset</span><span class="p">,</span>
-    <span class="n">ppf_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;names&#39;</span><span class="p">:</span> <span class="n">snaped_outlet_names</span><span class="p">,</span>
-        <span class="s1">&#39;lons&#39;</span><span class="p">:</span> <span class="n">snaped_outlet_lons</span><span class="p">,</span>
-        <span class="s1">&#39;lats&#39;</span><span class="p">:</span> <span class="n">snaped_outlet_lats</span><span class="p">,</span>
-    <span class="p">},</span>
-
-    <span class="n">uh_params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;createUH_func&#39;</span><span class="p">:</span> <span class="n">createGUH</span><span class="p">,</span>
-        <span class="s1">&#39;uh_dt&#39;</span><span class="p">:</span> <span class="n">rvic_uhbox_dt</span><span class="p">,</span>
-        <span class="s1">&#39;tp&#39;</span><span class="p">:</span> <span class="n">guh_params</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">][</span><span class="s1">&#39;optimal&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="n">guh_params</span><span class="p">[</span><span class="s1">&#39;mu&#39;</span><span class="p">][</span><span class="s1">&#39;optimal&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s1">&#39;m&#39;</span><span class="p">:</span> <span class="n">guh_params</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="s1">&#39;optimal&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s1">&#39;plot_bool&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s1">&#39;max_day&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;max_day_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-        <span class="s1">&#39;max_day_converged_threshold&#39;</span><span class="p">:</span> <span class="mf">0.001</span>
-    <span class="p">},</span>
-
-    <span class="n">cfg_params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;VELOCITY&#39;</span><span class="p">:</span> <span class="n">rvic_params</span><span class="p">[</span><span class="s1">&#39;VELOCITY&#39;</span><span class="p">][</span><span class="s1">&#39;optimal&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s1">&#39;DIFFUSION&#39;</span><span class="p">:</span> <span class="n">rvic_params</span><span class="p">[</span><span class="s1">&#39;DIFFUSION&#39;</span><span class="p">][</span><span class="s1">&#39;optimal&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s1">&#39;OUTPUT_INTERVAL&#39;</span><span class="p">:</span> <span class="n">rvic_OUTPUT_INTERVAL</span><span class="p">,</span>
-        <span class="s1">&#39;SUBSET_DAYS&#39;</span><span class="p">:</span> <span class="n">rvic_SUBSET_DAYS</span><span class="p">,</span>
-        <span class="s1">&#39;CELL_FLOWDAYS&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;BASIN_FLOWDAYS&#39;</span><span class="p">:</span> <span class="n">rvic_BASIN_FLOWDAYS</span><span class="p">,</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-
-<span class="n">globalParam</span> <span class="o">=</span> <span class="n">GlobalParamParser</span><span class="p">()</span>
-<span class="n">globalParam</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">globalParam_path</span><span class="p">)</span>
-<span class="n">rout_param_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-    <span class="n">evb_dir</span><span class="o">.</span><span class="n">rout_param_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">rout_param_dir</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;Routing&#39;</span><span class="p">,</span> <span class="s1">&#39;ROUT_PARAM&#39;</span><span class="p">,</span> <span class="n">rout_param_path</span><span class="p">)</span>
+<span class="n">HRB_build_RVIC_Param</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_RVIC_Param</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_RVIC_Param.py#L12">HRB_build_RVIC_Param.py#L12</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_build_RVIC_Param</span></code> reads domain data and Level-3 <code class="docutils literal notranslate"><span class="pre">gauge_info</span></code> to
+get level-1 outlet coordinates.</p></li>
+<li><p>It calls <code class="docutils literal notranslate"><span class="pre">buildRVICParam_basic</span></code> with:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ppf_kwargs</span></code> for outlet names/coordinates</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uh_params</span></code> using <code class="docutils literal notranslate"><span class="pre">createGUH</span></code> and default GUH parameters</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cfg_params</span></code> (for example <code class="docutils literal notranslate"><span class="pre">VELOCITY</span></code>, <code class="docutils literal notranslate"><span class="pre">DIFFUSION</span></code>, and timing options)</p></li>
+</ul>
+</li>
+<li><p>The generated files are the RVIC parameter/configuration inputs used by
+downstream routing runs.</p></li>
+</ul>
+<p>If RVIC is used, update <code class="docutils literal notranslate"><span class="pre">ROUT_PARAM</span></code> in <code class="docutils literal notranslate"><span class="pre">global_param.txt</span></code> accordingly.</p>
 </section>
-<section id="calibrate-the-model">
-<h1>10. <strong>Calibrate the Model</strong><a class="headerlink" href="#calibrate-the-model" title="Link to this heading"></a></h1>
-<p>You can inherit from the <cite>calibration_base</cite> class to create a subclass
-and override the corresponding class methods to implement different objective functions,
-optimization algorithms, etc.
-This is implemented based on the <cite>DEAP</cite> package.
-You can refer to the example script at <cite>examples/JRB_modeling/JRB_calibrate.py</cite>.</p>
-</section>
-<section id="plot">
-<h1>11. <strong>Plot</strong><a class="headerlink" href="#plot" title="Link to this heading"></a></h1>
-<p>You can use functions from the <cite>easy_vic_build.tools.plot_func</cite> module
-to conveniently plot model results, basin maps, and other visualizations.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You can refer to the code examples in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> directory for more detailed usage.</p>
+<section id="calibration-and-evaluation">
+<h2>10. Calibration and Evaluation<a class="headerlink" href="#calibration-and-evaluation" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">general_info</span> <span class="kn">import</span> <span class="n">evb_dir_modeling</span>
+<span class="kn">from</span> <span class="nn">HRB_calibrate</span> <span class="kn">import</span> <span class="n">calibrate_HRB</span>
+
+<span class="n">calibrate_HRB</span><span class="p">(</span><span class="n">evb_dir_modeling</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>For diagnostics/figures, see <code class="docutils literal notranslate"><span class="pre">HRB_plot_results.py</span></code> and
+<code class="docutils literal notranslate"><span class="pre">HRB_plot_Basinmap.py</span></code>.</p>
+<p>Imported symbols and source anchors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evb_dir_modeling</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py#L104">general_info.py#L104</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calibrate_HRB</span></code>:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_calibrate.py#L1494">HRB_calibrate.py#L1494</a></p></li>
+<li><p>Related post-processing scripts:
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_plot_results.py">HRB_plot_results.py</a>,
+<a class="reference external" href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_plot_Basinmap.py">HRB_plot_Basinmap.py</a></p></li>
+</ul>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">calibrate_HRB</span></code> sets the VIC executable path, algorithm hyperparameters,
+and multiple predefined calibration case templates.</p></li>
+<li><p>In the current source, Case 3 is active by default: distributed VIC
+parameters, uniform soil depths, and fixed RVIC/GUH parameters; other case
+templates are present but commented out.</p></li>
+<li><p>The function can instantiate either <code class="docutils literal notranslate"><span class="pre">NSGAII_VIC_HRB</span></code> or <code class="docutils literal notranslate"><span class="pre">CMA_ES_VIC_HRB</span></code>
+based on <code class="docutils literal notranslate"><span class="pre">cali_method</span></code> and uses shared helpers for parameter building,
+VIC/RVIC simulation, evaluation, and checkpoint/result management.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HRB_plot_results.py</span></code> and <code class="docutils literal notranslate"><span class="pre">HRB_plot_Basinmap.py</span></code> are the post-processing
+scripts for metrics, figures, and basin maps.</p></li>
+</ul>
+</section>
+<section id="script-entry-points">
+<h2>Script Entry Points<a class="headerlink" href="#script-entry-points" title="Link to this heading"></a></h2>
+<p>You can also run the workflow scripts directly (from repository root):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/HRB_modeling/HRB_hydroanalysis.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_build_dpc.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_build_domain.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_build_Param.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_build_MeteForcing.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_build_GlobalParam.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_build_RVIC_Param.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_calibrate.py
+python<span class="w"> </span>examples/HRB_modeling/HRB_plot_results.py
+</pre></div>
+</div>
+<p>Code notes:</p>
+<ul class="simple">
+<li><p>Running scripts in this order matches data dependencies in source code.</p></li>
+<li><p>Most build scripts read cached DPC/domain/parameter files, so you can rerun
+a single stage without rebuilding every previous stage.</p></li>
+</ul>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="installation.html"><span class="doc">Installation</span></a></p></li>
+<li><p><a class="reference internal" href="api.html"><span class="doc">API Reference</span></a></p></li>
+<li><p><a class="reference internal" href="notes.html"><span class="doc">Notes</span></a></p></li>
+</ul>
+</section>
 </section>
 
 
@@ -385,7 +590,7 @@ to conveniently plot model results, basin maps, and other visualizations.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

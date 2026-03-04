@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.build_MeteForcing &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.build_MeteForcing &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -41,21 +41,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -94,6 +82,14 @@
 <span class="c1"># author: Xudong Zheng</span>
 <span class="c1"># email: z786909151@163.com</span>
 
+<span class="sd">&quot;&quot;&quot;Build VIC meteorological forcing files from level-2 DPC data.</span>
+
+<span class="sd">Public function</span>
+<span class="sd">---------------</span>
+<span class="sd">``buildMeteForcing``</span>
+<span class="sd">    Create forcing files for a date range through a pluggable interface class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">from</span> <span class="nn">.tools.decoractors</span> <span class="kn">import</span> <span class="n">clock_decorator</span>
@@ -119,6 +115,36 @@
     <span class="n">cols_index_level2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build meteorological forcing files for one case.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+<span class="sd">    dpc_VIC_level2 : object</span>
+<span class="sd">        DPC instance used by the forcing interface.</span>
+<span class="sd">    date_period_process : list</span>
+<span class="sd">        Source data period used by the interface.</span>
+<span class="sd">    date_period_forcing : list</span>
+<span class="sd">        Output forcing period.</span>
+<span class="sd">    buildMeteForcing_interface : type</span>
+<span class="sd">        Interface class implementing ``buildMeteForcing_loop_years``.</span>
+<span class="sd">    date_format : str, optional</span>
+<span class="sd">        Datetime parsing/format string used in the interface.</span>
+<span class="sd">    timestep : str, optional</span>
+<span class="sd">        Output timestep tag (for example ``&quot;D&quot;``).</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        Whether latitude axis is arranged north-to-south.</span>
+<span class="sd">    stand_grids_lat_level2, stand_grids_lon_level2, rows_index_level2, cols_index_level2 : optional</span>
+<span class="sd">        Precomputed grid metadata for repeated runs.</span>
+<span class="sd">    file_format : str, optional</span>
+<span class="sd">        NetCDF output format used by the interface.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        The created forcing-interface instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to building meteForcing... ...&quot;</span><span class="p">)</span>
     
     <span class="n">buildMeteForcing_interface_instance</span> <span class="o">=</span> <span class="n">buildMeteForcing_interface</span><span class="p">(</span>
@@ -151,7 +177,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,4 +1,4 @@
-﻿easy\_vic\_build.build\_Param
+easy\_vic\_build.build\_Param
 =============================
 
 .. automodule:: easy_vic_build.build_Param

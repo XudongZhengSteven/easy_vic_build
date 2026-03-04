@@ -1,17 +1,20 @@
 Notes
 =====
 
-1. **Testing GitHub Workflow**  
-   This section is to test the GitHub Actions workflow.
+RVIC and parallel runs
+----------------------
 
-2. **RVIC Compilation Note**  
-   Please note that **RVIC** should not be compiled with **VIC** if you wish to use parallel processing (e.g., `mpiexec`).
+When VIC is compiled with RVIC coupling, parallel execution behavior may differ
+from standalone VIC runs. In some workflows, users run VIC in parallel first
+and then run RVIC convolution separately.
 
-   There are two types of compilation:
+If using separate RVIC convolution, ensure:
 
-   - **Compile VIC with RVIC**:  
-     You can run VIC with RVIC and set different timesteps.
-   - **Compile VIC without RVIC**:  
-     You can run VIC in parallel, but you will need to run RVIC separately (`rvic.convolution.convolution`).  
-     Make sure to prepare the `rvic.convolution.cfg` configuration file.  
-     Additionally, ensure that the VIC output timestep (daily or hourly) matches the UHBOX timestep (86400 seconds for daily, 3600 seconds for hourly).
+- VIC output timestep matches UHBOX timestep.
+- ``rvic.convolution.cfg`` is configured with consistent temporal settings.
+
+Project status
+--------------
+
+The project is under active development. APIs and workflow defaults may evolve
+across versions.

@@ -6,22 +6,22 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.build_MeteForcing &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.build_MeteForcing &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="easy_vic_build.build_RVIC_Param" href="easy_vic_build.build_RVIC_Param.html" />
-    <link rel="prev" title="easy_vic_build.build_hydroanalysis" href="easy_vic_build.build_hydroanalysis.html" /> 
+    <link rel="next" title="easy_vic_build.build_Param" href="easy_vic_build.build_Param.html" />
+    <link rel="prev" title="easy_vic_build.build_GlobalParam" href="easy_vic_build.build_GlobalParam.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,34 +44,29 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.html">easy_vic_build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">easy_vic_build.build_MeteForcing</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.build_MeteForcing.buildMeteForcing"><code class="docutils literal notranslate"><span class="pre">buildMeteForcing()</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#core-package">Core Package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.html">easy_vic_build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_GlobalParam.html">easy_vic_build.build_GlobalParam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">easy_vic_build.build_MeteForcing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#public-function">Public function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.build_MeteForcing.buildMeteForcing"><code class="docutils literal notranslate"><span class="pre">buildMeteForcing()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.bulid_Domain.html">easy_vic_build.bulid_Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.warmup.html">easy_vic_build.warmup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
@@ -97,6 +92,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
       <li class="breadcrumb-item active">easy_vic_build.build_MeteForcing</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.build_MeteForcing.rst" class="fa fa-github"> Edit on GitHub</a>
@@ -109,18 +105,52 @@
              
   <section id="module-easy_vic_build.build_MeteForcing">
 <span id="easy-vic-build-build-meteforcing"></span><h1>easy_vic_build.build_MeteForcing<a class="headerlink" href="#module-easy_vic_build.build_MeteForcing" title="Link to this heading"></a></h1>
+<p>Build VIC meteorological forcing files from level-2 DPC data.</p>
+<section id="public-function">
+<h2>Public function<a class="headerlink" href="#public-function" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">buildMeteForcing</span></code></dt><dd><p>Create forcing files for a date range through a pluggable interface class.</p>
+</dd>
+</dl>
+</section>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.build_MeteForcing.buildMeteForcing" title="easy_vic_build.build_MeteForcing.buildMeteForcing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildMeteForcing</span></code></a>(evb_dir, dpc_VIC_level2, ...)</p></td>
-<td><p></p></td>
+<td><p>Build meteorological forcing files for one case.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="easy_vic_build.build_MeteForcing.buildMeteForcing">
-<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_MeteForcing.</span></span><span class="sig-name descname"><span class="pre">buildMeteForcing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_period_process</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_period_forcing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buildMeteForcing_interface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">buildMeteForcing_interface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NETCDF4'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_MeteForcing.html#buildMeteForcing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_MeteForcing.buildMeteForcing" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.build_MeteForcing.</span></span><span class="sig-name descname"><span class="pre">buildMeteForcing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_period_process</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_period_forcing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buildMeteForcing_interface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.mete_func.build_MeteForcing_interface.html#easy_vic_build.tools.mete_func.build_MeteForcing_interface.buildMeteForcing_interface" title="easy_vic_build.tools.mete_func.build_MeteForcing_interface.buildMeteForcing_interface"><span class="pre">buildMeteForcing_interface</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d</span> <span class="pre">%H:%M:%S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NETCDF4'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/build_MeteForcing.html#buildMeteForcing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.build_MeteForcing.buildMeteForcing" title="Link to this definition"></a></dt>
+<dd><p>Build meteorological forcing files for one case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>dpc_VIC_level2</strong> (<em>object</em>) – DPC instance used by the forcing interface.</p></li>
+<li><p><strong>date_period_process</strong> (<em>list</em>) – Source data period used by the interface.</p></li>
+<li><p><strong>date_period_forcing</strong> (<em>list</em>) – Output forcing period.</p></li>
+<li><p><strong>buildMeteForcing_interface</strong> (<em>type</em>) – Interface class implementing <code class="docutils literal notranslate"><span class="pre">buildMeteForcing_loop_years</span></code>.</p></li>
+<li><p><strong>date_format</strong> (<em>str</em><em>, </em><em>optional</em>) – Datetime parsing/format string used in the interface.</p></li>
+<li><p><strong>timestep</strong> (<em>str</em><em>, </em><em>optional</em>) – Output timestep tag (for example <code class="docutils literal notranslate"><span class="pre">&quot;D&quot;</span></code>).</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether latitude axis is arranged north-to-south.</p></li>
+<li><p><strong>stand_grids_lat_level2</strong> (<em>optional</em>) – Precomputed grid metadata for repeated runs.</p></li>
+<li><p><strong>stand_grids_lon_level2</strong> (<em>optional</em>) – Precomputed grid metadata for repeated runs.</p></li>
+<li><p><strong>rows_index_level2</strong> (<em>optional</em>) – Precomputed grid metadata for repeated runs.</p></li>
+<li><p><strong>cols_index_level2</strong> (<em>optional</em>) – Precomputed grid metadata for repeated runs.</p></li>
+<li><p><strong>file_format</strong> (<em>str</em><em>, </em><em>optional</em>) – NetCDF output format used by the interface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The created forcing-interface instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -128,14 +158,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="easy_vic_build.build_hydroanalysis.html" class="btn btn-neutral float-left" title="easy_vic_build.build_hydroanalysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="easy_vic_build.build_RVIC_Param.html" class="btn btn-neutral float-right" title="easy_vic_build.build_RVIC_Param" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="easy_vic_build.build_GlobalParam.html" class="btn btn-neutral float-left" title="easy_vic_build.build_GlobalParam" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.build_Param.html" class="btn btn-neutral float-right" title="easy_vic_build.build_Param" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

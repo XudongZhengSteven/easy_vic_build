@@ -6,21 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="easy_vic_build.Logger" href="easy_vic_build.Logger.html" />
+    <link rel="next" title="easy_vic_build.Evb_dir_class" href="easy_vic_build.Evb_dir_class.html" />
     <link rel="prev" title="API Reference" href="../api.html" /> 
 </head>
 
@@ -44,36 +44,39 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">easy_vic_build</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#easy_vic_build.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#core-package">Core Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">easy_vic_build</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.build_GlobalParam.html">easy_vic_build.build_GlobalParam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.bulid_Domain.html">easy_vic_build.bulid_Domain</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.warmup.html">easy_vic_build.warmup</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_GlobalParam.html">easy_vic_build.build_GlobalParam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.bulid_Domain.html">easy_vic_build.bulid_Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.warmup.html">easy_vic_build.warmup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
@@ -111,94 +114,74 @@
              
   <section id="module-easy_vic_build">
 <span id="easy-vic-build"></span><h1>easy_vic_build<a class="headerlink" href="#module-easy_vic_build" title="Link to this heading"></a></h1>
-<p>easy_vic_build - A Python package for easily building VIC model.</p>
-<p>This package provides an open-source Python framework for scalable deployment and advanced applications
-of the VIC model. It streamlines the process of configuring, preparing, and calibrating the VIC model,
-and supports automation, preprocessing, and postprocessing workflows. The package is designed to
-improve efficiency and reduce the complexity of VIC model deployment.</p>
-<section id="submodules">
-<h2>Submodules:<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p><cite>tools</cite>: A subpackage containing utility modules for supporting VIC model deployment.</p></li>
-<li><p><cite>build_dpc</cite>: Module for building data processing class at three levels.</p></li>
-<li><p><cite>build_GlobalParam</cite>: Module for building the global parameter file.</p></li>
-<li><p><cite>build_hydroanalysis</cite>: Module for performing hydroanalysis tasks.</p></li>
-<li><p><cite>build_MeteForcing_nco</cite>: Module for building meteorological forcing files with nco.</p></li>
-<li><p><cite>build_MeteForcing</cite>: Module for building meteorological forcing files without nco.</p></li>
-<li><p><cite>build_RVIC_Param</cite>: Module for building RVIC parameter files.</p></li>
-<li><p><cite>build_Domain</cite>: Module for building domain files.</p></li>
-<li><p><cite>build_Param</cite>: Module for building VIC parameter files.</p></li>
-<li><p><cite>calibrate</cite>: Module for calibrating VIC model.</p></li>
-<li><p><cite>Evb_dir_class</cite>: Module containing Evb_dir class for managing path and directory.</p></li>
-<li><p><cite>warmup</cite>: Module for warmuping VIC model.</p></li>
+<p>Top-level package for <code class="docutils literal notranslate"><span class="pre">easy_vic_build</span></code>.</p>
+<p>This module exposes commonly used builders and utilities and performs optional
+feature detection at import time:</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">nco</span></code> is available, <code class="docutils literal notranslate"><span class="pre">build_MeteForcing_nco</span></code> is imported.</p></li>
+<li><p>Otherwise, fallback <code class="docutils literal notranslate"><span class="pre">build_MeteForcing</span></code> is imported.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">rvic</span></code> is available, <code class="docutils literal notranslate"><span class="pre">HAS_RVIC</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
-</div></blockquote>
-</section>
-<section id="usage">
-<h2>Usage:<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ol class="arabic simple" start="0">
-<li><p>Perform hydrological analysis for level0</p></li>
-<li><p>Build DPC (<cite>build_dpc</cite>)</p></li>
-<li><p>Build Domain (<cite>build_Domain</cite>)</p></li>
-<li><p>Build Parameters (<cite>build_Param</cite>)</p></li>
-<li><p>Perform Hydroanalysis for level1 (<cite>build_hydroanalysis</cite>)</p></li>
-<li><p>Build Meteorological Forcing (<cite>build_MeteForcing</cite>) or (<cite>build_MeteForcing_nco</cite>)</p></li>
-<li><p>Build RVIC Parameters (<cite>build_RVIC_Param</cite>)</p></li>
-<li><p>Build Global Parameters (<cite>build_GlobalParam</cite>)</p></li>
-<li><p>Calibrate the Model (<cite>calibrate</cite>)</p></li>
-<li><p>Plot Basin Map (<cite>plot_Basin_map</cite>), note that you must first run <cite>hydroanalysis_for_basin</cite></p></li>
-<li><p>Plot VIC Results (<cite>plot_VIC_result</cite>)</p></li>
-</ol>
-</div></blockquote>
-<p>Version: 0.1.0
-Author: Xudong Zheng
-License: MIT</p>
-</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="easy_vic_build.setup_logger">
 <span class="sig-prename descclassname"><span class="pre">easy_vic_build.</span></span><span class="sig-name descname"><span class="pre">setup_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/Logger.html#setup_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.setup_logger" title="Link to this definition"></a></dt>
-<dd><p>Configure the logger with user-defined settings.</p>
-<p>This function allows users to dynamically modify the logger’s configuration,
-including the logging level, format, and output destination (console or file).
-If no parameters are provided, the default configuration is used.</p>
-<section id="parameters">
-<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt>log_level<span class="classifier">int, optional</span></dt><dd><p>The logging level to set. Default is None (no change).</p>
+<dd><p>Configure and return the module logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_level</strong> (<em>int</em><em>, </em><em>optional</em>) – Logger level override.</p></li>
+<li><p><strong>log_format</strong> (<em>str</em><em>, </em><em>optional</em>) – Formatter pattern. Uses <code class="docutils literal notranslate"><span class="pre">Default_log_format</span></code> when omitted.</p></li>
+<li><p><strong>log_to_file</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, also attach a file handler.</p></li>
+<li><p><strong>log_file</strong> (<em>str</em><em>, </em><em>optional</em>) – Log file path used when <code class="docutils literal notranslate"><span class="pre">log_to_file=True</span></code>.</p></li>
+</ul>
 </dd>
-<dt>log_format<span class="classifier">str, optional</span></dt><dd><p>The log format to set. Default is None (no change).</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configured logger instance.</p>
 </dd>
-<dt>log_to_file<span class="classifier">bool, optional</span></dt><dd><p>Whether to log to a file. Default is None (no change).</p>
-</dd>
-<dt>log_file<span class="classifier">str, optional</span></dt><dd><p>If logging to a file, specify the file path. Default is None (no change).</p>
-</dd>
-</dl>
-</section>
-<section id="returns">
-<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt>Logging.Logger</dt><dd><p>The configured logger instance.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>logging.Logger</p>
 </dd>
 </dl>
-</section>
-<section id="example">
-<h2>Example:<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
-<dl>
-<dt>To customize the logger configuration:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">setup_logger</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">log_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">log_to_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;custom_log.log&quot;</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</section>
 </dd></dl>
 
+<p class="rubric">Modules</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.Evb_dir_class.html#module-easy_vic_build.Evb_dir_class" title="easy_vic_build.Evb_dir_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Evb_dir_class</span></code></a></p></td>
+<td><p>Directory and path manager for <code class="docutils literal notranslate"><span class="pre">easy_vic_build</span></code> cases.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.Logger.html#module-easy_vic_build.Logger" title="easy_vic_build.Logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Logger</span></code></a></p></td>
+<td><p>Logging setup utilities used across <code class="docutils literal notranslate"><span class="pre">easy_vic_build</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.build_GlobalParam.html#module-easy_vic_build.build_GlobalParam" title="easy_vic_build.build_GlobalParam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_GlobalParam</span></code></a></p></td>
+<td><p>Build VIC <code class="docutils literal notranslate"><span class="pre">global_param.txt</span></code> from a reference template.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.build_MeteForcing.html#module-easy_vic_build.build_MeteForcing" title="easy_vic_build.build_MeteForcing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_MeteForcing</span></code></a></p></td>
+<td><p>Build VIC meteorological forcing files from level-2 DPC data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.build_Param.html#module-easy_vic_build.build_Param" title="easy_vic_build.build_Param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_Param</span></code></a></p></td>
+<td><p>Build VIC parameter datasets and scale level-0 parameters to level-1.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html#module-easy_vic_build.build_RVIC_Param" title="easy_vic_build.build_RVIC_Param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_RVIC_Param</span></code></a></p></td>
+<td><p>Build RVIC routing inputs and configuration files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html#module-easy_vic_build.build_hydroanalysis" title="easy_vic_build.build_hydroanalysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_hydroanalysis</span></code></a></p></td>
+<td><p>Hydroanalysis utilities for level-0 and level-1 VIC workflows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.bulid_Domain.html#module-easy_vic_build.bulid_Domain" title="easy_vic_build.bulid_Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bulid_Domain</span></code></a></p></td>
+<td><p>Build and modify VIC domain files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.calibrate.html#module-easy_vic_build.calibrate" title="easy_vic_build.calibrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calibrate</span></code></a></p></td>
+<td><p>Calibration workflows for VIC/RVIC based on NSGA-II search.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="easy_vic_build.tools.html#module-easy_vic_build.tools" title="easy_vic_build.tools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tools</span></code></a></p></td>
+<td><p>Utility subpackages used by <code class="docutils literal notranslate"><span class="pre">easy_vic_build</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="easy_vic_build.warmup.html#module-easy_vic_build.warmup" title="easy_vic_build.warmup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warmup</span></code></a></p></td>
+<td><p>Run a VIC warm-up period and write a model state file.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -206,13 +189,13 @@ If no parameters are provided, the default configuration is used.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../api.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="easy_vic_build.Logger.html" class="btn btn-neutral float-right" title="easy_vic_build.Logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="easy_vic_build.Evb_dir_class.html" class="btn btn-neutral float-right" title="easy_vic_build.Evb_dir_class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

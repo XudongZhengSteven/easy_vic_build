@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>easy_vic_build.calibrate &mdash; easy_vic_build 0.1.0 documentation</title>
+  <title>easy_vic_build.calibrate &mdash; easy_vic_build 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=9a2dae69"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -41,21 +41,9 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-modeling-directory">1. <strong>Build Modeling Directory</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-basins-and-grids">2. <strong>Build Basins and Grids</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-dpc-data-processing-class">3. <strong>Build DPC (Data Processing Class)</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-domain">4. <strong>Build Domain</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-parameters">5. <strong>Build Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#perform-hydroanalysis">6. <strong>Perform Hydroanalysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-meteorological-forcing">7. <strong>Build Meteorological Forcing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-global-parameters">8. <strong>Build Global Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#build-rvic-parameters">9. <strong>Build RVIC Parameters</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#calibrate-the-model">10. <strong>Calibrate the Model</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plot">11. <strong>Plot</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -94,75 +82,14 @@
 <span class="c1"># author: Xudong Zheng</span>
 <span class="c1"># email: z786909151@163.com</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">calibrate - A Python module for calibrating the VIC model.</span>
+<span class="sd">&quot;&quot;&quot;Calibration workflows for VIC/RVIC based on NSGA-II search.</span>
 
-<span class="sd">This module provides functionality for calibrating hydrological models using the NSGA-II genetic algorithm approach.</span>
-<span class="sd">It includes the implementation of the `NSGAII_VIC_SO` class for single-objective optimization and a placeholder</span>
-<span class="sd">for the `NSGAII_VIC_MO` class for multi-objective optimization (which is not yet implemented). The module integrates</span>
-<span class="sd">with various tools for parameter setup, evaluation metrics, and simulation, as well as visualization capabilities.</span>
-
-<span class="sd">Classes:</span>
-<span class="sd">--------</span>
-<span class="sd">    - `NSGAII_VIC_SO`: Performs single-objective optimization using the NSGA-II genetic algorithm.</span>
-<span class="sd">      It inherits from `NSGAII_Base` and handles the calibration process by optimizing model parameters.</span>
-<span class="sd">    - `NSGAII_VIC_MO`: Placeholder for multi-objective optimization implementation (currently not implemented).</span>
-
-<span class="sd">Usage:</span>
-<span class="sd">------</span>
-<span class="sd">    1. Initialize an instance of `NSGAII_VIC_SO` with the necessary parameters and configuration.</span>
-<span class="sd">    2. Run the calibration process using the `run` method to optimize the model parameters.</span>
-<span class="sd">    3. Retrieve the best results using the `get_best_results` method to analyze the calibration performance.</span>
-<span class="sd">    4. Visualize the calibration results using the provided plotting functions.</span>
-
-<span class="sd">Example:</span>
-<span class="sd">--------</span>
-<span class="sd">    basin_index = 397</span>
-<span class="sd">    model_scale = &quot;6km&quot;</span>
-<span class="sd">    date_period = [&quot;19980101&quot;, &quot;20071231&quot;]</span>
-
-<span class="sd">    warmup_date_period = [&quot;19980101&quot;, &quot;19991231&quot;]</span>
-<span class="sd">    calibrate_date_period = [&quot;20000101&quot;, &quot;20071231&quot;]</span>
-<span class="sd">    verify_date_period = [&quot;20080101&quot;, &quot;20101231&quot;]</span>
-<span class="sd">    case_name = f&quot;{basin_index}_{model_scale}&quot;</span>
-
-<span class="sd">    evb_dir = Evb_dir(cases_home=&quot;/home/xdz/code/VIC_xdz/cases&quot;)</span>
-<span class="sd">    evb_dir.builddir(case_name)</span>
-<span class="sd">    evb_dir.vic_exe_path = &quot;/home/xdz/code/VIC_xdz/vic_image.exe&quot;</span>
-
-<span class="sd">    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)</span>
-
-<span class="sd">    modify_pourpoint_bool = True</span>
-<span class="sd">    if modify_pourpoint_bool:</span>
-<span class="sd">        pourpoint_lon = -91.8225</span>
-<span class="sd">        pourpoint_lat = 38.3625</span>
-
-<span class="sd">        modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat)  # mask-&gt;1</span>
-<span class="sd">        buildPourPointFile(evb_dir, None, names=[&quot;pourpoint&quot;], lons=[pourpoint_lon], lats=[pourpoint_lat])</span>
-
-<span class="sd">    algParams = {&quot;popSize&quot;: 20, &quot;maxGen&quot;: 200, &quot;cxProb&quot;: 0.7, &quot;mutateProb&quot;: 0.2}</span>
-<span class="sd">    nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, warmup_date_period, calibrate_date_period, verify_date_period,</span>
-<span class="sd">                                    algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)</span>
-
-<span class="sd">    calibrate_bool = False</span>
-<span class="sd">    if calibrate_bool:</span>
-<span class="sd">        nsgaII_VIC_SO.run()</span>
-
-<span class="sd">    get_best_results_bool = True</span>
-<span class="sd">    if get_best_results_bool:</span>
-<span class="sd">        cali_result, verify_result = nsgaII_VIC_SO.get_best_results()</span>
-
-<span class="sd">Dependencies:</span>
-<span class="sd">-------------</span>
-<span class="sd">    - `os`: For handling file operations and directory structures.</span>
-<span class="sd">    - `deap`: A library for evolutionary algorithms, used for genetic operations like crossover, mutation, and selection.</span>
-<span class="sd">    - `pandas`: For data manipulation and analysis.</span>
-<span class="sd">    - `netCDF4`: For working with netCDF files to handle model output data.</span>
-<span class="sd">    - `matplotlib`: For visualizing the calibration results.</span>
-<span class="sd">    - `.tools`: Various utility and function modules for parameter setup, evaluation, and grid search.</span>
-<span class="sd">    - `.bulid_Param`, `.build_RVIC_Param`, `.build_GlobalParam`: Modules for constructing configuration files and setting up model parameters.</span>
-<span class="sd">    - `.tools.decoractors`: For applying the clock decorator to measure function execution time.</span>
-
+<span class="sd">Public classes</span>
+<span class="sd">--------------</span>
+<span class="sd">``NSGAII_VIC_SO``</span>
+<span class="sd">    Single-objective calibration using KGE as fitness.</span>
+<span class="sd">``NSGAII_VIC_MO``</span>
+<span class="sd">    Minimal multi-objective subclass placeholder.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -197,6 +124,7 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">rvic.parameters</span> <span class="kn">import</span> <span class="n">parameters</span> <span class="k">as</span> <span class="n">rvic_parameters</span>
+    <span class="kn">from</span> <span class="nn">rvic.convolution</span> <span class="kn">import</span> <span class="n">convolution</span>
 
     <span class="n">HAS_RVIC</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span><span class="p">:</span>
@@ -206,7 +134,10 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO">[docs]</a>
 <span class="k">class</span> <span class="nc">NSGAII_VIC_SO</span><span class="p">(</span><span class="n">NSGAII_Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Single-objective NSGA-II calibrator for VIC/RVIC workflows.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="NSGAII_VIC_SO.__init__">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">evb_dir</span><span class="p">,</span>
@@ -235,6 +166,39 @@
         <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize calibration state and algorithm settings.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evb_dir : Evb_dir</span>
+<span class="sd">            Case directory manager and runtime paths.</span>
+<span class="sd">        dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level3 : object</span>
+<span class="sd">            DPC instances used for parameter updates and observations.</span>
+<span class="sd">        date_period, warmup_date_period, calibrate_date_period, verify_date_period : list</span>
+<span class="sd">            Simulation and evaluation date windows (``YYYYMMDD`` strings).</span>
+<span class="sd">        domain_dataset : netCDF4.Dataset, optional</span>
+<span class="sd">            Domain dataset. If ``None``, it is loaded from disk.</span>
+<span class="sd">        snaped_outlet_lons, snaped_outlet_lats, snaped_outlet_names : list, optional</span>
+<span class="sd">            Optional outlet definitions for RVIC routing.</span>
+<span class="sd">        buildParam_level0_interface_class, buildParam_level1_interface_class : type, optional</span>
+<span class="sd">            Interface classes for parameter generation.</span>
+<span class="sd">        soillayerresampler : object, optional</span>
+<span class="sd">            Soil-layer resampler for level-0 parameter build.</span>
+<span class="sd">        TF_VIC_class : type, optional</span>
+<span class="sd">            Transfer-function class.</span>
+<span class="sd">        nlayer_list : list, optional</span>
+<span class="sd">            Soil-layer indices used by scaling.</span>
+<span class="sd">        rvic_OUTPUT_INTERVAL, rvic_BASIN_FLOWDAYS, rvic_SUBSET_DAYS, rvic_uhbox_dt : int, optional</span>
+<span class="sd">            RVIC runtime/config defaults.</span>
+<span class="sd">        algParams : dict, optional</span>
+<span class="sd">            NSGA-II control parameters.</span>
+<span class="sd">        save_path : str, optional</span>
+<span class="sd">            Checkpoint path used by ``NSGAII_Base``.</span>
+<span class="sd">        reverse_lat : bool, optional</span>
+<span class="sd">            Whether latitude axis is arranged north-to-south.</span>
+<span class="sd">        parallel : bool or int, optional</span>
+<span class="sd">            VIC parallel execution flag/process count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Initializing NSGAII_VIC_SO instance with provided parameters... ...&quot;</span>
         <span class="p">)</span>
@@ -307,11 +271,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cols_index_level1</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">algParams</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initialized&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initialized&quot;</span><span class="p">)</span></div>
+
     
 <div class="viewcode-block" id="NSGAII_VIC_SO.set_GlobalParam_dict">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.set_GlobalParam_dict">[docs]</a>
     <span class="k">def</span> <span class="nf">set_GlobalParam_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and write the default VIC global-parameter configuration.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting global parameters for the simulation... ...&quot;</span><span class="p">)</span>
         <span class="n">GlobalParam_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Simulation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -339,6 +305,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.get_obs">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.get_obs">[docs]</a>
     <span class="k">def</span> <span class="nf">get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load observed streamflow and convert discharge to ``m3/s``.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting observation... ...&quot;</span><span class="p">)</span>
         <span class="n">basin_shp_with_streamflow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dpc_VIC_level3</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;streamflow&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">basin_shp_with_streamflow</span><span class="o">.</span><span class="n">streamflow</span>
@@ -353,6 +320,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.get_sim">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.get_sim">[docs]</a>
     <span class="k">def</span> <span class="nf">get_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read simulated discharge at pour point and resample to daily mean.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting simulation... ...&quot;</span><span class="p">)</span>
 
         <span class="c1"># path</span>
@@ -439,12 +407,14 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.createFitness">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.createFitness">[docs]</a>
     <span class="k">def</span> <span class="nf">createFitness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register single-objective fitness in DEAP creator.&quot;&quot;&quot;</span>
         <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Fitness&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">Fitness</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,))</span></div>
 
 
 <div class="viewcode-block" id="NSGAII_VIC_SO.samplingInd">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.samplingInd">[docs]</a>
     <span class="k">def</span> <span class="nf">samplingInd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample one individual from parameter bounds via LHS.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting parameter sampling process... ...&quot;</span><span class="p">)</span>
 
         <span class="c1"># n_samples</span>
@@ -463,6 +433,7 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.run_vic">[docs]</a>
     <span class="nd">@clock_decorator</span><span class="p">(</span><span class="n">print_arg_ret</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">run_vic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute VIC using the current global parameter file.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel</span><span class="p">:</span>
             <span class="n">command_run_vic</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="p">[</span>
@@ -493,6 +464,7 @@
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.run_rvic">[docs]</a>
     <span class="nd">@clock_decorator</span><span class="p">(</span><span class="n">print_arg_ret</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">run_rvic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_cfg_file_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run RVIC convolution with a loaded configuration dictionary.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;running RVIC convolution... ...&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RVIC configuration: </span><span class="si">{</span><span class="n">conv_cfg_file_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -511,6 +483,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.adjust_vic_params_level0">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.adjust_vic_params_level0">[docs]</a>
     <span class="k">def</span> <span class="nf">adjust_vic_params_level0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update or build level-0 parameters from a candidate vector.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adjusting params_dataset_level0... ...&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received parameters for adjustment: </span><span class="si">{</span><span class="n">g_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -559,6 +532,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.adjust_vic_params_level1">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.adjust_vic_params_level1">[docs]</a>
     <span class="k">def</span> <span class="nf">adjust_vic_params_level1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params_dataset_level0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update/build level-1 parameters and apply level-0 to level-1 scaling.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to adjust params_dataset_level1... ...&quot;</span><span class="p">)</span>
         
         <span class="n">buildParam_level1_interface_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buildParam_level1_interface_class</span><span class="p">(</span>
@@ -612,6 +586,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.cal_constraint_destroy">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.cal_constraint_destroy">[docs]</a>
     <span class="k">def</span> <span class="nf">cal_constraint_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params_dataset_level0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check hard physical constraints on level-0 parameters.&quot;&quot;&quot;</span>
         <span class="c1"># wp &lt; fc</span>
         <span class="c1"># Wpwp_FRACT &lt; Wcr_FRACT</span>
         <span class="c1"># depth_layer0 &lt; depth_layer1</span>
@@ -665,6 +640,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.adjust_rvic_params">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.adjust_rvic_params">[docs]</a>
     <span class="k">def</span> <span class="nf">adjust_rvic_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guh_params</span><span class="p">,</span> <span class="n">rvic_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rebuild RVIC routing parameters from candidate UH/routing values.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to adjust RVIC parameters... ...&quot;</span><span class="p">)</span>
         
         <span class="c1"># Cleanup and directory setup</span>
@@ -734,6 +710,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.adjust_rvic_conv_params">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.adjust_rvic_conv_params">[docs]</a>
     <span class="k">def</span> <span class="nf">adjust_rvic_conv_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build RVIC convolution config and return it as a dictionary.&quot;&quot;&quot;</span>
         <span class="c1"># TODO DATL_LIQ_FLDS, OUT_RUNOFF, OUT_BASEFLOW might be run individually</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to adjust RVIC convolution parameters... ...&quot;</span><span class="p">)</span>
@@ -764,6 +741,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.evaluate">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.evaluate">[docs]</a>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate one individual and return fitness tuple.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting evaluate individual... ...&quot;</span><span class="p">)</span>
 
         <span class="c1"># format dtype</span>
@@ -866,7 +844,8 @@
 <div class="viewcode-block" id="NSGAII_VIC_SO.simulate">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.simulate">[docs]</a>
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting VIC simulation... ...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run full VIC+RVIC simulation for one individual.&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting VIC-RVIC simulation... ...&quot;</span><span class="p">)</span>
 
         <span class="c1"># buildGlobalParam</span>
         <span class="n">buildGlobalParam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">)</span>
@@ -914,9 +893,83 @@
         <span class="k">return</span> <span class="n">sim</span></div>
 
 
+<div class="viewcode-block" id="NSGAII_VIC_SO.simulate_vic">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.simulate_vic">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate_vic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run VIC-only simulation for one individual.&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting VIC simulation... ...&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># buildGlobalParam</span>
+        <span class="n">buildGlobalParam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">)</span>
+
+        <span class="c1"># =============== get ind ===============</span>
+        <span class="c1"># format dtype</span>
+        <span class="n">ind_format</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramManager</span><span class="o">.</span><span class="n">vector_types</span><span class="p">())]</span>
+        
+        <span class="c1"># Extract parameter groups</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramManager</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="n">ind_format</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">&quot;optimal&quot;</span><span class="p">)</span>
+        
+        <span class="n">g_params</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;g_params&quot;</span><span class="p">]</span>
+        
+        <span class="c1"># =============== adjust vic params based on ind ===============</span>
+        <span class="c1"># adjust params_dataset_level0 based on g_params</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adjusting params_dataset_level0... ...&quot;</span><span class="p">)</span>
+        <span class="n">params_dataset_level0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_vic_params_level0</span><span class="p">(</span><span class="n">g_params</span><span class="p">)</span>
+
+        <span class="c1"># adjust params_dataset_level1 based on params_dataset_level0</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adjusting params_dataset_level1... ...&quot;</span><span class="p">)</span>
+        <span class="n">params_dataset_level1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_vic_params_level1</span><span class="p">(</span><span class="n">params_dataset_level0</span><span class="p">)</span>
+
+        <span class="c1"># close</span>
+        <span class="n">params_dataset_level0</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">params_dataset_level1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+        <span class="c1"># =============== run vic ===============</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running VIC simulation... ...&quot;</span><span class="p">)</span>
+        <span class="n">remove_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">VICResults_dir</span><span class="p">)</span>
+        <span class="n">remove_and_mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">VICLog_dir</span><span class="p">)</span>
+        <span class="n">out_vic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_vic</span><span class="p">()</span>
+        
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;VIC simulation successfully&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">out_vic</span></div>
+
+        
+
+<div class="viewcode-block" id="NSGAII_VIC_SO.simulate_rvic">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.simulate_rvic">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate_rvic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare RVIC inputs for one individual (execution path is incomplete).&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting RVIC simulation... ...&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># buildGlobalParam</span>
+        <span class="n">buildGlobalParam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">GlobalParam_dict</span><span class="p">)</span>
+        
+        <span class="c1"># =============== get ind ===============</span>
+        <span class="c1"># format dtype</span>
+        <span class="n">ind_format</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramManager</span><span class="o">.</span><span class="n">vector_types</span><span class="p">())]</span>
+        
+        <span class="c1"># Extract parameter groups</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramManager</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">vector</span><span class="o">=</span><span class="n">ind_format</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">&quot;optimal&quot;</span><span class="p">)</span>
+        
+        <span class="n">guh_params</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;guh_params&quot;</span><span class="p">]</span>
+        <span class="n">rvic_params</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;rvic_params&quot;</span><span class="p">]</span>
+        
+        <span class="c1"># =============== adjust rvic params based on ind ===============</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adjusting RVIC parameters... ...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adjust_rvic_params</span><span class="p">(</span><span class="n">guh_params</span><span class="p">,</span> <span class="n">rvic_params</span><span class="p">)</span>
+        
+        <span class="c1"># =============== run rvic ===============</span>
+        <span class="c1"># build cfg file</span>
+        <span class="n">conv_cfg_file_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_rvic_conv_params</span><span class="p">()</span>
+        
+        <span class="k">pass</span></div>
+
+    
 <div class="viewcode-block" id="NSGAII_VIC_SO.get_best_results">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_SO.get_best_results">[docs]</a>
     <span class="k">def</span> <span class="nf">get_best_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run best individual and export calibration/verification time series.&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Starting to retrieve best results from optimization history... ...&quot;</span>
         <span class="p">)</span>
@@ -1050,6 +1103,7 @@
 <div class="viewcode-block" id="NSGAII_VIC_MO">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_MO">[docs]</a>
 <span class="k">class</span> <span class="nc">NSGAII_VIC_MO</span><span class="p">(</span><span class="n">NSGAII_VIC_SO</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Minimal multi-objective subclass placeholder.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="NSGAII_VIC_MO.createFitness">
 <a class="viewcode-back" href="../../_autosummary/easy_vic_build.calibrate.html#easy_vic_build.calibrate.NSGAII_VIC_MO.createFitness">[docs]</a>
@@ -1102,7 +1156,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, XudongZheng. Licensed under the MIT Lincense.</p>
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
