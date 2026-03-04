@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.bulid_Domain &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.calibrate" href="easy_vic_build.calibrate.html" />
+    <link rel="prev" title="easy_vic_build.build_hydroanalysis" href="easy_vic_build.build_hydroanalysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#core-package">Core Package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.html">easy_vic_build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Logger.html">easy_vic_build.Logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.Evb_dir_class.html">easy_vic_build.Evb_dir_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_GlobalParam.html">easy_vic_build.build_GlobalParam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_hydroanalysis.html">easy_vic_build.build_hydroanalysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_MeteForcing.html">easy_vic_build.build_MeteForcing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_Param.html">easy_vic_build.build_Param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.build_RVIC_Param.html">easy_vic_build.build_RVIC_Param</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">easy_vic_build.bulid_Domain</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#public-functions">Public functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.generate_utm_proj_map"><code class="docutils literal notranslate"><span class="pre">generate_utm_proj_map()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.buildDomain"><code class="docutils literal notranslate"><span class="pre">buildDomain()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.cal_mask_frac_area_length"><code class="docutils literal notranslate"><span class="pre">cal_mask_frac_area_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.modifyDomain_for_pourpoint"><code class="docutils literal notranslate"><span class="pre">modifyDomain_for_pourpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.addElevIntoDomain"><code class="docutils literal notranslate"><span class="pre">addElevIntoDomain()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.centers_to_edges"><code class="docutils literal notranslate"><span class="pre">centers_to_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.bulid_Domain.remap_level1_to_level0_mask"><code class="docutils literal notranslate"><span class="pre">remap_level1_to_level0_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.calibrate.html">easy_vic_build.calibrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.warmup.html">easy_vic_build.warmup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.bulid_Domain</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.bulid_Domain.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.bulid_Domain">
+<span id="easy-vic-build-bulid-domain"></span><h1>easy_vic_build.bulid_Domain<a class="headerlink" href="#module-easy_vic_build.bulid_Domain" title="Link to this heading"></a></h1>
+<p>Build and modify VIC domain files.</p>
+<section id="public-functions">
+<h2>Public functions<a class="headerlink" href="#public-functions" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">buildDomain</span></code></dt><dd><p>Create <code class="docutils literal notranslate"><span class="pre">domain.nc</span></code> with mask, area, fraction, and grid-length variables.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">cal_mask_frac_area_length</span></code></dt><dd><p>Compute domain mask/fraction/area/length arrays from grid and basin geometry.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">modifyDomain_for_pourpoint</span></code></dt><dd><p>Force the domain mask at the nearest grid cell to a pour-point location.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">addElevIntoDomain</span></code></dt><dd><p>Append elevation from level-1 parameters into the domain file.</p>
+</dd>
+</dl>
+</section>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.addElevIntoDomain" title="easy_vic_build.bulid_Domain.addElevIntoDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addElevIntoDomain</span></code></a>(evb_dir, params_dataset_level1)</p></td>
+<td><p>Append <code class="docutils literal notranslate"><span class="pre">elev</span></code> variable into an existing domain file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.buildDomain" title="easy_vic_build.bulid_Domain.buildDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildDomain</span></code></a>(evb_dir, dpc_VIC[, reverse_lat, ...])</p></td>
+<td><p>Build <code class="docutils literal notranslate"><span class="pre">domain.nc</span></code> for the current case.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.cal_mask_frac_area_length" title="easy_vic_build.bulid_Domain.cal_mask_frac_area_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_mask_frac_area_length</span></code></a>(dpc_VIC[, ...])</p></td>
+<td><p>Compute mask/fraction/area/length arrays for domain generation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.centers_to_edges" title="easy_vic_build.bulid_Domain.centers_to_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">centers_to_edges</span></code></a>(centers)</p></td>
+<td><p>Compute grid edges from center coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.generate_utm_proj_map" title="easy_vic_build.bulid_Domain.generate_utm_proj_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_utm_proj_map</span></code></a>()</p></td>
+<td><p>Generate a global UTM zone dictionary (Zone 1-60, N/S)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.modifyDomain_for_pourpoint" title="easy_vic_build.bulid_Domain.modifyDomain_for_pourpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modifyDomain_for_pourpoint</span></code></a>(evb_dir, ...)</p></td>
+<td><p>Set domain mask to <code class="docutils literal notranslate"><span class="pre">1</span></code> at the grid nearest to the pour point.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.bulid_Domain.remap_level1_to_level0_mask" title="easy_vic_build.bulid_Domain.remap_level1_to_level0_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remap_level1_to_level0_mask</span></code></a>(lon_level1, ...)</p></td>
+<td><p>Map level-1 mask to level-0 grid by cell-center lookup.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.generate_utm_proj_map">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">generate_utm_proj_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#generate_utm_proj_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.generate_utm_proj_map" title="Link to this definition"></a></dt>
+<dd><p>Generate a global UTM zone dictionary (Zone 1-60, N/S)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.buildDomain">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">buildDomain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefine_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#buildDomain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.buildDomain" title="Link to this definition"></a></dt>
+<dd><p>Build <code class="docutils literal notranslate"><span class="pre">domain.nc</span></code> for the current case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager. Output is written to <code class="docutils literal notranslate"><span class="pre">evb_dir.domainFile_path</span></code>.</p></li>
+<li><p><strong>dpc_VIC</strong> (<em>object</em>) – DPC object that provides at least <code class="docutils literal notranslate"><span class="pre">grid_shp</span></code> (and optionally <code class="docutils literal notranslate"><span class="pre">basin_shp</span></code>
+when <code class="docutils literal notranslate"><span class="pre">basin_shp</span></code> is not passed explicitly).</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether latitude axis is arranged north-to-south.</p></li>
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em><em>, </em><em>optional</em>) – Basin polygon used to compute active-grid fractions. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, it is
+taken from <code class="docutils literal notranslate"><span class="pre">dpc_VIC</span></code> cache.</p></li>
+<li><p><strong>prefine_mask</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – If provided, this array is written to <code class="docutils literal notranslate"><span class="pre">mask</span></code> instead of computed mask.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.cal_mask_frac_area_length">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">cal_mask_frac_area_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dpc_VIC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#cal_mask_frac_area_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.cal_mask_frac_area_length" title="Link to this definition"></a></dt>
+<dd><p>Compute mask/fraction/area/length arrays for domain generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dpc_VIC</strong> (<em>object</em>) – DPC object that provides cached <code class="docutils literal notranslate"><span class="pre">grid_shp</span></code> and optionally <code class="docutils literal notranslate"><span class="pre">basin_shp</span></code>.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether latitude axis is arranged north-to-south.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, create a quick diagnostic plot.</p></li>
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em><em>, </em><em>optional</em>) – Basin polygon for intersection area calculation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(mask,</span> <span class="pre">frac_grid_in_basin,</span> <span class="pre">frac_full_one,</span> <span class="pre">area,</span> <span class="pre">x_length,</span> <span class="pre">y_length)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.modifyDomain_for_pourpoint">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">modifyDomain_for_pourpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pourpoint_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pourpoint_lat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#modifyDomain_for_pourpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.modifyDomain_for_pourpoint" title="Link to this definition"></a></dt>
+<dd><p>Set domain mask to <code class="docutils literal notranslate"><span class="pre">1</span></code> at the grid nearest to the pour point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>pourpoint_lon</strong> (<em>float</em>) – Pour-point longitude.</p></li>
+<li><p><strong>pourpoint_lat</strong> (<em>float</em>) – Pour-point latitude.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.addElevIntoDomain">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">addElevIntoDomain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_dataset_level1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#addElevIntoDomain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.addElevIntoDomain" title="Link to this definition"></a></dt>
+<dd><p>Append <code class="docutils literal notranslate"><span class="pre">elev</span></code> variable into an existing domain file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>params_dataset_level1</strong> (<em>netCDF4.Dataset</em>) – Parameter dataset that contains <code class="docutils literal notranslate"><span class="pre">elev</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(lat,</span> <span class="pre">lon)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.centers_to_edges">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">centers_to_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">centers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#centers_to_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.centers_to_edges" title="Link to this definition"></a></dt>
+<dd><p>Compute grid edges from center coordinates.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.bulid_Domain.remap_level1_to_level0_mask">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.bulid_Domain.</span></span><span class="sig-name descname"><span class="pre">remap_level1_to_level0_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_level0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/bulid_Domain.html#remap_level1_to_level0_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.bulid_Domain.remap_level1_to_level0_mask" title="Link to this definition"></a></dt>
+<dd><p>Map level-1 mask to level-0 grid by cell-center lookup.</p>
+<p>Each level-0 grid cell inherits the mask value of the level-1 cell
+in which its center falls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Remapped mask with <code class="docutils literal notranslate"><span class="pre">(len(lat_level0),</span> <span class="pre">len(lon_level0))</span></code> shape.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.build_hydroanalysis.html" class="btn btn-neutral float-left" title="easy_vic_build.build_hydroanalysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.calibrate.html" class="btn btn-neutral float-right" title="easy_vic_build.calibrate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

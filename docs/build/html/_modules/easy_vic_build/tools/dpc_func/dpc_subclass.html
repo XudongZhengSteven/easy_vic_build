@@ -1,0 +1,579 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.dpc_subclass &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.dpc_subclass</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.dpc_subclass</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Concrete data-processing pipelines built on :mod:`dpc_base`.</span>
+
+<span class="sd">This module defines level-specific subclasses of</span>
+<span class="sd">``easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base``. Each subclass</span>
+<span class="sd">registers decorated loading steps that pull source datasets and cache them</span>
+<span class="sd">into the common processing state.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">..decoractors</span> <span class="kn">import</span> <span class="n">processing_step</span>
+<span class="kn">from</span> <span class="nn">..utilities</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.basin_grid_class</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.dpc_base</span> <span class="kn">import</span> <span class="n">dataProcess_base</span>
+<span class="kn">from</span> <span class="nn">.extractData_func</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level0">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0">[docs]</a>
+<span class="k">class</span> <span class="nc">dataProcess_VIC_level0</span><span class="p">(</span><span class="n">dataProcess_base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load VIC level-0 static inputs on the grid domain.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="dataProcess_VIC_level0.load_dem">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_dem">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_dem&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;dem&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_dem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load SRTM DEM values for the current grid shapefile.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;dem&quot;`` whose value is the updated</span>
+<span class="sd">            grid GeoDataFrame containing DEM-related columns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading SRTM DEM data with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2"> into grid... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_dem</span> <span class="o">=</span> <span class="n">Extract_SrtmDEM</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_original</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;SRTM DEM data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dem&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_dem</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level0.load_soil">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_soil">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_soil&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;soil&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_soil</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load CONUS soil attributes for each grid cell.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;soil&quot;`` whose value is the updated</span>
+<span class="sd">            grid GeoDataFrame containing soil columns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading CONUS soil data into grids with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_soil</span> <span class="o">=</span> <span class="n">Extract_CONUS_SOIL</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_original</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;CONUS soil data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;soil&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_soil</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level1">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1">[docs]</a>
+<span class="k">class</span> <span class="nc">dataProcess_VIC_level1</span><span class="p">(</span><span class="n">dataProcess_base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load VIC level-1 eco-hydrological attributes on grids.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="dataProcess_VIC_level1.load_st">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_st">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_st&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;st&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_st</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load ERA5 soil temperature for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;st&quot;`` mapping to the updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+        <span class="n">search_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;search_method_st&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Loading ERA5 soil temperature data into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">grid_shp_with_st</span> <span class="o">=</span> <span class="n">Extract_ERA5_SoilTemperature</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">search_method</span><span class="o">=</span><span class="n">search_method</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ERA5 soil temperature data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;st&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_st</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level1.load_annual_P">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_annual_P">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_annual_P&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;annual_P&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_annual_P</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load NLDAS annual precipitation for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;annual_P&quot;`` mapping to updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+        <span class="n">search_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;search_method_annual_P&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading NLDAS annual precipitation into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_annual_P</span> <span class="o">=</span> <span class="n">Extract_NLDAS_annual_P</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">search_method</span><span class="o">=</span><span class="n">search_method</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;NLDAS annual precipitation data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;annual_P&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_annual_P</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level1.load_lulc">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_lulc">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_lulc&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;lulc&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_lulc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load UMD land-cover fractions and classes for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;lulc&quot;`` mapping to updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading UMD land cover data into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_lulc</span> <span class="o">=</span> <span class="n">Extract_UMD_1km</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_original</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;UMD land cover data successfully loaded into grids.&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lulc&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_lulc</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level1.load_bsa">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_bsa">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_bsa&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;bsa&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_lulc&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_bsa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load MODIS black-sky albedo (BSA) climatology for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;bsa&quot;`` mapping to updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading MODIS BSA data into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_bsa</span> <span class="o">=</span> <span class="n">Extract_MODIS_BSA</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot_month</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_original</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MODIS BSA data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bsa&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_bsa</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level1.load_ndvi">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_ndvi">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_ndvi&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;ndvi&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_lulc&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_ndvi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load MODIS NDVI climatology for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;ndvi&quot;`` mapping to updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading MODIS NDVI data into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_ndvi</span> <span class="o">=</span> <span class="n">Extract_MODIS_NDVI</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot_month</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_original</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MODIS NDVI data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ndvi&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_ndvi</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level1.load_lai">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_lai">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_lai&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;lai&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_lulc&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_lai</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load MODIS LAI climatology for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;lai&quot;`` mapping to updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading MODIS LAI data into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">grid_shp_with_lai</span> <span class="o">=</span> <span class="n">Extract_MODIS_LAI</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot_month</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">save_original</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MODIS LAI data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lai&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_lai</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level2">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2">[docs]</a>
+<span class="k">class</span> <span class="nc">dataProcess_VIC_level2</span><span class="p">(</span><span class="n">dataProcess_base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load VIC level-2 meteorological forcing data.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="dataProcess_VIC_level2.load_forcing">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_forcing">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_NLDAS_forcing&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;NLDAS_forcing&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;load_grid_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_forcing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load NLDAS forcing time series for each grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;NLDAS_forcing&quot;`` mapping to updated grid data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+        <span class="n">date_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;date_period&quot;</span><span class="p">]</span>
+        <span class="n">search_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;search_method&quot;</span><span class="p">]</span>
+        <span class="n">N_PROCESS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;N_PROCESS&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">CHUNK_SIZE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CHUNK_SIZE&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Loading forcing data into grid with resolution </span><span class="si">{</span><span class="n">grid_res</span><span class="si">}</span><span class="s2">... ...&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">grid_shp_with_NLDAS_forcing</span> <span class="o">=</span> <span class="n">Extract_NLDAS_forcing</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="p">,</span>
+            <span class="n">date_period</span><span class="p">,</span>
+            <span class="n">search_method</span><span class="o">=</span><span class="n">search_method</span><span class="p">,</span>
+            <span class="n">grid_shp_res</span><span class="o">=</span><span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check_search</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">N_PROCESS</span><span class="o">=</span><span class="n">N_PROCESS</span><span class="p">,</span>
+            <span class="n">CHUNK_SIZE</span><span class="o">=</span><span class="n">CHUNK_SIZE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;NLDAS forcing data successfully loaded into grids&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;NLDAS_forcing&quot;</span><span class="p">:</span> <span class="n">grid_shp_with_NLDAS_forcing</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level3">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3">[docs]</a>
+<span class="k">class</span> <span class="nc">dataProcess_VIC_level3</span><span class="p">(</span><span class="n">dataProcess_base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load VIC level-3 basin-level observations and attributes.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="dataProcess_VIC_level3.load_grid_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_grid_shp">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_grid_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable grid loading for level-3 workflows.</span>
+
+<span class="sd">        Level-3 processing operates at basin level only, so this method is a</span>
+<span class="sd">        no-op override of the base implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level3.load_streamflow">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_streamflow">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_streamflow&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;streamflow&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;basin_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_streamflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load CAMELS streamflow for the configured basin and period.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;streamflow&quot;`` mapping to basin-level data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">basin_shp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">]</span>
+        <span class="n">date_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;date_period&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Loading streamflow data for basin </span><span class="si">{</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">hru_id</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> with dates: </span><span class="si">{</span><span class="n">date_period</span><span class="si">}</span><span class="s2">... ...&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">basin_shp_with_streamflow</span> <span class="o">=</span> <span class="n">Extract_CAMELS_Streamflow</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">basin_shp</span><span class="p">,</span>
+            <span class="n">read_dates</span><span class="o">=</span><span class="n">date_period</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;CAMELS streamflow data successfully loaded into basins&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;streamflow&quot;</span><span class="p">:</span> <span class="n">basin_shp_with_streamflow</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_VIC_level3.load_basin_attribute">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.html#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_basin_attribute">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_basin_attribute&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;basin_attribute&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;basin_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_basin_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load CAMELS static attributes for the configured basin.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with key ``&quot;basin_attribute&quot;`` mapping to basin-level</span>
+<span class="sd">            attribute data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">basin_shp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">]</span>
+        <span class="n">k_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;k_list&quot;</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading basin_attribute data for basin </span><span class="si">{</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">hru_id</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+
+        <span class="n">basin_shp_with_basin_attribute</span> <span class="o">=</span> <span class="n">Extract_CAMELS_Attribute</span><span class="o">.</span><span class="n">ExtractData</span><span class="p">(</span>
+            <span class="n">basin_shp</span><span class="p">,</span>
+            <span class="n">k_list</span><span class="o">=</span><span class="n">k_list</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;CAMELS basin_attribute data successfully loaded into basins&quot;</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;basin_attribute&quot;</span><span class="p">:</span> <span class="n">basin_shp_with_basin_attribute</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

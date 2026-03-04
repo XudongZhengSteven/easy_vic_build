@@ -1,0 +1,1196 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.params_func.build_Param_interface &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.params_func.createParametersDataset" href="easy_vic_build.tools.params_func.createParametersDataset.html" />
+    <link rel="prev" title="easy_vic_build.tools.params_func.TransferFunction" href="easy_vic_build.tools.params_func.TransferFunction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.GlobalParamParser.html">easy_vic_build.tools.params_func.GlobalParamParser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.Scaling_operator.html">easy_vic_build.tools.params_func.Scaling_operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html">easy_vic_build.tools.params_func.TransferFunction</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.params_func.build_Param_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.createParametersDataset.html">easy_vic_build.tools.params_func.createParametersDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.params_set.html">easy_vic_build.tools.params_func.params_set</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare.html">easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.params_func.build_Param_interface</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.params_func.build_Param_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.params_func.build_Param_interface">
+<span id="easy-vic-build-tools-params-func-build-param-interface"></span><h1>easy_vic_build.tools.params_func.build_Param_interface<a class="headerlink" href="#module-easy_vic_build.tools.params_func.build_Param_interface" title="Link to this heading"></a></h1>
+<p>Interfaces for building VIC parameter datasets.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface" title="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildParam_level0_interface</span></code></a>(evb_dir, logger, ...)</p></td>
+<td><p>Build level-0 soil and terrain parameter fields for VIC.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform" title="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildParam_level0_interface_ARNO_spatially_uniform</span></code></a>(...)</p></td>
+<td><p>Level-0 builder variant with spatially uniform ARNO baseflow parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform" title="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildParam_level0_interface_Nijssen_spatially_uniform</span></code></a>(...)</p></td>
+<td><p>Level-0 builder variant with spatially uniform Nijssen baseflow parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface" title="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buildParam_level1_interface</span></code></a>(evb_dir, logger, ...)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.build_Param_interface.</span></span><span class="sig-name descname"><span class="pre">buildParam_level0_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><span class="pre">SoilLayerResampler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Build level-0 soil and terrain parameter fields for VIC.</p>
+<p>Initialize level-0 parameter builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – Project directory/config object with output paths.</p></li>
+<li><p><strong>logger</strong> (<em>object</em>) – Logger instance.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – Data-processing container that provides merged grid data.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter dictionary used by transfer functions.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Resampler for aggregating source soil layers to VIC layers.</p></li>
+<li><p><strong>TF_VIC</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><em>TF_VIC</em></a>) – VIC transfer-function class.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether standard latitude order is reversed.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard longitude coordinates.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed row indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed column indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested-basin hierarchy used to assign sub-basin-specific parameters.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><span class="pre">SoilLayerResampler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize level-0 parameter builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – Project directory/config object with output paths.</p></li>
+<li><p><strong>logger</strong> (<em>object</em>) – Logger instance.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – Data-processing container that provides merged grid data.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter dictionary used by transfer functions.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Resampler for aggregating source soil layers to VIC layers.</p></li>
+<li><p><strong>TF_VIC</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><em>TF_VIC</em></a>) – VIC transfer-function class.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether standard latitude order is reversed.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard longitude coordinates.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed row indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed column indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested-basin hierarchy used to assign sub-basin-specific parameters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.buildParam_level0_basic">
+<span class="sig-name descname"><span class="pre">buildParam_level0_basic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.buildParam_level0_basic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.buildParam_level0_basic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.buildParam_level0_by_g_tf">
+<span class="sig-name descname"><span class="pre">buildParam_level0_by_g_tf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.buildParam_level0_by_g_tf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.buildParam_level0_by_g_tf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_coord_map">
+<span class="sig-name descname"><span class="pre">set_coord_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_coord_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_coord_map" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.create_parameter_dataset">
+<span class="sig-name descname"><span class="pre">create_parameter_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.create_parameter_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.create_parameter_dataset" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_dims">
+<span class="sig-name descname"><span class="pre">set_dims</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_dims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_dims" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_depths_vertical_aggregation">
+<span class="sig-name descname"><span class="pre">set_depths_vertical_aggregation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_depths_vertical_aggregation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_depths_vertical_aggregation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_ele_std">
+<span class="sig-name descname"><span class="pre">set_ele_std</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_ele_std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_ele_std" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_b_infilt">
+<span class="sig-name descname"><span class="pre">set_b_infilt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_b_infilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_b_infilt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.cal_ssc_percentile_grid_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cal_ssc_percentile_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.cal_ssc_percentile_grid_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.cal_ssc_percentile_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted sand/silt/clay fractions for an aggregated layer range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp_level0</strong> (<em>GeoDataFrame</em>) – Grid shapefile data containing soil texture attributes.</p></li>
+<li><p><strong>orig_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Original soil-layer thicknesses used as aggregation weights.</p></li>
+<li><p><strong>depth_layer_start</strong> (<em>int</em>) – Start index (inclusive) of source soil layers.</p></li>
+<li><p><strong>depth_layer_end</strong> (<em>int</em>) – End index (inclusive) of source soil layers.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>list</em>) – Standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>list</em>) – Standard longitude coordinates.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em>) – Row indices mapping grid records to array rows.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em>) – Column indices mapping grid records to array columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_array_sand,</span> <span class="pre">grid_array_silt,</span> <span class="pre">grid_array_clay)</span></code> as
+aggregated percentage arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.cal_bd_grid_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cal_bd_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.cal_bd_grid_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.cal_bd_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted bulk density for an aggregated layer range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp_level0</strong> (<em>GeoDataFrame</em>) – Grid shapefile data containing bulk-density attributes.</p></li>
+<li><p><strong>orig_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Original soil-layer thicknesses used as aggregation weights.</p></li>
+<li><p><strong>depth_layer_start</strong> (<em>int</em>) – Start index (inclusive) of source soil layers.</p></li>
+<li><p><strong>depth_layer_end</strong> (<em>int</em>) – End index (inclusive) of source soil layers.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>list</em>) – Standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>list</em>) – Standard longitude coordinates.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em>) – Row indices mapping grid records to array rows.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em>) – Column indices mapping grid records to array columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregated bulk density array converted to <code class="docutils literal notranslate"><span class="pre">kg/m3</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_soil_texture">
+<span class="sig-name descname"><span class="pre">set_soil_texture</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_soil_texture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_soil_texture" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_ksat">
+<span class="sig-name descname"><span class="pre">set_ksat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_ksat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_ksat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_mean_slope">
+<span class="sig-name descname"><span class="pre">set_mean_slope</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_mean_slope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_mean_slope" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_phi_s">
+<span class="sig-name descname"><span class="pre">set_phi_s</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_phi_s"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_phi_s" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_psis">
+<span class="sig-name descname"><span class="pre">set_psis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_psis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_psis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_b_retcurve">
+<span class="sig-name descname"><span class="pre">set_b_retcurve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_b_retcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_b_retcurve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_expt">
+<span class="sig-name descname"><span class="pre">set_expt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_expt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_expt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_fc">
+<span class="sig-name descname"><span class="pre">set_fc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_fc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_fc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d4">
+<span class="sig-name descname"><span class="pre">set_d4</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_d4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_cexpt">
+<span class="sig-name descname"><span class="pre">set_cexpt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_cexpt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_cexpt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_arno_baseflow_layer_num">
+<span class="sig-name descname"><span class="pre">set_arno_baseflow_layer_num</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_arno_baseflow_layer_num"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_arno_baseflow_layer_num" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d1">
+<span class="sig-name descname"><span class="pre">set_d1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_d1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d2">
+<span class="sig-name descname"><span class="pre">set_d2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_d2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d3">
+<span class="sig-name descname"><span class="pre">set_d3</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_d3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_d3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Dsmax">
+<span class="sig-name descname"><span class="pre">set_Dsmax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_Dsmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Dsmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Ds">
+<span class="sig-name descname"><span class="pre">set_Ds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_Ds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Ds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Ws">
+<span class="sig-name descname"><span class="pre">set_Ws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_Ws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Ws" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_init_moist">
+<span class="sig-name descname"><span class="pre">set_init_moist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_init_moist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_init_moist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_elev">
+<span class="sig-name descname"><span class="pre">set_elev</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_elev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_elev" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_dp">
+<span class="sig-name descname"><span class="pre">set_dp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_dp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_dp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_bubble">
+<span class="sig-name descname"><span class="pre">set_bubble</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_bubble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_bubble" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_quartz">
+<span class="sig-name descname"><span class="pre">set_quartz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_quartz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_quartz" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_bulk_density">
+<span class="sig-name descname"><span class="pre">set_bulk_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_bulk_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_bulk_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_soil_density">
+<span class="sig-name descname"><span class="pre">set_soil_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_soil_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_soil_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Wcr_FRACT">
+<span class="sig-name descname"><span class="pre">set_Wcr_FRACT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_Wcr_FRACT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Wcr_FRACT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_wp">
+<span class="sig-name descname"><span class="pre">set_wp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_wp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_wp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Wpwp_FRACT">
+<span class="sig-name descname"><span class="pre">set_Wpwp_FRACT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_Wpwp_FRACT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_Wpwp_FRACT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_rough">
+<span class="sig-name descname"><span class="pre">set_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_rough"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_snow_rough">
+<span class="sig-name descname"><span class="pre">set_snow_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface.set_snow_rough"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface.set_snow_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.build_Param_interface.</span></span><span class="sig-name descname"><span class="pre">buildParam_level1_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.buildParam_level1_basic">
+<span class="sig-name descname"><span class="pre">buildParam_level1_basic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.buildParam_level1_basic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.buildParam_level1_basic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.buildParam_level1_by_tf">
+<span class="sig-name descname"><span class="pre">buildParam_level1_by_tf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.buildParam_level1_by_tf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.buildParam_level1_by_tf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_coord_map">
+<span class="sig-name descname"><span class="pre">set_coord_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_coord_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_coord_map" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.create_parameter_dataset">
+<span class="sig-name descname"><span class="pre">create_parameter_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.create_parameter_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.create_parameter_dataset" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_dims">
+<span class="sig-name descname"><span class="pre">set_dims</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_dims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_dims" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_run_cell">
+<span class="sig-name descname"><span class="pre">set_run_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_run_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_run_cell" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_grid_cell">
+<span class="sig-name descname"><span class="pre">set_grid_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_grid_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_grid_cell" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_off_gmt">
+<span class="sig-name descname"><span class="pre">set_off_gmt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_off_gmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_off_gmt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_avg_T">
+<span class="sig-name descname"><span class="pre">set_avg_T</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_avg_T"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_avg_T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_annual_prec">
+<span class="sig-name descname"><span class="pre">set_annual_prec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_annual_prec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_annual_prec" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_resid_moist">
+<span class="sig-name descname"><span class="pre">set_resid_moist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_resid_moist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_resid_moist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_fs_active">
+<span class="sig-name descname"><span class="pre">set_fs_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_fs_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_fs_active" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_Nveg">
+<span class="sig-name descname"><span class="pre">set_Nveg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_Nveg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_Nveg" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_Cv">
+<span class="sig-name descname"><span class="pre">set_Cv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_Cv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_Cv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_veg_params_json">
+<span class="sig-name descname"><span class="pre">set_veg_params_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_veg_params_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_veg_params_json" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_root_depth">
+<span class="sig-name descname"><span class="pre">set_root_depth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_root_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_root_depth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_root_fract">
+<span class="sig-name descname"><span class="pre">set_root_fract</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_root_fract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_root_fract" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_rarc">
+<span class="sig-name descname"><span class="pre">set_rarc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_rarc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_rarc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_rmin">
+<span class="sig-name descname"><span class="pre">set_rmin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_rmin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_rmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_overstory_wind_h">
+<span class="sig-name descname"><span class="pre">set_overstory_wind_h</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_overstory_wind_h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_overstory_wind_h" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_displacement">
+<span class="sig-name descname"><span class="pre">set_displacement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_displacement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_displacement" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_veg_rough">
+<span class="sig-name descname"><span class="pre">set_veg_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_veg_rough"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_veg_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_RGL">
+<span class="sig-name descname"><span class="pre">set_RGL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_RGL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_RGL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_rad_atten">
+<span class="sig-name descname"><span class="pre">set_rad_atten</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_rad_atten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_rad_atten" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_wind_atten">
+<span class="sig-name descname"><span class="pre">set_wind_atten</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_wind_atten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_wind_atten" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_trunk_ratio">
+<span class="sig-name descname"><span class="pre">set_trunk_ratio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_trunk_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_trunk_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_LAI">
+<span class="sig-name descname"><span class="pre">set_LAI</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_LAI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_LAI" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_albedo">
+<span class="sig-name descname"><span class="pre">set_albedo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_albedo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_albedo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_fcanopy">
+<span class="sig-name descname"><span class="pre">set_fcanopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level1_interface.set_fcanopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level1_interface.set_fcanopy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.build_Param_interface.</span></span><span class="sig-name descname"><span class="pre">buildParam_level0_interface_ARNO_spatially_uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><span class="pre">SoilLayerResampler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface" title="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface"><code class="xref py py-class docutils literal notranslate"><span class="pre">buildParam_level0_interface</span></code></a></p>
+<p>Level-0 builder variant with spatially uniform ARNO baseflow parameters.</p>
+<p class="rubric">Notes</p>
+<p>This variant keeps selected sensitive parameters spatially uniform:
+<code class="docutils literal notranslate"><span class="pre">total_depths</span></code>, <code class="docutils literal notranslate"><span class="pre">soil_layers_breakpoints</span></code>, <code class="docutils literal notranslate"><span class="pre">b_infilt</span></code>, <code class="docutils literal notranslate"><span class="pre">Ds</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Dsmax</span></code>, and <code class="docutils literal notranslate"><span class="pre">Ws</span></code>. Parameters <code class="docutils literal notranslate"><span class="pre">d1</span></code>, <code class="docutils literal notranslate"><span class="pre">d2</span></code>, and <code class="docutils literal notranslate"><span class="pre">d3</span></code> are disabled.</p>
+<p>Initialize level-0 parameter builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – Project directory/config object with output paths.</p></li>
+<li><p><strong>logger</strong> (<em>object</em>) – Logger instance.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – Data-processing container that provides merged grid data.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter dictionary used by transfer functions.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Resampler for aggregating source soil layers to VIC layers.</p></li>
+<li><p><strong>TF_VIC</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><em>TF_VIC</em></a>) – VIC transfer-function class.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether standard latitude order is reversed.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard longitude coordinates.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed row indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed column indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested-basin hierarchy used to assign sub-basin-specific parameters.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_depths_vertical_aggregation">
+<span class="sig-name descname"><span class="pre">set_depths_vertical_aggregation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_depths_vertical_aggregation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_depths_vertical_aggregation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_b_infilt">
+<span class="sig-name descname"><span class="pre">set_b_infilt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_b_infilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_b_infilt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d1">
+<span class="sig-name descname"><span class="pre">set_d1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_d1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d2">
+<span class="sig-name descname"><span class="pre">set_d2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_d2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d3">
+<span class="sig-name descname"><span class="pre">set_d3</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_d3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Dsmax">
+<span class="sig-name descname"><span class="pre">set_Dsmax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_Dsmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Dsmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Ds">
+<span class="sig-name descname"><span class="pre">set_Ds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_Ds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Ds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Ws">
+<span class="sig-name descname"><span class="pre">set_Ws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_ARNO_spatially_uniform.set_Ws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Ws" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><span class="pre">SoilLayerResampler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize level-0 parameter builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – Project directory/config object with output paths.</p></li>
+<li><p><strong>logger</strong> (<em>object</em>) – Logger instance.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – Data-processing container that provides merged grid data.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter dictionary used by transfer functions.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Resampler for aggregating source soil layers to VIC layers.</p></li>
+<li><p><strong>TF_VIC</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><em>TF_VIC</em></a>) – VIC transfer-function class.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether standard latitude order is reversed.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard longitude coordinates.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed row indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed column indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested-basin hierarchy used to assign sub-basin-specific parameters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.buildParam_level0_basic">
+<span class="sig-name descname"><span class="pre">buildParam_level0_basic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.buildParam_level0_basic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.buildParam_level0_by_g_tf">
+<span class="sig-name descname"><span class="pre">buildParam_level0_by_g_tf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.buildParam_level0_by_g_tf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.cal_bd_grid_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cal_bd_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.cal_bd_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted bulk density for an aggregated layer range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp_level0</strong> (<em>GeoDataFrame</em>) – Grid shapefile data containing bulk-density attributes.</p></li>
+<li><p><strong>orig_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Original soil-layer thicknesses used as aggregation weights.</p></li>
+<li><p><strong>depth_layer_start</strong> (<em>int</em>) – Start index (inclusive) of source soil layers.</p></li>
+<li><p><strong>depth_layer_end</strong> (<em>int</em>) – End index (inclusive) of source soil layers.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>list</em>) – Standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>list</em>) – Standard longitude coordinates.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em>) – Row indices mapping grid records to array rows.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em>) – Column indices mapping grid records to array columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregated bulk density array converted to <code class="docutils literal notranslate"><span class="pre">kg/m3</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.cal_ssc_percentile_grid_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cal_ssc_percentile_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.cal_ssc_percentile_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted sand/silt/clay fractions for an aggregated layer range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp_level0</strong> (<em>GeoDataFrame</em>) – Grid shapefile data containing soil texture attributes.</p></li>
+<li><p><strong>orig_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Original soil-layer thicknesses used as aggregation weights.</p></li>
+<li><p><strong>depth_layer_start</strong> (<em>int</em>) – Start index (inclusive) of source soil layers.</p></li>
+<li><p><strong>depth_layer_end</strong> (<em>int</em>) – End index (inclusive) of source soil layers.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>list</em>) – Standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>list</em>) – Standard longitude coordinates.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em>) – Row indices mapping grid records to array rows.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em>) – Column indices mapping grid records to array columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_array_sand,</span> <span class="pre">grid_array_silt,</span> <span class="pre">grid_array_clay)</span></code> as
+aggregated percentage arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.create_parameter_dataset">
+<span class="sig-name descname"><span class="pre">create_parameter_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.create_parameter_dataset" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Wcr_FRACT">
+<span class="sig-name descname"><span class="pre">set_Wcr_FRACT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Wcr_FRACT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Wpwp_FRACT">
+<span class="sig-name descname"><span class="pre">set_Wpwp_FRACT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_Wpwp_FRACT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_arno_baseflow_layer_num">
+<span class="sig-name descname"><span class="pre">set_arno_baseflow_layer_num</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_arno_baseflow_layer_num" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_b_retcurve">
+<span class="sig-name descname"><span class="pre">set_b_retcurve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_b_retcurve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_bubble">
+<span class="sig-name descname"><span class="pre">set_bubble</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_bubble" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_bulk_density">
+<span class="sig-name descname"><span class="pre">set_bulk_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_bulk_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_cexpt">
+<span class="sig-name descname"><span class="pre">set_cexpt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_cexpt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_coord_map">
+<span class="sig-name descname"><span class="pre">set_coord_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_coord_map" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d4">
+<span class="sig-name descname"><span class="pre">set_d4</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_d4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_dims">
+<span class="sig-name descname"><span class="pre">set_dims</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_dims" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_dp">
+<span class="sig-name descname"><span class="pre">set_dp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_dp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_ele_std">
+<span class="sig-name descname"><span class="pre">set_ele_std</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_ele_std" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_elev">
+<span class="sig-name descname"><span class="pre">set_elev</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_elev" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_expt">
+<span class="sig-name descname"><span class="pre">set_expt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_expt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_fc">
+<span class="sig-name descname"><span class="pre">set_fc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_fc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_init_moist">
+<span class="sig-name descname"><span class="pre">set_init_moist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_init_moist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_ksat">
+<span class="sig-name descname"><span class="pre">set_ksat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_ksat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_mean_slope">
+<span class="sig-name descname"><span class="pre">set_mean_slope</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_mean_slope" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_phi_s">
+<span class="sig-name descname"><span class="pre">set_phi_s</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_phi_s" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_psis">
+<span class="sig-name descname"><span class="pre">set_psis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_psis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_quartz">
+<span class="sig-name descname"><span class="pre">set_quartz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_quartz" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_rough">
+<span class="sig-name descname"><span class="pre">set_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_snow_rough">
+<span class="sig-name descname"><span class="pre">set_snow_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_snow_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_soil_density">
+<span class="sig-name descname"><span class="pre">set_soil_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_soil_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_soil_texture">
+<span class="sig-name descname"><span class="pre">set_soil_texture</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_soil_texture" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_wp">
+<span class="sig-name descname"><span class="pre">set_wp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_ARNO_spatially_uniform.set_wp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.build_Param_interface.</span></span><span class="sig-name descname"><span class="pre">buildParam_level0_interface_Nijssen_spatially_uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><span class="pre">SoilLayerResampler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_Nijssen_spatially_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface" title="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface"><code class="xref py py-class docutils literal notranslate"><span class="pre">buildParam_level0_interface</span></code></a></p>
+<p>Level-0 builder variant with spatially uniform Nijssen baseflow parameters.</p>
+<p class="rubric">Notes</p>
+<p>This variant keeps selected sensitive parameters spatially uniform:
+<code class="docutils literal notranslate"><span class="pre">total_depths</span></code>, <code class="docutils literal notranslate"><span class="pre">soil_layers_breakpoints</span></code>, <code class="docutils literal notranslate"><span class="pre">b_infilt</span></code>, <code class="docutils literal notranslate"><span class="pre">d1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">d2</span></code>, and <code class="docutils literal notranslate"><span class="pre">d3</span></code>.</p>
+<p>Initialize level-0 parameter builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – Project directory/config object with output paths.</p></li>
+<li><p><strong>logger</strong> (<em>object</em>) – Logger instance.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – Data-processing container that provides merged grid data.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter dictionary used by transfer functions.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Resampler for aggregating source soil layers to VIC layers.</p></li>
+<li><p><strong>TF_VIC</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><em>TF_VIC</em></a>) – VIC transfer-function class.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether standard latitude order is reversed.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard longitude coordinates.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed row indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed column indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested-basin hierarchy used to assign sub-basin-specific parameters.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_depths_vertical_aggregation">
+<span class="sig-name descname"><span class="pre">set_depths_vertical_aggregation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_Nijssen_spatially_uniform.set_depths_vertical_aggregation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_depths_vertical_aggregation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_b_infilt">
+<span class="sig-name descname"><span class="pre">set_b_infilt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_Nijssen_spatially_uniform.set_b_infilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_b_infilt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d1">
+<span class="sig-name descname"><span class="pre">set_d1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_Nijssen_spatially_uniform.set_d1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d2">
+<span class="sig-name descname"><span class="pre">set_d2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_Nijssen_spatially_uniform.set_d2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d3">
+<span class="sig-name descname"><span class="pre">set_d3</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/build_Param_interface.html#buildParam_level0_interface_Nijssen_spatially_uniform.set_d3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><span class="pre">SoilLayerResampler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF_VIC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><span class="pre">TF_VIC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index_level0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize level-0 parameter builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – Project directory/config object with output paths.</p></li>
+<li><p><strong>logger</strong> (<em>object</em>) – Logger instance.</p></li>
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – Data-processing container that provides merged grid data.</p></li>
+<li><p><strong>g_params</strong> (<em>dict</em>) – Parameter dictionary used by transfer functions.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Resampler for aggregating source soil layers to VIC layers.</p></li>
+<li><p><strong>TF_VIC</strong> (<a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><em>TF_VIC</em></a>) – VIC transfer-function class.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether standard latitude order is reversed.</p></li>
+<li><p><strong>stand_grids_lat_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed standard longitude coordinates.</p></li>
+<li><p><strong>rows_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed row indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>cols_index_level0</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Precomputed column indices for mapping grid shapefile to array.</p></li>
+<li><p><strong>basin_hierarchy</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested-basin hierarchy used to assign sub-basin-specific parameters.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.buildParam_level0_basic">
+<span class="sig-name descname"><span class="pre">buildParam_level0_basic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.buildParam_level0_basic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.buildParam_level0_by_g_tf">
+<span class="sig-name descname"><span class="pre">buildParam_level0_by_g_tf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.buildParam_level0_by_g_tf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.cal_bd_grid_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cal_bd_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.cal_bd_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted bulk density for an aggregated layer range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp_level0</strong> (<em>GeoDataFrame</em>) – Grid shapefile data containing bulk-density attributes.</p></li>
+<li><p><strong>orig_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Original soil-layer thicknesses used as aggregation weights.</p></li>
+<li><p><strong>depth_layer_start</strong> (<em>int</em>) – Start index (inclusive) of source soil layers.</p></li>
+<li><p><strong>depth_layer_end</strong> (<em>int</em>) – End index (inclusive) of source soil layers.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>list</em>) – Standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>list</em>) – Standard longitude coordinates.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em>) – Row indices mapping grid records to array rows.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em>) – Column indices mapping grid records to array columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregated bulk density array converted to <code class="docutils literal notranslate"><span class="pre">kg/m3</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.cal_ssc_percentile_grid_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cal_ssc_percentile_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orig_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_layer_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.cal_ssc_percentile_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted sand/silt/clay fractions for an aggregated layer range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp_level0</strong> (<em>GeoDataFrame</em>) – Grid shapefile data containing soil texture attributes.</p></li>
+<li><p><strong>orig_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Original soil-layer thicknesses used as aggregation weights.</p></li>
+<li><p><strong>depth_layer_start</strong> (<em>int</em>) – Start index (inclusive) of source soil layers.</p></li>
+<li><p><strong>depth_layer_end</strong> (<em>int</em>) – End index (inclusive) of source soil layers.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>list</em>) – Standard latitude coordinates.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>list</em>) – Standard longitude coordinates.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em>) – Row indices mapping grid records to array rows.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em>) – Column indices mapping grid records to array columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_array_sand,</span> <span class="pre">grid_array_silt,</span> <span class="pre">grid_array_clay)</span></code> as
+aggregated percentage arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.create_parameter_dataset">
+<span class="sig-name descname"><span class="pre">create_parameter_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.create_parameter_dataset" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Ds">
+<span class="sig-name descname"><span class="pre">set_Ds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Ds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Dsmax">
+<span class="sig-name descname"><span class="pre">set_Dsmax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Dsmax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Wcr_FRACT">
+<span class="sig-name descname"><span class="pre">set_Wcr_FRACT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Wcr_FRACT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Wpwp_FRACT">
+<span class="sig-name descname"><span class="pre">set_Wpwp_FRACT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Wpwp_FRACT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Ws">
+<span class="sig-name descname"><span class="pre">set_Ws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_Ws" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_arno_baseflow_layer_num">
+<span class="sig-name descname"><span class="pre">set_arno_baseflow_layer_num</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_arno_baseflow_layer_num" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_b_retcurve">
+<span class="sig-name descname"><span class="pre">set_b_retcurve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_b_retcurve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_bubble">
+<span class="sig-name descname"><span class="pre">set_bubble</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_bubble" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_bulk_density">
+<span class="sig-name descname"><span class="pre">set_bulk_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_bulk_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_cexpt">
+<span class="sig-name descname"><span class="pre">set_cexpt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_cexpt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_coord_map">
+<span class="sig-name descname"><span class="pre">set_coord_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_coord_map" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d4">
+<span class="sig-name descname"><span class="pre">set_d4</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_d4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_dims">
+<span class="sig-name descname"><span class="pre">set_dims</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_dims" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_dp">
+<span class="sig-name descname"><span class="pre">set_dp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_dp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_ele_std">
+<span class="sig-name descname"><span class="pre">set_ele_std</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_ele_std" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_elev">
+<span class="sig-name descname"><span class="pre">set_elev</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_elev" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_expt">
+<span class="sig-name descname"><span class="pre">set_expt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_expt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_fc">
+<span class="sig-name descname"><span class="pre">set_fc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_fc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_init_moist">
+<span class="sig-name descname"><span class="pre">set_init_moist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_init_moist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_ksat">
+<span class="sig-name descname"><span class="pre">set_ksat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_ksat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_mean_slope">
+<span class="sig-name descname"><span class="pre">set_mean_slope</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_mean_slope" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_phi_s">
+<span class="sig-name descname"><span class="pre">set_phi_s</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_phi_s" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_psis">
+<span class="sig-name descname"><span class="pre">set_psis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_psis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_quartz">
+<span class="sig-name descname"><span class="pre">set_quartz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_quartz" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_rough">
+<span class="sig-name descname"><span class="pre">set_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_snow_rough">
+<span class="sig-name descname"><span class="pre">set_snow_rough</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_snow_rough" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_soil_density">
+<span class="sig-name descname"><span class="pre">set_soil_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_soil_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_soil_texture">
+<span class="sig-name descname"><span class="pre">set_soil_texture</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_soil_texture" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_wp">
+<span class="sig-name descname"><span class="pre">set_wp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.params_func.build_Param_interface.buildParam_level0_interface_Nijssen_spatially_uniform.set_wp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.params_func.TransferFunction.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.params_func.TransferFunction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.params_func.createParametersDataset.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.params_func.createParametersDataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

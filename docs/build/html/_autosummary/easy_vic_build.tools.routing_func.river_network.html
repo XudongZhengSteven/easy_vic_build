@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.routing_func.river_network &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.utilities" href="easy_vic_build.tools.utilities.html" />
+    <link rel="prev" title="easy_vic_build.tools.routing_func.create_uh" href="easy_vic_build.tools.routing_func.create_uh.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.Muskingum_routing.html">easy_vic_build.tools.routing_func.Muskingum_routing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.Uh_routing.html">easy_vic_build.tools.routing_func.Uh_routing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.create_uh.html">easy_vic_build.tools.routing_func.create_uh</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.routing_func.river_network</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.routing_func.river_network</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.routing_func.river_network.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.routing_func.river_network">
+<span id="easy-vic-build-tools-routing-func-river-network"></span><h1>easy_vic_build.tools.routing_func.river_network<a class="headerlink" href="#module-easy_vic_build.tools.routing_func.river_network" title="Link to this heading"></a></h1>
+<p>Module <code class="docutils literal notranslate"><span class="pre">easy_vic_build.tools.routing_func.river_network</span></code>.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.build_node_features" title="easy_vic_build.tools.routing_func.river_network.build_node_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_node_features</span></code></a>(G, matrix_features)</p></td>
+<td><p>Sample raster features to graph nodes by <code class="docutils literal notranslate"><span class="pre">matrix_pos</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.build_upstream_subgraph_for_node" title="easy_vic_build.tools.routing_func.river_network.build_upstream_subgraph_for_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_upstream_subgraph_for_node</span></code></a>(G, target_node)</p></td>
+<td><p>Build upstream subgraph for a target node with optional k-hop limit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.cal_threshold" title="easy_vic_build.tools.routing_func.river_network.cal_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_threshold</span></code></a>(flow_acc)</p></td>
+<td><p>Calculate default river threshold from flow accumulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.create_river_network_graph" title="easy_vic_build.tools.routing_func.river_network.create_river_network_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_river_network_graph</span></code></a>(flow_direction, ...)</p></td>
+<td><p>Create directed river-network graph from D8 flow direction and accumulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.extract_connected_river_network" title="easy_vic_build.tools.routing_func.river_network.extract_connected_river_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_connected_river_network</span></code></a>(G[, ...])</p></td>
+<td><p>Extract largest weakly connected river subnetwork.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.find_path_to_sink" title="easy_vic_build.tools.routing_func.river_network.find_path_to_sink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_path_to_sink</span></code></a>(G, start_node, sinks, ...)</p></td>
+<td><p>Find one downstream river path from a start node to a sink.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.find_river_paths" title="easy_vic_build.tools.routing_func.river_network.find_river_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_river_paths</span></code></a>(G[, min_in_degree])</p></td>
+<td><p>Extract unique downstream paths across river nodes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.get_display_positions" title="easy_vic_build.tools.routing_func.river_network.get_display_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_display_positions</span></code></a>(G)</p></td>
+<td><p>Build plotting positions from node matrix coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.sort_river_paths_by_lengths" title="easy_vic_build.tools.routing_func.river_network.sort_river_paths_by_lengths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_river_paths_by_lengths</span></code></a>(river_paths[, ...])</p></td>
+<td><p>Sort river paths by path length and return ranking metadata.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.cal_threshold">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">cal_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#cal_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.cal_threshold" title="Link to this definition"></a></dt>
+<dd><p>Calculate default river threshold from flow accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flow_acc</strong> (<em>numpy.ndarray</em>) – Flow-accumulation raster.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>80th percentile value of <code class="docutils literal notranslate"><span class="pre">flow_acc</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.get_display_positions">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">get_display_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#get_display_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.get_display_positions" title="Link to this definition"></a></dt>
+<dd><p>Build plotting positions from node matrix coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>G</strong> (<em>networkx.Graph</em>) – Graph whose nodes contain <code class="docutils literal notranslate"><span class="pre">matrix_pos=(row,</span> <span class="pre">col)</span></code> attributes.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mapping <code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">-&gt;</span> <span class="pre">(x,</span> <span class="pre">y)</span></code> where <code class="docutils literal notranslate"><span class="pre">x=col</span></code> and <code class="docutils literal notranslate"><span class="pre">y=-row</span></code> for display.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.create_river_network_graph">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">create_river_network_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#create_river_network_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.create_river_network_graph" title="Link to this definition"></a></dt>
+<dd><p>Create directed river-network graph from D8 flow direction and accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_direction</strong> (<em>numpy.ndarray</em>) – 2D D8 flow-direction raster using codes in <code class="docutils literal notranslate"><span class="pre">direction_mapping_num</span></code>.</p></li>
+<li><p><strong>flow_acc</strong> (<em>numpy.ndarray</em>) – 2D flow-accumulation raster with the same shape as <code class="docutils literal notranslate"><span class="pre">flow_direction</span></code>.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – River-definition threshold on <code class="docutils literal notranslate"><span class="pre">flow_acc</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, 80th percentile
+is used via <a class="reference internal" href="#easy_vic_build.tools.routing_func.river_network.cal_threshold" title="easy_vic_build.tools.routing_func.river_network.cal_threshold"><code class="xref py py-func docutils literal notranslate"><span class="pre">cal_threshold()</span></code></a>.</p></li>
+<li><p><strong>mask</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – 2D mask raster with the same shape as <code class="docutils literal notranslate"><span class="pre">flow_direction</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><code class="docutils literal notranslate"><span class="pre">(G,</span> <span class="pre">position_to_node,</span> <span class="pre">threshold)</span></code> where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">G</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code> with node attributes:
+<code class="docutils literal notranslate"><span class="pre">matrix_pos</span></code>, <code class="docutils literal notranslate"><span class="pre">direction_value</span></code>, <code class="docutils literal notranslate"><span class="pre">flow_acc</span></code>, <code class="docutils literal notranslate"><span class="pre">node_type</span></code>,
+<code class="docutils literal notranslate"><span class="pre">is_river</span></code> and optional <code class="docutils literal notranslate"><span class="pre">mask</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position_to_node</span></code> maps <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span> <span class="pre">-&gt;</span> <span class="pre">node_name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code> is the effective threshold used.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Node type rules:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">river</span></code>: <code class="docutils literal notranslate"><span class="pre">flow_acc</span> <span class="pre">&gt;=</span> <span class="pre">threshold</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sink</span></code>: direction is invalid (0/-1/255/None)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hillslope</span></code>: otherwise</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flow_direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flow_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="p">,</span> <span class="n">pos2node</span><span class="p">,</span> <span class="n">thr</span> <span class="o">=</span> <span class="n">create_river_network_graph</span><span class="p">(</span><span class="n">flow_direction</span><span class="p">,</span> <span class="n">flow_acc</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">),</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pos2node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+<span class="go">(True, True)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.find_path_to_sink">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">find_path_to_sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sinks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visited_edges</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#find_path_to_sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.find_path_to_sink" title="Link to this definition"></a></dt>
+<dd><p>Find one downstream river path from a start node to a sink.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>networkx.DiGraph</em>) – River graph with node attribute <code class="docutils literal notranslate"><span class="pre">is_river</span></code>.</p></li>
+<li><p><strong>start_node</strong> (<em>str</em>) – Starting node name.</p></li>
+<li><p><strong>sinks</strong> (<em>sequence</em>) – Candidate sink nodes.</p></li>
+<li><p><strong>visited_edges</strong> (<em>set</em>) – Mutable edge set used to reduce duplicate traversals across calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Node sequence of one path. May contain only <code class="docutils literal notranslate"><span class="pre">start_node</span></code> when no
+downstream river successor exists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.find_river_paths">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">find_river_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_in_degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#find_river_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.find_river_paths" title="Link to this definition"></a></dt>
+<dd><p>Extract unique downstream paths across river nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>networkx.DiGraph</em>) – River graph.</p></li>
+<li><p><strong>min_in_degree</strong> (<em>int</em><em>, </em><em>optional</em>) – Source-node criterion. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the minimum in-degree among river
+nodes is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Unique river paths, each represented by a node-name sequence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If no sink node (out-degree=0) is found, the river node with maximum
+<code class="docutils literal notranslate"><span class="pre">flow_acc</span></code> is used as fallback sink.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.sort_river_paths_by_lengths">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">sort_river_paths_by_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">river_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">descending</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#sort_river_paths_by_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.sort_river_paths_by_lengths" title="Link to this definition"></a></dt>
+<dd><p>Sort river paths by path length and return ranking metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>river_paths</strong> (<em>list</em><em> of </em><em>list</em>) – Input river paths.</p></li>
+<li><p><strong>descending</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, longest-first ordering; otherwise shortest-first.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(sorted_river_paths,</span> <span class="pre">length_info)</span></code> where <code class="docutils literal notranslate"><span class="pre">length_info</span></code> is a list
+of dictionaries with rank, length, start/end nodes, and original path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.extract_connected_river_network">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">extract_connected_river_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#extract_connected_river_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.extract_connected_river_network" title="Link to this definition"></a></dt>
+<dd><p>Extract largest weakly connected river subnetwork.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>networkx.DiGraph</em>) – Full river graph.</p></li>
+<li><p><strong>min_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum component size to keep before selecting largest component.</p></li>
+<li><p><strong>mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, only keep river nodes with node attribute <code class="docutils literal notranslate"><span class="pre">mask</span></code> truthy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Largest qualified weakly connected river subgraph. Returns an empty
+<code class="docutils literal notranslate"><span class="pre">DiGraph</span></code> when no component passes <code class="docutils literal notranslate"><span class="pre">min_size</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.build_node_features">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">build_node_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#build_node_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.build_node_features" title="Link to this definition"></a></dt>
+<dd><p>Sample raster features to graph nodes by <code class="docutils literal notranslate"><span class="pre">matrix_pos</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>networkx.Graph</em>) – Graph with node attribute <code class="docutils literal notranslate"><span class="pre">matrix_pos=(row,</span> <span class="pre">col)</span></code>.</p></li>
+<li><p><strong>matrix_features</strong> (<em>list</em><em> of </em><em>numpy.ndarray</em>) – <p>Feature rasters to sample. Supported shapes:</p>
+<ul>
+<li><p>2D: <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> -&gt; scalar sampled per node.</p></li>
+<li><p>3D: <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">row,</span> <span class="pre">col)</span></code> -&gt; 1D time series sampled per node.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Node-aligned features for each input matrix, preserving input order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.river_network.build_upstream_subgraph_for_node">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.river_network.</span></span><span class="sig-name descname"><span class="pre">build_upstream_subgraph_for_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">khop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_node</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/river_network.html#build_upstream_subgraph_for_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.river_network.build_upstream_subgraph_for_node" title="Link to this definition"></a></dt>
+<dd><p>Build upstream subgraph for a target node with optional k-hop limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>networkx.DiGraph</em>) – Directed river graph.</p></li>
+<li><p><strong>target_node</strong> (<em>str</em>) – Node for which upstream contributors are traced.</p></li>
+<li><p><strong>khop</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum upstream hop distance. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, traverse until exhaustion.</p></li>
+<li><p><strong>cutoff_node</strong> (<em>str</em><em>, </em><em>optional</em>) – Upstream node at which traversal stops (node itself is still connected
+to its downstream edge in the returned subgraph).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(new_G,</span> <span class="pre">new_edges)</span></code> where <code class="docutils literal notranslate"><span class="pre">new_G</span></code> is the upstream subgraph and
+<code class="docutils literal notranslate"><span class="pre">new_edges</span></code> is the collected upstream edge list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.routing_func.create_uh.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.routing_func.create_uh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.utilities.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

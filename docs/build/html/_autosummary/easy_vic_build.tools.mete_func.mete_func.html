@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.mete_func.mete_func &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.mete_func.resampleTimeForcing" href="easy_vic_build.tools.mete_func.resampleTimeForcing.html" />
+    <link rel="prev" title="easy_vic_build.tools.mete_func.createMeteForcingDataset" href="easy_vic_build.tools.mete_func.createMeteForcingDataset.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.mete_func.build_MeteForcing_interface.html">easy_vic_build.tools.mete_func.build_MeteForcing_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.mete_func.createMeteForcingDataset.html">easy_vic_build.tools.mete_func.createMeteForcingDataset</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.mete_func.mete_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.mete_func.resampleTimeForcing.html">easy_vic_build.tools.mete_func.resampleTimeForcing</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.mete_func.mete_func</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.mete_func.mete_func.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.mete_func.mete_func">
+<span id="easy-vic-build-tools-mete-func-mete-func"></span><h1>easy_vic_build.tools.mete_func.mete_func<a class="headerlink" href="#module-easy_vic_build.tools.mete_func.mete_func" title="Link to this heading"></a></h1>
+<p>Meteorological utility functions for VIC forcing preparation.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_Brutsaert_eq" title="easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_Brutsaert_eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_LWDOWN_Brutsaert_eq</span></code></a>(Ta_K, VP_kPa)</p></td>
+<td><p>Calculate downward longwave radiation using Brutsaert equation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_CD99_eq" title="easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_CD99_eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_LWDOWN_CD99_eq</span></code></a>(Ta_K[, cloud_cover, c_cloud])</p></td>
+<td><p>Calculate downward longwave radiation using CD99 emissivity equation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_SWDOWN_Angstrom_Prescott_eq" title="easy_vic_build.tools.mete_func.mete_func.cal_SWDOWN_Angstrom_Prescott_eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_SWDOWN_Angstrom_Prescott_eq</span></code></a>(ssd_h, lat, date)</p></td>
+<td><p>Estimate downward shortwave radiation using Angstrom-Prescott equation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_VP_from_RH_es" title="easy_vic_build.tools.mete_func.mete_func.cal_VP_from_RH_es"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_VP_from_RH_es</span></code></a>(RH_100, es_kPa)</p></td>
+<td><p>Calculate vapor pressure from relative humidity and saturation pressure.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_VP_from_prs_sh" title="easy_vic_build.tools.mete_func.mete_func.cal_VP_from_prs_sh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_VP_from_prs_sh</span></code></a>(prs_kPa, sh_kg_per_kg)</p></td>
+<td><p>Calculate vapor pressure from air pressure and specific humidity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_clearsky_SWDOWN_Dudhia89_eq" title="easy_vic_build.tools.mete_func.mete_func.cal_clearsky_SWDOWN_Dudhia89_eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_clearsky_SWDOWN_Dudhia89_eq</span></code></a>(date, lat[, ...])</p></td>
+<td><p>Calculate clear-sky shortwave radiation at the surface.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_ssd" title="easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_ssd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_cloud_fraction_from_ssd</span></code></a>(ssd_h, date, lat)</p></td>
+<td><p>Estimate cloud fraction from sunshine duration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_swdown" title="easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_swdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_cloud_fraction_from_swdown</span></code></a>(sw_measure, ...)</p></td>
+<td><p>Estimate cloud fraction from measured and clear-sky shortwave radiation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_es_Tetens_eq" title="easy_vic_build.tools.mete_func.mete_func.cal_es_Tetens_eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_es_Tetens_eq</span></code></a>(Ta_C[, es_ref])</p></td>
+<td><p>Calculate saturation vapor pressure from air temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.mete_func.mete_func.cal_max_ssd" title="easy_vic_build.tools.mete_func.mete_func.cal_max_ssd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cal_max_ssd</span></code></a>(date, lat)</p></td>
+<td><p>Calculate astronomical maximum sunshine duration for a given day.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_es_Tetens_eq">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_es_Tetens_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ta_C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6112</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_es_Tetens_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_es_Tetens_eq" title="Link to this definition"></a></dt>
+<dd><p>Calculate saturation vapor pressure from air temperature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ta_C</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Air temperature in degrees Celsius.</p></li>
+<li><p><strong>es_ref</strong> (<em>float</em><em>, </em><em>optional</em>) – Reference saturation vapor pressure constant in kPa.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Saturation vapor pressure in kPa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Piecewise Tetens form is used:</p>
+<ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">Ta_C</span> <span class="pre">&gt;=</span> <span class="pre">0</span></code>:
+<code class="docutils literal notranslate"><span class="pre">es</span> <span class="pre">=</span> <span class="pre">es_ref</span> <span class="pre">*</span> <span class="pre">exp(17.67</span> <span class="pre">*</span> <span class="pre">Ta_C</span> <span class="pre">/</span> <span class="pre">(Ta_C</span> <span class="pre">+</span> <span class="pre">243.5))</span></code></p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">Ta_C</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>:
+<code class="docutils literal notranslate"><span class="pre">es</span> <span class="pre">=</span> <span class="pre">es_ref</span> <span class="pre">*</span> <span class="pre">exp(21.875</span> <span class="pre">*</span> <span class="pre">Ta_C</span> <span class="pre">/</span> <span class="pre">(Ta_C</span> <span class="pre">+</span> <span class="pre">265.5))</span></code></p></li>
+</ul>
+<p>Unit of <code class="docutils literal notranslate"><span class="pre">es</span></code> is kPa.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_VP_from_RH_es">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_VP_from_RH_es</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">RH_100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_kPa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_VP_from_RH_es"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_VP_from_RH_es" title="Link to this definition"></a></dt>
+<dd><p>Calculate vapor pressure from relative humidity and saturation pressure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RH_100</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Relative humidity in percent (0-100).</p></li>
+<li><p><strong>es_kPa</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Saturation vapor pressure in kPa.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vapor pressure in kPa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Formula:
+<code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">(RH</span> <span class="pre">/</span> <span class="pre">100)</span> <span class="pre">*</span> <span class="pre">es</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_VP_from_prs_sh">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_VP_from_prs_sh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prs_kPa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sh_kg_per_kg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_VP_from_prs_sh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_VP_from_prs_sh" title="Link to this definition"></a></dt>
+<dd><p>Calculate vapor pressure from air pressure and specific humidity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prs_kPa</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Air pressure in kPa.</p></li>
+<li><p><strong>sh_kg_per_kg</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Specific humidity in kg/kg.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vapor pressure in kPa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Formula:
+<code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">q</span> <span class="pre">*</span> <span class="pre">p</span> <span class="pre">/</span> <span class="pre">(0.622</span> <span class="pre">+</span> <span class="pre">q)</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">q</span></code> is specific humidity (kg kg-1) and <code class="docutils literal notranslate"><span class="pre">p</span></code> is pressure (kPa).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_SWDOWN_Angstrom_Prescott_eq">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_SWDOWN_Angstrom_Prescott_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ssd_h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clearsky</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_SWDOWN_Angstrom_Prescott_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_SWDOWN_Angstrom_Prescott_eq" title="Link to this definition"></a></dt>
+<dd><p>Estimate downward shortwave radiation using Angstrom-Prescott equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ssd_h</strong> (<em>float</em>) – Observed sunshine duration in hours.</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – Latitude in degrees.</p></li>
+<li><p><strong>date</strong> (<em>datetime.date</em><em> or </em><em>datetime.datetime</em>) – Date used to compute solar geometry.</p></li>
+<li><p><strong>a</strong> (<em>float</em><em>, </em><em>optional</em>) – Angstrom coefficient <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
+<li><p><strong>b</strong> (<em>float</em><em>, </em><em>optional</em>) – Angstrom coefficient <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p></li>
+<li><p><strong>clearsky</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, return clear-sky shortwave radiation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Downward shortwave radiation in W/m2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Angstrom-Prescott relation:
+<code class="docutils literal notranslate"><span class="pre">Rs</span> <span class="pre">=</span> <span class="pre">(a</span> <span class="pre">+</span> <span class="pre">b</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">/</span> <span class="pre">N)</span> <span class="pre">*</span> <span class="pre">Ra</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code> is observed sunshine duration (hours).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N</span></code> is astronomical maximum sunshine duration (hours).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Ra</span></code> is extraterrestrial radiation (MJ m-2 day-1, FAO-56 form).</p></li>
+</ul>
+<p>Output is converted from MJ m-2 day-1 to W m-2.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_clearsky_SWDOWN_Dudhia89_eq">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_clearsky_SWDOWN_Dudhia89_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elevation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_UTC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ESRA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_clearsky_SWDOWN_Dudhia89_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_clearsky_SWDOWN_Dudhia89_eq" title="Link to this definition"></a></dt>
+<dd><p>Calculate clear-sky shortwave radiation at the surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>datetime.date</em><em> or </em><em>datetime.datetime</em>) – Date of calculation.</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – Latitude in degrees.</p></li>
+<li><p><strong>elevation</strong> (<em>float</em><em>, </em><em>optional</em>) – Elevation in meters.</p></li>
+<li><p><strong>time_UTC</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – UTC hour of day.</p></li>
+<li><p><strong>ESRA</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use ESRA transmissivity; otherwise use Dudhia (1989).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Clear-sky shortwave radiation in W/m2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Surface clear-sky shortwave radiation is computed as:
+<code class="docutils literal notranslate"><span class="pre">SWDOWN_clear</span> <span class="pre">=</span> <span class="pre">S0</span> <span class="pre">*</span> <span class="pre">cos(theta_z)</span> <span class="pre">*</span> <span class="pre">tau</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">S0</span> <span class="pre">=</span> <span class="pre">1361</span></code> W m-2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">theta_z</span></code> is solar zenith angle at <code class="docutils literal notranslate"><span class="pre">time_UTC</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> is atmospheric transmissivity.</p></li>
+</ul>
+<p>If <code class="docutils literal notranslate"><span class="pre">ESRA=True</span></code>, this implementation uses
+<code class="docutils literal notranslate"><span class="pre">tau</span> <span class="pre">=</span> <span class="pre">0.664</span> <span class="pre">+</span> <span class="pre">0.163</span> <span class="pre">/</span> <span class="pre">cos(theta_z)</span></code> (clipped to [0, 1]),
+then applies a simple elevation correction.
+Otherwise, Dudhia (1989) approximation is used:
+<code class="docutils literal notranslate"><span class="pre">tau</span> <span class="pre">=</span> <span class="pre">max(0.6,</span> <span class="pre">0.75</span> <span class="pre">-</span> <span class="pre">0.00002</span> <span class="pre">*</span> <span class="pre">elevation)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_Brutsaert_eq">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_LWDOWN_Brutsaert_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ta_K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VP_kPa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_LWDOWN_Brutsaert_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_Brutsaert_eq" title="Link to this definition"></a></dt>
+<dd><p>Calculate downward longwave radiation using Brutsaert equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ta_K</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Air temperature in Kelvin.</p></li>
+<li><p><strong>VP_kPa</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Vapor pressure in kPa.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Downward longwave radiation in W/m2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Brutsaert clear-sky form:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">eps_a</span> <span class="pre">=</span> <span class="pre">1.24</span> <span class="pre">*</span> <span class="pre">(e</span> <span class="pre">/</span> <span class="pre">Ta_K)</span> <span class="pre">**</span> <span class="pre">(1/7)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LWDOWN</span> <span class="pre">=</span> <span class="pre">eps_a</span> <span class="pre">*</span> <span class="pre">sigma</span> <span class="pre">*</span> <span class="pre">Ta_K</span> <span class="pre">**</span> <span class="pre">4</span></code></p></li>
+</ul>
+<p>where <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">5.670374419e-8</span></code> W m-2 K-4 and <code class="docutils literal notranslate"><span class="pre">e</span></code> is vapor pressure in kPa.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_CD99_eq">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_LWDOWN_CD99_eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ta_K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cloud_cover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_cloud</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.22</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_LWDOWN_CD99_eq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_CD99_eq" title="Link to this definition"></a></dt>
+<dd><p>Calculate downward longwave radiation using CD99 emissivity equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ta_K</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Air temperature in Kelvin.</p></li>
+<li><p><strong>cloud_cover</strong> (<em>float</em><em>, </em><em>optional</em>) – Cloud fraction in [0, 1]. If provided, cloudy-sky correction is applied.</p></li>
+<li><p><strong>c_cloud</strong> (<em>float</em><em>, </em><em>optional</em>) – Cloud correction coefficient.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Downward longwave radiation in W/m2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If <code class="docutils literal notranslate"><span class="pre">cloud_cover</span></code> is outside [0, 1].</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>CD99 emissivity:
+<code class="docutils literal notranslate"><span class="pre">eps_a</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">0.261</span> <span class="pre">*</span> <span class="pre">exp(-7.77e-4</span> <span class="pre">*</span> <span class="pre">(273.15</span> <span class="pre">-</span> <span class="pre">Ta_K)^2)</span></code>.</p>
+<p>Clear-sky longwave:
+<code class="docutils literal notranslate"><span class="pre">LWDOWN_clear</span> <span class="pre">=</span> <span class="pre">eps_a</span> <span class="pre">*</span> <span class="pre">sigma</span> <span class="pre">*</span> <span class="pre">Ta_K^4</span></code>.</p>
+<p>Cloud correction (if <code class="docutils literal notranslate"><span class="pre">cloud_cover</span></code> is provided):
+<code class="docutils literal notranslate"><span class="pre">LWDOWN</span> <span class="pre">=</span> <span class="pre">LWDOWN_clear</span> <span class="pre">*</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">c_cloud</span> <span class="pre">*</span> <span class="pre">cloud_cover^2)</span></code>.</p>
+<p>Reference: Crawford and Duchon (1999),
+Journal of Applied Meteorology, 38(4), 474-480.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_max_ssd">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_max_ssd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_max_ssd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_max_ssd" title="Link to this definition"></a></dt>
+<dd><p>Calculate astronomical maximum sunshine duration for a given day.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>datetime.date</em><em> or </em><em>datetime.datetime</em>) – Date of calculation.</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – Latitude in degrees.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Maximum sunshine duration in hours.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Uses declination approximation:
+<code class="docutils literal notranslate"><span class="pre">decl</span> <span class="pre">=</span> <span class="pre">23.45</span> <span class="pre">*</span> <span class="pre">sin(2*pi*(284</span> <span class="pre">+</span> <span class="pre">n)/365)</span></code> (degrees),
+then sunrise/sunset hour-angle <code class="docutils literal notranslate"><span class="pre">omega</span></code> to compute:
+<code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">degrees(omega)</span> <span class="pre">/</span> <span class="pre">15</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_ssd">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_cloud_fraction_from_ssd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ssd_h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_cloud_fraction_from_ssd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_ssd" title="Link to this definition"></a></dt>
+<dd><p>Estimate cloud fraction from sunshine duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ssd_h</strong> (<em>float</em>) – Observed sunshine duration in hours.</p></li>
+<li><p><strong>date</strong> (<em>datetime.date</em><em> or </em><em>datetime.datetime</em>) – Date of calculation.</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – Latitude in degrees.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cloud fraction in [0, 1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Formula:
+<code class="docutils literal notranslate"><span class="pre">cloud_fraction</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">min(ssd_h</span> <span class="pre">/</span> <span class="pre">max_ssd,</span> <span class="pre">1.0)</span></code>,
+then clipped to [0, 1].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_swdown">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.mete_func.mete_func.</span></span><span class="sig-name descname"><span class="pre">cal_cloud_fraction_from_swdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sw_measure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sw_clearsky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/mete_func/mete_func.html#cal_cloud_fraction_from_swdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_swdown" title="Link to this definition"></a></dt>
+<dd><p>Estimate cloud fraction from measured and clear-sky shortwave radiation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sw_measure</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Measured downward shortwave radiation.</p></li>
+<li><p><strong>sw_clearsky</strong> (<em>float</em><em> or </em><em>numpy.ndarray</em>) – Clear-sky downward shortwave radiation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cloud fraction in [0, 1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Formula:
+<code class="docutils literal notranslate"><span class="pre">cloud_fraction</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">clip(sw_measure</span> <span class="pre">/</span> <span class="pre">sw_clearsky,</span> <span class="pre">0,</span> <span class="pre">1)</span></code>.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.mete_func.createMeteForcingDataset.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.mete_func.createMeteForcingDataset" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.mete_func.resampleTimeForcing.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.mete_func.resampleTimeForcing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

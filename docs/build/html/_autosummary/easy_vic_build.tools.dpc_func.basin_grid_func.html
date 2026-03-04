@@ -1,0 +1,527 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.basin_grid_func &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.dpc_func.dpc_base" href="easy_vic_build.tools.dpc_func.dpc_base.html" />
+    <link rel="prev" title="easy_vic_build.tools.dpc_func.basin_grid_class" href="easy_vic_build.tools.dpc_func.basin_grid_class.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.aggregate.html">easy_vic_build.tools.dpc_func.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html">easy_vic_build.tools.dpc_func.basin_grid_class</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.dpc_func.basin_grid_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html">easy_vic_build.tools.dpc_func.dpc_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_subclass.html">easy_vic_build.tools.dpc_func.dpc_subclass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.extractData_func.html">easy_vic_build.tools.dpc_func.extractData_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.select_basin_shp.html">easy_vic_build.tools.dpc_func.select_basin_shp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.basin_grid_func</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.dpc_func.basin_grid_func">
+<span id="easy-vic-build-tools-dpc-func-basin-grid-func"></span><h1>easy_vic_build.tools.dpc_func.basin_grid_func<a class="headerlink" href="#module-easy_vic_build.tools.dpc_func.basin_grid_func" title="Link to this heading"></a></h1>
+<p>Grid utility functions for basin-grid conversion and array mapping.</p>
+<p>This module provides helper functions to:</p>
+<ul class="simple">
+<li><p>build basin-based grids at one or multiple resolutions,</p></li>
+<li><p>map GeoDataFrame rows to array indices and back,</p></li>
+<li><p>create and fill gridded arrays from vector attributes,</p></li>
+<li><p>derive mask arrays and coordinate-index mappings.</p></li>
+</ul>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.assignValue_for_grid_array" title="easy_vic_build.tools.dpc_func.basin_grid_func.assignValue_for_grid_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assignValue_for_grid_array</span></code></a>(empty_grid_array, ...)</p></td>
+<td><p>Assign values to the empty grid array at the specified indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.build_grid_shp" title="easy_vic_build.tools.dpc_func.basin_grid_func.build_grid_shp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_grid_shp</span></code></a>(basin_shp, grid_res_level0, ...)</p></td>
+<td><p>Build multi-resolution grid layers for one basin geometry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createArray_from_gridshp" title="easy_vic_build.tools.dpc_func.basin_grid_func.createArray_from_gridshp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createArray_from_gridshp</span></code></a>(grid_shp[, ...])</p></td>
+<td><p>Create a grid array from the grid shape, with values assigned from a specific column.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_and_assignValue_from_gridshp" title="easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_and_assignValue_from_gridshp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createEmptyArray_and_assignValue_from_gridshp</span></code></a>(...)</p></td>
+<td><p>Create an empty grid array and assign values from grid shape data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_from_gridshp" title="easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_from_gridshp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createEmptyArray_from_gridshp</span></code></a>(...[, ...])</p></td>
+<td><p>Create an empty grid array with the given latitude and longitude grid points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createGridForBasin" title="easy_vic_build.tools.dpc_func.basin_grid_func.createGridForBasin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createGridForBasin</span></code></a>(basin_shp, grid_res, ...)</p></td>
+<td><p>Create grid points for the given basin shape.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createStand_grids_lat_lon_from_gridshp" title="easy_vic_build.tools.dpc_func.basin_grid_func.createStand_grids_lat_lon_from_gridshp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createStand_grids_lat_lon_from_gridshp</span></code></a>(grid_shp)</p></td>
+<td><p>Generate sorted latitude and longitude arrays from grid shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_basinshp" title="easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_basinshp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createmaskArray_for_gridshp_intersect_basinshp</span></code></a>(...)</p></td>
+<td><p>Build a boolean mask for grid cells outside a basin polygon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_gridshpRef" title="easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_gridshpRef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createmaskArray_for_gridshp_intersect_gridshpRef</span></code></a>(...)</p></td>
+<td><p>Build a boolean mask for grid cells outside a reference grid extent.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.grids_array_coord_map" title="easy_vic_build.tools.dpc_func.basin_grid_func.grids_array_coord_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grids_array_coord_map</span></code></a>(grid_shp[, reverse_lat])</p></td>
+<td><p>Generate coordinate-to-index mappings for grid arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.gridshp_index_to_grid_array_index" title="easy_vic_build.tools.dpc_func.basin_grid_func.gridshp_index_to_grid_array_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridshp_index_to_grid_array_index</span></code></a>(grid_shp, ...)</p></td>
+<td><p>Convert grid shape indices to the corresponding grid array indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.intersectGridsWithBasins" title="easy_vic_build.tools.dpc_func.basin_grid_func.intersectGridsWithBasins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intersectGridsWithBasins</span></code></a>(grids, basins)</p></td>
+<td><p>Identify and collect grid cells intersecting each basin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.retriveArray_to_gridshp_values_list" title="easy_vic_build.tools.dpc_func.basin_grid_func.retriveArray_to_gridshp_values_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retriveArray_to_gridshp_values_list</span></code></a>(...)</p></td>
+<td><p>Retrieve values from a gridded array using row/column index lists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_func.shift_grids" title="easy_vic_build.tools.dpc_func.basin_grid_func.shift_grids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift_grids</span></code></a>(grid_shp, dx, dy)</p></td>
+<td><p>Translate all grid geometries by fixed offsets.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createGridForBasin">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createGridForBasin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">create_grid_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createGridForBasin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createGridForBasin" title="Link to this definition"></a></dt>
+<dd><p>Create grid points for the given basin shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin polygon dataset used to generate the grid.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em>) – Grid resolution. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, only one boundary grid is created.</p></li>
+<li><p><strong>**create_grid_kwargs</strong> (<em>dict</em>) – Extra keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">Grids_for_shp</span></code> construction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_shp_lon,</span> <span class="pre">grid_shp_lat,</span> <span class="pre">grid_shp)</span></code> where longitude and
+latitude are center-point coordinate lists and <code class="docutils literal notranslate"><span class="pre">grid_shp</span></code> is the
+generated <code class="docutils literal notranslate"><span class="pre">Grids_for_shp</span></code> object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.shift_grids">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">shift_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#shift_grids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.shift_grids" title="Link to this definition"></a></dt>
+<dd><p>Translate all grid geometries by fixed offsets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid dataset containing <code class="docutils literal notranslate"><span class="pre">geometry</span></code> and <code class="docutils literal notranslate"><span class="pre">point_geometry</span></code> columns.</p></li>
+<li><p><strong>dx</strong> (<em>float</em>) – Horizontal shift in coordinate units.</p></li>
+<li><p><strong>dy</strong> (<em>float</em>) – Vertical shift in coordinate units.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Shifted grid dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createStand_grids_lat_lon_from_gridshp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createStand_grids_lat_lon_from_gridshp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createStand_grids_lat_lon_from_gridshp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createStand_grids_lat_lon_from_gridshp" title="Link to this definition"></a></dt>
+<dd><p>Generate sorted latitude and longitude arrays from grid shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid dataset containing <code class="docutils literal notranslate"><span class="pre">point_geometry</span></code>.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em><em>, </em><em>optional</em>) – The resolution of the grid. If None, the grid will be a complete rectangular grid.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, latitude will be sorted from large to small, top to bottom.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>stand_grids_lat</strong> (<em>numpy.ndarray</em>) – Sorted latitude values of the grid.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>numpy.ndarray</em>) – Sorted longitude values of the grid.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_from_gridshp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createEmptyArray_from_gridshp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">third_dim_len=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value=nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createEmptyArray_from_gridshp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_from_gridshp" title="Link to this definition"></a></dt>
+<dd><p>Create an empty grid array with the given latitude and longitude grid points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stand_grids_lat</strong> (<em>numpy.ndarray</em>) – Latitude values of the grid.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>numpy.ndarray</em>) – Longitude values of the grid.</p></li>
+<li><p><strong>third_dim_len</strong> (<em>int</em><em>, </em><em>optional</em>) – Length of the third dimension. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a 2D array is returned.</p></li>
+<li><p><strong>dtype</strong> (<em>data-type</em><em>, </em><em>optional</em>) – The desired data type for the array. Default is float.</p></li>
+<li><p><strong>missing_value</strong> (<em>scalar</em><em>, </em><em>optional</em>) – The value to use for missing data. Default is NaN.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>grid_array</strong> – The empty grid array with the specified shape and missing values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.gridshp_index_to_grid_array_index">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">gridshp_index_to_grid_array_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#gridshp_index_to_grid_array_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.gridshp_index_to_grid_array_index" title="Link to this definition"></a></dt>
+<dd><p>Convert grid shape indices to the corresponding grid array indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid dataset containing <code class="docutils literal notranslate"><span class="pre">point_geometry</span></code>.</p></li>
+<li><p><strong>stand_grids_lat</strong> (<em>numpy.ndarray</em>) – The latitude values of the stand grids.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>numpy.ndarray</em>) – The longitude values of the stand grids.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>rows_index</strong> (<em>list</em>) – The row indices of the grid array.</p></li>
+<li><p><strong>cols_index</strong> (<em>list</em>) – The column indices of the grid array.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.assignValue_for_grid_array">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">assignValue_for_grid_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">empty_grid_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#assignValue_for_grid_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.assignValue_for_grid_array" title="Link to this definition"></a></dt>
+<dd><p>Assign values to the empty grid array at the specified indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>empty_grid_array</strong> (<em>numpy.ndarray</em>) – The empty grid array to which values will be assigned.</p></li>
+<li><p><strong>values_list</strong> (<em>list</em>) – The list of values to assign.</p></li>
+<li><p><strong>rows_index</strong> (<em>list</em>) – The row indices where values will be assigned.</p></li>
+<li><p><strong>cols_index</strong> (<em>list</em>) – The column indices where values will be assigned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>grid_array</strong> – The grid array with assigned values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.retriveArray_to_gridshp_values_list">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">retriveArray_to_gridshp_values_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#retriveArray_to_gridshp_values_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.retriveArray_to_gridshp_values_list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve values from a gridded array using row/column index lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_array</strong> (<em>numpy.ndarray</em>) – Source array containing gridded values.</p></li>
+<li><p><strong>rows_index</strong> (<em>array-like</em><em> of </em><em>int</em>) – Row indices corresponding to target records.</p></li>
+<li><p><strong>cols_index</strong> (<em>array-like</em><em> of </em><em>int</em>) – Column indices corresponding to target records.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Values sampled from <code class="docutils literal notranslate"><span class="pre">grid_array</span></code> at <code class="docutils literal notranslate"><span class="pre">(rows_index,</span> <span class="pre">cols_index)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_and_assignValue_from_gridshp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createEmptyArray_and_assignValue_from_gridshp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value=nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createEmptyArray_and_assignValue_from_gridshp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_and_assignValue_from_gridshp" title="Link to this definition"></a></dt>
+<dd><p>Create an empty grid array and assign values from grid shape data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stand_grids_lat</strong> (<em>numpy.ndarray</em>) – Latitude values of the stand grids.</p></li>
+<li><p><strong>stand_grids_lon</strong> (<em>numpy.ndarray</em>) – Longitude values of the stand grids.</p></li>
+<li><p><strong>values_list</strong> (<em>list</em>) – List of values to assign.</p></li>
+<li><p><strong>rows_index</strong> (<em>list</em>) – Row indices for assigning values.</p></li>
+<li><p><strong>cols_index</strong> (<em>list</em>) – Column indices for assigning values.</p></li>
+<li><p><strong>dtype</strong> (<em>data-type</em><em>, </em><em>optional</em>) – The desired data type for the array. Default is float.</p></li>
+<li><p><strong>missing_value</strong> (<em>scalar</em><em>, </em><em>optional</em>) – The value to use for missing data. Default is NaN.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>grid_array</strong> – The grid array with assigned values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createArray_from_gridshp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createArray_from_gridshp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_column=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_list=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value=nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat=True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createArray_from_gridshp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createArray_from_gridshp" title="Link to this definition"></a></dt>
+<dd><p>Create a grid array from the grid shape, with values assigned from a specific column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid dataset containing <code class="docutils literal notranslate"><span class="pre">point_geometry</span></code> and optional value columns.</p></li>
+<li><p><strong>value_column</strong> (<em>str</em><em>, </em><em>optional</em>) – Column name in <code class="docutils literal notranslate"><span class="pre">grid_shp</span></code> used as the source values.</p></li>
+<li><p><strong>values_list</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Explicit values to assign. Used when <code class="docutils literal notranslate"><span class="pre">value_column</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em><em>, </em><em>optional</em>) – The resolution of the grid. Default is None.</p></li>
+<li><p><strong>dtype</strong> (<em>data-type</em><em>, </em><em>optional</em>) – The desired data type for the array. Default is float.</p></li>
+<li><p><strong>missing_value</strong> (<em>scalar</em><em>, </em><em>optional</em>) – The value to use for missing data. Default is NaN.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the grid array will be plotted. Default is False.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, latitude will be sorted from large to small. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_array,</span> <span class="pre">stand_grids_lon,</span> <span class="pre">stand_grids_lat,</span> <span class="pre">rows_index,</span> <span class="pre">cols_index)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_basinshp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createmaskArray_for_gridshp_intersect_basinshp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createmaskArray_for_gridshp_intersect_basinshp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_basinshp" title="Link to this definition"></a></dt>
+<dd><p>Build a boolean mask for grid cells outside a basin polygon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid dataset with a <code class="docutils literal notranslate"><span class="pre">geometry</span></code> column.</p></li>
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset; the first geometry is used for intersection.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em><em>, </em><em>optional</em>) – Grid resolution used when reconstructing a complete array.</p></li>
+<li><p><strong>missing_value</strong> (<em>scalar</em><em>, </em><em>optional</em>) – Fill value for unassigned cells.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, plot the generated mask.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, output array latitude is ordered from north to south.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_shp,</span> <span class="pre">grid_array_mask)</span></code> where <code class="docutils literal notranslate"><span class="pre">grid_array_mask</span></code> is a 2D mask
+array aligned with standardized latitude/longitude grids.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_gridshpRef">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">createmaskArray_for_gridshp_intersect_gridshpRef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shpRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#createmaskArray_for_gridshp_intersect_gridshpRef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_gridshpRef" title="Link to this definition"></a></dt>
+<dd><p>Build a boolean mask for grid cells outside a reference grid extent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid dataset to be masked.</p></li>
+<li><p><strong>grid_shpRef</strong> (<em>geopandas.GeoDataFrame</em>) – Reference grid dataset; its unary union defines the valid footprint.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em><em>, </em><em>optional</em>) – Grid resolution used when reconstructing a complete array.</p></li>
+<li><p><strong>missing_value</strong> (<em>scalar</em><em>, </em><em>optional</em>) – Fill value for unassigned cells.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, plot the generated mask.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, output array latitude is ordered from north to south.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_shp,</span> <span class="pre">grid_array_mask)</span></code> where <code class="docutils literal notranslate"><span class="pre">grid_array_mask</span></code> is a 2D mask
+array aligned with standardized latitude/longitude grids.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.grids_array_coord_map">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">grids_array_coord_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#grids_array_coord_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.grids_array_coord_map" title="Link to this definition"></a></dt>
+<dd><p>Generate coordinate-to-index mappings for grid arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>GeoDataFrame</em>) – A geospatial dataframe containing a ‘point_geometry’ column with x (longitude) and y (latitude) coordinates.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, sorts latitude values in descending order (useful for direct plotting), by default True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(lon_list,</span> <span class="pre">lat_list,</span> <span class="pre">lon_map_index,</span> <span class="pre">lat_map_index)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.intersectGridsWithBasins">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">intersectGridsWithBasins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids"><span class="pre">Grids</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">basins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Basins" title="easy_vic_build.tools.dpc_func.basin_grid_class.Basins"><span class="pre">Basins</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#intersectGridsWithBasins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.intersectGridsWithBasins" title="Link to this definition"></a></dt>
+<dd><p>Identify and collect grid cells intersecting each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grids</strong> (<a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids"><em>Grids</em></a>) – A geospatial grid dataset.</p></li>
+<li><p><strong>basins</strong> (<a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Basins" title="easy_vic_build.tools.dpc_func.basin_grid_class.Basins"><em>Basins</em></a>) – A geospatial dataset containing basin geometries.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(basins,</span> <span class="pre">intersects_grids)</span></code> where <code class="docutils literal notranslate"><span class="pre">basins</span></code> gains an
+<code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column and <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> is the deduplicated
+union of all intersecting grid cells.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_func.build_grid_shp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_func.</span></span><span class="sig-name descname"><span class="pre">build_grid_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res_level2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_grids_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_func.html#build_grid_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_func.build_grid_shp" title="Link to this definition"></a></dt>
+<dd><p>Build multi-resolution grid layers for one basin geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin polygon dataset.</p></li>
+<li><p><strong>grid_res_level0</strong> (<em>float</em>) – Resolution for level-0 grids.</p></li>
+<li><p><strong>grid_res_level1</strong> (<em>float</em>) – Resolution for level-1 grids (main modeling scale).</p></li>
+<li><p><strong>grid_res_level2</strong> (<em>float</em>) – Resolution for level-2 grids.</p></li>
+<li><p><strong>expand_grids_num</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of level-1 grid cells to expand beyond basin boundary.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, plot all generated grid levels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(grid_shp_level0,</span> <span class="pre">grid_shp_level1,</span> <span class="pre">grid_shp_level2,</span> <span class="pre">grid_shp_level3)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.dpc_func.basin_grid_class.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.dpc_func.basin_grid_class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.dpc_func.dpc_base.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.dpc_func.dpc_base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

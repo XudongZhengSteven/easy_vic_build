@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+<span class="sd">&quot;&quot;&quot;DEM conditioning helpers for hydroanalysis workflows.</span>
+
+<span class="sd">This module provides utilities to estimate terrain-scale increments, add</span>
+<span class="sd">deterministic perturbations to break flat ties, and generate hydrologically</span>
+<span class="sd">conditioned DEM rasters using WhiteboxTools operations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+
+<div class="viewcode-block" id="estimate_typical_dz">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.estimate_typical_dz">[docs]</a>
+<span class="k">def</span> <span class="nf">estimate_typical_dz</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate representative local elevation difference for a DEM.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dem : numpy.ndarray</span>
+<span class="sd">        Input DEM array.</span>
+<span class="sd">    nodata : float, optional</span>
+<span class="sd">        Nodata value to be ignored during estimation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Median absolute difference between each cell and its 8 neighbors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">nodata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">dem</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">)</span>
+        <span class="n">dem</span> <span class="o">=</span> <span class="n">dem</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dem</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">diffs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">shifts</span> <span class="o">=</span> <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dx</span> <span class="ow">in</span> <span class="n">shifts</span><span class="p">:</span>
+        <span class="n">shifted</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">dx</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dem</span> <span class="o">-</span> <span class="n">shifted</span><span class="p">)</span>
+        <span class="n">diffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        
+    <span class="n">all_diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">diffs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">all_diffs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vals</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="add_deterministic_perturbation">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.add_deterministic_perturbation">[docs]</a>
+<span class="k">def</span> <span class="nf">add_deterministic_perturbation</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">epsilon_ratio</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add tiny monotonic perturbation to break flat-elevation ties.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dem : numpy.ndarray</span>
+<span class="sd">        Input DEM array.</span>
+<span class="sd">    epsilon_ratio : float, optional</span>
+<span class="sd">        Ratio used to scale perturbation based on minimum non-zero elevation</span>
+<span class="sd">        difference in the DEM.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Perturbed DEM array with deterministic tie-breaking offsets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dem</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">dem</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diffs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dem</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">dem</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">min_dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diffs</span><span class="p">[</span><span class="n">diffs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">min_dz</span> <span class="o">*</span> <span class="n">epsilon_ratio</span>
+
+    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">dem</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rows</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">cols</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">cols</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">idx_norm</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">/</span> <span class="n">idx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">dem_pert</span> <span class="o">=</span> <span class="n">dem</span> <span class="o">+</span> <span class="n">epsilon</span> <span class="o">*</span> <span class="n">idx_norm</span>
+    <span class="k">return</span> <span class="n">dem_pert</span></div>
+
+
+<div class="viewcode-block" id="filldem">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.filldem">[docs]</a>
+<span class="k">def</span> <span class="nf">filldem</span><span class="p">(</span>
+    <span class="n">wbe</span><span class="p">,</span>
+    <span class="n">dem_path</span><span class="p">,</span>
+    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;filled_dem.tif&quot;</span><span class="p">,</span>
+    <span class="n">add_perturbation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">burn_streams_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fill_depressions_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Condition a DEM using least-cost breaching and optional post-processing.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wbe : `WbEnvironment`</span>
+<span class="sd">        WhiteboxTools workflow environment instance</span>
+<span class="sd">        </span>
+<span class="sd">    dem_path : str</span>
+<span class="sd">        Path to input DEM raster file</span>
+<span class="sd">        </span>
+<span class="sd">    output_file : str, optional</span>
+<span class="sd">        Output file path for filled DEM (default=&quot;filled_dem.tif&quot;)</span>
+
+<span class="sd">    add_perturbation : bool, optional</span>
+<span class="sd">        If ``True``, add a small deterministic perturbation before breaching to</span>
+<span class="sd">        reduce flat-area tie effects.</span>
+
+<span class="sd">    burn_streams_path : str, optional</span>
+<span class="sd">        Optional path to stream vectors used by ``fill_burn`` after filling.</span>
+
+<span class="sd">    fill_depressions_bool : bool, optional</span>
+<span class="sd">        If ``True``, run ``wbe.fill_depressions`` after breaching.</span>
+<span class="sd">        </span>
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        Additional parameters for breach_depressions_least_cost:</span>
+<span class="sd">        </span>
+<span class="sd">        - max_dist : float</span>
+<span class="sd">            Maximum breach channel length (in meters). Recommended value is DEM </span>
+<span class="sd">            resolution multiplied by terrain complexity factor:</span>
+<span class="sd">            - 10-20x for simple terrain</span>
+<span class="sd">            - 30-50x for complex/mountainous terrain</span>
+<span class="sd">            Example: 500.0 for 30m resolution DEM (e.g., SRTM)</span>
+<span class="sd">            </span>
+<span class="sd">        - flat_increment : float</span>
+<span class="sd">            Elevation increment applied to flat areas (prevents flow direction </span>
+<span class="sd">            artifacts). Recommended:</span>
+<span class="sd">            - 0.001 for meter-level DEMs</span>
+<span class="sd">            - 0.0001 for sub-meter DEMs</span>
+<span class="sd">            </span>
+<span class="sd">        - min_dist : bool</span>
+<span class="sd">            Whether to enforce minimum distance paths (default=True). Set to False</span>
+<span class="sd">            may create shorter but less natural breach paths.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `WbRaster`</span>
+<span class="sd">        Conditioned DEM raster object. If ``burn_streams_path`` is provided,</span>
+<span class="sd">        returns the burned DEM.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # Basic usage with default parameters</span>
+<span class="sd">    &gt;&gt;&gt; filled = filldem(wbe, &quot;input_dem.tif&quot;)</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; # Advanced usage with custom parameters</span>
+<span class="sd">    &gt;&gt;&gt; filled = filldem(wbe, &quot;input_dem.tif&quot;, </span>
+<span class="sd">    ...                 output_file=&quot;output_dem.tif&quot;,</span>
+<span class="sd">    ...                 max_dist=100.0, </span>
+<span class="sd">    ...                 flat_increment=0.001)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ``flat_increment`` is auto-estimated from local elevation differences and</span>
+<span class="sd">    can be overridden through ``**kwargs``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># add_deterministic_perturbation</span>
+    
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dem_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">dem_array</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">nodata</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
+        <span class="n">dz_typ</span> <span class="o">=</span> <span class="n">estimate_typical_dz</span><span class="p">(</span><span class="n">dem_array</span><span class="p">)</span>
+        <span class="n">flat_increment</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">dz_typ</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">add_perturbation</span><span class="p">:</span>
+            <span class="n">dem_pert</span> <span class="o">=</span> <span class="n">add_deterministic_perturbation</span><span class="p">(</span><span class="n">dem_array</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">epsilon_ratio</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+        
+            <span class="n">dem_path_pert</span> <span class="o">=</span> <span class="n">dem_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="s2">&quot;_pert.tif&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dem_path_pert</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+                <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dem_pert</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+            
+            <span class="n">dem_path</span> <span class="o">=</span> <span class="n">dem_path_pert</span>
+        
+    <span class="c1"># read</span>
+    <span class="n">dem</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">read_raster</span><span class="p">(</span><span class="n">dem_path</span><span class="p">)</span>
+    <span class="c1"># show(dem, colorbar_kwargs={&#39;label&#39;: &#39;Elevation (m)&#39;})</span>
+    
+    <span class="c1"># kwargs</span>
+    <span class="n">kwargs_</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;flat_increment&quot;</span><span class="p">:</span> <span class="n">flat_increment</span><span class="p">,</span> <span class="c1"># flat_increment,</span>
+        <span class="c1"># &quot;max_dist&quot;: 500</span>
+    <span class="p">}</span>
+    <span class="n">kwargs_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs_</span>
+    
+    <span class="c1"># fill depressions</span>
+    <span class="n">filled_dem</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">breach_depressions_least_cost</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fill_depressions_bool</span><span class="p">:</span>
+        <span class="n">filled_dem</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">fill_depressions</span><span class="p">(</span><span class="n">filled_dem</span><span class="p">,</span> <span class="n">flat_increment</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;flat_increment&quot;</span><span class="p">])</span>
+    
+    <span class="c1"># write</span>
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_raster</span><span class="p">(</span><span class="n">filled_dem</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+    
+    <span class="c1"># filled_dem = wbe.resolve_flats(filled_dem) # resolve flats</span>
+    <span class="c1"># show(filled_dem, colorbar_kwargs={&#39;label&#39;: &#39;Elevation (m)&#39;})</span>
+    <span class="c1"># show(filled_dem - dem, colorbar_kwargs={&#39;label&#39;: &#39;fill (m)&#39;})</span>
+    
+    <span class="c1"># burn streams into DEM</span>
+    <span class="k">if</span> <span class="n">burn_streams_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">streams</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">read_vector</span><span class="p">(</span><span class="n">burn_streams_path</span><span class="p">)</span>
+        <span class="n">burned_dem</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">fill_burn</span><span class="p">(</span><span class="n">filled_dem</span><span class="p">,</span> <span class="n">streams</span><span class="p">)</span>  <span class="c1"># , decrement_value=10.0, gradient_distance=8</span>
+        <span class="n">burned_dem_path</span> <span class="o">=</span> <span class="n">dem_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="s2">&quot;_burned.tif&quot;</span><span class="p">)</span>
+        <span class="n">wbe</span><span class="o">.</span><span class="n">write_raster</span><span class="p">(</span><span class="n">burned_dem</span><span class="p">,</span> <span class="n">burned_dem_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">burned_dem</span>
+    
+    <span class="k">return</span> <span class="n">filled_dem</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

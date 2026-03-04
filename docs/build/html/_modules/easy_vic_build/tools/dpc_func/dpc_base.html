@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.dpc_base &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.dpc_base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.dpc_base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base workflow class for basin/grid data processing.</span>
+
+<span class="sd">The class in this module maintains a dependency-aware step graph, executes</span>
+<span class="sd">registered processing steps, and caches basin/grid-level outputs for reuse.</span>
+<span class="sd">Subclasses provide concrete loading or aggregation routines through decorated</span>
+<span class="sd">methods.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">..decoractors</span> <span class="kn">import</span> <span class="n">processing_step</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
+
+
+<div class="viewcode-block" id="dataProcess_base">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base">[docs]</a>
+<span class="k">class</span> <span class="nc">dataProcess_base</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for basin/grid data loading pipelines.</span>
+
+<span class="sd">    The class manages three internal states:</span>
+
+<span class="sd">    - ``_processing_steps``: registered step metadata and dependencies.</span>
+<span class="sd">    - ``_executed_steps``: names of completed steps.</span>
+<span class="sd">    - ``_cache``: in-memory data products keyed by ``save_name``.</span>
+
+<span class="sd">    Subclasses typically declare loading methods decorated by</span>
+<span class="sd">    :func:`easy_vic_build.tools.decoractors.processing_step`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="dataProcess_base.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reset_on_load_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the processing object and optionally restore saved state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        load_path : str, optional</span>
+<span class="sd">            Path to a serialized processor state (pickle file). If provided, the</span>
+<span class="sd">            state will be loaded immediately.</span>
+<span class="sd">        reset_on_load_failure : bool, optional</span>
+<span class="sd">            If ``True``, reset to a clean state when state loading fails.</span>
+<span class="sd">            If ``False``, loading errors raise ``RuntimeError``.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Extra keyword arguments forwarded to :meth:`load_state`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_state</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">load_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_path</span> <span class="o">=</span> <span class="n">load_path</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_state</span><span class="p">(</span><span class="n">load_path</span><span class="p">,</span> <span class="n">reset_on_load_failure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_register_decorated_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register all bound methods marked by ``@processing_step``.</span>
+
+<span class="sd">        The decorator stores metadata on the method object. This helper scans</span>
+<span class="sd">        instance attributes and converts those metadata into entries in</span>
+<span class="sd">        ``self._processing_steps``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s2">&quot;_step_name&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">register_processing_step</span><span class="p">(</span>
+                    <span class="n">step_name</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">_step_name</span><span class="p">,</span>
+                    <span class="n">save_names</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">_save_names</span><span class="p">,</span>
+                    <span class="n">data_level</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">_data_level</span><span class="p">,</span>
+                    <span class="n">func</span><span class="o">=</span><span class="n">attr</span><span class="p">,</span>
+                    <span class="n">dependencies</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">_step_deps</span>
+                <span class="p">)</span>
+
+<div class="viewcode-block" id="dataProcess_base.register_processing_step">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.register_processing_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_processing_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">data_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">dependencies</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register one processing step in the execution graph.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Unique step identifier.</span>
+<span class="sd">        save_names : str or list of str</span>
+<span class="sd">            Cache key(s) expected to be produced by ``func``.</span>
+<span class="sd">        data_level : str</span>
+<span class="sd">            Data scope label, usually ``&quot;basin_level&quot;`` or ``&quot;grid_level&quot;``.</span>
+<span class="sd">        func : Callable</span>
+<span class="sd">            Step callable with zero arguments. It must return a ``dict`` keyed</span>
+<span class="sd">            by ``save_names``.</span>
+<span class="sd">        dependencies : list of str, optional</span>
+<span class="sd">            Steps that must be executed before this step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">func</span><span class="p">,</span>
+            <span class="s2">&quot;deps&quot;</span><span class="p">:</span> <span class="n">dependencies</span> <span class="ow">or</span> <span class="p">[],</span>
+            <span class="s2">&quot;save_names&quot;</span><span class="p">:</span> <span class="n">save_names</span><span class="p">,</span>
+            <span class="s2">&quot;data_level&quot;</span><span class="p">:</span> <span class="n">data_level</span>
+        <span class="p">}</span></div>
+
+    
+<div class="viewcode-block" id="dataProcess_base.loaddata_pipeline">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.loaddata_pipeline">[docs]</a>
+    <span class="k">def</span> <span class="nf">loaddata_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loaddata_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute all registered steps in dependency order.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path : str, optional</span>
+<span class="sd">            Path for persisting state after each successful step.</span>
+<span class="sd">        loaddata_kwargs : dict, optional</span>
+<span class="sd">            Runtime input dictionary consumed by individual step methods.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span> <span class="o">=</span> <span class="n">loaddata_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">step_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_step</span><span class="p">(</span><span class="n">step_name</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_execute_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">save_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">visited</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute a single step recursively with dependency checks.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Step to execute.</span>
+<span class="sd">        save_path : str, optional</span>
+<span class="sd">            Path used by :meth:`save_state` after caching outputs.</span>
+<span class="sd">        visited : set of str, optional</span>
+<span class="sd">            DFS guard set used for cycle detection.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If circular dependencies are detected.</span>
+<span class="sd">        KeyError</span>
+<span class="sd">            If step metadata is missing or returned outputs are incomplete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">step_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executed_steps</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="k">if</span> <span class="n">visited</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">step_name</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Circular dependency detected involving step: </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">step_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step &#39;</span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2">&#39; not found in registered steps&quot;</span><span class="p">)</span>
+        
+        <span class="n">step_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span>
+        <span class="n">save_names</span> <span class="o">=</span> <span class="n">step_info</span><span class="p">[</span><span class="s2">&quot;save_names&quot;</span><span class="p">]</span>
+        <span class="n">save_names_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">save_names</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">save_names</span>
+        
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">save_names_list</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[SKIP] </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2"> (cached)&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">step_info</span><span class="p">[</span><span class="s2">&quot;deps&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">dep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executed_steps</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_execute_step</span><span class="p">(</span>
+                    <span class="n">dep</span><span class="p">,</span>
+                    <span class="n">visited</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">visited</span><span class="p">)</span>
+                <span class="p">)</span>
+        
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[RUN ] </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">step_info</span><span class="p">[</span><span class="s2">&quot;func&quot;</span><span class="p">]()</span>
+
+        <span class="k">for</span> <span class="n">save_name</span> <span class="ow">in</span> <span class="n">save_names_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">save_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2"> did not produce expected save name: </span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">save_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">save_name</span><span class="p">],</span> 
+                <span class="s2">&quot;data_level&quot;</span><span class="p">:</span> <span class="n">step_info</span><span class="p">[</span><span class="s2">&quot;data_level&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
+            
+            <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_state</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved </span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2"> from step </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2"> with data level: </span><span class="si">{</span><span class="n">step_info</span><span class="p">[</span><span class="s1">&#39;data_level&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_executed_steps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="dataProcess_base.merge_basin_data">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.merge_basin_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge_basin_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge all cached basin-level outputs into one GeoDataFrame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Basin GeoDataFrame containing original geometry plus all joinable</span>
+<span class="sd">            basin-level products in cache.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;merged_basin_shp&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+            <span class="n">merged_basin_shp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s2">&quot;merged_basin_shp&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;basin_shp&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;basin_shp&#39; in cache&quot;</span><span class="p">)</span>
+            <span class="n">merged_basin_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">save_name</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;data_level&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;basin_level&quot;</span> <span class="ow">or</span> <span class="n">save_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;merged_basin_shp&quot;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+            
+            <span class="n">data</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">save_name</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="n">overlapping_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">merged_basin_shp</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">overlapping_cols</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column(s) </span><span class="si">{</span><span class="n">overlapping_cols</span><span class="si">}</span><span class="s2"> in &#39;</span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2">&#39; already exist in basin_shp.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected DataFrame or Series for &#39;</span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2">&#39;, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">merged_basin_shp</span> <span class="o">=</span> <span class="n">merged_basin_shp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_data_to_cache</span><span class="p">(</span>
+            <span class="n">save_name</span><span class="o">=</span><span class="s2">&quot;merged_basin_shp&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">merged_basin_shp</span><span class="p">,</span>
+            <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;basin_level&quot;</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">merged_basin_shp</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_base.merge_grid_data">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.merge_grid_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge_grid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge all cached grid-level outputs into one GeoDataFrame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Grid GeoDataFrame containing original grid fields and appended</span>
+<span class="sd">            grid-level variables from cache.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;merged_grid_shp&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+            <span class="n">merged_grid_shp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s2">&quot;merged_grid_shp&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;grid_shp&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;grid_shp&#39; in cache&quot;</span><span class="p">)</span>
+            <span class="n">merged_grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+        
+        <span class="k">for</span> <span class="n">save_name</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;data_level&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;grid_level&quot;</span> <span class="ow">or</span> <span class="n">save_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;merged_grid_shp&quot;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+            
+            <span class="n">data</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">save_name</span><span class="p">)</span>
+            
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="n">cols_to_join</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">merged_grid_shp</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;below columns will be added to the merged_grid_shp:</span><span class="se">\n\n</span><span class="s2">Added </span><span class="si">{</span><span class="n">cols_to_join</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected DataFrame for </span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">, will not be added to the merged_grid_shp&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            
+            <span class="n">merged_grid_shp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">merged_grid_shp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">cols_to_join</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_data_to_cache</span><span class="p">(</span>
+            <span class="n">save_name</span><span class="o">=</span><span class="s2">&quot;merged_grid_shp&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">merged_grid_shp</span><span class="p">,</span>
+            <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">merged_grid_shp</span></div>
+
+
+<div class="viewcode-block" id="dataProcess_base.discard_step_name">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.discard_step_name">[docs]</a>
+    <span class="k">def</span> <span class="nf">discard_step_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mark one step as not executed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Step name to remove from ``_executed_steps``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_executed_steps</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="dataProcess_base.get_data_from_cache">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.get_data_from_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data_from_cache</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get cached data and its level by key.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_name : str</span>
+<span class="sd">            Cache key to retrieve.</span>
+<span class="sd">        default : Any, optional</span>
+<span class="sd">            Value used when the key is not found.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            ``(data, data_level)`` if key exists; otherwise ``(default, None)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">save_name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_level&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span><span class="p">,</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="dataProcess_base.list_cache">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.list_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List available keys in cache.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            Current cache key names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+    
+<div class="viewcode-block" id="dataProcess_base.save_data_to_cache">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.save_data_to_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_data_to_cache</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save data into cache and optionally reopen its step state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_name : str</span>
+<span class="sd">            Cache key for the data object.</span>
+<span class="sd">        data : Any</span>
+<span class="sd">            Data object to cache.</span>
+<span class="sd">        data_level : str</span>
+<span class="sd">            Data scope label, usually ``&quot;basin_level&quot;`` or ``&quot;grid_level&quot;``.</span>
+<span class="sd">        step_name : str, optional</span>
+<span class="sd">            Step name to discard from ``_executed_steps`` after updating cache.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">save_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;data_level&quot;</span><span class="p">:</span> <span class="n">data_level</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discard_step_name</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="dataProcess_base.clear_data_from_cache">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.clear_data_from_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_data_from_cache</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear cached entries by key list or clear all entries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_names : list of str, optional</span>
+<span class="sd">            Keys to remove. If ``None``, all cache entries are removed.</span>
+<span class="sd">        step_name : str, optional</span>
+<span class="sd">            Step name to discard from ``_executed_steps`` while clearing keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">save_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">save_names</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">discard_step_name</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="dataProcess_base.save_state">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.save_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize processor state to a pickle file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path : str, optional</span>
+<span class="sd">            Output state path. If omitted, ``self.load_path`` is used when set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;_cache&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span>
+            <span class="s1">&#39;_executed_steps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executed_steps</span><span class="p">,</span>
+            <span class="s1">&#39;_processing_steps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="p">,</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_path</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="dataProcess_base.load_state">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.load_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">load_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">reset_on_load_failure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;dataProcess_base&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load processor state from a pickle file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        load_path : str</span>
+<span class="sd">            State file path.</span>
+<span class="sd">        reset_on_load_failure : bool, optional</span>
+<span class="sd">            Whether to reset to a clean state when loading fails.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Reserved for compatibility.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dataProcess_base</span>
+<span class="sd">            Current processor instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            Raised when loading fails and ``reset_on_load_failure`` is ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">load_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            
+            <span class="n">valid_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_cache&#39;</span><span class="p">,</span> <span class="s1">&#39;_processing_steps&#39;</span><span class="p">,</span> <span class="s1">&#39;_executed_steps&#39;</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">valid_attrs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">state</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># Clear existing steps to avoid duplicates</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_decorated_steps</span><span class="p">()</span>  <span class="c1"># register for _processing_steps</span>
+        
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reset_on_load_failure</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to load state from </span><span class="si">{</span><span class="n">load_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. </span><span class="se">\n</span><span class="s2">Resetting state!&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reset_state</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to load state from </span><span class="si">{</span><span class="n">load_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_reset_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset cache, step graph, and executed-step registry.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processing_steps</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_executed_steps</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_decorated_steps</span><span class="p">()</span>
+        
+<div class="viewcode-block" id="dataProcess_base.aggregate_grid_to_basins">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.aggregate_grid_to_basins">[docs]</a>
+    <span class="k">def</span> <span class="nf">aggregate_grid_to_basins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregate grid-level variables to basin-level summaries.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method is intentionally left for subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+        
+<div class="viewcode-block" id="dataProcess_base.plot">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grid_shp_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+        <span class="n">grid_shp_point_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+        <span class="n">basin_shp_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot cached basin and grid geometry.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">            Existing figure object. A new one is created when omitted.</span>
+<span class="sd">        ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">            Existing axes object. A new one is created when omitted.</span>
+<span class="sd">        grid_shp_kwargs : dict, optional</span>
+<span class="sd">            Keyword arguments passed to ``grid_shp.boundary.plot``.</span>
+<span class="sd">        grid_shp_point_kwargs : dict, optional</span>
+<span class="sd">            Keyword arguments passed to ``grid_shp[&quot;point_geometry&quot;].plot``.</span>
+<span class="sd">        basin_shp_kwargs : dict, optional</span>
+<span class="sd">            Keyword arguments passed to ``basin_shp.plot``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            ``(fig, ax)`` with rendered basin/grid layout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="c1"># plot kwargs</span>
+        <span class="n">grid_shp_kwargs_all</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;linewidth&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+        <span class="n">grid_shp_kwargs_all</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grid_shp_kwargs</span><span class="p">)</span>
+
+        <span class="n">grid_shp_point_kwargs_all</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;markersize&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">grid_shp_point_kwargs_all</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grid_shp_point_kwargs</span><span class="p">)</span>
+
+        <span class="n">basin_shp_kwargs_all</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">}</span>
+        <span class="n">basin_shp_kwargs_all</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">basin_shp_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># plot</span>
+        <span class="n">grid_shp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">)</span>
+        <span class="n">basin_shp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">grid_shp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">grid_shp</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">grid_shp_kwargs_all</span><span class="p">)</span>
+            <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">grid_shp_point_kwargs_all</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">basin_shp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">basin_shp_kwargs_all</span><span class="p">)</span>
+
+        <span class="n">boundary_x_y</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generated plot for grid and basin data&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+    
+    <span class="c1"># general processing step</span>
+<div class="viewcode-block" id="dataProcess_base.load_basin_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.load_basin_shp">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_basin_shp&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">,</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;basin_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_basin_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load basin shapefile-like object from ``loaddata_kwargs``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing key ``&quot;basin_shp&quot;``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loaded_basin_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">])</span>
+        
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">:</span> <span class="n">loaded_basin_shp</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+    
+<div class="viewcode-block" id="dataProcess_base.load_grid_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base.load_grid_shp">[docs]</a>
+    <span class="nd">@processing_step</span><span class="p">(</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="s2">&quot;load_grid_shp&quot;</span><span class="p">,</span>
+        <span class="n">save_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_res&quot;</span><span class="p">],</span>
+        <span class="n">data_level</span><span class="o">=</span><span class="s2">&quot;grid_level&quot;</span><span class="p">,</span>
+        <span class="n">deps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">load_grid_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load grid shapefile-like object and grid resolution from inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing keys ``&quot;grid_shp&quot;`` and ``&quot;grid_res&quot;``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loaded_grid_shp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">])</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaddata_kwargs</span><span class="p">[</span><span class="s2">&quot;grid_res&quot;</span><span class="p">]</span>
+        
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">:</span> <span class="n">loaded_grid_shp</span><span class="p">,</span> <span class="s2">&quot;grid_res&quot;</span><span class="p">:</span> <span class="n">grid_res</span><span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

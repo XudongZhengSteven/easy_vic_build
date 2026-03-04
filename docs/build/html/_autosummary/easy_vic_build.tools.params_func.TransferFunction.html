@@ -1,0 +1,1113 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.params_func.TransferFunction &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.params_func.build_Param_interface" href="easy_vic_build.tools.params_func.build_Param_interface.html" />
+    <link rel="prev" title="easy_vic_build.tools.params_func.Scaling_operator" href="easy_vic_build.tools.params_func.Scaling_operator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.GlobalParamParser.html">easy_vic_build.tools.params_func.GlobalParamParser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.Scaling_operator.html">easy_vic_build.tools.params_func.Scaling_operator</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.params_func.TransferFunction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.build_Param_interface.html">easy_vic_build.tools.params_func.build_Param_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.createParametersDataset.html">easy_vic_build.tools.params_func.createParametersDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.params_set.html">easy_vic_build.tools.params_func.params_set</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare.html">easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.params_func.TransferFunction</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.params_func.TransferFunction.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.params_func.TransferFunction">
+<span id="easy-vic-build-tools-params-func-transferfunction"></span><h1>easy_vic_build.tools.params_func.TransferFunction<a class="headerlink" href="#module-easy_vic_build.tools.params_func.TransferFunction" title="Link to this heading"></a></h1>
+<p>Transfer functions and soil-layer resampling utilities for VIC parameters.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoilLayerResampler</span></code></a>(original_depths[, ...])</p></td>
+<td><p>Resample original soil layers into grouped layers by breakpoints.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="easy_vic_build.tools.params_func.TransferFunction.TF_VIC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TF_VIC</span></code></a>()</p></td>
+<td><p>Transfer-function collection for VIC parameter derivation.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.TransferFunction.</span></span><span class="sig-name descname"><span class="pre">TF_VIC</span></span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Transfer-function collection for VIC parameter derivation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.b_infilt">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">b_infilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.b_infilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.b_infilt" title="Link to this definition"></a></dt>
+<dd><p>Calculate VIC infiltration parameter <code class="docutils literal notranslate"><span class="pre">b_infilt</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elev_std</strong> (<em>ndarray</em>) – Elevation standard-deviation values.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – Calibration coefficient.</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – Calibration coefficient.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">b_infilt</span></code> values clipped to valid range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.total_depth">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_depth_original</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.total_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.total_depth" title="Link to this definition"></a></dt>
+<dd><p>Scale total soil depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total_depth_original</strong> (<em>ndarray</em>) – Original total depth values.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Multiplicative scaling factor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Scaled total depth values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.depth">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soillayerresampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.depth" title="Link to this definition"></a></dt>
+<dd><p>Distribute total depth into VIC layers using breakpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total_depth</strong> (<em>ndarray</em>) – Total soil depth.</p></li>
+<li><p><strong>soillayerresampler</strong> (<a class="reference internal" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler"><em>SoilLayerResampler</em></a>) – Layer resampler instance used to create grouping.</p></li>
+<li><p><strong>g</strong> (<em>sequence</em><em> of </em><em>int</em>) – Breakpoint indices, for example <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">6]</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Depth values of each aggregated layer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> is treated as breakpoint indices of original layers.
+For example, with 11 source layers and <code class="docutils literal notranslate"><span class="pre">g=[2,</span> <span class="pre">6]</span></code>, grouped layers are:
+<code class="docutils literal notranslate"><span class="pre">[0,1]</span></code>, <code class="docutils literal notranslate"><span class="pre">[2,3,4,5]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[6,7,8,9,10]</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TF_VIC</span><span class="o">.</span><span class="n">depth</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">320.0</span><span class="p">]),</span> <span class="n">resampler</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="go">[array([20.]), array([80.]), array([220.])]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.ksat">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ksat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.ksat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.ksat" title="Link to this definition"></a></dt>
+<dd><p>Calculate the saturated hydraulic conductivity (Ks) using the formula from Cosby et al. (1984).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sand</strong> (<em>float</em>) – The percentage of sand in the soil.</p></li>
+<li><p><strong>clay</strong> (<em>float</em>) – The percentage of clay in the soil.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g3</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The saturated hydraulic conductivity in mm/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.phi_s">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phi_s</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.phi_s"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.phi_s" title="Link to this definition"></a></dt>
+<dd><p>Calculate the saturated water content (phi_s) or porosity using the formula from Cosby et al. (1984).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sand</strong> (<em>float</em>) – The percentage of sand in the soil.</p></li>
+<li><p><strong>clay</strong> (<em>float</em>) – The percentage of clay in the soil.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g3</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The saturated water content in m3/m3 (or mm/mm).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.psis">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">psis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.psis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.psis" title="Link to this definition"></a></dt>
+<dd><p>Calculate the saturation matric potential (psis) using the formula from Cosby et al. (1984).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sand</strong> (<em>float</em>) – The percentage of sand in the soil.</p></li>
+<li><p><strong>silt</strong> (<em>float</em>) – The percentage of silt in the soil.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g3</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The saturation matric potential in kPa.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.b_retcurve">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">b_retcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.b_retcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.b_retcurve" title="Link to this definition"></a></dt>
+<dd><p>Calculate the slope of the retention curve (b) using the formula from Cosby et al. (1984).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sand</strong> (<em>float</em>) – The percentage of sand in the soil.</p></li>
+<li><p><strong>clay</strong> (<em>float</em>) – The percentage of clay in the soil.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g3</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The slope of the retention curve.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.expt">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b_retcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.expt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.expt" title="Link to this definition"></a></dt>
+<dd><p>Calculate the exponent in Campbell’s equation for hydraulic conductivity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>b_retcurve</strong> (<em>float</em>) – The slope of the retention curve.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The exponent in Campbell’s equation for hydraulic conductivity (k = ks (θ/θs)^(2b+3)).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.fc">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_retcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.fc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.fc" title="Link to this definition"></a></dt>
+<dd><p>Calculate the field capacity (fc) using Campbell’s equation for hydraulic conductivity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated water content (porosity).</p></li>
+<li><p><strong>b_retcurve</strong> (<em>float</em>) – The slope of the retention curve (b).</p></li>
+<li><p><strong>psis</strong> (<em>float</em>) – The saturation matric potential (ψs).</p></li>
+<li><p><strong>sand</strong> (<em>float</em>) – The percentage of sand in the soil.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – The constant parameter for the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The field capacity (θ) in m³/m³ or %.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d1">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">d1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.d1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d1" title="Link to this definition"></a></dt>
+<dd><p>Calculate the d1 parameter, with units of day^-1, the coefficient of the linear reservoir (baseflow, bottom layer).
+Darcy law.
+Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ks</strong> (<em>float</em>) – Hydraulic conductivity at layer 3 (m/s).</p></li>
+<li><p><strong>slope_mean</strong> (<em>float</em>) – Mean slope value.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (2.0 (1.75, 3.5)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The d1 value in day^-1, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d2">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">d2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.d2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d2" title="Link to this definition"></a></dt>
+<dd><p>Calculate the d2 parameter with units of day^-d4, the coefficient of the nonlinear reservoir (baseflow, bottom layer).
+Darcy law.
+Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ks</strong> (<em>float</em>) – Hydraulic conductivity at layer 3 (m/s).</p></li>
+<li><p><strong>slope_mean</strong> (<em>float</em>) – Mean slope value.</p></li>
+<li><p><strong>d4</strong> (<em>float</em>) – Exponent for d4.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (2.0 (1.75, 3.5)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The d2 value, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d3">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">d3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.d3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d3" title="Link to this definition"></a></dt>
+<dd><p>Calculate the d3 parameter in mm, the soil mois-ture level at which the baseflow transitions from linear to nonlinear.
+Darcy law.
+Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fc</strong> (<em>float</em>) – Field capacity (m³/m³).</p></li>
+<li><p><strong>depth</strong> (<em>float</em>) – Depth of the soil layer (m).</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (1.0 (0.001, 2.0)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The d3 value in mm, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d4">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">d4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.d4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d4" title="Link to this definition"></a></dt>
+<dd><p>Return the value for d4, typically set to 2, the exponent of the nonlinear part of the outflow curve (note that d4&gt;=1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>float</em><em>, </em><em>optional</em>) – Constant parameter for the model (default is 2.0 (1.2, 2.5)).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of d4.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.cexpt">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cexpt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.cexpt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.cexpt" title="Link to this definition"></a></dt>
+<dd><p>Return the value for cexpt, which is equal to d4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>d4</strong> (<em>float</em>) – Exponent value for the d4 parameter.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of cexpt.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Dsmax">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Dsmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cexpt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.Dsmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Dsmax" title="Link to this definition"></a></dt>
+<dd><p>Calculate the maximum soil moisture (Dsmax).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d1</strong> (<em>float</em>) – The d1 parameter value.</p></li>
+<li><p><strong>d2</strong> (<em>float</em>) – The d2 parameter value.</p></li>
+<li><p><strong>d3</strong> (<em>float</em>) – The d3 parameter value.</p></li>
+<li><p><strong>cexpt</strong> (<em>float</em>) – The cexpt parameter value, typically equal to d4.</p></li>
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated soil water content (m³/m³).</p></li>
+<li><p><strong>depth</strong> (<em>float</em>) – Depth of the soil layer (m).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The maximum soil moisture (Dsmax) in mm or mm/day.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Ds">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Dsmax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.Ds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Ds" title="Link to this definition"></a></dt>
+<dd><p>Calculate the Ds parameter, typically used as a fraction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d1</strong> (<em>float</em>) – The d1 parameter value.</p></li>
+<li><p><strong>d3</strong> (<em>float</em>) – The d3 parameter value.</p></li>
+<li><p><strong>Dsmax</strong> (<em>float</em>) – The maximum soil moisture (Dsmax).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Ds value, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Ws">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ws</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.Ws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Ws" title="Link to this definition"></a></dt>
+<dd><p>Calculate the fraction of water available in the soil (Ws).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d3</strong> (<em>float</em>) – The d3 parameter value (mm).</p></li>
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated soil water content (m³/m³).</p></li>
+<li><p><strong>depth</strong> (<em>float</em>) – The depth of the soil layer (m).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fraction of available water in the soil (Ws), bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.init_moist">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_moist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.init_moist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.init_moist" title="Link to this definition"></a></dt>
+<dd><p>Initialize the soil moisture (init_moist) in mm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated soil water content (m³/m³).</p></li>
+<li><p><strong>depth</strong> (<em>float</em>) – The depth of the soil layer (m).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The initialized soil moisture in mm.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.dp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.dp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.dp" title="Link to this definition"></a></dt>
+<dd><p>Calculate the dp parameter based on the given constant (g).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>float</em>) – A constant parameter for the model (typically 1.0 (0.9, 1.1)).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dp value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.bubble">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bubble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.bubble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.bubble" title="Link to this definition"></a></dt>
+<dd><p>Calculate the bubble parameter based on Schaperow et al. (2021).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expt</strong> (<em>float</em>) – The exponent in Campbell’s equation.</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – Constant parameter for the model (typically 0.32 (0.1, 0.8)).</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – Constant parameter for the model (typically 4.3 (0.0, 10.0)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The bubble parameter value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.quartz">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quartz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.quartz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.quartz" title="Link to this definition"></a></dt>
+<dd><p>Calculate the quartz content in the soil based on sand content and g.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sand</strong> (<em>float</em>) – The sand content in the soil (%).</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 0.8 (0.7, 0.9)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The quartz content, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.bulk_density">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bulk_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bulk_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.bulk_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.bulk_density" title="Link to this definition"></a></dt>
+<dd><p>Calculate the bulk density of the soil based on the given value and g.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bulk_density</strong> (<em>float</em>) – The bulk density of the soil (kg/m³), read from file.</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.9, 1.1)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The bulk density value, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.soil_density">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">soil_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.soil_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.soil_density" title="Link to this definition"></a></dt>
+<dd><p>Calculate the soil mineral density based on a scaling factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.9, 1.1)).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The soil mineral density (kg/cm³), scaled by the factor <cite>g</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Wcr_FRACT">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Wcr_FRACT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.Wcr_FRACT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Wcr_FRACT" title="Link to this definition"></a></dt>
+<dd><p>Calculate the fraction of water retention at field capacity (Wcr) based on soil properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fc</strong> (<em>float</em>) – The field capacity of the soil (m³/m³).</p></li>
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated soil water content (m³/m³).</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.8, 1.2)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fraction of water retention, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.wp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_retcurve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.wp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.wp" title="Link to this definition"></a></dt>
+<dd><p>Calculate the wilting point based on Campbell’s (1974) equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated soil water content (m³/m³).</p></li>
+<li><p><strong>b_retcurve</strong> (<em>float</em>) – The exponent of the retention curve.</p></li>
+<li><p><strong>psis</strong> (<em>float</em>) – The soil water potential at saturation (kPa).</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.8, 1.2)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The wilting point (θ), computed based on the Campbell equation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Wpwp_FRACT">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Wpwp_FRACT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.Wpwp_FRACT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Wpwp_FRACT" title="Link to this definition"></a></dt>
+<dd><p>Calculate the fraction of the wilting point moisture content (Wpwp) based on soil properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wp</strong> (<em>float</em>) – The wilting point moisture content (m³/m³).</p></li>
+<li><p><strong>phi_s</strong> (<em>float</em>) – The saturated soil water content (m³/m³).</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.8, 1.2)).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fraction of the wilting point moisture content, bounded between a minimum and maximum range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.rough">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rough</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.rough"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.rough" title="Link to this definition"></a></dt>
+<dd><p>Calculate the soil surface roughness based on a scaling factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.9, 1.1)).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The surface roughness (m), scaled by the factor <cite>g</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.snow_rough">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">snow_rough</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.snow_rough"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.snow_rough" title="Link to this definition"></a></dt>
+<dd><p>Calculate the snow surface roughness based on a scaling factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>float</em>) – Constant parameter for the model (typically 1.0 (0.9, 1.1)).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The snow surface roughness (m), scaled by the factor <cite>g</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.off_gmt">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">off_gmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.off_gmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.off_gmt" title="Link to this definition"></a></dt>
+<dd><p>Calculate the offset from GMT based on longitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lon</strong> (<em>float</em>) – The longitude of the location (degrees).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The offset from GMT in hours.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.fs_active">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fs_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">activate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.fs_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.fs_active" title="Link to this definition"></a></dt>
+<dd><p>Activate or deactivate a flag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>activate</strong> (<em>int</em><em>, </em><em>optional</em>) – A flag to activate or deactivate (default is 0, which means inactive).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The activation flag value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.velocity">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">velocity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_km2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landcover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.velocity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.velocity" title="Link to this definition"></a></dt>
+<dd><p>Estimate spatially distributed velocity (m/s) for RVIC using a transfer function.
+Chen, Y., Shi, P., Ji, X., Qu, S., Zhao, L., and Dong, F.: New method to calculate the dynamic factor-flow velocity in Geomorphologic instantaneous unit hydrograph, Scientific Reports, 9, 10.1038/s41598-019-50723-x, 2019.
+Duc, N., Oki, T., and Kanae, S.: A variable streamflow velocity method for global river routing model: Model description and preliminary results, Hydrology and Earth System Sciences Discussions, 4, 10.5194/hessd-4-4389-2007, 2007.
+K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acc</strong> (<em>float</em>) – Flow accumulation / upstream area (km^2).</p></li>
+<li><p><strong>slope</strong> (<em>float</em>) – Local slope (m/m).</p></li>
+<li><p><strong>g1</strong> (<em>float</em>) – Global calibration parameter (scale factor).</p></li>
+<li><p><strong>g2</strong> (<em>float</em>) – Exponent for flow accumulation.</p></li>
+<li><p><strong>g3</strong> (<em>float</em>) – Exponent for slope.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated flow velocity in m/s.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.TF_VIC.diffusion">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">diffusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_distance_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#TF_VIC.diffusion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.diffusion" title="Link to this definition"></a></dt>
+<dd><p>Estimate diffusion coefficient matrix D from flow velocity and river segment length.
+Yang, Y., Endreny, T. A., and Nowak, D. J. J. J. o. E. s.: Application of advection-diffusion routing model to flood wave propagation: A case study on Big Piney River, Missouri USA, 27, 9-14, 2016.
+D=alpha*v*L
+g: alpha, 0.1, (0.001, 0.5)</p>
+<p>Units: D in m^2/s, v in m/s, flow_distance in m.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>np.ndarray</em>) – Flow velocity matrix (m/s), same shape as the grid.</p></li>
+<li><p><strong>flow_distance_m</strong> (<em>np.ndarray</em>) – River segment length or flow distance matrix (m), same shape as v.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Scaling factor for diffusion coefficient, default 0.1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>D</strong> – Diffusion coefficient matrix (m^2/s), same shape as input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.TransferFunction.</span></span><span class="sig-name descname"><span class="pre">SoilLayerResampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breakpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#SoilLayerResampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Resample original soil layers into grouped layers by breakpoints.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_depths">
+<span class="sig-name descname"><span class="pre">orig_depths</span></span><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_depths" title="Link to this definition"></a></dt>
+<dd><p>Thickness of original layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.n_orig">
+<span class="sig-name descname"><span class="pre">n_orig</span></span><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.n_orig" title="Link to this definition"></a></dt>
+<dd><p>Number of original layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_total">
+<span class="sig-name descname"><span class="pre">orig_total</span></span><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_total" title="Link to this definition"></a></dt>
+<dd><p>Total original depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_cumsum">
+<span class="sig-name descname"><span class="pre">orig_cumsum</span></span><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_cumsum" title="Link to this definition"></a></dt>
+<dd><p>Cumulative depth of original layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_boundaries">
+<span class="sig-name descname"><span class="pre">orig_boundaries</span></span><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.orig_boundaries" title="Link to this definition"></a></dt>
+<dd><p>Layer boundaries with leading zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.grouping">
+<span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.grouping" title="Link to this definition"></a></dt>
+<dd><p>Group metadata after <a class="reference internal" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_grouping()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Original 11 layers</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">original_depths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">(</span><span class="n">original_depths</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># 1) Create grouping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grouping</span> <span class="o">=</span> <span class="n">resampler</span><span class="o">.</span><span class="n">grouping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original grouping:&quot;</span><span class="p">)</span>
+<span class="go">Original grouping:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Depths:&quot;</span><span class="p">,</span> <span class="n">grouping</span><span class="p">[</span><span class="s2">&quot;depths&quot;</span><span class="p">])</span>
+<span class="go">Depths: [ 20.  80. 220.]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Depth percentages:&quot;</span><span class="p">,</span> <span class="n">grouping</span><span class="p">[</span><span class="s2">&quot;depth_percentages&quot;</span><span class="p">])</span>
+<span class="go">Depth percentages: [0.0625 0.25   0.6875]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># 2) Scale to new total depth</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaled_grouping</span> <span class="o">=</span> <span class="n">resampler</span><span class="o">.</span><span class="n">scale_grouping</span><span class="p">(</span><span class="n">grouping</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Scaled grouping (500cm total):&quot;</span><span class="p">)</span>
+<span class="go">Scaled grouping (500cm total):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Scaled depths:&quot;</span><span class="p">,</span> <span class="n">scaled_grouping</span><span class="p">[</span><span class="s2">&quot;depths&quot;</span><span class="p">])</span>
+<span class="go">Scaled depths: [ 31.25 125.   343.75]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Boundaries:&quot;</span><span class="p">,</span> <span class="n">scaled_grouping</span><span class="p">[</span><span class="s2">&quot;boundaries&quot;</span><span class="p">])</span>
+<span class="go">Boundaries: [  0.    31.25 156.25 500.  ]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># 3) Value conversion</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Value conversion ===&quot;</span><span class="p">)</span>
+<span class="go">=== Value conversion ===</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">orig_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grouped_values</span> <span class="o">=</span> <span class="n">resampler</span><span class="o">.</span><span class="n">convert_to_grouping</span><span class="p">(</span><span class="n">orig_values</span><span class="p">,</span> <span class="n">grouping</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original:&quot;</span><span class="p">,</span> <span class="n">orig_values</span><span class="p">)</span>
+<span class="go">Original: [ 1  2  3  4  5  6  7  8  9 10 11]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Grouped (mean):&quot;</span><span class="p">,</span> <span class="n">grouped_values</span><span class="p">)</span>
+<span class="go">Grouped (mean): [1.5 4.5 9. ]</span>
+</pre></div>
+</div>
+<p>Initialize resampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Thickness of each original soil layer.</p></li>
+<li><p><strong>breakpoints</strong> (<em>sequence</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – Breakpoint indices used to build grouping at initialization.
+Example: <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">6]</span></code> creates three groups from 11 original layers.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_depths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breakpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#SoilLayerResampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize resampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_depths</strong> (<em>sequence</em><em> of </em><em>float</em>) – Thickness of each original soil layer.</p></li>
+<li><p><strong>breakpoints</strong> (<em>sequence</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – Breakpoint indices used to build grouping at initialization.
+Example: <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">6]</span></code> creates three groups from 11 original layers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping">
+<span class="sig-name descname"><span class="pre">create_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">breakpoints</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#SoilLayerResampler.create_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping" title="Link to this definition"></a></dt>
+<dd><p>Create grouped-layer metadata from breakpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>breakpoints</strong> (<em>sequence</em><em> of </em><em>int</em>) – Group end indices (exclusive in group construction).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Grouping is stored in <code class="docutils literal notranslate"><span class="pre">self.grouping</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If breakpoints are invalid or do not cover full layer range.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Breakpoints are interpreted as group end indices in the original-layer
+index space. Internally, <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">n_orig</span></code> are added automatically.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">grouping</span><span class="p">[</span><span class="s2">&quot;grouping_scheme&quot;</span><span class="p">]</span>
+<span class="go">[[0, 1], [2, 3, 4, 5], [6, 7, 8, 9, 10]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.scale_grouping">
+<span class="sig-name descname"><span class="pre">scale_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_total_depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#SoilLayerResampler.scale_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.scale_grouping" title="Link to this definition"></a></dt>
+<dd><p>Scale grouped layers to a new total depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grouping</strong> (<em>dict</em>) – Grouping dictionary generated by <code class="docutils literal notranslate"><span class="pre">create_grouping</span></code>.</p></li>
+<li><p><strong>new_total_depth</strong> (<em>float</em>) – Target total depth after scaling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Grouping dictionary with updated <code class="docutils literal notranslate"><span class="pre">depths</span></code> and <code class="docutils literal notranslate"><span class="pre">boundaries</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaled</span> <span class="o">=</span> <span class="n">resampler</span><span class="o">.</span><span class="n">scale_grouping</span><span class="p">(</span><span class="n">resampler</span><span class="o">.</span><span class="n">grouping</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaled</span><span class="p">[</span><span class="s2">&quot;depths&quot;</span><span class="p">]</span>
+<span class="go">array([ 31.25, 125.  , 343.75])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.convert_to_grouping">
+<span class="sig-name descname"><span class="pre">convert_to_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orig_to_new'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#SoilLayerResampler.convert_to_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.convert_to_grouping" title="Link to this definition"></a></dt>
+<dd><p>Convert values between original layers and grouped layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>array-like</em>) – Input values to convert.</p></li>
+<li><p><strong>grouping</strong> (<em>dict</em>) – Grouping dictionary from <code class="docutils literal notranslate"><span class="pre">create_grouping</span></code>.</p></li>
+<li><p><strong>direction</strong> (<em>{'orig_to_new'</em><em>, </em><em>'new_to_orig'}</em><em>, </em><em>optional</em>) – Conversion direction.</p></li>
+<li><p><strong>method</strong> (<em>{'mean'</em><em>, </em><em>'sum'}</em><em>, </em><em>optional</em>) – Aggregation method used for <code class="docutils literal notranslate"><span class="pre">orig_to_new</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Converted values in the target layer space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If direction/method is invalid or input length is inconsistent.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">convert_to_grouping</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">resampler</span><span class="o">.</span><span class="n">grouping</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+<span class="go">array([1.5, 4.5, 9. ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span><span class="o">.</span><span class="n">convert_to_grouping</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">9.</span> <span class="p">]),</span> <span class="n">resampler</span><span class="o">.</span><span class="n">grouping</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;new_to_orig&quot;</span><span class="p">)</span>
+<span class="go">array([1.5, 1.5, 4.5, 4.5, 4.5, 4.5, 9. , 9. , 9. , 9. , 9. ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.get_optimal_grouping">
+<span class="sig-name descname"><span class="pre">get_optimal_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_n_layers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equal_thickness'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/TransferFunction.html#SoilLayerResampler.get_optimal_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.get_optimal_grouping" title="Link to this definition"></a></dt>
+<dd><p>Generate breakpoint proposal for a target layer count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_n_layers</strong> (<em>int</em>) – Desired number of grouped layers.</p></li>
+<li><p><strong>method</strong> (<em>{'equal_thickness'</em><em>, </em><em>'equal_layers'}</em><em>, </em><em>optional</em>) – Strategy for generating breakpoints.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Breakpoints that can be passed to <code class="docutils literal notranslate"><span class="pre">create_grouping</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of int</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If method is unsupported.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Returned breakpoints can be passed directly to
+<a class="reference internal" href="#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping" title="easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_grouping()</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bp</span> <span class="o">=</span> <span class="n">resampler</span><span class="o">.</span><span class="n">get_optimal_grouping</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;equal_thickness&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">bp</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.params_func.Scaling_operator.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.params_func.Scaling_operator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.params_func.build_Param_interface.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.params_func.build_Param_interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

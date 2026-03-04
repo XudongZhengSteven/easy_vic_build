@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.geo_func.clip &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.geo_func.clip</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.geo_func.clip</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Clipping utilities for array grids and GeoTIFF rasters.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">rasterio.mask</span> <span class="kn">import</span> <span class="n">mask</span>
+<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">windows</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+
+
+<div class="viewcode-block" id="clip">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.clip.html#easy_vic_build.tools.geo_func.clip.clip">[docs]</a>
+<span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="n">dst_lat</span><span class="p">,</span> <span class="n">dst_lon</span><span class="p">,</span> <span class="n">dst_res</span><span class="p">,</span> <span class="n">src_lat</span><span class="p">,</span> <span class="n">src_lon</span><span class="p">,</span> <span class="n">src_data</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clip source gridded arrays by destination extent and resolution buffer.</span>
+
+<span class="sd">    This function is typically used as a pre-step before grid searching to</span>
+<span class="sd">    reduce search-space size and improve runtime.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dst_lat : array-like</span>
+<span class="sd">        The latitude values of the target grid (destination).</span>
+
+<span class="sd">    dst_lon : array-like</span>
+<span class="sd">        The longitude values of the target grid (destination).</span>
+
+<span class="sd">    dst_res : float</span>
+<span class="sd">        The resolution of the target grid (in degrees).</span>
+
+<span class="sd">    src_lat : array-like</span>
+<span class="sd">        The latitude values of the source data grid.</span>
+
+<span class="sd">    src_lon : array-like</span>
+<span class="sd">        The longitude values of the source data grid.</span>
+
+<span class="sd">    src_data : array-like</span>
+<span class="sd">        Source 2D data array indexed by ``[lat, lon]``.</span>
+
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        If True, assumes the source latitude values are in descending order (large to small).</span>
+<span class="sd">        If False, assumes ascending order (small to large). Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(src_data_clip, src_lon_clip, src_lat_clip)``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ``dst_res / 2`` is used as an outer buffer when locating source indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xindex_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">src_lon</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dst_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">xindex_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">src_lon</span> <span class="o">&gt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dst_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># if reverse_lat (src_lat, large -&gt; small), else (src_lat, small -&gt; large)</span>
+    <span class="k">if</span> <span class="n">reverse_lat</span><span class="p">:</span>
+        <span class="n">yindex_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">src_lat</span> <span class="o">&gt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dst_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">yindex_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">src_lat</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dst_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">yindex_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">src_lat</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dst_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">yindex_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">src_lat</span> <span class="o">&gt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dst_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">src_data_clip</span> <span class="o">=</span> <span class="n">src_data</span><span class="p">[</span>
+        <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">]</span>
+    <span class="n">src_lon_clip</span> <span class="o">=</span> <span class="n">src_lon</span><span class="p">[</span><span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">src_lat_clip</span> <span class="o">=</span> <span class="n">src_lat</span><span class="p">[</span><span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1">## old version</span>
+    <span class="c1"># xindex = np.where((src_lon &gt;= min(dst_lon) - dst_res/2) &amp; (src_lon &lt;= max(dst_lon) + dst_res/2))[0]</span>
+    <span class="c1"># yindex = np.where((src_lat &gt;= min(dst_lat) - dst_res/2) &amp; (src_lat &lt;= max(dst_lat) + dst_res/2))[0]</span>
+
+    <span class="c1"># src_data_clip = src_data[min(yindex): max(yindex), min(xindex): max(xindex)]</span>
+    <span class="c1"># src_lon_clip = src_lon[min(xindex): max(xindex)]</span>
+    <span class="c1"># src_lat_clip = src_lat[min(yindex): max(yindex)]</span>
+
+    <span class="c1">## then search grids</span>
+    <span class="c1"># searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat=grids_lat, dst_lon=grids_lon,</span>
+    <span class="c1">#                                                                     src_lat=umd_lat_clip, src_lon=umd_lon_clip,</span>
+    <span class="c1">#                                                                     lat_radius=grid_shp_res/2, lon_radius=grid_shp_res/2)</span>
+
+    <span class="k">return</span> <span class="n">src_data_clip</span><span class="p">,</span> <span class="n">src_lon_clip</span><span class="p">,</span> <span class="n">src_lat_clip</span></div>
+
+
+
+<div class="viewcode-block" id="clip_tiff">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.clip.html#easy_vic_build.tools.geo_func.clip.clip_tiff">[docs]</a>
+<span class="k">def</span> <span class="nf">clip_tiff</span><span class="p">(</span>
+    <span class="n">input_tiff</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_tiff</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bbox</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">shp_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clip a GeoTIFF by bounding box or shapefile boundary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_tiff : str</span>
+<span class="sd">        Path to the input GeoTIFF file.</span>
+<span class="sd">    output_tiff : str</span>
+<span class="sd">        Path to the output clipped GeoTIFF file.</span>
+<span class="sd">    bbox : tuple, optional</span>
+<span class="sd">        Geographic extent (xmin, ymin, xmax, ymax), e.g. (105.2, 33.5, 106.8, 34.9).</span>
+<span class="sd">    shp_path : str, optional</span>
+<span class="sd">        Path to a shapefile used as the clipping boundary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        Clipped raster is written to ``output_tiff``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If ``input_tiff`` or ``shp_path`` does not exist.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If neither ``bbox`` nor ``shp_path`` is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ---------------- Check input validity ----------------</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_tiff</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input file not found: </span><span class="si">{</span><span class="n">input_tiff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">shp_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either &#39;bbox&#39; or &#39;shp_path&#39; must be provided.&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">input_tiff</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="c1"># ---------------- Clip by shapefile ----------------</span>
+        <span class="k">if</span> <span class="n">shp_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">shp_path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shapefile not found: </span><span class="si">{</span><span class="n">shp_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Read shapefile and convert CRS to match raster</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">shp_path</span><span class="p">)</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+            <span class="c1"># Extract geometry</span>
+            <span class="n">geoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">__geo_interface__</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]]</span>
+
+            <span class="c1"># Perform masking and cropping</span>
+            <span class="n">out_image</span><span class="p">,</span> <span class="n">out_transform</span> <span class="o">=</span> <span class="n">mask</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">geoms</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">out_meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">out_meta</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s2">&quot;driver&quot;</span><span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">out_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">out_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">out_transform</span>
+            <span class="p">})</span>
+
+        <span class="c1"># ---------------- Clip by bounding box ----------------</span>
+        <span class="k">elif</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">bbox</span>
+            <span class="c1"># Compute the pixel window corresponding to the bbox</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">from_bounds</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
+
+            <span class="c1"># Read data within the window</span>
+            <span class="n">out_image</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+            <span class="n">out_transform</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
+
+            <span class="n">out_meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">out_meta</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s2">&quot;driver&quot;</span><span class="p">:</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">out_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">out_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">out_transform</span>
+            <span class="p">})</span>
+
+    <span class="c1"># ---------------- Write clipped raster ----------------</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output_tiff</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_tiff</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">out_meta</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
+        <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_image</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clipping completed. Output saved to: </span><span class="si">{</span><span class="n">output_tiff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

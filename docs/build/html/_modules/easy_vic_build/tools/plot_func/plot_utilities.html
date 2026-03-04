@@ -1,0 +1,566 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.plot_func.plot_utilities &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.plot_func.plot_utilities</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.plot_func.plot_utilities</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.plot_func.plot_utilities``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.cm</span> <span class="kn">import</span> <span class="n">ScalarMappable</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">Normalize</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">FuncFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
+
+<span class="kn">from</span> <span class="nn">..geo_func.create_gdf</span> <span class="kn">import</span> <span class="n">CreateGDF</span>
+<span class="kn">from</span> <span class="nn">..params_func.params_set</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">## ------------------------ plot utilities ------------------------</span>
+<div class="viewcode-block" id="get_colorbar">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.get_colorbar">[docs]</a>
+<span class="k">def</span> <span class="nf">get_colorbar</span><span class="p">(</span>
+    <span class="n">vmin</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="n">subplots_adjust</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+    <span class="n">cb_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">cb_label_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">cb_kwargs</span><span class="o">=</span><span class="p">{},</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a colorbar for visualizing data range using a given colormap.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vmin : float</span>
+<span class="sd">        The minimum value for the colormap normalization.</span>
+<span class="sd">    vmax : float</span>
+<span class="sd">        The maximum value for the colormap normalization.</span>
+<span class="sd">    cmap : matplotlib.colors.Colormap</span>
+<span class="sd">        The colormap to be used for the colorbar.</span>
+<span class="sd">    figsize : tuple, optional</span>
+<span class="sd">        The size of the figure (width, height). Default is (2, 6).</span>
+<span class="sd">    subplots_adjust : dict, optional</span>
+<span class="sd">        A dictionary to adjust the subplot layout. The default is {&quot;left&quot;: 0.5}.</span>
+<span class="sd">        This allows fine control over the subplot positioning (e.g., &quot;top&quot;, &quot;bottom&quot;, &quot;right&quot;).</span>
+<span class="sd">    cb_label : str, optional</span>
+<span class="sd">        The label for the colorbar. Default is an empty string.</span>
+<span class="sd">    cb_label_kwargs : dict, optional</span>
+<span class="sd">        Additional keyword arguments to customize the colorbar label. Default is an empty dictionary.</span>
+<span class="sd">    cb_kwargs : dict, optional</span>
+<span class="sd">        Additional keyword arguments to customize the colorbar itself. This can include parameters like</span>
+<span class="sd">        `orientation` (either &#39;vertical&#39; or &#39;horizontal&#39;). Default is an empty dictionary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure containing the colorbar.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the colorbar.</span>
+<span class="sd">    norm : matplotlib.colors.Normalize</span>
+<span class="sd">        The normalization used for the colormap.</span>
+<span class="sd">    sm : matplotlib.cm.ScalarMappable</span>
+<span class="sd">        The scalar mappable object for the colorbar.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function creates a colorbar using a given colormap and normalizes the values between</span>
+<span class="sd">    `vmin` and `vmax`. The subplot layout can be adjusted via `subplots_adjust`, and the colorbar</span>
+<span class="sd">    label can be set with `cb_label` and additional arguments provided through `cb_label_kwargs`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># cb_kwargs:</span>
+    <span class="c1">#   orientation：None or {&#39;vertical&#39;, &#39;horizontal&#39;}</span>
+    <span class="c1">#   subplots_adjust={&quot;left&quot;: 0.5} top/bottom/right, set  0.5</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+    <span class="n">sm</span> <span class="o">=</span> <span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+
+    <span class="c1"># usage</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="o">**</span><span class="n">subplots_adjust</span><span class="p">)</span>
+
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">cb_kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cb_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">cb_label</span><span class="p">,</span> <span class="o">**</span><span class="n">cb_label_kwargs</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="s2">&quot;ticks&quot;</span> <span class="ow">in</span> <span class="n">cb_kwargs</span><span class="p">:</span>
+        <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">cb_kwargs</span><span class="p">[</span><span class="s2">&quot;ticks&quot;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)]))</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">sm</span></div>
+
+
+
+<div class="viewcode-block" id="get_NDVI_cmap">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.get_NDVI_cmap">[docs]</a>
+<span class="k">def</span> <span class="nf">get_NDVI_cmap</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a custom colormap for NDVI (Normalized Difference Vegetation Index) values.</span>
+
+<span class="sd">    This function generates a colormap that represents NDVI values, ranging from 0 to 1, using</span>
+<span class="sd">    a series of colors that reflect vegetation health. The colormap starts with a light brown</span>
+<span class="sd">    color for low NDVI values and transitions to deep green for high NDVI values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matplotlib.colors.LinearSegmentedColormap</span>
+<span class="sd">        A custom colormap designed for NDVI visualization, with color transitions at specified NDVI values.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The NDVI values are mapped to the following colors:</span>
+<span class="sd">        - NDVI = 0: Light brown (near white).</span>
+<span class="sd">        - NDVI = 0.15: Light brown.</span>
+<span class="sd">        - NDVI = 0.3: Dark brown and light green.</span>
+<span class="sd">        - NDVI = 0.65: Light green.</span>
+<span class="sd">        - NDVI = 1: Deep green.</span>
+
+<span class="sd">    This colormap can be used to visualize NDVI data in a meaningful way, where lower NDVI values</span>
+<span class="sd">    represent less vegetation and higher NDVI values represent more vegetation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;#F5F5DC&quot;</span><span class="p">),</span>  <span class="c1"># NDVI = 0: Light brown (near white)</span>
+        <span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;#D2B48C&quot;</span><span class="p">),</span>  <span class="c1"># NDVI = 0.15: Light brown</span>
+        <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;#8B4513&quot;</span><span class="p">),</span>  <span class="c1"># NDVI = 0.3: Dark brown</span>
+        <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;#F0FFF0&quot;</span><span class="p">),</span>  <span class="c1"># NDVI = 0.3: Light green (near white)</span>
+        <span class="p">(</span><span class="mf">0.65</span><span class="p">,</span> <span class="s2">&quot;#90EE90&quot;</span><span class="p">),</span>  <span class="c1"># NDVI = 0.65: Light green</span>
+        <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;#006400&quot;</span><span class="p">),</span>  <span class="c1"># NDVI = 1: Deep green</span>
+    <span class="p">]</span>
+
+    <span class="n">ndvi_cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ndvi_cmap&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ndvi_cmap</span></div>
+
+
+
+<div class="viewcode-block" id="get_UMD_LULC_cmap">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.get_UMD_LULC_cmap">[docs]</a>
+<span class="k">def</span> <span class="nf">get_UMD_LULC_cmap</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a colormap for UMD Land Use and Land Cover (LULC) classification.</span>
+
+<span class="sd">    This function generates a colormap for the UMD LULC classes, which categorize land cover</span>
+<span class="sd">    types such as water bodies, forests, grasslands, and urban areas. The colormap maps specific</span>
+<span class="sd">    colors to each LULC class and returns the colormap, normalization, and other related information</span>
+<span class="sd">    for visualization.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cmap : matplotlib.colors.ListedColormap</span>
+<span class="sd">        A colormap object that maps LULC classes to specific colors.</span>
+<span class="sd">    norm : matplotlib.colors.BoundaryNorm</span>
+<span class="sd">        A normalization object that maps the LULC class values to the colormap.</span>
+<span class="sd">    ticks : list of str</span>
+<span class="sd">        A list of LULC class labels, corresponding to the categories.</span>
+<span class="sd">    ticks_position : list of int</span>
+<span class="sd">        A list of positions for each LULC class, used for tick placement in a colorbar.</span>
+<span class="sd">    colorlist : list of str</span>
+<span class="sd">        A list of hex color values representing the colors for each LULC class.</span>
+<span class="sd">    colorlevel : numpy.ndarray</span>
+<span class="sd">        An array of color boundaries that corresponds to the LULC class levels.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The UMD LULC classes and their corresponding colors are as follows:</span>
+<span class="sd">        0.0: Water               -&gt; Deep Blue</span>
+<span class="sd">        1.0: Evergreen Needleleaf Forest -&gt; Dark Green</span>
+<span class="sd">        2.0: Evergreen Broadleaf Forest -&gt; Light Green</span>
+<span class="sd">        3.0: Deciduous Needleleaf Forest -&gt; Brownish</span>
+<span class="sd">        4.0: Deciduous Broadleaf Forest -&gt; Orange</span>
+<span class="sd">        5.0: Mixed Forest        -&gt; Purple</span>
+<span class="sd">        6.0: Woodland            -&gt; Yellow-Green</span>
+<span class="sd">        7.0: Wooded Grassland    -&gt; Gray</span>
+<span class="sd">        8.0: Closed Shrubland    -&gt; Red</span>
+<span class="sd">        9.0: Open Shrubland      -&gt; Light Orange</span>
+<span class="sd">        10.0: Grassland          -&gt; Light Green</span>
+<span class="sd">        11.0: Cropland           -&gt; Golden Yellow</span>
+<span class="sd">        12.0: Bare Ground        -&gt; Light Brown</span>
+<span class="sd">        13.0: Urban and Built-up -&gt; Bright Cyan</span>
+
+<span class="sd">    This colormap can be used for visualizing land cover data based on the UMD classification scheme.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">colordict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Water&quot;</span><span class="p">:</span> <span class="s2">&quot;#444f89&quot;</span><span class="p">,</span>  <span class="c1"># Water (Deep Blue)</span>
+        <span class="s2">&quot;Evergreen Needleleaf Forest&quot;</span><span class="p">:</span> <span class="s2">&quot;#016400&quot;</span><span class="p">,</span>  <span class="c1"># Evergreen Needleleaf Forest (Dark Green)</span>
+        <span class="s2">&quot;Evergreen Broadleaf Forest&quot;</span><span class="p">:</span> <span class="s2">&quot;#018200&quot;</span><span class="p">,</span>  <span class="c1"># Evergreen Broadleaf Forest (Light Green)</span>
+        <span class="s2">&quot;Deciduous Needleleaf Forest&quot;</span><span class="p">:</span> <span class="s2">&quot;#97bf47&quot;</span><span class="p">,</span>  <span class="c1"># Deciduous Needleleaf Forest (Brownish)</span>
+        <span class="s2">&quot;Deciduous Broadleaf Forest&quot;</span><span class="p">:</span> <span class="s2">&quot;#02dc00&quot;</span><span class="p">,</span>  <span class="c1"># Deciduous Broadleaf Forest (Orange)</span>
+        <span class="s2">&quot;Mixed Forest&quot;</span><span class="p">:</span> <span class="s2">&quot;#00ff00&quot;</span><span class="p">,</span>  <span class="c1"># Mixed Forest (Purple)</span>
+        <span class="s2">&quot;Woodland&quot;</span><span class="p">:</span> <span class="s2">&quot;#92ae2f&quot;</span><span class="p">,</span>  <span class="c1"># Woodland (Yellow-Green)</span>
+        <span class="s2">&quot;Wooded Grassland&quot;</span><span class="p">:</span> <span class="s2">&quot;#dcce00&quot;</span><span class="p">,</span>  <span class="c1"># Wooded Grassland (Gray)</span>
+        <span class="s2">&quot;Closed Shrubland&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffad00&quot;</span><span class="p">,</span>  <span class="c1"># Closed Shrubland (Red)</span>
+        <span class="s2">&quot;Open Shrubland&quot;</span><span class="p">:</span> <span class="s2">&quot;#fffbc3&quot;</span><span class="p">,</span>  <span class="c1"># Open Shrubland (Light Orange)</span>
+        <span class="s2">&quot;Grassland&quot;</span><span class="p">:</span> <span class="s2">&quot;#8c4809&quot;</span><span class="p">,</span>  <span class="c1"># Grassland (Light Green)</span>
+        <span class="s2">&quot;Cropland&quot;</span><span class="p">:</span> <span class="s2">&quot;#f7a5ff&quot;</span><span class="p">,</span>  <span class="c1"># Cropland (Golden Yellow)</span>
+        <span class="s2">&quot;Bare Ground&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffc7ae&quot;</span><span class="p">,</span>  <span class="c1"># Bare Ground (Light Brown)</span>
+        <span class="s2">&quot;Urban and Built-up&quot;</span><span class="p">:</span> <span class="s2">&quot;#00ffff&quot;</span><span class="p">,</span>  <span class="c1"># Urban and Built-up (Bright Cyan)</span>
+    <span class="p">}</span>
+    <span class="n">ticks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">colordict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">ticks_position</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ticks</span><span class="p">)))</span>  <span class="c1"># 0~13</span>
+    <span class="n">colorlist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">colordict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">colorlevel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># -0.5~13.5</span>
+
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">colorlist</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">colorlevel</span><span class="p">,</span> <span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">ticks</span><span class="p">,</span> <span class="n">ticks_position</span><span class="p">,</span> <span class="n">colorlist</span><span class="p">,</span> <span class="n">colorlevel</span></div>
+
+
+
+<div class="viewcode-block" id="format_lon">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.format_lon">[docs]</a>
+<span class="k">def</span> <span class="nf">format_lon</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format longitude value as a string with direction (East/West).</span>
+
+<span class="sd">    This function takes a longitude value and returns it as a string with one decimal place,</span>
+<span class="sd">    followed by the corresponding directional suffix (&#39;°E&#39; for positive values and &#39;°W&#39; for negative values).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lon : float</span>
+<span class="sd">        The longitude value to be formatted.</span>
+<span class="sd">    pos : float</span>
+<span class="sd">        The position of the tick (not used in this function, but required by the formatter).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The formatted longitude string, e.g., &quot;45.0°E&quot; or &quot;90.0°W&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°W&quot;</span> <span class="k">if</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°E&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="format_lat">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.format_lat">[docs]</a>
+<span class="k">def</span> <span class="nf">format_lat</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format latitude value as a string with direction (North/South).</span>
+
+<span class="sd">    This function takes a latitude value and returns it as a string with one decimal place,</span>
+<span class="sd">    followed by the corresponding directional suffix (&#39;°N&#39; for positive values and &#39;°S&#39; for negative values).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lat : float</span>
+<span class="sd">        The latitude value to be formatted.</span>
+<span class="sd">    pos : float</span>
+<span class="sd">        The position of the tick (not used in this function, but required by the formatter).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The formatted latitude string, e.g., &quot;45.0°N&quot; or &quot;90.0°S&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°S&quot;</span> <span class="k">if</span> <span class="n">lat</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°N&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="rotate_yticks">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.rotate_yticks">[docs]</a>
+<span class="k">def</span> <span class="nf">rotate_yticks</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rotate the y-axis tick labels on a given axis.</span>
+
+<span class="sd">    This function modifies the y-axis tick labels of the given axis object by setting their</span>
+<span class="sd">    rotation angle and vertical alignment.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object whose y-tick labels will be rotated.</span>
+<span class="sd">    yticks_rotation : float, optional</span>
+<span class="sd">        The angle of rotation for the y-tick labels in degrees (default is 0).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">():</span>
+        <span class="n">tick</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">yticks_rotation</span><span class="p">)</span>
+        <span class="n">tick</span><span class="o">.</span><span class="n">set_va</span><span class="p">(</span><span class="s2">&quot;center&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_xyticks">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.set_xyticks">[docs]</a>
+<span class="k">def</span> <span class="nf">set_xyticks</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the x and y axis ticks with specified intervals and rotation.</span>
+
+<span class="sd">    This function configures the major tick locations and formatting for both the x and y axes.</span>
+<span class="sd">    It also allows for rotation of the y-axis tick labels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object where the ticks and labels will be applied.</span>
+<span class="sd">    x_locator_interval : float</span>
+<span class="sd">        The interval between x-axis ticks.</span>
+<span class="sd">    y_locator_interval : float</span>
+<span class="sd">        The interval between y-axis ticks.</span>
+<span class="sd">    yticks_rotation : float, optional</span>
+<span class="sd">        The angle of rotation for the y-tick labels in degrees (default is 0).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set xy ticks</span>
+    <span class="c1"># for tick in ax.get_yticklabels():</span>
+    <span class="c1">#     tick.set_rotation(yticks_rotation)</span>
+    <span class="c1">#     tick.set_va(&#39;center&#39;)</span>
+    <span class="n">rotate_yticks</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">x_locator_interval</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="n">y_locator_interval</span><span class="p">))</span>
+
+    <span class="c1"># format_lon = lambda lon, pos: f&quot;{abs(lon):.1f}°W&quot; if lon &lt; 0 else f&quot;{abs(lon):.1f}°E&quot;</span>
+    <span class="c1"># format_lat = lambda lat, pos: f&quot;{abs(lat):.1f}°S&quot; if lat &lt; 0 else f&quot;{abs(lat):.1f}°N&quot;</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="n">format_lon</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="n">format_lat</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="set_boundary">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.set_boundary">[docs]</a>
+<span class="k">def</span> <span class="nf">set_boundary</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">boundary_x_y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the axis limits based on the given boundary values.</span>
+
+<span class="sd">    This function adjusts the x and y axis limits of the provided axis object (`ax`)</span>
+<span class="sd">    using the boundary values specified in `boundary_x_y`. The first two elements in</span>
+<span class="sd">    `boundary_x_y` correspond to the x-axis limits, and the last two elements correspond</span>
+<span class="sd">    to the y-axis limits.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object for which the limits will be set.</span>
+<span class="sd">    boundary_x_y : list or tuple of 4 floats</span>
+<span class="sd">        The boundary values in the format [x_min, y_min, x_max, y_max], which define</span>
+<span class="sd">        the x and y axis limits.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">boundary_x_y</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="zoom_center">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.zoom_center">[docs]</a>
+<span class="k">def</span> <span class="nf">zoom_center</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span> <span class="n">zoom_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Zoom into a specific region around a central point on the axis.</span>
+
+<span class="sd">    This function zooms into the region centered at (`x_center`, `y_center`) by a</span>
+<span class="sd">    factor specified by `zoom_factor`. The zooming is applied symmetrically, maintaining</span>
+<span class="sd">    the aspect ratio of the plot.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object to apply the zoom on.</span>
+<span class="sd">    x_center : float</span>
+<span class="sd">        The x-coordinate of the center point for zooming.</span>
+<span class="sd">    y_center : float</span>
+<span class="sd">        The y-coordinate of the center point for zooming.</span>
+<span class="sd">    zoom_factor : float, optional</span>
+<span class="sd">        The factor by which to zoom the plot. A value greater than 1 will zoom in</span>
+<span class="sd">        (default is 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+
+    <span class="n">x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">zoom_factor</span>
+    <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">zoom_factor</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_center</span> <span class="o">-</span> <span class="n">x_range</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x_center</span> <span class="o">+</span> <span class="n">x_range</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_center</span> <span class="o">-</span> <span class="n">y_range</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y_center</span> <span class="o">+</span> <span class="n">y_range</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_ax_box_aspect">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.set_ax_box_aspect">[docs]</a>
+<span class="k">def</span> <span class="nf">set_ax_box_aspect</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">hw_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the aspect ratio of the axis box.</span>
+
+<span class="sd">    This function adjusts the aspect ratio of the axis box. The aspect ratio is set</span>
+<span class="sd">    according to the value of `hw_factor`, where a value of 1 maintains a square aspect</span>
+<span class="sd">    ratio. Values greater than 1 will stretch the plot horizontally, and values less</span>
+<span class="sd">    than 1 will stretch it vertically.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object for which the box aspect ratio will be set.</span>
+<span class="sd">    hw_factor : float, optional</span>
+<span class="sd">        The ratio of the width to the height of the axis box. A value of 1 maintains</span>
+<span class="sd">        a square aspect ratio (default is 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">(</span><span class="n">hw_factor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_check_search">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_utilities.html#easy_vic_build.tools.plot_func.plot_utilities.plot_check_search">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_check_search</span><span class="p">(</span>
+    <span class="n">searched_grid_lat</span><span class="p">,</span> <span class="n">searched_grid_lon</span><span class="p">,</span>
+    <span class="n">target_grid_lat</span><span class="p">,</span> <span class="n">target_grid_lon</span><span class="p">,</span>
+    <span class="n">searched_grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Usage:</span>
+<span class="sd">    i = 205</span>
+<span class="sd">    searched_grid_lon = [src_lon[l] for l in searched_grids_index[i][0]]</span>
+<span class="sd">    searched_grid_lat = [src_lat[l] for l in searched_grids_index[i][1]]</span>
+<span class="sd">    searched_grid_res = src_dlon</span>
+<span class="sd">    target_grid_lat = [dst_lat[i]]</span>
+<span class="sd">    target_grid_lon = [dst_lon[i]]</span>
+<span class="sd">    target_grid_res = dst_dlon</span>
+<span class="sd">    plot_check_search(</span>
+<span class="sd">        searched_grid_lat, searched_grid_lon,</span>
+<span class="sd">        target_grid_lat, target_grid_lon,</span>
+<span class="sd">        searched_grid_res,</span>
+<span class="sd">        target_grid_res,</span>
+<span class="sd">    )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cgdf</span> <span class="o">=</span> <span class="n">CreateGDF</span><span class="p">()</span>
+    
+    <span class="c1"># create searched_grids_gdf</span>
+    <span class="k">if</span> <span class="n">searched_grid_res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">searched_grids_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_rectangle_central_coord</span><span class="p">(</span>
+            <span class="n">searched_grid_lon</span><span class="p">,</span> <span class="n">searched_grid_lat</span><span class="p">,</span> <span class="n">searched_grid_res</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">searched_grids_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_points</span><span class="p">(</span>
+            <span class="n">lon</span><span class="o">=</span><span class="n">searched_grid_lon</span><span class="p">,</span>
+            <span class="n">lat</span><span class="o">=</span><span class="n">searched_grid_lat</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="c1"># create target_grid</span>
+    <span class="k">if</span> <span class="n">target_grid_res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_grids_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_rectangle_central_coord</span><span class="p">(</span>
+            <span class="n">target_grid_lon</span><span class="p">,</span> <span class="n">target_grid_lat</span><span class="p">,</span> <span class="n">target_grid_res</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">target_grids_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_points</span><span class="p">(</span>
+            <span class="n">lon</span><span class="o">=</span><span class="n">target_grid_lon</span><span class="p">,</span>
+            <span class="n">lat</span><span class="o">=</span><span class="n">target_grid_lat</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="c1"># plot</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">target_grids_gdf</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># target</span>
+    <span class="n">searched_grids_gdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;check search&quot;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

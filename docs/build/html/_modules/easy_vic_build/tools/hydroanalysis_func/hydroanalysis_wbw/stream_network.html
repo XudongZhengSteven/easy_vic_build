@@ -1,0 +1,570 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+<span class="sd">&quot;&quot;&quot;Stream-network extraction and threshold utilities.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">...geo_func.format_conversion</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">whitebox_workflows</span> <span class="kn">import</span> <span class="n">show</span>
+
+<div class="viewcode-block" id="d8_streamnetwork">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.d8_streamnetwork">[docs]</a>
+<span class="k">def</span> <span class="nf">d8_streamnetwork</span><span class="p">(</span>
+    <span class="n">wbe</span><span class="p">,</span>
+    <span class="n">flow_acc</span><span class="p">,</span>
+    <span class="n">flow_direction</span><span class="p">,</span>
+    <span class="n">filled_dem</span><span class="p">,</span>
+    <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+    <span class="n">output_file_stream_raster</span><span class="o">=</span><span class="s2">&quot;stream_raster.tif&quot;</span><span class="p">,</span>
+    <span class="n">output_file_stream_raster_vector</span><span class="o">=</span><span class="s2">&quot;stream_raster_vector.shp&quot;</span><span class="p">,</span>
+    <span class="n">output_file_stream_raster_link</span><span class="o">=</span><span class="s2">&quot;stream_raster_link.tif&quot;</span><span class="p">,</span>
+    <span class="n">output_file_stream_vector</span><span class="o">=</span><span class="s2">&quot;stream_vector.shp&quot;</span><span class="p">,</span>
+    <span class="n">output_file_stream_vector_repaired</span><span class="o">=</span><span class="s2">&quot;stream_vector_repaired.shp&quot;</span><span class="p">,</span>
+    <span class="n">output_file_stream_lines_vector</span><span class="o">=</span><span class="s2">&quot;stream_lines_vector.shp&quot;</span><span class="p">,</span>
+    <span class="n">output_file_confluences_points_vector</span><span class="o">=</span><span class="s2">&quot;confluences_points_vector.shp&quot;</span><span class="p">,</span>
+    <span class="n">output_file_outlet_points_vector</span><span class="o">=</span><span class="s2">&quot;outlet_points_vector.shp&quot;</span><span class="p">,</span>
+    <span class="n">output_file_channel_head_points_vector</span><span class="o">=</span><span class="s2">&quot;channel_head_points_vector.shp&quot;</span><span class="p">,</span>
+    <span class="n">kwargs_extract_streams</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">kwargs_vector_stream_network_analysis</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">snap_dist</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+    <span class="n">esri_pointer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract and analyze a D8-based stream network.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wbe : `WbEnvironment`</span>
+<span class="sd">        WhiteboxTools workflow environment instance.</span>
+<span class="sd">    flow_acc : `WbRaster`</span>
+<span class="sd">        Flow-accumulation raster or raster object.</span>
+<span class="sd">    flow_direction : `WbRaster`</span>
+<span class="sd">        D8 flow-direction raster or raster object.</span>
+<span class="sd">    filled_dem : `WbRaster`</span>
+<span class="sd">        Hydrologically conditioned DEM raster or raster object.</span>
+<span class="sd">    stream_acc_threshold : float, optional</span>
+<span class="sd">        Flow-accumulation threshold for stream initiation.</span>
+<span class="sd">    output_file_stream_raster : str, optional</span>
+<span class="sd">        Output path for stream raster.</span>
+<span class="sd">    output_file_stream_raster_vector : str, optional</span>
+<span class="sd">        Output path for vectorized stream raster.</span>
+<span class="sd">    output_file_stream_raster_link : str, optional</span>
+<span class="sd">        Output path for stream-link raster.</span>
+<span class="sd">    output_file_stream_vector : str, optional</span>
+<span class="sd">        Output path for stream vector before topology repair.</span>
+<span class="sd">    output_file_stream_vector_repaired : str, optional</span>
+<span class="sd">        Output path for repaired stream vector.</span>
+<span class="sd">    output_file_stream_lines_vector : str, optional</span>
+<span class="sd">        Output path for stream-line vector.</span>
+<span class="sd">    output_file_confluences_points_vector : str, optional</span>
+<span class="sd">        Output path for confluence points vector.</span>
+<span class="sd">    output_file_outlet_points_vector : str, optional</span>
+<span class="sd">        Output path for outlet points vector.</span>
+<span class="sd">    output_file_channel_head_points_vector : str, optional</span>
+<span class="sd">        Output path for channel-head points vector.</span>
+<span class="sd">    kwargs_extract_streams : dict, optional</span>
+<span class="sd">        Additional keyword arguments passed to ``wbe.extract_streams``.</span>
+<span class="sd">    kwargs_vector_stream_network_analysis : dict, optional</span>
+<span class="sd">        Additional keyword arguments passed to</span>
+<span class="sd">        ``wbe.vector_stream_network_analysis``.</span>
+<span class="sd">    snap_dist : float, optional</span>
+<span class="sd">        Snap distance used in topology repair and vector network analysis.</span>
+<span class="sd">    esri_pointer : bool, optional</span>
+<span class="sd">        Whether ``flow_direction`` uses ESRI D8 pointer encoding.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(stream_raster, stream_vector, repaired_stream_vector,</span>
+<span class="sd">        vector_stream_network_analysis_result)``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ``filled_dem`` should be hydrologically conditioned before use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># stream raster</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting stream_raster... ...&quot;</span><span class="p">)</span>
+    <span class="n">stream_raster</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">extract_streams</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">stream_acc_threshold</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_extract_streams</span><span class="p">)</span>
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_raster</span><span class="p">(</span><span class="n">stream_raster</span><span class="p">,</span> <span class="n">output_file_stream_raster</span><span class="p">)</span>
+    <span class="c1"># show(stream_raster, colorbar_kwargs={&#39;label&#39;: &#39;stream raster (1, bool)&#39;})</span>
+    
+    <span class="c1"># stream raster vector</span>
+    <span class="n">stream_raster_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">raster_to_vector_lines</span><span class="p">(</span><span class="n">stream_raster</span><span class="p">)</span>
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">stream_raster_vector</span><span class="p">,</span> <span class="n">output_file_stream_raster_vector</span><span class="p">)</span>
+    <span class="c1"># show(stream_raster_vector, colorbar_kwargs={&#39;label&#39;: &#39;stream raster vector(1, bool)&#39;})</span>
+    
+    <span class="c1"># stream link</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Linking stream_raster... ...&quot;</span><span class="p">)</span>
+    <span class="n">stream_raster_link</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">stream_link_class</span><span class="p">(</span><span class="n">flow_direction</span><span class="p">,</span> <span class="n">stream_raster</span><span class="p">,</span> <span class="n">esri_pntr</span><span class="o">=</span><span class="n">esri_pointer</span><span class="p">)</span>
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_raster</span><span class="p">(</span><span class="n">stream_raster_link</span><span class="p">,</span> <span class="n">output_file_stream_raster_link</span><span class="p">)</span>
+    
+    <span class="c1"># stream vector</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Converting stream_raster to stream_vector... ...&quot;</span><span class="p">)</span>
+    <span class="n">stream_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">raster_streams_to_vector</span><span class="p">(</span><span class="n">stream_raster</span><span class="p">,</span> <span class="n">flow_direction</span><span class="p">)</span>
+    <span class="n">stream_vector</span><span class="p">,</span> <span class="n">tmp1</span><span class="p">,</span> <span class="n">tmp2</span><span class="p">,</span> <span class="n">tmp3</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">vector_stream_network_analysis</span><span class="p">(</span>
+        <span class="n">stream_vector</span><span class="p">,</span> <span class="n">filled_dem</span>
+    <span class="p">)</span>
+    
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">stream_vector</span><span class="p">,</span> <span class="n">output_file_stream_vector</span><span class="p">)</span>
+    <span class="c1"># show(stream_vector, colorbar_kwargs={&#39;label&#39;: &#39;stream vector(1, bool)&#39;})</span>
+    
+    <span class="c1"># repair_stream_vector_topology</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Repairing stream_vector... ...&quot;</span><span class="p">)</span>
+    <span class="n">repaired_stream_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">repair_stream_vector_topology</span><span class="p">(</span>
+        <span class="n">stream_vector</span><span class="p">,</span>
+        <span class="n">snap_dist</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">repaired_stream_vector</span><span class="p">,</span> <span class="n">output_file_stream_vector_repaired</span><span class="p">)</span>
+    
+    <span class="c1"># vector_stream_network_analysis</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Analyzing stream_vector network... ...&quot;</span><span class="p">)</span>
+    <span class="n">stream_lines_vector</span><span class="p">,</span> <span class="n">confluences_points_vector</span><span class="p">,</span> <span class="n">outlet_points_vector</span><span class="p">,</span> <span class="n">channel_head_points_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">vector_stream_network_analysis</span><span class="p">(</span>
+        <span class="n">repaired_stream_vector</span><span class="p">,</span>
+        <span class="n">filled_dem</span><span class="p">,</span>
+        <span class="n">snap_distance</span><span class="o">=</span><span class="n">snap_dist</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs_vector_stream_network_analysis</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">vector_stream_network_analysis_result</span> <span class="o">=</span> <span class="p">(</span><span class="n">stream_lines_vector</span><span class="p">,</span> <span class="n">confluences_points_vector</span><span class="p">,</span> <span class="n">outlet_points_vector</span><span class="p">,</span> <span class="n">channel_head_points_vector</span><span class="p">)</span>
+    
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">stream_lines_vector</span><span class="p">,</span> <span class="n">output_file_stream_lines_vector</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">confluences_points_vector</span><span class="o">.</span><span class="n">records</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">confluences_points_vector</span><span class="p">,</span> <span class="n">output_file_confluences_points_vector</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Confluences points vector could not be written. It may be empty.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outlet_points_vector</span><span class="o">.</span><span class="n">records</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">outlet_points_vector</span><span class="p">,</span> <span class="n">output_file_outlet_points_vector</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Outlet points vector could not be written. It may be empty.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_head_points_vector</span><span class="o">.</span><span class="n">records</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">channel_head_points_vector</span><span class="p">,</span> <span class="n">output_file_channel_head_points_vector</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Channel head points vector could not be written. It may be empty.&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">stream_raster</span><span class="p">,</span> <span class="n">stream_vector</span><span class="p">,</span> <span class="n">repaired_stream_vector</span><span class="p">,</span> <span class="n">vector_stream_network_analysis_result</span></div>
+
+    
+
+<div class="viewcode-block" id="calculate_streamnetwork_threshold">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.calculate_streamnetwork_threshold">[docs]</a>
+<span class="k">def</span> <span class="nf">calculate_streamnetwork_threshold</span><span class="p">(</span>
+    <span class="n">flow_acc_path</span><span class="p">,</span>
+    <span class="n">dem_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;hybrid&#39;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>                        
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate a stream-extraction threshold from flow accumulation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flow_acc_path : str</span>
+<span class="sd">        Path to the flow-accumulation raster file.</span>
+<span class="sd">    dem_path : str, optional</span>
+<span class="sd">        Path to DEM raster. Required when ``method=&#39;drainage_area&#39;``.</span>
+<span class="sd">    method : {&#39;hybrid&#39;, &#39;max_ratio&#39;, &#39;percentile&#39;, &#39;drainage_area&#39;, &#39;dynamic_elbow&#39;, &#39;multiscale&#39;}, optional</span>
+<span class="sd">        Threshold estimation method.</span>
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        Optional method parameters: ``max_ratio``, ``percentile``,</span>
+<span class="sd">        ``drainage_area_km2``, ``elbow_sensitivity``, and ``scale_levels``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Stream-extraction threshold in flow-accumulation units.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``method`` is not supported.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If no valid flow-accumulation values are found, or DEM is missing</span>
+<span class="sd">        for ``method=&#39;drainage_area&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs_</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;max_ratio&#39;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
+        <span class="s1">&#39;percentile&#39;</span><span class="p">:</span> <span class="mf">99.5</span><span class="p">,</span>
+        <span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="s1">&#39;elbow_sensitivity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s1">&#39;scale_levels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">kwargs_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs_</span>
+    
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">flow_acc_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">flow_acc</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">valid_acc</span> <span class="o">=</span> <span class="n">flow_acc</span><span class="p">[</span><span class="n">flow_acc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No valid flow accumulation values found&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span>
+    
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;max_ratio&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">threshold_max_ratio</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_ratio&#39;</span><span class="p">])</span>
+    
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;percentile&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">threshold_percentile</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;percentile&#39;</span><span class="p">])</span>
+    
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;drainage_area&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dem_path</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;DEM path is required for drainage_area method&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+        
+        <span class="k">return</span> <span class="n">threshold_drainage_area</span><span class="p">(</span><span class="n">dem_path</span><span class="p">,</span> <span class="n">flow_acc_path</span><span class="p">,</span> <span class="n">drainage_area_km2</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">],</span> <span class="n">max_ratio</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_ratio&#39;</span><span class="p">])</span>
+    
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;dynamic_elbow&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">threshold_dynamic_elbow</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;elbow_sensitivity&#39;</span><span class="p">])</span>
+    
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;multiscale&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">threshold_multiscale</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scale_levels&#39;</span><span class="p">])</span>
+    
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hybrid&#39;</span><span class="p">:</span>
+        <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">threshold_max_ratio</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_ratio&#39;</span><span class="p">]),</span>
+            <span class="n">threshold_percentile</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;percentile&#39;</span><span class="p">]),</span>
+            <span class="n">threshold_dynamic_elbow</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;elbow_sensitivity&#39;</span><span class="p">]),</span>
+            <span class="n">threshold_multiscale</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scale_levels&#39;</span><span class="p">])</span>
+        <span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">dem_path</span><span class="p">:</span>
+            <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">threshold_drainage_area</span><span class="p">(</span><span class="n">dem_path</span><span class="p">,</span> <span class="n">flow_acc_path</span><span class="p">,</span> <span class="n">drainage_area_km2</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;drainage_area_km2&#39;</span><span class="p">],</span> <span class="n">max_ratio</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_ratio&#39;</span><span class="p">])</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># Use weighted average instead of simple min</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span>  <span class="c1"># Customizable weights</span>
+        <span class="k">if</span> <span class="n">dem_path</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>  <span class="c1"># Adjust if drainage area is included</span>
+        
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;calculated thresholds</span><span class="se">\n</span><span class="s2">max_ratio: </span><span class="si">{</span><span class="n">thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">percentile: </span><span class="si">{</span><span class="n">thresholds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">dynamic_elbow: </span><span class="si">{</span><span class="n">thresholds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">multiscale: </span><span class="si">{</span><span class="n">thresholds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">drainage_area: </span><span class="si">{</span><span class="n">thresholds</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">weighted_avg</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="n">w</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">weights</span><span class="p">))</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">weighted_avg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method or missing required parameters&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="threshold_max_ratio">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_max_ratio">[docs]</a>
+<span class="k">def</span> <span class="nf">threshold_max_ratio</span><span class="p">(</span>
+    <span class="n">flow_acc</span><span class="p">,</span>
+    <span class="n">max_ratio</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate threshold as a fraction of maximum flow accumulation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flow_acc : `numpy.ndarray`</span>
+<span class="sd">        Flow-accumulation values.</span>
+<span class="sd">    max_ratio : float</span>
+<span class="sd">        Ratio applied to the maximum value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Threshold value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_ratio</span></div>
+
+
+<div class="viewcode-block" id="threshold_percentile">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_percentile">[docs]</a>
+<span class="k">def</span> <span class="nf">threshold_percentile</span><span class="p">(</span>
+    <span class="n">flow_acc</span><span class="p">,</span>
+    <span class="n">percentile</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate threshold from a percentile of flow accumulation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flow_acc : `numpy.ndarray`</span>
+<span class="sd">        Flow-accumulation values.</span>
+<span class="sd">    percentile : float</span>
+<span class="sd">        Percentile value in ``[0, 100]``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Threshold value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">,</span> <span class="n">percentile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="threshold_drainage_area">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_drainage_area">[docs]</a>
+<span class="k">def</span> <span class="nf">threshold_drainage_area</span><span class="p">(</span>
+    <span class="n">dem_path</span><span class="p">,</span>
+    <span class="n">flow_acc_path</span><span class="p">,</span>
+    <span class="n">drainage_area_km2</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">max_ratio</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">min_cells</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate threshold from a minimum drainage-area constraint.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dem_path : str</span>
+<span class="sd">        Path to DEM raster file.</span>
+<span class="sd">    flow_acc_path : str</span>
+<span class="sd">        Path to flow-accumulation raster file.</span>
+<span class="sd">    drainage_area_km2 : float, optional</span>
+<span class="sd">        Minimum drainage area in square kilometers.</span>
+<span class="sd">    max_ratio : float, optional</span>
+<span class="sd">        Upper-limit ratio relative to maximum flow accumulation.</span>
+<span class="sd">    min_cells : int, optional</span>
+<span class="sd">        Lower bound of threshold in cell count.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Threshold value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dem_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">dem</span><span class="p">:</span>
+        <span class="n">cell_area_km2</span> <span class="o">=</span> <span class="n">dem</span><span class="o">.</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dem</span><span class="o">.</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e6</span>
+        <span class="n">threshold_cells</span> <span class="o">=</span> <span class="n">drainage_area_km2</span> <span class="o">/</span> <span class="n">cell_area_km2</span>
+    
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">flow_acc_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">flow_acc</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">valid_acc</span> <span class="o">=</span> <span class="n">flow_acc</span><span class="p">[</span><span class="n">flow_acc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">max_acc</span> <span class="o">=</span> <span class="n">valid_acc</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="n">threshold</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_cells</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">threshold_cells</span><span class="p">,</span> <span class="n">max_acc</span> <span class="o">*</span> <span class="n">max_ratio</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">threshold</span></div>
+
+
+
+<div class="viewcode-block" id="threshold_dynamic_elbow">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_dynamic_elbow">[docs]</a>
+<span class="k">def</span> <span class="nf">threshold_dynamic_elbow</span><span class="p">(</span>
+    <span class="n">flow_acc</span><span class="p">,</span>
+    <span class="n">elbow_sensitivity</span><span class="o">=</span><span class="mf">0.3</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate threshold using curvature-based elbow detection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flow_acc : `numpy.ndarray`</span>
+<span class="sd">        Flow-accumulation values.</span>
+<span class="sd">    elbow_sensitivity : float, optional</span>
+<span class="sd">        Sensitivity factor applied to the detected elbow value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Threshold value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flow_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">[</span><span class="n">flow_acc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flow_acc</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flow_acc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">d2y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    
+    <span class="n">elbow_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">d2y</span><span class="p">)</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">flow_acc</span><span class="p">[</span><span class="n">elbow_idx</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">elbow_sensitivity</span></div>
+
+
+<div class="viewcode-block" id="threshold_multiscale">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_multiscale">[docs]</a>
+<span class="k">def</span> <span class="nf">threshold_multiscale</span><span class="p">(</span>
+    <span class="n">flow_acc</span><span class="p">,</span>
+    <span class="n">scale_levels</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate threshold using a multi-scale adaptive approach.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flow_acc : `numpy.ndarray`</span>
+<span class="sd">        Flow-accumulation values.</span>
+<span class="sd">    scale_levels : list of float</span>
+<span class="sd">        Proportions used to build sub-scale masks.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Mean threshold across scales.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">thresholds</span>  <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">valid_acc</span> <span class="o">=</span> <span class="n">flow_acc</span><span class="p">[</span><span class="n">flow_acc</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scale_levels</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">flow_acc</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">scale</span><span class="p">))</span>
+        <span class="n">sub_acc</span> <span class="o">=</span> <span class="n">flow_acc</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_acc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">sub_acc</span><span class="p">,</span> <span class="mi">95</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span> <span class="k">if</span> <span class="n">thresholds</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">valid_acc</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="clip_stream_for_basin">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.clip_stream_for_basin">[docs]</a>
+<span class="k">def</span> <span class="nf">clip_stream_for_basin</span><span class="p">(</span>
+    <span class="n">wbe</span><span class="p">,</span>
+    <span class="n">stream_vector</span><span class="p">,</span>
+    <span class="n">basin_vector</span><span class="p">,</span>
+    <span class="n">output_file_clipped_stream_vector</span><span class="o">=</span><span class="s2">&quot;clipped_stream_vector.shp&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clip stream vectors by a basin polygon and save the clipped output.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wbe : WbEnvironment</span>
+<span class="sd">        WhiteboxTools workflow environment.</span>
+<span class="sd">    stream_vector : str or WbVector</span>
+<span class="sd">        Stream layer path or an already loaded stream vector.</span>
+<span class="sd">    basin_vector : str or WbVector</span>
+<span class="sd">        Basin polygon path or an already loaded basin vector.</span>
+<span class="sd">    output_file_clipped_stream_vector : str, optional</span>
+<span class="sd">        Output path for clipped stream vectors.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    WbVector</span>
+<span class="sd">        Clipped stream vector object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream_vector</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">stream_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">read_vector</span><span class="p">(</span><span class="n">stream_vector</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">basin_vector</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">basin_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">read_vector</span><span class="p">(</span><span class="n">basin_vector</span><span class="p">)</span>
+    
+    <span class="n">clipped_stream_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+        <span class="n">stream_vector</span><span class="p">,</span>
+        <span class="n">basin_vector</span>
+    <span class="p">)</span>
+    
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">clipped_stream_vector</span><span class="p">,</span> <span class="n">output_file_clipped_stream_vector</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">clipped_stream_vector</span></div>
+
+    
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

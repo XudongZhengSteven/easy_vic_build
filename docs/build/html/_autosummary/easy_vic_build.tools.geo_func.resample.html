@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.geo_func.resample &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.geo_func.search_grids" href="easy_vic_build.tools.geo_func.search_grids.html" />
+    <link rel="prev" title="easy_vic_build.tools.geo_func.reproject" href="easy_vic_build.tools.geo_func.reproject.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.clip.html">easy_vic_build.tools.geo_func.clip</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.create_gdf.html">easy_vic_build.tools.geo_func.create_gdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.fill_gap.html">easy_vic_build.tools.geo_func.fill_gap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.format_conversion.html">easy_vic_build.tools.geo_func.format_conversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.reproject.html">easy_vic_build.tools.geo_func.reproject</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.geo_func.resample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.search_grids.html">easy_vic_build.tools.geo_func.search_grids</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.geo_func.resample</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.geo_func.resample.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.geo_func.resample">
+<span id="easy-vic-build-tools-geo-func-resample"></span><h1>easy_vic_build.tools.geo_func.resample<a class="headerlink" href="#module-easy_vic_build.tools.geo_func.resample" title="Link to this heading"></a></h1>
+<p>Resampling methods for grid-based geospatial variables.</p>
+<p>This module provides several interpolation/aggregation strategies that map
+source-grid values to a destination location, including mean, IDW, bilinear,
+majority vote, generic-function aggregation, and conservative remapping.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_GeneralFunction" title="easy_vic_build.tools.geo_func.resample.resampleMethod_GeneralFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resampleMethod_GeneralFunction</span></code></a>(...[, ...])</p></td>
+<td><p>Resample values using a user-provided aggregation function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_IDW" title="easy_vic_build.tools.geo_func.resample.resampleMethod_IDW"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resampleMethod_IDW</span></code></a>(searched_grids_data, ...)</p></td>
+<td><p>Resample values using inverse-distance weighting (IDW).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_Majority" title="easy_vic_build.tools.geo_func.resample.resampleMethod_Majority"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resampleMethod_Majority</span></code></a>(searched_grids_data, ...)</p></td>
+<td><p>Resample categorical values using majority vote.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_SimpleAverage" title="easy_vic_build.tools.geo_func.resample.resampleMethod_SimpleAverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resampleMethod_SimpleAverage</span></code></a>(...[, dst_lat, ...])</p></td>
+<td><p>Resample values using simple arithmetic mean.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_bilinear" title="easy_vic_build.tools.geo_func.resample.resampleMethod_bilinear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resampleMethod_bilinear</span></code></a>(searched_grids_data, ...)</p></td>
+<td><p>Resample values using bilinear interpolation with fallbacks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_conservative" title="easy_vic_build.tools.geo_func.resample.resampleMethod_conservative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resampleMethod_conservative</span></code></a>(...[, ...])</p></td>
+<td><p>Resample values using overlap-area conservative remapping.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.resample.resampleMethod_SimpleAverage">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.resample.</span></span><span class="sig-name descname"><span class="pre">resampleMethod_SimpleAverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">searched_grids_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/resample.html#resampleMethod_SimpleAverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_SimpleAverage" title="Link to this definition"></a></dt>
+<dd><p>Resample values using simple arithmetic mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>searched_grids_data</strong> (<em>array-like</em>) – The data values of the searched grids.</p></li>
+<li><p><strong>searched_grids_lat</strong> (<em>array-like</em>) – The latitudes corresponding to the searched grids.</p></li>
+<li><p><strong>searched_grids_lon</strong> (<em>array-like</em>) – The longitudes corresponding to the searched grids.</p></li>
+<li><p><strong>dst_lat</strong> (<em>float</em><em>, </em><em>optional</em>) – The latitude of the destination grid (not used in computation).</p></li>
+<li><p><strong>dst_lon</strong> (<em>float</em><em>, </em><em>optional</em>) – The longitude of the destination grid (not used in computation).</p></li>
+<li><p><strong>missing_value</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The value representing missing data. If provided, missing data will be removed before averaging.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean value of <code class="docutils literal notranslate"><span class="pre">searched_grids_data</span></code>. If no valid data is available,
+returns <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> or <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.resample.resampleMethod_IDW">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.resample.</span></span><span class="sig-name descname"><span class="pre">resampleMethod_IDW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">searched_grids_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/resample.html#resampleMethod_IDW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_IDW" title="Link to this definition"></a></dt>
+<dd><p>Resample values using inverse-distance weighting (IDW).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>searched_grids_data</strong> (<em>array-like</em>) – The data values of the searched grids.</p></li>
+<li><p><strong>searched_grids_lat</strong> (<em>array-like</em>) – The latitudes corresponding to the searched grids.</p></li>
+<li><p><strong>searched_grids_lon</strong> (<em>array-like</em>) – The longitudes corresponding to the searched grids.</p></li>
+<li><p><strong>dst_lat</strong> (<em>float</em>) – The latitude of the destination grid.</p></li>
+<li><p><strong>dst_lon</strong> (<em>float</em>) – The longitude of the destination grid.</p></li>
+<li><p><strong>p</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – The power exponent for weighting, controlling the influence of distance. Default is 2.</p></li>
+<li><p><strong>missing_value</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The value representing missing data. If provided, missing data will be removed before interpolation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>IDW-interpolated value at <code class="docutils literal notranslate"><span class="pre">(dst_lat,</span> <span class="pre">dst_lon)</span></code>. If no valid data is
+available, returns <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> or <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.resample.resampleMethod_bilinear">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.resample.</span></span><span class="sig-name descname"><span class="pre">resampleMethod_bilinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">searched_grids_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/resample.html#resampleMethod_bilinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_bilinear" title="Link to this definition"></a></dt>
+<dd><p>Resample values using bilinear interpolation with fallbacks.</p>
+<p>Bilinear interpolation estimates the value at <code class="docutils literal notranslate"><span class="pre">(dst_lat,</span> <span class="pre">dst_lon)</span></code> using
+four surrounding points. If geometric assumptions are not met, the function
+falls back to distance-based interpolation.</p>
+<p>Schematic representation:</p>
+<blockquote>
+<div><dl>
+<dt>(lat2, lon1) —– (lat2, lon2)   -&gt; Corresponding latitudes and longitudes</dt><dd><div class="line-block">
+<div class="line">(x, y)   |</div>
+<div class="line-block">
+<div class="line"><a href="#id1"><span class="problematic" id="id2">|</span></a></div>
+</div>
+</div>
+</dd>
+</dl>
+<p>(lat1, lon1) —– (lat1, lon2)</p>
+<ul class="simple">
+<li><p>The interpolation first computes intermediate values along the longitude direction.</p></li>
+<li><p>Then, it interpolates along the latitude direction.</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>searched_grids_data</strong> (<em>array-like</em>) – The data values of the searched grids.</p></li>
+<li><p><strong>searched_grids_lat</strong> (<em>array-like</em>) – The latitudes corresponding to the searched grids.</p></li>
+<li><p><strong>searched_grids_lon</strong> (<em>array-like</em>) – The longitudes corresponding to the searched grids.</p></li>
+<li><p><strong>dst_lat</strong> (<em>float</em>) – The latitude of the destination grid.</p></li>
+<li><p><strong>dst_lon</strong> (<em>float</em>) – The longitude of the destination grid.</p></li>
+<li><p><strong>missing_value</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The value representing missing data. If provided, missing data will be removed before interpolation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Interpolated destination value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Fallback behavior:</p>
+<ul class="simple">
+<li><p>4+ points: bilinear interpolation (or IDW when points are not rectangular),</p></li>
+<li><p>2-3 points: distance-weighted interpolation,</p></li>
+<li><p>1 point: direct value return,</p></li>
+<li><p>0 point: <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> or <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.resample.resampleMethod_Majority">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.resample.</span></span><span class="sig-name descname"><span class="pre">resampleMethod_Majority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">searched_grids_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/resample.html#resampleMethod_Majority"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_Majority" title="Link to this definition"></a></dt>
+<dd><p>Resample categorical values using majority vote.</p>
+<p>This method finds the most frequently occurring value (mode) in the searched grid data.
+It is useful for categorical data resampling, such as land cover classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>searched_grids_data</strong> (<em>array-like</em>) – The data values of the searched grids.</p></li>
+<li><p><strong>searched_grids_lat</strong> (<em>array-like</em>) – The latitudes corresponding to the searched grids.</p></li>
+<li><p><strong>searched_grids_lon</strong> (<em>array-like</em>) – The longitudes corresponding to the searched grids.</p></li>
+<li><p><strong>dst_lat</strong> (<em>float</em><em>, </em><em>optional</em>) – The latitude of the destination grid (not used in computation).</p></li>
+<li><p><strong>dst_lon</strong> (<em>float</em><em>, </em><em>optional</em>) – The longitude of the destination grid (not used in computation).</p></li>
+<li><p><strong>missing_value</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The value representing missing data. If provided, missing data will be removed before computing
+the majority value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Most frequent value in <code class="docutils literal notranslate"><span class="pre">searched_grids_data</span></code>. If no valid data is
+available, returns <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> or <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.resample.resampleMethod_GeneralFunction">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.resample.</span></span><span class="sig-name descname"><span class="pre">resampleMethod_GeneralFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">searched_grids_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lat=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_function=&lt;function</span> <span class="pre">mean&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/resample.html#resampleMethod_GeneralFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_GeneralFunction" title="Link to this definition"></a></dt>
+<dd><p>Resample values using a user-provided aggregation function.</p>
+<p>This method applies <code class="docutils literal notranslate"><span class="pre">general_function</span></code> to source values after wrapper-level
+preprocessing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>searched_grids_data</strong> (<em>array-like</em>) – The data values of the searched grids.</p></li>
+<li><p><strong>searched_grids_lat</strong> (<em>array-like</em>) – The latitudes corresponding to the searched grids.</p></li>
+<li><p><strong>searched_grids_lon</strong> (<em>array-like</em>) – The longitudes corresponding to the searched grids.</p></li>
+<li><p><strong>dst_lat</strong> (<em>float</em><em>, </em><em>optional</em>) – The latitude of the destination grid (not used in computation).</p></li>
+<li><p><strong>dst_lon</strong> (<em>float</em><em>, </em><em>optional</em>) – The longitude of the destination grid (not used in computation).</p></li>
+<li><p><strong>general_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that aggregates the input data, such as <cite>np.mean</cite>, <cite>np.max</cite>, or <cite>np.min</cite>.
+Default is <cite>np.mean</cite>.</p></li>
+<li><p><strong>missing_value</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The value representing missing data. If provided, missing data will be removed before applying
+the general function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregated value returned by <code class="docutils literal notranslate"><span class="pre">general_function</span></code>. If evaluation fails or
+no valid data is available, returns <code class="docutils literal notranslate"><span class="pre">missing_value</span></code> or <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.resample.resampleMethod_conservative">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.resample.</span></span><span class="sig-name descname"><span class="pre">resampleMethod_conservative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">searched_grids_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searched_grids_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/resample.html#resampleMethod_conservative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.resample.resampleMethod_conservative" title="Link to this definition"></a></dt>
+<dd><p>Resample values using overlap-area conservative remapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>searched_grids_data</strong> (<em>array-like</em>) – Values from source grids.</p></li>
+<li><p><strong>searched_grids_lat</strong> (<em>array-like</em>) – Source-grid center latitudes.</p></li>
+<li><p><strong>searched_grids_lon</strong> (<em>array-like</em>) – Source-grid center longitudes.</p></li>
+<li><p><strong>searched_grids_res</strong> (<em>float</em><em>, </em><em>optional</em>) – Source-grid resolution.</p></li>
+<li><p><strong>dst_lat</strong> (<em>float</em><em>, </em><em>optional</em>) – Destination-grid center latitude.</p></li>
+<li><p><strong>dst_lon</strong> (<em>float</em><em>, </em><em>optional</em>) – Destination-grid center longitude.</p></li>
+<li><p><strong>dst_res</strong> (<em>float</em><em>, </em><em>optional</em>) – Destination-grid resolution.</p></li>
+<li><p><strong>missing_value</strong> (<em>float</em><em>, </em><em>optional</em>) – Missing-value code used when no valid overlap exists.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Conservatively remapped destination value. If resolution inputs are
+missing, the function falls back to <code class="docutils literal notranslate"><span class="pre">np.nanmean(data)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.geo_func.reproject.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.geo_func.reproject" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.geo_func.search_grids.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.geo_func.search_grids" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1360 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.plot_func.plot_map &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.plot_func.plot_map</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.plot_func.plot_map</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.plot_func.plot_map``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">..params_func.params_set</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..dpc_func.basin_grid_func</span> <span class="kn">import</span> <span class="n">createArray_from_gridshp</span>
+<span class="kn">from</span> <span class="nn">.plot_utilities</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">## ------------------------ plot map ------------------------</span>
+<div class="viewcode-block" id="plotBackground">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plotBackground">[docs]</a>
+<span class="k">def</span> <span class="nf">plotBackground</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">grid_shp</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the background for a given basin and grid shape.</span>
+
+<span class="sd">    This function plots the background for a given basin and grid shape on a figure</span>
+<span class="sd">    and axis. If no axis object is provided, a new figure and axis are created.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_shp : shapefile</span>
+<span class="sd">        The shapefile object containing basin boundaries.</span>
+<span class="sd">    grid_shp : shapefile</span>
+<span class="sd">        The shapefile object containing grid boundaries.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object to plot on (default is None, a new figure is created).</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object to plot on (default is None, a new axis is created).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object with the background plot.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object with the background plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plot_kwgs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">}</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plotBasins</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot_kwgs</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plotGrids</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plotGrids">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plotGrids">[docs]</a>
+<span class="k">def</span> <span class="nf">plotGrids</span><span class="p">(</span>
+    <span class="n">grid_shp</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_kwgs1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_kwgs2</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot grid shapes and point geometries on a given axis.</span>
+
+<span class="sd">    This function plots the grid shapes from the `grid_shp` object on the given `ax` (or creates a new</span>
+<span class="sd">    figure and axis if `ax` is not provided). Two sets of keyword arguments can be used to customize</span>
+<span class="sd">    the appearance of the grid shapes and the point geometries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        A GeoDataFrame containing the grid shapes and point geometries to be plotted.</span>
+<span class="sd">    column : str, optional</span>
+<span class="sd">        The column in `grid_shp` to use for coloring the grid shapes. If not provided, no coloring is applied.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure to plot on. If not provided, a new figure is created.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis to plot on. If not provided, a new axis is created.</span>
+<span class="sd">    plot_kwgs1 : dict, optional</span>
+<span class="sd">        A dictionary of keyword arguments for customizing the grid shape plot. Defaults to an empty dictionary.</span>
+<span class="sd">    plot_kwgs2 : dict, optional</span>
+<span class="sd">        A dictionary of keyword arguments for customizing the point geometry plot. Defaults to an empty dictionary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object with the grid shapes and point geometries plotted.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object with the grid shapes and point geometries plotted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plot_kwgs1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_kwgs1</span> <span class="k">else</span> <span class="n">plot_kwgs1</span>
+    <span class="n">plot_kwgs2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_kwgs2</span> <span class="k">else</span> <span class="n">plot_kwgs2</span>
+    <span class="n">plot_kwgs1_</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;gray&quot;</span><span class="p">}</span>
+    <span class="n">plot_kwgs2_</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markersize&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">plot_kwgs1_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_kwgs1</span><span class="p">)</span>
+    <span class="n">plot_kwgs2_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_kwgs2</span><span class="p">)</span>
+
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwgs1_</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwgs2_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plotBasins">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plotBasins">[docs]</a>
+<span class="k">def</span> <span class="nf">plotBasins</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_kwgs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot basin shapes on a given axis.</span>
+
+<span class="sd">    This function plots the basin shapes from the `basin_shp` object on the given `ax` (or creates a new</span>
+<span class="sd">    figure and axis if `ax` is not provided). Additional customization can be done using the `plot_kwgs`</span>
+<span class="sd">    dictionary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        A GeoDataFrame containing the basin shapes to be plotted.</span>
+<span class="sd">    column : str, optional</span>
+<span class="sd">        The column in `basin_shp` to use for coloring the basin shapes. If not provided, no coloring is applied.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure to plot on. If not provided, a new figure is created.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis to plot on. If not provided, a new axis is created.</span>
+<span class="sd">    plot_kwgs : dict, optional</span>
+<span class="sd">        A dictionary of keyword arguments for customizing the basin plot. Defaults to an empty dictionary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object with the basin shapes plotted.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object with the basin shapes plotted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plot_kwgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_kwgs</span> <span class="k">else</span> <span class="n">plot_kwgs</span>
+    <span class="n">plot_kwgs_</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;legend&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">plot_kwgs_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_kwgs</span><span class="p">)</span>
+    <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwgs_</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="setBoundary">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.setBoundary">[docs]</a>
+<span class="k">def</span> <span class="nf">setBoundary</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">,</span> <span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the boundary limits for the x and y axes.</span>
+
+<span class="sd">    This function adjusts the x and y axis limits of the provided axis object (`ax`) based on the</span>
+<span class="sd">    given boundary values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object to set the boundaries on.</span>
+<span class="sd">    boundary_x_min : float</span>
+<span class="sd">        The minimum value for the x-axis.</span>
+<span class="sd">    boundary_x_max : float</span>
+<span class="sd">        The maximum value for the x-axis.</span>
+<span class="sd">    boundary_y_min : float</span>
+<span class="sd">        The minimum value for the y-axis.</span>
+<span class="sd">    boundary_y_max : float</span>
+<span class="sd">        The maximum value for the y-axis.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object with the updated boundaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_basemap">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_basemap">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_basemap</span><span class="p">(</span>
+    <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">set_xyticks_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">x_locator_interval</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">y_locator_interval</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a basemap of the United States with customizable tick settings.</span>
+
+<span class="sd">    This function creates a map of the United States, including coastlines, rivers, lakes, and state</span>
+<span class="sd">    boundaries, and allows for customization of x and y axis ticks, including their interval and rotation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure to plot on. If not provided, a new figure is created.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis to plot on. If not provided, a new axis is created.</span>
+<span class="sd">    set_xyticks_bool : bool, optional</span>
+<span class="sd">        If True, sets the x and y axis ticks to a specified interval (default is True).</span>
+<span class="sd">    x_locator_interval : int, optional</span>
+<span class="sd">        The interval for the x-axis ticks (default is 15).</span>
+<span class="sd">    y_locator_interval : int, optional</span>
+<span class="sd">        The interval for the y-axis ticks (default is 10).</span>
+<span class="sd">    yticks_rotation : int, optional</span>
+<span class="sd">        The rotation angle for the y-axis ticks (default is 0).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object with the US basemap plotted.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object with the US basemap plotted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()</span>
+    <span class="c1"># extent = [-125, -66.5, 24.5, 50.5]</span>
+    <span class="c1"># extent = [-125, 24.5, -66.5, 50.5]</span>
+
+    <span class="c1"># get fig, ax</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
+
+    <span class="c1"># add background</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">COASTLINE</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s2">&quot;50m&quot;</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">LAND</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">OCEAN</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span>
+        <span class="n">cfeature</span><span class="o">.</span><span class="n">RIVERS</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s2">&quot;50m&quot;</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span>
+        <span class="n">cfeature</span><span class="o">.</span><span class="n">LAKES</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s2">&quot;50m&quot;</span><span class="p">),</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">STATES</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># set ticks</span>
+    <span class="k">if</span> <span class="n">set_xyticks_bool</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+        <span class="n">set_xyticks</span><span class="p">(</span>
+            <span class="n">ax</span><span class="p">,</span>
+            <span class="n">x_locator_interval</span><span class="o">=</span><span class="n">x_locator_interval</span><span class="p">,</span>
+            <span class="n">y_locator_interval</span><span class="o">=</span><span class="n">y_locator_interval</span><span class="p">,</span>
+            <span class="n">yticks_rotation</span><span class="o">=</span><span class="n">yticks_rotation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># set boundary</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">extent</span><span class="p">)</span>  <span class="c1"># or ax.set_extent(extent, crs=proj)</span>
+
+    <span class="c1"># # set gridliner, use this may lead to different sizes between xticks and yticks</span>
+    <span class="c1"># gridliner = ax.gridlines(crs=proj, draw_labels=True)  # , linewidth=2, color=&#39;gray&#39;, alpha=0.5, linestyle=&#39;--&#39;</span>
+    <span class="c1"># gridliner.top_labels = False</span>
+    <span class="c1"># gridliner.right_labels = False</span>
+    <span class="c1"># gridliner.xlines = False</span>
+    <span class="c1"># gridliner.ylines = False</span>
+    <span class="c1"># gridliner.xformatter = LongitudeFormatter()</span>
+    <span class="c1"># gridliner.yformatter = LatitudeFormatter()</span>
+    <span class="c1"># gridliner.xlabel_style = {&#39;size&#39;: 12, &#39;color&#39;: &#39;k&#39;}</span>
+    <span class="c1"># gridliner.xlabel_style = {&#39;size&#39;: 12, &#39;color&#39;: &#39;k&#39;}</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_selected_map">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_selected_map">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_selected_map</span><span class="p">(</span>
+    <span class="n">basin_index</span><span class="p">,</span>
+    <span class="n">dpc</span><span class="p">,</span>
+    <span class="n">text_name</span><span class="o">=</span><span class="s2">&quot;basin_index&quot;</span><span class="p">,</span>
+    <span class="n">plot_solely</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_kwgs_set</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot selected basins on a map and optionally annotate and plot basins individually.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_index : list</span>
+<span class="sd">        List of basin indices to be plotted.</span>
+<span class="sd">    dpc : object</span>
+<span class="sd">        Data processing class instance containing the basin shapefile and related data.</span>
+<span class="sd">    text_name : str, optional</span>
+<span class="sd">        The type of text annotation to plot. Defaults to &quot;basin_index&quot;.</span>
+<span class="sd">    plot_solely : bool, optional</span>
+<span class="sd">        Whether to plot each selected basin separately. Defaults to True.</span>
+<span class="sd">    column : str, optional</span>
+<span class="sd">        The column name from the shapefile to be used for coloring. Defaults to None.</span>
+<span class="sd">    plot_kwgs_set : dict, optional</span>
+<span class="sd">        Additional keyword arguments to customize the plot (e.g., color map). Defaults to an empty dictionary.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object containing the plot.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the plot.</span>
+<span class="sd">    fig_solely : dict or None</span>
+<span class="sd">        A dictionary of figures and axes for each basin if `plot_solely` is True, otherwise None.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The function uses a PlateCarree projection for the map.</span>
+<span class="sd">    - The function can annotate each basin with its `basin_index` or other attributes (e.g., `hru_id` or `gauge_id`).</span>
+<span class="sd">    - The basins are plotted using the `plotBasins` function.</span>
+
+<span class="sd">    Usages:</span>
+<span class="sd">    -----</span>
+<span class="sd">    fig, ax, fig_solely = plot_selected_map(basin_shp_area_excluding.index.to_list(), # [0, 1, 2]</span>
+<span class="sd">                                        dpc,</span>
+<span class="sd">                                        text_name=&quot;basin_index&quot;,  # &quot;basin_index&quot;, None,</span>
+<span class="sd">                                        plot_solely=False,</span>
+<span class="sd">                                        column=None,  # &quot;camels_clim:aridity&quot;,  # None</span>
+<span class="sd">                                        plot_kwgs_set=dict()) # {&quot;cmap&quot;: plt.cm.hot})  # dict()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># background</span>
+    <span class="n">proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="mf">24.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">66.5</span><span class="p">,</span> <span class="mf">50.5</span><span class="p">]</span>  <span class="c1"># [-125, -66.5, 24.5, 50.5]</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fig</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">COASTLINE</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s2">&quot;50m&quot;</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">LAND</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">OCEAN</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span>
+            <span class="n">cfeature</span><span class="o">.</span><span class="n">RIVERS</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s2">&quot;50m&quot;</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span>
+            <span class="n">cfeature</span><span class="o">.</span><span class="n">LAKES</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s2">&quot;50m&quot;</span><span class="p">),</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
+
+    <span class="c1"># plot</span>
+    <span class="n">plot_kwgs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;linewidth&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
+    <span class="n">plot_kwgs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plot_kwgs_set</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">basin_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plotBasins</span><span class="p">(</span>
+            <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basin_index</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">proj</span><span class="p">),</span>
+            <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">plot_kwgs</span><span class="o">=</span><span class="n">plot_kwgs</span><span class="p">,</span>
+            <span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">basin_index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plotBasins</span><span class="p">(</span>
+            <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">basin_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basin_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">proj</span><span class="p">),</span>
+            <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">plot_kwgs</span><span class="o">=</span><span class="n">plot_kwgs</span><span class="p">,</span>
+            <span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="c1"># annotation</span>
+    <span class="k">if</span> <span class="n">text_name</span><span class="p">:</span>  <span class="c1"># None means not to plot text</span>
+        <span class="n">basinLatCens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;lat_cen&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">basin_index</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">basinLonCens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;lon_cen&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">basin_index</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">basinLatCens</span><span class="p">)):</span>
+            <span class="n">basinLatCen</span> <span class="o">=</span> <span class="n">basinLatCens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">basinLonCen</span> <span class="o">=</span> <span class="n">basinLonCens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">text_names_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;basin_index&quot;</span><span class="p">:</span> <span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="s2">&quot;hru_id&quot;</span><span class="p">:</span> <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;hru_id&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;gauge_id&quot;</span><span class="p">:</span> <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;camels_hydro:gauge_id&quot;</span><span class="p">],</span>
+            <span class="p">}</span>
+
+            <span class="n">text_name_plot</span> <span class="o">=</span> <span class="n">text_names_dict</span><span class="p">[</span><span class="n">text_name</span><span class="p">]</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                <span class="n">basinLonCen</span><span class="p">,</span>
+                <span class="n">basinLatCen</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text_name_plot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">proj</span><span class="p">,</span>
+                <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Arial&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+
+    <span class="c1"># plot solely</span>
+    <span class="n">fig_solely</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">plot_solely</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">basin_index</span><span class="p">)):</span>
+            <span class="n">fig_</span><span class="p">,</span> <span class="n">ax_</span> <span class="o">=</span> <span class="n">plotBasins</span><span class="p">(</span>
+                <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">proj</span><span class="p">),</span>
+                <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">plot_kwgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">fig_solely</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fig&quot;</span><span class="p">:</span> <span class="n">fig_</span><span class="p">,</span> <span class="s2">&quot;ax&quot;</span><span class="p">:</span> <span class="n">ax_</span><span class="p">}</span>
+
+            <span class="n">text_names_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;basin_index&quot;</span><span class="p">:</span> <span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="s2">&quot;hru_id&quot;</span><span class="p">:</span> <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;hru_id&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;gauge_id&quot;</span><span class="p">:</span> <span class="n">dpc</span><span class="o">.</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basin_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;camels_hydro:gauge_id&quot;</span><span class="p">],</span>
+            <span class="p">}</span>
+            <span class="n">text_name_plot</span> <span class="o">=</span> <span class="n">text_names_dict</span><span class="p">[</span><span class="n">text_name</span><span class="p">]</span>
+
+            <span class="n">ax_</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">text_name_plot</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig_solely</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">fig_solely</span></div>
+
+
+
+<div class="viewcode-block" id="plotShp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plotShp">[docs]</a>
+<span class="k">def</span> <span class="nf">plotShp</span><span class="p">(</span>
+    <span class="n">basinShp_original</span><span class="p">,</span>
+    <span class="n">basinShp</span><span class="p">,</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">intersects_grids</span><span class="p">,</span>
+    <span class="n">boundary_x_min</span><span class="p">,</span>
+    <span class="n">boundary_x_max</span><span class="p">,</span>
+    <span class="n">boundary_y_min</span><span class="p">,</span>
+    <span class="n">boundary_y_max</span><span class="p">,</span>
+    <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot shapefiles of basins, grids, and intersecting grids on a map with specified boundaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basinShp_original : geopandas.GeoDataFrame</span>
+<span class="sd">        Original basin shapefile to be plotted with an outline.</span>
+<span class="sd">    basinShp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin shapefile to be plotted on top of the original basin shapefile.</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid shapefile containing the geometry and point geometry to be plotted.</span>
+<span class="sd">    intersects_grids : geopandas.GeoDataFrame</span>
+<span class="sd">        Shapefile representing the intersection of grids to be plotted.</span>
+<span class="sd">    boundary_x_min : float</span>
+<span class="sd">        Minimum x-coordinate (longitude) for the plot boundary.</span>
+<span class="sd">    boundary_x_max : float</span>
+<span class="sd">        Maximum x-coordinate (longitude) for the plot boundary.</span>
+<span class="sd">    boundary_y_min : float</span>
+<span class="sd">        Minimum y-coordinate (latitude) for the plot boundary.</span>
+<span class="sd">    boundary_y_max : float</span>
+<span class="sd">        Maximum y-coordinate (latitude) for the plot boundary.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object containing the plot.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the plot.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The plot includes multiple layers: original basin, basin, grid geometry, grid points, and intersecting grids.</span>
+<span class="sd">    - The boundaries of the plot are set using the provided min and max x and y coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">basinShp_original</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">basinShp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+    <span class="n">intersects_grids</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plotLandCover">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plotLandCover">[docs]</a>
+<span class="k">def</span> <span class="nf">plotLandCover</span><span class="p">(</span>
+    <span class="n">basinShp_original</span><span class="p">,</span>
+    <span class="n">basinShp</span><span class="p">,</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">intersects_grids</span><span class="p">,</span>
+    <span class="n">boundary_x_min</span><span class="p">,</span>
+    <span class="n">boundary_x_max</span><span class="p">,</span>
+    <span class="n">boundary_y_min</span><span class="p">,</span>
+    <span class="n">boundary_y_max</span><span class="p">,</span>
+    <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot land cover data along with basin, grid, and intersection information on a map.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basinShp_original : geopandas.GeoDataFrame</span>
+<span class="sd">        Original basin shapefile to be plotted with an outline.</span>
+<span class="sd">    basinShp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin shapefile to be plotted on top of the original basin shapefile.</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid shapefile containing land cover classification data.</span>
+<span class="sd">    intersects_grids : geopandas.GeoDataFrame</span>
+<span class="sd">        Shapefile representing the intersection of grids to be plotted.</span>
+<span class="sd">    boundary_x_min : float</span>
+<span class="sd">        Minimum x-coordinate (longitude) for the plot boundary.</span>
+<span class="sd">    boundary_x_max : float</span>
+<span class="sd">        Maximum x-coordinate (longitude) for the plot boundary.</span>
+<span class="sd">    boundary_y_min : float</span>
+<span class="sd">        Minimum y-coordinate (latitude) for the plot boundary.</span>
+<span class="sd">    boundary_y_max : float</span>
+<span class="sd">        Maximum y-coordinate (latitude) for the plot boundary.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object containing the plot.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the plot.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The plot includes multiple layers: original basin, basin, grid land cover classification,</span>
+<span class="sd">      and intersecting grids.</span>
+<span class="sd">    - A color map is applied to the land cover classification with corresponding ticks in the legend.</span>
+<span class="sd">    - The boundaries of the plot are set using the provided min and max x and y coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">colorlevel</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">)]</span>
+    <span class="n">colordict</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">colordict</span> <span class="o">=</span> <span class="n">colordict</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">))</span>
+    <span class="n">ticks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">))</span>
+    <span class="n">ticks_position</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">))</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">colordict</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">colorlevel</span><span class="p">,</span> <span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">basinShp_original</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">basinShp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">column</span><span class="o">=</span><span class="s2">&quot;major_umd_landcover_classification_grids&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">colormap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;major_umd_landcover_classification_grids&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">intersects_grids</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">])</span>
+
+    <span class="n">ax_cb</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">ax_cb</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">ticks_position</span><span class="p">)</span>
+    <span class="n">ax_cb</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plotHWSDSoilData">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plotHWSDSoilData">[docs]</a>
+<span class="k">def</span> <span class="nf">plotHWSDSoilData</span><span class="p">(</span>
+    <span class="n">basinShp_original</span><span class="p">,</span>
+    <span class="n">basinShp</span><span class="p">,</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">intersects_grids</span><span class="p">,</span>
+    <span class="n">boundary_x_min</span><span class="p">,</span>
+    <span class="n">boundary_x_max</span><span class="p">,</span>
+    <span class="n">boundary_y_min</span><span class="p">,</span>
+    <span class="n">boundary_y_max</span><span class="p">,</span>
+    <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fig_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fig_S</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax_S</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot soil data from HWSD, USDA texture classes, and basin information on multiple maps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basinShp_original : geopandas.GeoDataFrame</span>
+<span class="sd">        Original basin shapefile to be plotted with an outline.</span>
+<span class="sd">    basinShp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin shapefile to be plotted on top of the original basin shapefile.</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid shapefile containing soil data including HWSD and USDA texture classes.</span>
+<span class="sd">    intersects_grids : geopandas.GeoDataFrame</span>
+<span class="sd">        Shapefile representing the intersection of grids to be plotted.</span>
+<span class="sd">    boundary_x_min : float</span>
+<span class="sd">        Minimum x-coordinate (longitude) for the plot boundary.</span>
+<span class="sd">    boundary_x_max : float</span>
+<span class="sd">        Maximum x-coordinate (longitude) for the plot boundary.</span>
+<span class="sd">    boundary_y_min : float</span>
+<span class="sd">        Minimum y-coordinate (latitude) for the plot boundary.</span>
+<span class="sd">    boundary_y_max : float</span>
+<span class="sd">        Maximum y-coordinate (latitude) for the plot boundary.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</span>
+<span class="sd">    fig_T : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object for T_USDA_TEX_CLASS plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax_T : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object for T_USDA_TEX_CLASS plot. If None, a new axis will be created. Defaults to None.</span>
+<span class="sd">    fig_S : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object for S_USDA_TEX_CLASS plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax_S : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object for S_USDA_TEX_CLASS plot. If None, a new axis will be created. Defaults to None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object containing the main plot.</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the main plot.</span>
+<span class="sd">    fig_S : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object containing the S_USDA_TEX_CLASS plot.</span>
+<span class="sd">    ax_S : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the S_USDA_TEX_CLASS plot.</span>
+<span class="sd">    fig_T : matplotlib.figure.Figure</span>
+<span class="sd">        The figure object containing the T_USDA_TEX_CLASS plot.</span>
+<span class="sd">    ax_T : matplotlib.axes.Axes</span>
+<span class="sd">        The axis object containing the T_USDA_TEX_CLASS plot.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Three different maps are created for HWSD soil data, T_USDA_TEX_CLASS, and S_USDA_TEX_CLASS.</span>
+<span class="sd">    - Each map is plotted with the corresponding soil classification data overlaid on the basin and grid shapefiles.</span>
+<span class="sd">    - The boundaries of the plots are set using the provided min and max x and y coordinates.</span>
+<span class="sd">    - Legends for each map are created with the respective soil classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">basinShp_original</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">basinShp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">column</span><span class="o">=</span><span class="s2">&quot;HWSD_BIL_Value&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span>
+        <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;HWSD_BIL_Value&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">intersects_grids</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">])</span>
+
+    <span class="c1"># T_USDA_TEX_CLASS</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax_T</span><span class="p">:</span>
+        <span class="n">fig_T</span><span class="p">,</span> <span class="n">ax_T</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">basinShp_original</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_T</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">basinShp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_T</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax_T</span><span class="p">,</span>
+        <span class="n">column</span><span class="o">=</span><span class="s2">&quot;T_USDA_TEX_CLASS&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span>
+        <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;T_USDA_TEX_CLASS&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">intersects_grids</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_T</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax_T</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">])</span>
+    <span class="n">ax_T</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">])</span>
+
+    <span class="c1"># S_USDA_TEX_CLASS</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax_S</span><span class="p">:</span>
+        <span class="n">fig_S</span><span class="p">,</span> <span class="n">ax_S</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">basinShp_original</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_S</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">basinShp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_S</span><span class="p">)</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax_S</span><span class="p">,</span>
+        <span class="n">column</span><span class="o">=</span><span class="s2">&quot;S_USDA_TEX_CLASS&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span>
+        <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;S_USDA_TEX_CLASS&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">intersects_grids</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_S</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax_S</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">])</span>
+    <span class="n">ax_S</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">fig_S</span><span class="p">,</span> <span class="n">ax_S</span><span class="p">,</span> <span class="n">fig_T</span><span class="p">,</span> <span class="n">ax_T</span></div>
+
+
+
+
+<div class="viewcode-block" id="plot_Basin_map">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_Basin_map">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_Basin_map</span><span class="p">(</span>
+    <span class="n">dpc_VIC_level0</span><span class="p">,</span>
+    <span class="n">dpc_VIC_level1</span><span class="p">,</span>
+    <span class="n">dpc_VIC_level2</span><span class="p">,</span>
+    <span class="n">stream_gdf</span><span class="p">,</span>
+    <span class="n">gauge_coord</span><span class="p">,</span>
+    <span class="n">x_locator_interval</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">y_locator_interval</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dem_column</span><span class="o">=</span><span class="s2">&quot;SrtmDEM_mean_Value&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the basin map including elevation, basin boundary, river network, and gauge location.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dpc_VIC_level0 : object</span>
+<span class="sd">        A VIC model object at level 0 containing grid and basin shapefiles.</span>
+<span class="sd">    dpc_VIC_level1 : object</span>
+<span class="sd">        A VIC model object at level 1 containing grid and basin shapefiles.</span>
+<span class="sd">    dpc_VIC_level2 : object</span>
+<span class="sd">        A VIC model object at level 2 containing grid and basin shapefiles.</span>
+<span class="sd">    stream_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">        A GeoDataFrame containing the river network to be plotted.</span>
+<span class="sd">    gauge_coord: [lon, lat]</span>
+<span class="sd">    x_locator_interval : float, optional</span>
+<span class="sd">        The interval for x-axis ticks. Defaults to 0.3.</span>
+<span class="sd">    y_locator_interval : float, optional</span>
+<span class="sd">        The interval for y-axis ticks. Defaults to 0.2.</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig_dict : dict</span>
+<span class="sd">        A dictionary containing the figure objects for the basin map and grid basins.</span>
+<span class="sd">    ax_dict : dict</span>
+<span class="sd">        A dictionary containing the axis objects for the basin map and grid basins.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The function plots the basin map with layers including the DEM (elevation),</span>
+<span class="sd">      basin boundary, river network, and gauge location.</span>
+<span class="sd">    - It also generates plots for different grid levels (level 0, 1, and 2) of the VIC model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># =========== plot Basin_map ===========</span>
+    <span class="c1"># get fig, ax</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig_Basin_map</span><span class="p">,</span> <span class="n">ax_Basin_map</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># get data</span>
+    <span class="n">basin_shp_level0</span> <span class="o">=</span> <span class="n">dpc_VIC_level0</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">grid_shp_level0</span> <span class="o">=</span> <span class="n">dpc_VIC_level0</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">basin_shp_level1</span> <span class="o">=</span> <span class="n">dpc_VIC_level1</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">grid_shp_level1</span> <span class="o">=</span> <span class="n">dpc_VIC_level1</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">basin_shp_level2</span> <span class="o">=</span> <span class="n">dpc_VIC_level2</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">grid_shp_level2</span> <span class="o">=</span> <span class="n">dpc_VIC_level2</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;grid_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># plot dem at level0</span>
+    <span class="n">dpc_VIC_level0</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;dem&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax_Basin_map</span><span class="p">,</span>
+        <span class="n">column</span><span class="o">=</span><span class="n">dem_column</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;terrain&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Elevation (m)&quot;</span><span class="p">},</span>
+    <span class="p">)</span>  <span class="c1"># terrain gray</span>
+    
+    <span class="c1"># plot basin boundary</span>
+    <span class="n">basin_shp_level0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax_Basin_map</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span>
+    <span class="p">)</span>
+    <span class="n">basin_shp_level0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_Basin_map</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># plot river</span>
+    <span class="n">stream_gdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax_Basin_map</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        
+    <span class="c1"># plot gauge</span>
+    <span class="n">ax_Basin_map</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">gauge_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gauge_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;r*&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span>
+    <span class="p">)</span>  <span class="c1"># gauge_coord[lon, lat]</span>
+
+    <span class="c1"># set plot boundary and ticks</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax_Basin_map</span><span class="p">,</span> <span class="n">grid_shp_level0</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax_Basin_map</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="p">)</span>
+
+    <span class="c1"># =========== plot grid basin ===========</span>
+    <span class="n">fig_grid_basin_level0</span><span class="p">,</span> <span class="n">ax_grid_basin_level0</span> <span class="o">=</span> <span class="n">dpc_VIC_level0</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">fig_grid_basin_level1</span><span class="p">,</span> <span class="n">ax_grid_basin_level1</span> <span class="o">=</span> <span class="n">dpc_VIC_level1</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">fig_grid_basin_level2</span><span class="p">,</span> <span class="n">ax_grid_basin_level2</span> <span class="o">=</span> <span class="n">dpc_VIC_level2</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax_grid_basin_level0</span><span class="p">,</span> <span class="n">grid_shp_level0</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax_grid_basin_level1</span><span class="p">,</span> <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax_grid_basin_level2</span><span class="p">,</span> <span class="n">grid_shp_level2</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax_grid_basin_level0</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="p">)</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax_grid_basin_level1</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="p">)</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax_grid_basin_level2</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="p">)</span>
+
+    <span class="c1"># =========== store ===========</span>
+    <span class="n">fig_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fig_Basin_map&quot;</span><span class="p">:</span> <span class="n">fig_Basin_map</span><span class="p">,</span>
+        <span class="s2">&quot;fig_grid_basin_level0&quot;</span><span class="p">:</span> <span class="n">fig_grid_basin_level0</span><span class="p">,</span>
+        <span class="s2">&quot;fig_grid_basin_level1&quot;</span><span class="p">:</span> <span class="n">fig_grid_basin_level1</span><span class="p">,</span>
+        <span class="s2">&quot;fig_grid_basin_level2&quot;</span><span class="p">:</span> <span class="n">fig_grid_basin_level2</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">ax_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ax_Basin_map&quot;</span><span class="p">:</span> <span class="n">ax_Basin_map</span><span class="p">,</span>
+        <span class="s2">&quot;ax_grid_basin_level0&quot;</span><span class="p">:</span> <span class="n">ax_grid_basin_level0</span><span class="p">,</span>
+        <span class="s2">&quot;ax_grid_basin_level1&quot;</span><span class="p">:</span> <span class="n">ax_grid_basin_level1</span><span class="p">,</span>
+        <span class="s2">&quot;ax_grid_basin_level2&quot;</span><span class="p">:</span> <span class="n">ax_grid_basin_level2</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">fig_dict</span><span class="p">,</span> <span class="n">ax_dict</span></div>
+
+
+
+<div class="viewcode-block" id="plot_basin_map_combine">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_basin_map_combine">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_basin_map_combine</span><span class="p">(</span>
+    <span class="n">evb_dir</span><span class="p">,</span>
+    <span class="n">evb_dir_hydroanalysis</span><span class="p">,</span>
+    <span class="n">dpc_VIC_level0</span><span class="p">,</span>
+    <span class="n">dpc_VIC_level1</span><span class="p">,</span>
+    <span class="n">dpc_VIC_level3</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="n">grid_kwarg</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mf">0.06</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mf">0.98</span><span class="p">,</span> <span class="s2">&quot;hspace&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;wspace&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">},</span>
+    <span class="n">ax1_box_aspect_factor</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">x_locator_interval_landsurface</span><span class="o">=</span><span class="mf">0.47</span><span class="p">,</span> <span class="n">y_locator_interval_landsurface</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">x_locator_interval_grid</span><span class="o">=</span><span class="mf">0.24</span><span class="p">,</span> <span class="n">y_locator_interval_grid</span><span class="o">=</span><span class="mf">0.3</span>
+<span class="p">):</span>  
+    <span class="n">dpc_VIC_level0</span><span class="o">.</span><span class="n">merge_grid_data</span><span class="p">()</span>
+    <span class="n">grid_shp_level0</span> <span class="o">=</span> <span class="n">dpc_VIC_level0</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;merged_grid_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">dpc_VIC_level1</span><span class="o">.</span><span class="n">merge_grid_data</span><span class="p">()</span>
+    <span class="n">grid_shp_level1</span> <span class="o">=</span> <span class="n">dpc_VIC_level1</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;merged_grid_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">basin_shp</span> <span class="o">=</span> <span class="n">dpc_VIC_level3</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;basin_shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">stream_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">evb_dir_hydroanalysis</span><span class="o">.</span><span class="n">Hydroanalysis_dir</span><span class="p">,</span>
+        <span class="s2">&quot;wbw_working_directory_level0&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;stream_raster_clip_vector.shp&quot;</span>
+    <span class="p">))</span>
+    
+    <span class="n">basin_attribute</span> <span class="o">=</span> <span class="n">dpc_VIC_level3</span><span class="o">.</span><span class="n">get_data_from_cache</span><span class="p">(</span><span class="s2">&quot;basin_attribute&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">basin_center_coord</span> <span class="o">=</span> <span class="p">[</span><span class="n">basin_attribute</span><span class="o">.</span><span class="n">lon_cen</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basin_attribute</span><span class="o">.</span><span class="n">lat_cen</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># [lon, lat]</span>
+    <span class="n">gauge_lon</span> <span class="o">=</span> <span class="n">basin_attribute</span><span class="p">[</span><span class="s2">&quot;camels_topo:gauge_lon&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">gauge_lat</span> <span class="o">=</span> <span class="n">basin_attribute</span><span class="p">[</span><span class="s2">&quot;camels_topo:gauge_lat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># plot</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="o">**</span><span class="n">grid_kwarg</span><span class="p">)</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">projection</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+    
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:])</span>
+    <span class="n">ax4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax5</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    
+    <span class="c1"># plot US</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plot_basemap</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">set_xyticks_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">basin_center_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basin_center_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;r*&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>  <span class="c1"># location</span>
+    <span class="n">zoom_center</span><span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">basin_center_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basin_center_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">zoom_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">set_ax_box_aspect</span><span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax1_box_aspect_factor</span><span class="p">)</span>
+    <span class="c1"># ax1.set_aspect(&#39;equal&#39;, adjustable=&#39;datalim&#39;)</span>
+    
+    <span class="c1"># plot dem</span>
+    <span class="n">grid_shp_level0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;SrtmDEM_mean_Value&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;terrain&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Elevation (m)&quot;</span><span class="p">})</span>  <span class="c1"># terrain gray</span>
+    <span class="c1"># grid_shp_level0.plot(ax=ax2, facecolor=&quot;none&quot;, linewidth=0.1, alpha=1, edgecolor=&quot;k&quot;, zorder=2)</span>
+    <span class="c1"># grid_shp_level0.plot(ax=ax2, facecolor=&quot;k&quot;, alpha=0.2, zorder=3)</span>
+    <span class="n">stream_gdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gauge_lon</span><span class="p">,</span> <span class="n">gauge_lat</span><span class="p">,</span> <span class="s2">&quot;r^&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># fig, ax2 = dpc_VIC_level1.plot(fig, ax2, basin_shp_kwargs={&quot;edgecolor&quot;: &quot;k&quot;, &quot;alpha&quot;: 0.1, &quot;facecolor&quot;: &quot;b&quot;})  # grid</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax2</span><span class="p">,</span> <span class="n">grid_shp_level0</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax2</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="o">=</span><span class="n">x_locator_interval_landsurface</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="o">=</span><span class="n">y_locator_interval_landsurface</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    
+    <span class="c1"># plot grid</span>
+    <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;darkblue&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>        
+    <span class="c1"># fig, ax3 = grid_shp_level1.plot(fig, ax3)</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax3</span><span class="p">,</span> <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax3</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="o">=</span><span class="n">x_locator_interval_grid</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="o">=</span><span class="n">y_locator_interval_grid</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    
+    <span class="c1"># plot LULC</span>
+    <span class="n">UMD_LULC_cmap</span><span class="p">,</span> <span class="n">UMD_LULC_norm</span><span class="p">,</span> <span class="n">UMD_LULC_ticks</span><span class="p">,</span> <span class="n">UMD_LULC_ticks_position</span><span class="p">,</span> <span class="n">UMD_LULC_colorlist</span><span class="p">,</span> <span class="n">UMD_LULC_colorlevel</span> <span class="o">=</span> <span class="n">get_UMD_LULC_cmap</span><span class="p">()</span>
+    <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax4</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;umd_lc_major_Value&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="n">UMD_LULC_cmap</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">UMD_LULC_norm</span><span class="p">,</span>
+                                 <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;UMD LULC&quot;</span><span class="p">})</span>  <span class="c1"># terrain gray</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax4</span><span class="p">,</span> <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax4</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="o">=</span><span class="n">x_locator_interval_landsurface</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="o">=</span><span class="n">y_locator_interval_landsurface</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    
+    <span class="c1"># plot Veg</span>
+    <span class="n">ndvi_cmap</span> <span class="o">=</span> <span class="n">get_NDVI_cmap</span><span class="p">()</span>
+    <span class="n">grid_shp_level1</span><span class="p">[</span><span class="s2">&quot;MODIS_NDVI_mean_Value_month7_scaled&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp_level1</span><span class="p">[</span><span class="s2">&quot;MODIS_NDVI_mean_Value_month7&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.0001</span> <span class="o">*</span> <span class="mf">0.0001</span>
+    <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax5</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s2">&quot;MODIS_NDVI_mean_Value_month7_scaled&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="n">ndvi_cmap</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;NDVI&quot;</span><span class="p">},</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Greens</span>
+    <span class="n">set_boundary</span><span class="p">(</span><span class="n">ax5</span><span class="p">,</span> <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">set_xyticks</span><span class="p">(</span><span class="n">ax5</span><span class="p">,</span> <span class="n">x_locator_interval</span><span class="o">=</span><span class="n">x_locator_interval_landsurface</span><span class="p">,</span> <span class="n">y_locator_interval</span><span class="o">=</span><span class="n">y_locator_interval_landsurface</span><span class="p">,</span> <span class="n">yticks_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    
+    <span class="c1"># ------------ plot colorbar ------------</span>
+    <span class="c1"># dem cb</span>
+    <span class="n">dem_values</span> <span class="o">=</span> <span class="n">grid_shp_level0</span><span class="p">[</span><span class="s2">&quot;SrtmDEM_mean_Value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">dem_vmin</span> <span class="o">=</span> <span class="n">dem_values</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">dem_vmax</span> <span class="o">=</span> <span class="n">dem_values</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">dem_cmap</span> <span class="o">=</span> <span class="s2">&quot;terrain&quot;</span>
+    <span class="n">fig_dem_cb</span><span class="p">,</span> <span class="n">ax_dem_cb</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_colorbar</span><span class="p">(</span><span class="n">dem_vmin</span><span class="p">,</span> <span class="n">dem_vmax</span><span class="p">,</span> <span class="n">dem_cmap</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">subplots_adjust</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">cb_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">cb_label_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">cb_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span><span class="s2">&quot;vertical&quot;</span><span class="p">})</span>
+    
+    <span class="c1"># lulc cb</span>
+    <span class="n">lulc_vmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+    <span class="n">lulc_vmax</span> <span class="o">=</span> <span class="mf">13.5</span>
+    <span class="n">lulc_cmap</span> <span class="o">=</span> <span class="n">UMD_LULC_cmap</span>
+    <span class="n">fig_lulc_cb</span><span class="p">,</span> <span class="n">ax_lulc_cb</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_colorbar</span><span class="p">(</span><span class="n">lulc_vmin</span><span class="p">,</span> <span class="n">lulc_vmax</span><span class="p">,</span> <span class="n">lulc_cmap</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">subplots_adjust</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">cb_label</span><span class="o">=</span><span class="s2">&quot;UMD LULC Classification&quot;</span><span class="p">,</span> <span class="n">cb_label_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">cb_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;ticks&quot;</span><span class="p">:</span> <span class="n">UMD_LULC_ticks_position</span><span class="p">})</span>
+    
+    <span class="c1"># NDVI cb</span>
+    <span class="n">ndvi_vmin</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ndvi_vmax</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ndvi_cmap</span> <span class="o">=</span> <span class="n">ndvi_cmap</span>
+    <span class="n">fig_ndvi_cb</span><span class="p">,</span> <span class="n">ax_ndvi_cb</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_colorbar</span><span class="p">(</span><span class="n">ndvi_vmin</span><span class="p">,</span> <span class="n">ndvi_vmax</span><span class="p">,</span> <span class="n">ndvi_cmap</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">subplots_adjust</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">cb_label</span><span class="o">=</span><span class="s2">&quot;NDVI&quot;</span><span class="p">,</span> <span class="n">cb_label_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">cb_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span><span class="s2">&quot;horizontal&quot;</span><span class="p">})</span>
+    
+    <span class="c1"># ------------ save fig ------------</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">BasinMap_dir</span><span class="p">,</span> <span class="s2">&quot;fig_Basin_map_combine.tiff&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">fig_dem_cb</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">BasinMap_dir</span><span class="p">,</span> <span class="s2">&quot;fig_dem_cb.svg&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">fig_lulc_cb</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">BasinMap_dir</span><span class="p">,</span> <span class="s2">&quot;fig_lulc_cb.svg&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">fig_ndvi_cb</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">BasinMap_dir</span><span class="p">,</span> <span class="s2">&quot;fig_ndvi_cb.svg&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_river_network">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_river_network">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_river_network</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">river_paths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">mask_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labeled_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+    <span class="kn">from</span> <span class="nn">..routing_func.river_network</span> <span class="kn">import</span> <span class="n">get_display_positions</span>
+    
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    
+    <span class="c1"># plot set</span>
+    <span class="n">color_scheme</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;river_node&#39;</span><span class="p">:</span> <span class="s1">&#39;#fde725&#39;</span><span class="p">,</span> <span class="c1"># &#39;#440154&#39;,</span>
+        <span class="s1">&#39;hillslope_node&#39;</span><span class="p">:</span> <span class="s1">&#39;#9E9E9E&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;sink_node&#39;</span><span class="p">:</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;river_edge&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;normal_edge&#39;</span><span class="p">:</span> <span class="s1">&#39;#E0E0E0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;background&#39;</span><span class="p">:</span> <span class="s1">&#39;#F8F8F8&#39;</span>
+    <span class="p">}</span>
+
+    <span class="n">basic_node_size</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">basic_edge_width</span> <span class="o">=</span> <span class="mf">0.8</span>
+    
+    <span class="c1"># background</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">])</span>
+    
+    <span class="c1">#* pos</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">get_display_positions</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pos</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no pos founded, using spring layout&quot;</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    
+    <span class="c1"># nodes</span>
+    <span class="n">all_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">mask_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">all_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">all_nodes</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">river_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">all_nodes</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;node_type&quot;</span><span class="p">,</span> <span class="s2">&quot;hillslope&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;river&quot;</span><span class="p">]</span>
+    <span class="n">hillslope_sink_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">all_nodes</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">river_nodes</span><span class="p">]</span>
+    
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span>
+        <span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">hillslope_sink_nodes</span><span class="p">,</span> 
+        <span class="n">node_color</span><span class="o">=</span><span class="p">[</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;hillslope_node&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;node_type&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;sink&#39;</span> <span class="k">else</span> <span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;sink_node&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">hillslope_sink_nodes</span><span class="p">],</span>
+        <span class="n">node_size</span><span class="o">=</span><span class="p">[</span><span class="n">basic_node_size</span><span class="o">-</span><span class="mi">30</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;node_type&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;sink&#39;</span> <span class="k">else</span> <span class="n">basic_node_size</span><span class="o">+</span><span class="mi">30</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">hillslope_sink_nodes</span><span class="p">],</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+    <span class="p">)</span>
+    
+    <span class="n">river_nodes_cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis_r</span>
+    <span class="n">original_acc_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;flow_acc&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">river_nodes</span><span class="p">]</span>
+    <span class="n">log_acc_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">original_acc_values</span><span class="p">)</span>
+    <span class="n">river_nodes_norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">))</span>
+    <span class="n">vmin_adjusted</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">))</span>
+    <span class="n">river_nodes_norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin_adjusted</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">))</span>
+    
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span>
+        <span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">river_nodes</span><span class="p">,</span>
+        <span class="n">node_color</span><span class="o">=</span><span class="n">river_nodes_cmap</span><span class="p">(</span><span class="n">river_nodes_norm</span><span class="p">(</span><span class="n">log_acc_values</span><span class="p">)),</span>
+        <span class="n">node_size</span><span class="o">=</span><span class="p">[</span><span class="n">basic_node_size</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;flow_acc&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">river_nodes</span><span class="p">],</span>
+        <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;darkblue&#39;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+    <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">labeled_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labeled_nodes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">labeled_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">labeled_nodes</span><span class="p">]</span>
+        
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span>
+            <span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">labeled_nodes</span><span class="p">,</span>
+            <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+            <span class="n">node_shape</span><span class="o">=</span><span class="s1">&#39;^&#39;</span><span class="p">,</span>
+            <span class="n">node_size</span><span class="o">=</span><span class="n">basic_node_size</span><span class="o">*</span><span class="mf">2.5</span><span class="p">,</span>
+            <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span>  <span class="c1"># royalblue</span>
+            <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.8</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+        <span class="p">)</span>
+        
+        <span class="n">label_offset</span> <span class="o">=</span> <span class="mf">0.025</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">labeled_nodes</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+                    <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;darkblue&#39;</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+                    <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round,pad=0.2&quot;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">))</span>
+    
+    <span class="c1"># normal edges</span>
+    <span class="n">all_edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">mask_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;from&quot;</span><span class="p">:</span>
+            <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_edges</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_mask&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;to&quot;</span><span class="p">:</span>
+            <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_edges</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to_mask&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+            <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_edges</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_mask&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to_mask&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;either&quot;</span><span class="p">:</span>
+            <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_edges</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_mask&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to_mask&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    
+    <span class="n">normal_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_edges</span> <span class="k">if</span> <span class="ow">not</span> 
+                    <span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_river&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> 
+                     <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_river&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))]</span>
+    
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+        <span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edgelist</span><span class="o">=</span><span class="n">normal_edges</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;normal_edge&#39;</span><span class="p">],</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">basic_edge_width</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">arrows</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># river edges (river paths)</span>
+    <span class="n">river_edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">river_paths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">river_paths</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">river_edges</span><span class="p">:</span>
+                    <span class="n">edge</span> <span class="o">=</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                    
+                    <span class="k">if</span> <span class="n">mask_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">edge_data</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge</span><span class="p">]</span>
+                        <span class="n">from_mask</span> <span class="o">=</span> <span class="n">edge_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_mask&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="n">to_mask</span> <span class="o">=</span> <span class="n">edge_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to_mask&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        
+                        <span class="k">if</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;from&quot;</span> <span class="ow">and</span> <span class="n">from_mask</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">elif</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;to&quot;</span> <span class="ow">and</span> <span class="n">to_mask</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">elif</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">from_mask</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">to_mask</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
+                            <span class="k">continue</span>
+                        <span class="k">elif</span> <span class="n">mask_by</span> <span class="o">==</span> <span class="s2">&quot;either&quot;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">from_mask</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">to_mask</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
+                            <span class="k">continue</span>
+                        
+                    <span class="n">river_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">river_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">all_edges</span> <span class="k">if</span> 
+                      <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_river&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> 
+                      <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_river&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)]</span>
+    
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span>
+        <span class="n">G</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edgelist</span><span class="o">=</span><span class="n">river_edges</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s2">&quot;river_edge&quot;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">basic_edge_width</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">arrows</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">arrowsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">arrowstyle</span><span class="o">=</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span>
+        <span class="n">node_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">legend_handles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;river_node&#39;</span><span class="p">],</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;darkblue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;River Node&#39;</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;hillslope_node&#39;</span><span class="p">],</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hillslope Node&#39;</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;sink_node&#39;</span><span class="p">],</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sink Node&#39;</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;river_edge&#39;</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;River Edge&#39;</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">[</span><span class="s1">&#39;normal_edge&#39;</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Normal Edge&#39;</span><span class="p">)</span>
+    <span class="p">]</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+        <span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
+        <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;family&#39;</span><span class="p">:</span> <span class="s1">&#39;Arial&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+    <span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">spine</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">spine</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">spine</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="n">spine</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+    
+    <span class="n">cbar_norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">vmin_adjusted</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">original_acc_values</span><span class="p">))</span>
+    <span class="n">sm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="n">river_nodes_cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">cbar_norm</span><span class="p">)</span>
+    <span class="n">sm</span><span class="o">.</span><span class="n">set_array</span><span class="p">([])</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span>
+        <span class="s1">&#39;Flow Accumulation&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">270</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">fontfamily</span><span class="o">=</span><span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;River network topology&quot;</span> <span class="k">if</span> <span class="n">threshold_label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;River network topology (threshold </span><span class="si">{</span><span class="n">threshold_label</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+        <span class="n">title</span><span class="p">,</span>
+        <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;fontfamily&quot;</span><span class="p">:</span> <span class="s1">&#39;Arial&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;fontweight&quot;</span><span class="p">:</span> <span class="s1">&#39;bold&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">pad</span><span class="o">=</span><span class="mf">10.0</span>
+    <span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">pad</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="soft_hillshade">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.soft_hillshade">[docs]</a>
+<span class="k">def</span> <span class="nf">soft_hillshade</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">vert_exag</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">azdeg</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span> <span class="n">altdeg</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">dem</span> <span class="o">*</span> <span class="n">vert_exag</span><span class="p">)</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span><span class="p">))</span>
+    <span class="n">aspect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="n">az</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">azdeg</span><span class="p">)</span>
+    <span class="n">alt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">altdeg</span><span class="p">)</span>
+
+    <span class="n">shaded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az</span> <span class="o">-</span> <span class="n">aspect</span><span class="p">)</span>
+    <span class="n">shaded</span> <span class="o">=</span> <span class="p">(</span><span class="n">shaded</span> <span class="o">-</span> <span class="n">shaded</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">shaded</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">shaded</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">shaded</span></div>
+
+
+
+<div class="viewcode-block" id="light_gray_dem">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.light_gray_dem">[docs]</a>
+<span class="k">def</span> <span class="nf">light_gray_dem</span><span class="p">(</span><span class="n">dem</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">dem</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">dem</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">dem</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">dem</span><span class="p">))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="mf">0.3</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">**</span><span class="mf">0.8</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+
+
+
+<div class="viewcode-block" id="plot_dem">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_dem">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_dem</span><span class="p">(</span><span class="n">grid_shp_level0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        
+    <span class="n">grid_array_dem</span><span class="p">,</span> <span class="n">stand_grids_lon</span><span class="p">,</span> <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span> <span class="o">=</span> <span class="n">createArray_from_gridshp</span><span class="p">(</span>
+        <span class="n">grid_shp_level0</span><span class="p">,</span>
+        <span class="n">value_column</span><span class="o">=</span><span class="s2">&quot;ASTGTM_DEM_mean_Value&quot;</span><span class="p">,</span>
+        <span class="n">values_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">stand_grids_lon</span><span class="p">)</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">stand_grids_lon</span><span class="p">)</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">stand_grids_lat</span><span class="p">)</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">stand_grids_lat</span><span class="p">)</span>
+    
+    <span class="n">dem_light</span> <span class="o">=</span> <span class="n">light_gray_dem</span><span class="p">(</span><span class="n">grid_array_dem</span><span class="p">)</span>
+    <span class="n">hs</span> <span class="o">=</span> <span class="n">soft_hillshade</span><span class="p">(</span><span class="n">grid_array_dem</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">dem_light</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;terrain&quot;</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">],</span>
+        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;bicubic&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">hs</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">],</span>
+        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;bicubic&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_Orthographic_basin_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.plot_func.plot_map.html#easy_vic_build.tools.plot_func.plot_map.plot_Orthographic_basin_shp">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_Orthographic_basin_shp</span><span class="p">():</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">Orthographic</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">45</span><span class="p">))</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">OCEAN</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">LAND</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_global</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="s1">&#39;box&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

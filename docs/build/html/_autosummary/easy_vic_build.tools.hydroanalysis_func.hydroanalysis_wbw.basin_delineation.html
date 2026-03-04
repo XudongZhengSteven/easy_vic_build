@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem" href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.html" />
+    <link rel="prev" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw" href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.backup.html">easy_vic_build.tools.hydroanalysis_func.backup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.create_dem.html">easy_vic_build.tools.hydroanalysis_func.create_dem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.create_flow_distance.html">easy_vic_build.tools.hydroanalysis_func.create_flow_distance</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.mosaic_dem.html">easy_vic_build.tools.hydroanalysis_func.mosaic_dem</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation">
+<span id="easy-vic-build-tools-hydroanalysis-func-hydroanalysis-wbw-basin-delineation"></span><h1>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation<a class="headerlink" href="#module-easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation" title="Link to this heading"></a></h1>
+<p>Basin and subbasin delineation helpers based on flow-direction rasters.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_all_basins" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_all_basins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delineate_all_basins</span></code></a>(wbe, flow_direction[, ...])</p></td>
+<td><p>Delineate all edge-draining basins from a flow-direction raster.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_basins_for_snaped_outlets" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_basins_for_snaped_outlets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delineate_basins_for_snaped_outlets</span></code></a>(wbe, ...)</p></td>
+<td><p>Delineate basins for user-provided snapped outlet points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_subbasins" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_subbasins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delineate_subbasins</span></code></a>(wbe, flow_direction, ...)</p></td>
+<td><p>Delineate subbasins draining to each stream link.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.repair_basins_vector" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.repair_basins_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repair_basins_vector</span></code></a>(basins_vector_path[, ...])</p></td>
+<td><p>Repair invalid basin-vector geometries using <code class="docutils literal notranslate"><span class="pre">make_valid</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_basins_for_snaped_outlets">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.</span></span><span class="sig-name descname"><span class="pre">delineate_basins_for_snaped_outlets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wbe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snaped_outlets_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_basins_raster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'basins_raster.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_basins_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'basins_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_filter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esri_pointer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/basin_delineation.html#delineate_basins_for_snaped_outlets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_basins_for_snaped_outlets" title="Link to this definition"></a></dt>
+<dd><p>Delineate basins for user-provided snapped outlet points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wbe</strong> (<cite>WbEnvironment</cite>) – WhiteboxTools workflow environment instance.</p></li>
+<li><p><strong>flow_direction</strong> (<cite>WbRaster</cite>) – D8 flow direction raster (path or object). Values should follow WhiteboxTools
+D8 encoding (0=East, 1=NE, 2=North, etc.).</p></li>
+<li><p><strong>snaped_outlets_vector</strong> (<cite>WbVector</cite>) – Vector file containing snapped outlet points.</p></li>
+<li><p><strong>output_file_basins_raster</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for basins raster (default “basins_raster.tif”).</p></li>
+<li><p><strong>output_file_basins_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for basins vector (default “basins_vector.shp”).</p></li>
+<li><p><strong>smooth_vector</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to smooth output vector polygons (default False).
+Note: smooth_vector may cause edges to not align properly.</p></li>
+<li><p><strong>smooth_filter_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of smoothing filter (default 5).</p></li>
+<li><p><strong>esri_pointer</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether flow direction uses ESRI pointer convention (default True).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(basins_raster,</span> <span class="pre">basins_vector)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_all_basins">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.</span></span><span class="sig-name descname"><span class="pre">delineate_all_basins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wbe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_all_basins_raster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all_basins_raster.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_all_basins_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all_basins_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_filter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esri_pointer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/basin_delineation.html#delineate_all_basins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_all_basins" title="Link to this definition"></a></dt>
+<dd><p>Delineate all edge-draining basins from a flow-direction raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wbe</strong> (<cite>WbEnvironment</cite>) – WhiteboxTools workflow environment instance.</p></li>
+<li><p><strong>flow_direction</strong> (<cite>WbRaster</cite>) – D8 flow direction raster (path or object). Values should follow WhiteboxTools
+D8 encoding (0=East, 1=NE, 2=North, etc.).</p></li>
+<li><p><strong>output_file_all_basins_raster</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for basins raster (default “all_basins_raster.tif”).</p></li>
+<li><p><strong>output_file_all_basins_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for basins vector (default “all_basins_vector.shp”).</p></li>
+<li><p><strong>smooth_vector</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to smooth output vector polygons (default True).</p></li>
+<li><p><strong>smooth_filter_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of smoothing filter (default 5).</p></li>
+<li><p><strong>esri_pointer</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether flow direction uses ESRI pointer convention (default True).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(all_basins_raster,</span> <span class="pre">all_basins_vector)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_subbasins">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.</span></span><span class="sig-name descname"><span class="pre">delineate_subbasins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wbe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_raster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_subbasins_raster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'subbasins_raster.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_subbasins_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'subbasins_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_filter_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esri_pointer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/basin_delineation.html#delineate_subbasins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.delineate_subbasins" title="Link to this definition"></a></dt>
+<dd><p>Delineate subbasins draining to each stream link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wbe</strong> (<cite>WbEnvironment</cite>) – WhiteboxTools workflow environment instance.</p></li>
+<li><p><strong>flow_direction</strong> (<cite>WbRaster</cite>) – D8 flow direction raster (path or object). Values should follow WhiteboxTools
+D8 encoding (0=East, 1=NE, 2=North, etc.).</p></li>
+<li><p><strong>stream_raster</strong> (<cite>WbRaster</cite>) – Extracted stream raster (binary).</p></li>
+<li><p><strong>output_file_subbasins_raster</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for subbasins raster (default “subbasins_raster.tif”).</p></li>
+<li><p><strong>output_file_subbasins_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for subbasins vector (default “subbasins_vector.shp”).</p></li>
+<li><p><strong>smooth_vector</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to smooth output vector polygons (default True).</p></li>
+<li><p><strong>smooth_filter_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of smoothing filter (default 5).</p></li>
+<li><p><strong>esri_pointer</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether flow direction uses ESRI pointer convention (default True).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(subbasins_raster,</span> <span class="pre">subbasins_vector)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.repair_basins_vector">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.</span></span><span class="sig-name descname"><span class="pre">repair_basins_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basins_vector_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_basins_vector_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'repaired_basins_vector.shp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/basin_delineation.html#repair_basins_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.basin_delineation.repair_basins_vector" title="Link to this definition"></a></dt>
+<dd><p>Repair invalid basin-vector geometries using <code class="docutils literal notranslate"><span class="pre">make_valid</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basins_vector_path</strong> (<em>str</em>) – Path to the input vector file (e.g., Shapefile, GeoJSON) containing basin polygons.</p></li>
+<li><p><strong>output_file_basins_vector_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path placeholder. The current implementation does not write to file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>GeoDataFrame with repaired geometries.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>gpd.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.fill_dem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

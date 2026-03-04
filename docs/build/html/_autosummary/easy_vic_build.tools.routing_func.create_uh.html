@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.routing_func.create_uh &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.routing_func.river_network" href="easy_vic_build.tools.routing_func.river_network.html" />
+    <link rel="prev" title="easy_vic_build.tools.routing_func.Uh_routing" href="easy_vic_build.tools.routing_func.Uh_routing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.Muskingum_routing.html">easy_vic_build.tools.routing_func.Muskingum_routing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.Uh_routing.html">easy_vic_build.tools.routing_func.Uh_routing</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.routing_func.create_uh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.routing_func.river_network.html">easy_vic_build.tools.routing_func.river_network</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.routing_func.create_uh</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.routing_func.create_uh.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.routing_func.create_uh">
+<span id="easy-vic-build-tools-routing-func-create-uh"></span><h1>easy_vic_build.tools.routing_func.create_uh<a class="headerlink" href="#module-easy_vic_build.tools.routing_func.create_uh" title="Link to this heading"></a></h1>
+<p>Module: create_uh</p>
+<p>This module provides functions for generating Unit Hydrographs (UH) using different methodologies, including
+the General Unit Hydrograph (gUH) and Nash Unit Hydrograph (NashUH). These functions allow for the creation of
+dimensionless unit hydrographs based on specified time parameters and other relevant inputs. The module includes
+utilities for plotting and visualizing the generated unit hydrographs, and it also includes functionality for
+determining the maximum day for the UH based on convergence criteria.</p>
+<section id="functions">
+<h2>Functions:<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>get_max_day: Determines the maximum day for UH calculation based on the convergence of the hydrograph.</p></li>
+<li><p>createGUH: Generates a General Unit Hydrograph using an analytical expression based on time parameters.</p></li>
+<li><p>createNashUH: Generates a Nash Unit Hydrograph using a gamma distribution with specified parameters.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="dependencies">
+<h2>Dependencies:<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>numpy: Used for numerical operations, particularly with arrays and time-related calculations.</p></li>
+<li><p>pandas: For creating and manipulating data structures, especially DataFrames for output.</p></li>
+<li><p>matplotlib.pyplot: Used for creating static visualizations of the unit hydrographs.</p></li>
+<li><p>scipy.stats.gamma: Provides tools for generating the gamma distribution used in the NashUH calculation.</p></li>
+<li><p>os: For interacting with the file system, including saving plot images.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="author">
+<h2>Author:<a class="headerlink" href="#author" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>Xudong Zheng
+Email: <a class="reference external" href="mailto:zhengxd&#37;&#52;&#48;sehemodel&#46;club">zhengxd<span>&#64;</span>sehemodel<span>&#46;</span>club</a></p>
+</div></blockquote>
+</section>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.create_uh.createGUH" title="easy_vic_build.tools.routing_func.create_uh.createGUH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createGUH</span></code></a>(evb_dir[, uh_dt, tp, mu, m, ...])</p></td>
+<td><p>Create a General Unit Hydrograph (gUH) and optionally plot and save the results.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.create_uh.createNashUH" title="easy_vic_build.tools.routing_func.create_uh.createNashUH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createNashUH</span></code></a>(evb_dir[, uh_dt, n, K, tp, qp, ...])</p></td>
+<td><p>Create a Nash Unit Hydrograph (UH) using a gamma distribution and optionally plot and save the results.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.routing_func.create_uh.get_max_day" title="easy_vic_build.tools.routing_func.create_uh.get_max_day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_max_day</span></code></a>(UH_func_frozen_param[, ...])</p></td>
+<td><p>Calculate the maximum day (in days) at which the unit hydrograph (UH) function converges below a specified threshold.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.create_uh.get_max_day">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.create_uh.</span></span><span class="sig-name descname"><span class="pre">get_max_day</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UH_func_frozen_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day_converged_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/create_uh.html#get_max_day"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.create_uh.get_max_day" title="Link to this definition"></a></dt>
+<dd><p>Calculate the maximum day (in days) at which the unit hydrograph (UH) function converges below a specified threshold.</p>
+<p>This function automatically calculates the maximum day for the UH function, starting with an initial
+guess for the top time and iterating to find the day at which the function falls below the convergence threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>UH_func_frozen_param</strong> (<em>function</em>) – A function representing the unit hydrograph (UH) at a given time in hours.
+The function should take a single argument <cite>t</cite> (time in hours) and return the UH value.</p></li>
+<li><p><strong>max_day_range</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The range of maximum days (in days) to consider for the search.
+Defaults to (0, 10), i.e., searching within 0 to 10 days.</p></li>
+<li><p><strong>max_day_converged_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – The threshold below which the UH function is considered converged.
+Defaults to 0.001.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>max_day</strong> – The maximum day (rounded up to the nearest whole day) at which the UH function converges below
+the specified threshold.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function uses a binary search approach to find the time when the UH function value first falls
+below the specified threshold, with the search range defined by <cite>max_day_range</cite>. The result is
+returned in days (rounded up).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.create_uh.createGUH">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.create_uh.</span></span><span class="sig-name descname"><span class="pre">createGUH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uh_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day_converged_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/create_uh.html#createGUH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.create_uh.createGUH" title="Link to this definition"></a></dt>
+<dd><p>Create a General Unit Hydrograph (gUH) and optionally plot and save the results.</p>
+<p>This function calculates the General Unit Hydrograph (gUH) using parameters defined in the SCS UH method,
+including time steps, and generates a UHBOX file for hydrological analysis. The function also provides an
+option to plot the gUH functions and save the plots as images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – The directory object where the results, including plots, will be saved.</p></li>
+<li><p><strong>uh_dt</strong> (<em>int</em><em>, </em><em>optional</em>) – The time step (in seconds) for the UH calculation. Default is 3600 seconds (1 hour).</p></li>
+<li><p><strong>tp</strong> (<em>float</em><em>, </em><em>optional</em>) – The time parameter for the General Unit Hydrograph (gUH) model in hours. Default is 1.4 hours.</p></li>
+<li><p><strong>mu</strong> (<em>float</em><em>, </em><em>optional</em>) – The scaling factor for the gUH model. Default is 5.0, based on SCS UH.</p></li>
+<li><p><strong>m</strong> (<em>float</em><em>, </em><em>optional</em>) – A parameter for the gUH model. Should be greater than 1. Default is 3.0, based on SCS UH.</p></li>
+<li><p><strong>plot_bool</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function will plot the gUH and save the plot. Default is False.</p></li>
+<li><p><strong>max_day</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum day for the UH calculation. If None, the function will calculate it using <cite>get_max_day</cite>.</p></li>
+<li><p><strong>max_day_range</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The range of maximum days (in days) to consider for the search. Default is (0, 10).</p></li>
+<li><p><strong>max_day_converged_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – The threshold below which the UH function is considered converged. Default is 0.001.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>max_day</strong> (<em>int</em>) – The maximum day (rounded up to the nearest whole day) at which the UH function converges below
+the specified threshold.</p></li>
+<li><p><strong>UHBOX_file</strong> (<em>pandas.DataFrame</em>) – A DataFrame containing the time and corresponding General Unit Hydrograph (gUH) values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function uses the method from Guo (2022) to calculate the general and analytic unit hydrograph (gUH).
+It also supports plotting the results for visualization purposes. The calculated UHBOX file is saved as
+a DataFrame containing the time series and corresponding gUH values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.routing_func.create_uh.createNashUH">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.routing_func.create_uh.</span></span><span class="sig-name descname"><span class="pre">createNashUH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uh_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_day_converged_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/routing_func/create_uh.html#createNashUH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.routing_func.create_uh.createNashUH" title="Link to this definition"></a></dt>
+<dd><p>Create a Nash Unit Hydrograph (UH) using a gamma distribution and optionally plot and save the results.</p>
+<p>This function calculates the Nash Unit Hydrograph (NashUH) based on the Nash gamma distribution. The function
+also provides an option to plot the NashUH function and save the plots as images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<em>object</em>) – The directory object where the results, including plots, will be saved.</p></li>
+<li><p><strong>uh_dt</strong> (<em>int</em><em>, </em><em>optional</em>) – The time step (in seconds) for the UH calculation. Default is 3600 seconds (1 hour).</p></li>
+<li><p><strong>n</strong> (<em>float</em><em>, </em><em>optional</em>) – The shape parameter for the gamma distribution. If None, it is calculated based on <cite>beta</cite> and <cite>tp</cite>.
+Default is None.</p></li>
+<li><p><strong>K</strong> (<em>float</em><em>, </em><em>optional</em>) – The scale parameter for the gamma distribution. If None, it is calculated based on <cite>n</cite> and <cite>tp</cite>.
+Default is None.</p></li>
+<li><p><strong>tp</strong> (<em>float</em><em>, </em><em>optional</em>) – The time parameter for the Nash UH model in hours. Default is 1.4 hours.</p></li>
+<li><p><strong>qp</strong> (<em>float</em><em>, </em><em>optional</em>) – A parameter for the Nash UH model. Default is 0.15.</p></li>
+<li><p><strong>plot_bool</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function will plot the Nash UH and save the plot. Default is False.</p></li>
+<li><p><strong>max_day</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum day for the UH calculation. If None, the function will calculate it using <cite>get_max_day</cite>.</p></li>
+<li><p><strong>max_day_range</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The range of maximum days (in days) to consider for the search. Default is (0, 10).</p></li>
+<li><p><strong>max_day_converged_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – The threshold below which the UH function is considered converged. Default is 0.001.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>max_day</strong> (<em>int</em>) – The maximum day (rounded up to the nearest whole day) at which the UH function converges below
+the specified threshold.</p></li>
+<li><p><strong>UHBOX_file</strong> (<em>pandas.DataFrame</em>) – A DataFrame containing the time and corresponding Nash Unit Hydrograph (NashUH) values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function uses a gamma distribution to model the Nash Unit Hydrograph (NashUH) and calculates the
+maximum day for which the UH function converges. It also supports plotting the results for visualization
+purposes. The calculated UHBOX file is saved as a DataFrame containing the time series and corresponding
+NashUH values.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.routing_func.Uh_routing.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.routing_func.Uh_routing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.routing_func.river_network.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.routing_func.river_network" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

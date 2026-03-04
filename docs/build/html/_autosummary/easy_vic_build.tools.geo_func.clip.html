@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.geo_func.clip &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.geo_func.create_gdf" href="easy_vic_build.tools.geo_func.create_gdf.html" />
+    <link rel="prev" title="easy_vic_build.tools.geo_func" href="easy_vic_build.tools.geo_func.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.geo_func.clip</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.create_gdf.html">easy_vic_build.tools.geo_func.create_gdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.fill_gap.html">easy_vic_build.tools.geo_func.fill_gap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.format_conversion.html">easy_vic_build.tools.geo_func.format_conversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.reproject.html">easy_vic_build.tools.geo_func.reproject</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.resample.html">easy_vic_build.tools.geo_func.resample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.geo_func.search_grids.html">easy_vic_build.tools.geo_func.search_grids</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.geo_func.clip</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.geo_func.clip.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.geo_func.clip">
+<span id="easy-vic-build-tools-geo-func-clip"></span><h1>easy_vic_build.tools.geo_func.clip<a class="headerlink" href="#module-easy_vic_build.tools.geo_func.clip" title="Link to this heading"></a></h1>
+<p>Clipping utilities for array grids and GeoTIFF rasters.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.clip.clip" title="easy_vic_build.tools.geo_func.clip.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(dst_lat, dst_lon, dst_res, src_lat, ...)</p></td>
+<td><p>Clip source gridded arrays by destination extent and resolution buffer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.geo_func.clip.clip_tiff" title="easy_vic_build.tools.geo_func.clip.clip_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_tiff</span></code></a>(input_tiff, output_tiff[, bbox, ...])</p></td>
+<td><p>Clip a GeoTIFF by bounding box or shapefile boundary.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.clip.clip">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.clip.</span></span><span class="sig-name descname"><span class="pre">clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse_lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/clip.html#clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.clip.clip" title="Link to this definition"></a></dt>
+<dd><p>Clip source gridded arrays by destination extent and resolution buffer.</p>
+<p>This function is typically used as a pre-step before grid searching to
+reduce search-space size and improve runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst_lat</strong> (<em>array-like</em>) – The latitude values of the target grid (destination).</p></li>
+<li><p><strong>dst_lon</strong> (<em>array-like</em>) – The longitude values of the target grid (destination).</p></li>
+<li><p><strong>dst_res</strong> (<em>float</em>) – The resolution of the target grid (in degrees).</p></li>
+<li><p><strong>src_lat</strong> (<em>array-like</em>) – The latitude values of the source data grid.</p></li>
+<li><p><strong>src_lon</strong> (<em>array-like</em>) – The longitude values of the source data grid.</p></li>
+<li><p><strong>src_data</strong> (<em>array-like</em>) – Source 2D data array indexed by <code class="docutils literal notranslate"><span class="pre">[lat,</span> <span class="pre">lon]</span></code>.</p></li>
+<li><p><strong>reverse_lat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, assumes the source latitude values are in descending order (large to small).
+If False, assumes ascending order (small to large). Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(src_data_clip,</span> <span class="pre">src_lon_clip,</span> <span class="pre">src_lat_clip)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><code class="docutils literal notranslate"><span class="pre">dst_res</span> <span class="pre">/</span> <span class="pre">2</span></code> is used as an outer buffer when locating source indices.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.geo_func.clip.clip_tiff">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.geo_func.clip.</span></span><span class="sig-name descname"><span class="pre">clip_tiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_tiff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_tiff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shp_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/geo_func/clip.html#clip_tiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.geo_func.clip.clip_tiff" title="Link to this definition"></a></dt>
+<dd><p>Clip a GeoTIFF by bounding box or shapefile boundary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_tiff</strong> (<em>str</em>) – Path to the input GeoTIFF file.</p></li>
+<li><p><strong>output_tiff</strong> (<em>str</em>) – Path to the output clipped GeoTIFF file.</p></li>
+<li><p><strong>bbox</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Geographic extent (xmin, ymin, xmax, ymax), e.g. (105.2, 33.5, 106.8, 34.9).</p></li>
+<li><p><strong>shp_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a shapefile used as the clipping boundary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Clipped raster is written to <code class="docutils literal notranslate"><span class="pre">output_tiff</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If <code class="docutils literal notranslate"><span class="pre">input_tiff</span></code> or <code class="docutils literal notranslate"><span class="pre">shp_path</span></code> does not exist.</p></li>
+<li><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">bbox</span></code> nor <code class="docutils literal notranslate"><span class="pre">shp_path</span></code> is provided.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.geo_func.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.geo_func" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.geo_func.create_gdf.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.geo_func.create_gdf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

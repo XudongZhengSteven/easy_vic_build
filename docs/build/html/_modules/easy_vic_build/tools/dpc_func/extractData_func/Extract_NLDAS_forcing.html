@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">...geo_func</span> <span class="kn">import</span> <span class="n">search_grids</span><span class="p">,</span> <span class="n">resample</span>
+<span class="kn">from</span> <span class="nn">...geo_func.create_gdf</span> <span class="kn">import</span> <span class="n">CreateGDF</span>
+<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">...mete_func.mete_func</span> <span class="kn">import</span> <span class="n">cal_VP_from_prs_sh</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+
+<div class="viewcode-block" id="generate_nldas_filename">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.generate_nldas_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_nldas_filename</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``generate_nldas_filename`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dt : object</span>
+<span class="sd">        Input value for ``dt``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;NLDAS_FORA0125_H.A</span><span class="si">{</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.002.grb.SUB.nc4&quot;</span></div>
+
+    
+    
+<div class="viewcode-block" id="process_date_chunk">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.process_date_chunk">[docs]</a>
+<span class="k">def</span> <span class="nf">process_date_chunk</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``process_date_chunk`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : object</span>
+<span class="sd">        Input value for ``args``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">var_name</span><span class="p">,</span> <span class="n">date_chunk</span><span class="p">,</span> <span class="n">grid_shp</span><span class="p">,</span> <span class="n">searched_grids_index</span><span class="p">,</span> <span class="n">NLDAS_forcing_home</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="n">chunk_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_chunk</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">di</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">date_chunk</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">chunk_results</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ExtractData_di</span><span class="p">(</span>
+                <span class="n">di</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">NLDAS_forcing_home</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> 
+                <span class="n">grid_shp</span><span class="p">,</span> <span class="n">searched_grids_index</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error at di=</span><span class="si">{</span><span class="n">di</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">chunk_results</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9999.0</span>
+    
+    <span class="k">return</span> <span class="n">date_chunk</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">chunk_results</span></div>
+
+    
+
+<div class="viewcode-block" id="ExtractData_di">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.ExtractData_di">[docs]</a>
+<span class="k">def</span> <span class="nf">ExtractData_di</span><span class="p">(</span>
+    <span class="n">di</span><span class="p">,</span>
+    <span class="n">date</span><span class="p">,</span>
+    <span class="n">NLDAS_forcing_home</span><span class="p">,</span>
+    <span class="n">var_name</span><span class="p">,</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">searched_grids_index</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``ExtractData_di`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    di : object</span>
+<span class="sd">        Input value for ``di``.</span>
+<span class="sd">    date : object</span>
+<span class="sd">        Input value for ``date``.</span>
+<span class="sd">    NLDAS_forcing_home : object</span>
+<span class="sd">        Input value for ``NLDAS_forcing_home``.</span>
+<span class="sd">    var_name : object</span>
+<span class="sd">        Input value for ``var_name``.</span>
+<span class="sd">    grid_shp : object</span>
+<span class="sd">        Input value for ``grid_shp``.</span>
+<span class="sd">    searched_grids_index : object</span>
+<span class="sd">        Input value for ``searched_grids_index``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">date</span><span class="p">[</span><span class="n">di</span><span class="p">]</span>
+    <span class="n">searched_resample_data_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># len=len(grid_shp.index)</span>
+    
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">generate_nldas_filename</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NLDAS_forcing_home</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_dataset</span><span class="p">:</span>
+        <span class="n">src_var</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">gi</span> <span class="ow">in</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="c1"># get search grid index, lat, lon for this dst_grid</span>
+            <span class="n">searched_grid_index</span> <span class="o">=</span> <span class="n">searched_grids_index</span><span class="p">[</span><span class="n">gi</span><span class="p">]</span>
+            
+            <span class="c1"># get searched data</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">src_var</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">searched_grid_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">src_var</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">l</span><span class="p">],</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">l</span><span class="p">]]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+                
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">src_var</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">searched_grid_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">src_var</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">l</span><span class="p">],</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">l</span><span class="p">]]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> has unsupported dimensions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">src_var</span><span class="o">.</span><span class="n">dimensions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># resample # TODO</span>
+            <span class="n">searched_resample_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">searched_grid_data</span><span class="p">))</span>
+            
+            <span class="c1"># append</span>
+            <span class="n">searched_resample_data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">searched_resample_data</span><span class="p">)</span>
+            
+            <span class="c1"># # check</span>
+            <span class="c1"># if check_search and vi+gi+di == 0:</span>
+            <span class="c1">#     cgdf = CreateGDF()</span>
+            <span class="c1">#     grid_shp_grid = grid_shp.loc[[gi], &quot;geometry&quot;]</span>
+            <span class="c1">#     searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(</span>
+            <span class="c1">#         searched_grid_lon, searched_grid_lat, NLDAS_forcing_lat_res</span>
+            <span class="c1">#     )</span>
+
+            <span class="c1">#     fig, ax = plt.subplots()</span>
+            <span class="c1">#     grid_shp_grid.boundary.plot(ax=ax, edgecolor=&quot;r&quot;, linewidth=2)  # target</span>
+            <span class="c1">#     searched_grids_gdf.plot(</span>
+            <span class="c1">#         ax=ax, edgecolor=&quot;k&quot;, linewidth=0.2, facecolor=&quot;b&quot;, alpha=0.5</span>
+            <span class="c1">#     )  # searched data from source data</span>
+                
+            <span class="c1">#     ax.set_title(&quot;check search&quot;)</span>
+                
+            <span class="c1">#     plt.show(block=True)</span>
+
+    <span class="k">return</span> <span class="n">searched_resample_data_list</span></div>
+
+
+<div class="viewcode-block" id="ExtractData">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_NLDAS_forcing.ExtractData">[docs]</a>
+<span class="k">def</span> <span class="nf">ExtractData</span><span class="p">(</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">date_period</span><span class="p">,</span>
+    <span class="n">search_method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+    <span class="n">grid_shp_res</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> 
+    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+    <span class="n">check_search</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">N_PROCESS</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">CHUNK_SIZE</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># general</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``ExtractData`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : object</span>
+<span class="sd">        Input value for ``grid_shp``.</span>
+<span class="sd">    date_period : object</span>
+<span class="sd">        Input value for ``date_period``.</span>
+<span class="sd">    search_method : object, optional</span>
+<span class="sd">        Input value for ``search_method``.</span>
+<span class="sd">    grid_shp_res : object, optional</span>
+<span class="sd">        Input value for ``grid_shp_res``.</span>
+<span class="sd">    plot : object, optional</span>
+<span class="sd">        Input value for ``plot``.</span>
+<span class="sd">    check_search : object, optional</span>
+<span class="sd">        Input value for ``check_search``.</span>
+<span class="sd">    N_PROCESS : object, optional</span>
+<span class="sd">        Input value for ``N_PROCESS``.</span>
+<span class="sd">    CHUNK_SIZE : object, optional</span>
+<span class="sd">        Input value for ``CHUNK_SIZE``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NLDAS_forcing_home</span> <span class="o">=</span> <span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">hydrometeorology</span><span class="se">\\</span><span class="s2">NLDAS</span><span class="se">\\</span><span class="s2">NLDAS2_Primary_Forcing_Data_subset_0.125</span><span class="se">\\</span><span class="s2">data&quot;</span>
+    
+    <span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">date_period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">date_period</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;H&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># read NLDAS, lat, lon, res (0.125deg)</span>
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NLDAS_forcing_home</span><span class="p">,</span> <span class="n">generate_nldas_filename</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">NLDAS_forcing_lat</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">][:]</span>
+        <span class="n">NLDAS_forcing_lon</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">][:]</span>
+        <span class="n">NLDAS_forcing_lat_res</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">NLDAS_forcing_lat</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">NLDAS_forcing_lat</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">NLDAS_forcing_lat</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">NLDAS_forcing_lon_res</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">NLDAS_forcing_lon</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">NLDAS_forcing_lon</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">NLDAS_forcing_lon</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">NLDAS_forcing_lat_res</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NLDAS_forcing_lat_res</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">NLDAS_forcing_lon_res</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NLDAS_forcing_lon_res</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># set grids_lat, lon</span>
+    <span class="n">grids_lat</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">grids_lon</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    
+    <span class="c1"># set var name</span>
+    <span class="n">var_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;TMP&quot;</span><span class="p">,</span>  <span class="c1">#* K -&gt; -273.15 -&gt; C</span>
+        <span class="s2">&quot;APCP&quot;</span><span class="p">,</span>  <span class="c1">#* kg/m^2 == mm/step</span>
+        <span class="s2">&quot;PRES&quot;</span><span class="p">,</span>  <span class="c1">#* Pa -&gt; /1000 -&gt; kPa</span>
+        <span class="s2">&quot;DSWRF&quot;</span><span class="p">,</span>  <span class="c1">#* W/m^2</span>
+        <span class="s2">&quot;DLWRF&quot;</span><span class="p">,</span>  <span class="c1">#* W/m^2</span>
+        <span class="s2">&quot;SPFH&quot;</span><span class="p">,</span>  <span class="c1"># kg/kg</span>
+        <span class="s2">&quot;UGRD&quot;</span><span class="p">,</span>  <span class="c1">#* m/s</span>
+        <span class="s2">&quot;VGRD&quot;</span><span class="p">,</span>  <span class="c1">#* m/s</span>
+    <span class="p">]</span>    <span class="c1"># need to derive: VP (kPa), Wind</span>
+    
+    <span class="c1"># search grids</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;searching grids for NLDAS forcing data... ...&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># source data res: 0.125 deg ~= 13.875km</span>
+    <span class="k">if</span> <span class="n">search_method</span> <span class="o">==</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span>
+        <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids</span><span class="o">.</span><span class="n">search_grids_radius</span><span class="p">(</span>
+            <span class="n">dst_lat</span><span class="o">=</span><span class="n">grids_lat</span><span class="p">,</span>
+            <span class="n">dst_lon</span><span class="o">=</span><span class="n">grids_lon</span><span class="p">,</span>
+            <span class="n">src_lat</span><span class="o">=</span><span class="n">NLDAS_forcing_lat</span><span class="p">,</span>
+            <span class="n">src_lon</span><span class="o">=</span><span class="n">NLDAS_forcing_lon</span><span class="p">,</span>
+            <span class="n">lat_radius</span><span class="o">=</span><span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">lon_radius</span><span class="o">=</span><span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">search_method</span> <span class="o">==</span> <span class="s2">&quot;radius_rectangle&quot;</span><span class="p">:</span>
+        <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids</span><span class="o">.</span><span class="n">search_grids_radius_rectangle</span><span class="p">(</span>
+            <span class="n">dst_lat</span><span class="o">=</span><span class="n">grids_lat</span><span class="p">,</span>
+            <span class="n">dst_lon</span><span class="o">=</span><span class="n">grids_lon</span><span class="p">,</span>
+            <span class="n">src_lat</span><span class="o">=</span><span class="n">NLDAS_forcing_lat</span><span class="p">,</span>
+            <span class="n">src_lon</span><span class="o">=</span><span class="n">NLDAS_forcing_lon</span><span class="p">,</span>
+            <span class="n">lat_radius</span><span class="o">=</span><span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">lon_radius</span><span class="o">=</span><span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">search_method</span> <span class="o">==</span> <span class="s2">&quot;radius_rectangle_reverse&quot;</span><span class="p">:</span>
+        <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids</span><span class="o">.</span><span class="n">search_grids_radius_rectangle_reverse</span><span class="p">(</span>
+            <span class="n">dst_lat</span><span class="o">=</span><span class="n">grids_lat</span><span class="p">,</span>
+            <span class="n">dst_lon</span><span class="o">=</span><span class="n">grids_lon</span><span class="p">,</span>
+            <span class="n">src_lat</span><span class="o">=</span><span class="n">NLDAS_forcing_lat</span><span class="p">,</span>
+            <span class="n">src_lon</span><span class="o">=</span><span class="n">NLDAS_forcing_lon</span><span class="p">,</span>
+            <span class="n">lat_radius</span><span class="o">=</span><span class="n">NLDAS_forcing_lat_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">lon_radius</span><span class="o">=</span><span class="n">NLDAS_forcing_lon_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">search_method</span> <span class="o">==</span> <span class="s2">&quot;nearest&quot;</span><span class="p">:</span>
+        <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids</span><span class="o">.</span><span class="n">search_grids_nearest</span><span class="p">(</span><span class="n">dst_lat</span><span class="o">=</span><span class="n">grids_lat</span><span class="p">,</span> <span class="n">dst_lon</span><span class="o">=</span><span class="n">grids_lon</span><span class="p">,</span>
+                                                                 <span class="n">src_lat</span><span class="o">=</span><span class="n">NLDAS_forcing_lat</span><span class="p">,</span> <span class="n">src_lon</span><span class="o">=</span><span class="n">NLDAS_forcing_lon</span><span class="p">,</span>
+                                                                 <span class="n">search_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                                 <span class="n">move_src_lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">move_src_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;search method </span><span class="si">{</span><span class="n">search_method</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
+
+    <span class="c1"># initialize the array to hold results</span>
+    <span class="n">forcings_searched_resample_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+        <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">var_names</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">date</span><span class="p">)),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mf">9999.0</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">)</span>
+
+    <span class="c1"># loop to read NLDAS forcing data for each variable</span>
+    <span class="k">for</span> <span class="n">vi</span><span class="p">,</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">var_names</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">CHUNK_SIZE</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">date</span><span class="p">)))</span> 
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">date</span><span class="p">),</span> <span class="n">CHUNK_SIZE</span><span class="p">)</span>
+        <span class="p">]</span>
+        
+        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">N_PROCESS</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
+                    <span class="n">process_date_chunk</span><span class="p">,</span>
+                    <span class="p">((</span><span class="n">var_name</span><span class="p">,</span> <span class="n">chunk</span><span class="p">,</span> <span class="n">grid_shp</span><span class="p">,</span> <span class="n">searched_grids_index</span><span class="p">,</span> <span class="n">NLDAS_forcing_home</span><span class="p">,</span> <span class="n">date</span><span class="p">),)</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span>
+            <span class="p">]</span>
+            
+            <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> Progress&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+                    <span class="n">start_di</span><span class="p">,</span> <span class="n">chunk_res</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                    <span class="n">end_di</span> <span class="o">=</span> <span class="n">start_di</span> <span class="o">+</span> <span class="n">chunk_res</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">forcings_searched_resample_arrays</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="p">:,</span> <span class="n">start_di</span><span class="p">:</span><span class="n">end_di</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_res</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># save</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">var_names</span><span class="p">)):</span>
+        <span class="n">forcings_searched_resample_arrays_v</span> <span class="o">=</span> <span class="n">forcings_searched_resample_arrays</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="c1"># [v1, ..., v5], v1 = [grid1, ..., gridn], grid1 = [time1, ..., timek] (series)</span>
+        <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var_names</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">forcings_searched_resample_arrays_v</span><span class="p">]</span>
+    
+    <span class="c1"># postprocessing: unit change</span>
+    <span class="c1"># TMP: K -&gt; -273.15 -&gt; C</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;TMP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;TMP&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">)</span>  <span class="c1"># K to C</span>
+    
+    <span class="c1"># PRES: Pa -&gt; /1000 -&gt; kPa</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;PRES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;PRES&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>  <span class="c1"># Pa to kPa</span>
+    
+    <span class="c1"># calculate VP, kPa</span>
+    <span class="k">def</span> <span class="nf">compute_vp_series</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="n">prs_kPa</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;PRES&quot;</span><span class="p">]</span>
+        <span class="n">sh_kg_per_kg</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;SPFH&quot;</span><span class="p">]</span>
+        
+        <span class="n">vp_series</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">cal_VP_from_prs_sh</span><span class="p">(</span><span class="n">prs_kPa_day</span><span class="p">,</span> <span class="n">sh_kg_per_kg_day</span><span class="p">)</span> <span class="k">for</span> <span class="n">prs_kPa_day</span><span class="p">,</span> <span class="n">sh_kg_per_kg_day</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prs_kPa</span><span class="p">,</span> <span class="n">sh_kg_per_kg</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">vp_series</span>
+
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;VP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">compute_vp_series</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># cal wind</span>
+    <span class="k">def</span> <span class="nf">compute_wind_series</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="n">wind_u</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;UGRD&quot;</span><span class="p">]</span>
+        <span class="n">wind_v</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;VGRD&quot;</span><span class="p">]</span>
+        
+        <span class="n">vp_series</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">wind_u_day</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">wind_v_day</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>  <span class="k">for</span> <span class="n">wind_u_day</span><span class="p">,</span> <span class="n">wind_v_day</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wind_u</span><span class="p">,</span> <span class="n">wind_v</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">vp_series</span>
+
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;WIND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">compute_wind_series</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># rename columns to add units</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;TMP&quot;</span><span class="p">:</span> <span class="s2">&quot;tmp_avg_C&quot;</span><span class="p">,</span>  <span class="c1"># C</span>
+            <span class="s2">&quot;APCP&quot;</span><span class="p">:</span> <span class="s2">&quot;pre_mm_per_step&quot;</span><span class="p">,</span>  <span class="c1"># mm/step (1h)</span>
+            <span class="s2">&quot;PRES&quot;</span><span class="p">:</span> <span class="s2">&quot;prs_kPa&quot;</span><span class="p">,</span>  <span class="c1"># kPa</span>
+            <span class="s2">&quot;DSWRF&quot;</span><span class="p">:</span> <span class="s2">&quot;swd_W_per_m2&quot;</span><span class="p">,</span>  <span class="c1"># W m-2</span>
+            <span class="s2">&quot;DLWRF&quot;</span><span class="p">:</span> <span class="s2">&quot;lwd_W_per_m2&quot;</span><span class="p">,</span>  <span class="c1"># W m-2</span>
+            <span class="s2">&quot;SPFH&quot;</span><span class="p">:</span> <span class="s2">&quot;shu_kg_per_kg&quot;</span><span class="p">,</span>  <span class="c1"># kg/kg</span>
+            <span class="s2">&quot;VP&quot;</span><span class="p">:</span> <span class="s2">&quot;vp_kPa&quot;</span><span class="p">,</span>  <span class="c1"># kPa</span>
+            <span class="s2">&quot;WIND&quot;</span><span class="p">:</span> <span class="s2">&quot;wind_m_per_s&quot;</span><span class="p">,</span>  <span class="c1"># m/s</span>
+            <span class="c1"># &quot;UGRD&quot;</span>
+            <span class="c1"># &quot;VGRD&quot;</span>
+        <span class="p">},</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="c1"># plot timeseries</span>
+        <span class="n">grid_i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">plot_var_name</span> <span class="o">=</span> <span class="s2">&quot;lwd_W_per_m2&quot;</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">grid_i</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_var_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">plot_var_name</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">plot_var_name</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time Series of </span><span class="si">{</span><span class="n">plot_var_name</span><span class="si">}</span><span class="s2"> at Grid </span><span class="si">{</span><span class="n">grid_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># plt.show(block=True)</span>
+        
+        <span class="c1"># plot map</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        
+        <span class="n">grid_shp_plot</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">)</span>
+        <span class="n">grid_shp_plot</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_var_name</span><span class="si">}</span><span class="s2">_timemean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp_plot</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_var_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+        
+        <span class="n">grid_shp_plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_var_name</span><span class="si">}</span><span class="s2">_timemean&quot;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_var_name</span><span class="si">}</span><span class="s2"> mean&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">grid_shp</span></div>
+
+
+<span class="c1"># def ExtractData(</span>
+<span class="c1">#     grid_shp,</span>
+<span class="c1">#     date_period,</span>
+<span class="c1">#     search_method=&quot;nearest&quot;,</span>
+<span class="c1">#     grid_shp_res=0.25, </span>
+<span class="c1">#     plot=True, </span>
+<span class="c1">#     check_search=False</span>
+<span class="c1"># ):</span>
+<span class="c1">#     # general</span>
+<span class="c1">#     NLDAS_forcing_home = &quot;E:\\data\\hydrometeorology\\NLDAS\\NLDAS2_Primary_Forcing_Data_subset_0.125\\data&quot;</span>
+    
+<span class="c1">#     def generate_nldas_filename(dt):</span>
+<span class="c1">#         return f&quot;NLDAS_FORA0125_H.A{dt.strftime(&#39;%Y%m%d&#39;)}.{dt.strftime(&#39;%H%M&#39;)}.002.grb.SUB.nc4&quot;</span>
+    
+<span class="c1">#     date = pd.date_range(date_period[0], date_period[1], freq=&quot;H&quot;)</span>
+    
+<span class="c1">#     # read NLDAS, lat, lon, res (0.125deg)</span>
+<span class="c1">#     with Dataset(os.path.join(NLDAS_forcing_home, generate_nldas_filename(date[0])), &quot;r&quot;) as dataset:</span>
+<span class="c1">#         NLDAS_forcing_lat = dataset.variables[&quot;lat&quot;][:]</span>
+<span class="c1">#         NLDAS_forcing_lon = dataset.variables[&quot;lon&quot;][:]</span>
+<span class="c1">#         NLDAS_forcing_lat_res = (max(NLDAS_forcing_lat) - min(NLDAS_forcing_lat)) / (len(NLDAS_forcing_lat) - 1)</span>
+<span class="c1">#         NLDAS_forcing_lon_res = (max(NLDAS_forcing_lon) - min(NLDAS_forcing_lon)) / (len(NLDAS_forcing_lon) - 1)</span>
+<span class="c1">#         NLDAS_forcing_lat_res = float(f&quot;{NLDAS_forcing_lat_res:.3g}&quot;)</span>
+<span class="c1">#         NLDAS_forcing_lon_res = float(f&quot;{NLDAS_forcing_lon_res:.3g}&quot;)</span>
+    
+<span class="c1">#     # set grids_lat, lon</span>
+<span class="c1">#     grids_lat = grid_shp.point_geometry.y.to_list()</span>
+<span class="c1">#     grids_lon = grid_shp.point_geometry.x.to_list()</span>
+    
+<span class="c1">#     # set var name</span>
+<span class="c1">#     var_names = [</span>
+<span class="c1">#         &quot;TMP&quot;,  #* K -&gt; -273.15 -&gt; C</span>
+<span class="c1">#         &quot;APCP&quot;,  #* kg/m^2 == mm/step</span>
+<span class="c1">#         &quot;PRES&quot;,  #* Pa -&gt; /1000 -&gt; kPa</span>
+<span class="c1">#         &quot;DSWRF&quot;,  #* W/m^2</span>
+<span class="c1">#         &quot;DLWRF&quot;,  #* W/m^2</span>
+<span class="c1">#         &quot;SPFH&quot;,  # kg/kg</span>
+<span class="c1">#         &quot;UGRD&quot;,  #* m/s</span>
+<span class="c1">#         &quot;VGRD&quot;,  #* m/s</span>
+<span class="c1">#     ]    # need to derive: VP (kPa), Wind</span>
+    
+<span class="c1">#     # search grids</span>
+<span class="c1">#     logger.info(&quot;searching grids for NLDAS forcing data... ...&quot;)</span>
+    
+<span class="c1">#     # source data res: 0.125 deg</span>
+<span class="c1">#     if search_method == &quot;radius_rectangle&quot;:</span>
+<span class="c1">#         searched_grids_index = search_grids.search_grids_radius_rectangle(</span>
+<span class="c1">#             dst_lat=grids_lat,</span>
+<span class="c1">#             dst_lon=grids_lon,</span>
+<span class="c1">#             src_lat=NLDAS_forcing_lat,</span>
+<span class="c1">#             src_lon=NLDAS_forcing_lon,</span>
+<span class="c1">#             lat_radius=grid_shp_res / 2,</span>
+<span class="c1">#             lon_radius=grid_shp_res / 2,</span>
+<span class="c1">#         )</span>
+    
+<span class="c1">#     elif search_method == &quot;radius_rectangle_reverse&quot;:</span>
+<span class="c1">#         searched_grids_index = search_grids.search_grids_radius_rectangle_reverse(</span>
+<span class="c1">#             dst_lat=grids_lat,</span>
+<span class="c1">#             dst_lon=grids_lon,</span>
+<span class="c1">#             src_lat=NLDAS_forcing_lat,</span>
+<span class="c1">#             src_lon=NLDAS_forcing_lon,</span>
+<span class="c1">#             lat_radius=NLDAS_forcing_lat_res / 2,</span>
+<span class="c1">#             lon_radius=NLDAS_forcing_lon_res / 2,</span>
+<span class="c1">#         )</span>
+    
+<span class="c1">#     elif search_method == &quot;nearest&quot;:</span>
+<span class="c1">#         searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,</span>
+<span class="c1">#                                                                  src_lat=NLDAS_forcing_lat, src_lon=NLDAS_forcing_lon,</span>
+<span class="c1">#                                                                  search_num=1,</span>
+<span class="c1">#                                                                  move_src_lat=None, move_src_lon=None)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         logger.warning(f&quot;search method {search_method} not supported&quot;)</span>
+    
+<span class="c1">#     # loop to read NLDAS forcing data for each grid</span>
+<span class="c1">#     forcings_searched_resample_arrays = [np.full((len(grid_shp.index), len(date)), fill_value=-9999.0, dtype=float) for _ in range(len(var_names))] # grids * dates</span>
+    
+<span class="c1">#     for vi, var_name in enumerate(var_names):</span>
+<span class="c1">#         forcings_searched_resample_arrays_v = forcings_searched_resample_arrays[vi]</span>
+        
+<span class="c1">#         logger.info(f&quot;Extracting NLDAS forcing data for variable: {var_name}... ...&quot;)</span>
+        
+<span class="c1">#         for di, dt in tqdm(enumerate(date),</span>
+<span class="c1">#                        colour=&quot;green&quot;,</span>
+<span class="c1">#                        desc=f&quot;loop for each date to extract forcing data&quot;):</span>
+<span class="c1">#             fn = generate_nldas_filename(dt)</span>
+<span class="c1">#             fp = os.path.join(NLDAS_forcing_home, fn)</span>
+            
+<span class="c1">#             with Dataset(fp, &quot;r&quot;) as src_dataset:</span>
+<span class="c1">#                 src_var = src_dataset.variables[var_name]</span>
+
+<span class="c1">#                 for gi in grid_shp.index:</span>
+<span class="c1">#                     # get search grid index, lat, lon for this dst_grid</span>
+<span class="c1">#                     searched_grid_index = searched_grids_index[gi]</span>
+<span class="c1">#                     # dst_lat_grid = grid_shp.loc[gi, :].point_geometry.y</span>
+<span class="c1">#                     # dst_lon_grid = grid_shp.loc[gi, :].point_geometry.x</span>
+        
+<span class="c1">#                     # searched_grid_lat = [</span>
+<span class="c1">#                     #     NLDAS_forcing_lat[searched_grid_index[0][j]]</span>
+<span class="c1">#                     #     for j in range(len(searched_grid_index[0]))</span>
+<span class="c1">#                     # ]</span>
+                    
+<span class="c1">#                     # searched_grid_lon = [</span>
+<span class="c1">#                     #     NLDAS_forcing_lon[searched_grid_index[1][j]]</span>
+<span class="c1">#                     #     for j in range(len(searched_grid_index[0]))</span>
+<span class="c1">#                     # ]</span>
+                    
+<span class="c1">#                     # get searched data</span>
+<span class="c1">#                     if len(src_var.dimensions) == 3:</span>
+<span class="c1">#                         searched_grid_data = [src_var[0, searched_grid_index[0][l], searched_grid_index[1][l]] for l in range(len(searched_grid_index[0]))]</span>
+                        
+<span class="c1">#                     elif len(src_var.dimensions) == 4:</span>
+<span class="c1">#                         searched_grid_data = [src_var[0, 0, searched_grid_index[0][l], searched_grid_index[1][l]] for l in range(len(searched_grid_index[0]))]</span>
+                        
+<span class="c1">#                     else:</span>
+<span class="c1">#                         logger.warning(f&quot;Variable {var_name} has unsupported dimensions: {len(src_var.dimensions)}&quot;)</span>
+        
+<span class="c1">#                     # resample</span>
+<span class="c1">#                     searched_resample_data = np.nanmean(np.array(searched_grid_data))</span>
+                    
+<span class="c1">#                     # append</span>
+<span class="c1">#                     forcings_searched_resample_arrays_v[gi, di] = searched_resample_data</span>
+                    
+<span class="c1">#                     # # check</span>
+<span class="c1">#                     # if check_search and vi+gi+di == 0:</span>
+<span class="c1">#                     #     cgdf = CreateGDF()</span>
+<span class="c1">#                     #     grid_shp_grid = grid_shp.loc[[gi], &quot;geometry&quot;]</span>
+<span class="c1">#                     #     searched_grids_gdf = cgdf.createGDF_rectangle_central_coord(</span>
+<span class="c1">#                     #         searched_grid_lon, searched_grid_lat, NLDAS_forcing_lat_res</span>
+<span class="c1">#                     #     )</span>
+
+<span class="c1">#                     #     fig, ax = plt.subplots()</span>
+<span class="c1">#                     #     grid_shp_grid.boundary.plot(ax=ax, edgecolor=&quot;r&quot;, linewidth=2)  # target</span>
+<span class="c1">#                     #     searched_grids_gdf.plot(</span>
+<span class="c1">#                     #         ax=ax, edgecolor=&quot;k&quot;, linewidth=0.2, facecolor=&quot;b&quot;, alpha=0.5</span>
+<span class="c1">#                     #     )  # searched data from source data</span>
+                        
+<span class="c1">#                     #     ax.set_title(&quot;check search&quot;)</span>
+                        
+<span class="c1">#                     #     plt.show(block=True)</span>
+    
+<span class="c1">#     # save</span>
+<span class="c1">#     for j in range(len(var_names)):</span>
+<span class="c1">#         # [v1, ..., v5], v1 = [grid1, ..., gridn], grid1 = [time1, ..., timek] (series)</span>
+<span class="c1">#         grid_shp[f&quot;{var_names[j]}&quot;] = [row.tolist() for row in forcings_searched_resample_arrays[j]]</span>
+    
+<span class="c1">#     # postprocessing: unit change</span>
+<span class="c1">#     # TMP: K -&gt; -273.15 -&gt; C</span>
+<span class="c1">#     grid_shp[&quot;TMP&quot;] = grid_shp[&quot;TMP&quot;].apply(lambda row: np.array(row) - 273.15)  # K to C</span>
+    
+<span class="c1">#     # PRES: Pa -&gt; /1000 -&gt; kPa</span>
+<span class="c1">#     grid_shp[&quot;PRES&quot;] = grid_shp[&quot;PRES&quot;].apply(lambda row: np.array(row) / 1000.0)  # Pa to kPa</span>
+    
+<span class="c1">#     # calculate VP, kPa</span>
+<span class="c1">#     def compute_vp_series(row):</span>
+<span class="c1">#         prs_kPa = row[&quot;PRES&quot;]</span>
+<span class="c1">#         sh_kg_per_kg = row[&quot;SPFH&quot;]</span>
+        
+<span class="c1">#         vp_series = [</span>
+<span class="c1">#             cal_VP_from_prs_sh(prs_kPa_day, sh_kg_per_kg_day) for prs_kPa_day, sh_kg_per_kg_day in zip(prs_kPa, sh_kg_per_kg)</span>
+<span class="c1">#         ]</span>
+<span class="c1">#         return vp_series</span>
+
+<span class="c1">#     grid_shp[&quot;VP&quot;] = grid_shp.apply(compute_vp_series, axis=1)</span>
+    
+<span class="c1">#     # cal wind</span>
+<span class="c1">#     def compute_wind_series(row):</span>
+<span class="c1">#         wind_u = row[&quot;UGRD&quot;]</span>
+<span class="c1">#         wind_v = row[&quot;VGRD&quot;]</span>
+        
+<span class="c1">#         vp_series = [</span>
+<span class="c1">#             (wind_u_day**2 + wind_v_day**2)**0.5  for wind_u_day, wind_v_day in zip(wind_u, wind_v)</span>
+<span class="c1">#         ]</span>
+<span class="c1">#         return vp_series</span>
+
+<span class="c1">#     grid_shp[&quot;WIND&quot;] = grid_shp.apply(compute_wind_series, axis=1)</span>
+    
+<span class="c1">#     # rename columns to add units</span>
+<span class="c1">#     grid_shp.rename(</span>
+<span class="c1">#         columns={</span>
+<span class="c1">#             &quot;TMP&quot;: &quot;tmp_avg_C&quot;,  # C</span>
+<span class="c1">#             &quot;APCP&quot;: &quot;pre_mm_per_day&quot;,  # mm/day</span>
+<span class="c1">#             &quot;PRES&quot;: &quot;prs_kPa&quot;,  # kPa</span>
+<span class="c1">#             &quot;DSWRF&quot;: &quot;swd_W_per_m2&quot;,  # W m-2</span>
+<span class="c1">#             &quot;DLWRF&quot;: &quot;lwd_W_per_m2&quot;,  # W m-2</span>
+<span class="c1">#             &quot;SPFH&quot;: &quot;shu_kg_per_kg&quot;,  # kg/kg</span>
+<span class="c1">#             &quot;VP&quot;: &quot;vp_kPa&quot;,  # kPa</span>
+<span class="c1">#             &quot;WIND&quot;: &quot;wind_m_per_s&quot;,  # m/s</span>
+<span class="c1">#             # &quot;UGRD&quot;</span>
+<span class="c1">#             # &quot;VGRD&quot;</span>
+<span class="c1">#         },</span>
+<span class="c1">#         inplace=True</span>
+<span class="c1">#     )</span>
+    
+<span class="c1">#     # plot</span>
+<span class="c1">#     if plot:</span>
+<span class="c1">#         # plot timeseries</span>
+<span class="c1">#         grid_i = 0</span>
+<span class="c1">#         plot_var_name = &quot;lwd_W_per_m2&quot;</span>
+        
+<span class="c1">#         plt.figure(figsize=(10, 6))</span>
+<span class="c1">#         plt.plot(date, grid_shp.loc[grid_shp.index[grid_i], f&quot;{plot_var_name}&quot;], label=plot_var_name)</span>
+<span class="c1">#         plt.xlabel(&quot;Time&quot;)</span>
+<span class="c1">#         plt.ylabel(plot_var_name)</span>
+<span class="c1">#         plt.legend()</span>
+<span class="c1">#         plt.title(f&quot;Time Series of {plot_var_name} at Grid {grid_i}&quot;)</span>
+<span class="c1">#         plt.show(block=True)</span>
+        
+<span class="c1">#         # plot map</span>
+<span class="c1">#         fig, ax = plt.subplots()</span>
+        
+<span class="c1">#         grid_shp_plot = deepcopy(grid_shp)</span>
+<span class="c1">#         grid_shp_plot[f&quot;{plot_var_name}_timemean&quot;] = grid_shp_plot.apply(</span>
+<span class="c1">#             lambda row: np.nanmean(row[f&quot;{plot_var_name}&quot;]), axis=1</span>
+<span class="c1">#         )</span>
+        
+<span class="c1">#         grid_shp_plot.plot(</span>
+<span class="c1">#             f&quot;{plot_var_name}_timemean&quot;,</span>
+<span class="c1">#             ax=ax,</span>
+<span class="c1">#             edgecolor=&quot;k&quot;,</span>
+<span class="c1">#             linewidth=0.2,</span>
+<span class="c1">#         )</span>
+<span class="c1">#         ax.set_title(f&quot;{plot_var_name} mean&quot;)</span>
+<span class="c1">#         ax.set_xlim(</span>
+<span class="c1">#             [min(grids_lon) - grid_shp_res / 2, max(grids_lon) + grid_shp_res / 2]</span>
+<span class="c1">#         )</span>
+<span class="c1">#         ax.set_ylim(</span>
+<span class="c1">#             [min(grids_lat) - grid_shp_res / 2, max(grids_lat) + grid_shp_res / 2]</span>
+<span class="c1">#         )</span>
+        
+<span class="c1">#         plt.show(block=True)</span>
+        
+<span class="c1">#     return grid_shp</span>
+        
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># ExtractData(None, [&quot;19980101&quot;, &quot;20101231&quot;], grid_shp_res=0.25, plot=False, check_search=False)</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

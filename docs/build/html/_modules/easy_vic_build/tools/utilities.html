@@ -1,0 +1,821 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.utilities &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.utilities</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;General utility functions for path handling, resource loading, dataset I/O, and so on&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">ConfigParser</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">.dpc_func.basin_grid_class</span> <span class="kn">import</span> <span class="n">Basins</span>
+<span class="kn">from</span> <span class="nn">.geo_func.search_grids</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.params_func.GlobalParamParser</span> <span class="kn">import</span> <span class="n">GlobalParamParser</span>
+<span class="kn">from</span> <span class="nn">.params_func.params_set</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">## ------------------------ general utilities ------------------------</span>
+
+<span class="n">top_package</span> <span class="o">=</span> <span class="n">__package__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="check_and_mkdir">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.check_and_mkdir">[docs]</a>
+<span class="k">def</span> <span class="nf">check_and_mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a directory if it does not exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        The directory path to check and create.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="nb">dir</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="remove_and_mkdir">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.remove_and_mkdir">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_and_mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove a directory and recreate it as an empty directory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        The directory path to remove and create.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="nb">dir</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="remove_files">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.remove_files">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_files</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove files in a directory while keeping subdirectories.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        The directory from which files will be removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># do not remove subdir</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="setHomePath">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.setHomePath">[docs]</a>
+<span class="k">def</span> <span class="nf">setHomePath</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;E:&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the home path for the CAMELS dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    root : str, optional</span>
+<span class="sd">        The root directory for the CAMELS dataset, default is &quot;E:&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    root: str</span>
+<span class="sd">        The root directory path.</span>
+<span class="sd">        </span>
+<span class="sd">    home: str</span>
+<span class="sd">        The home directory path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">home</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s2">/data/hydrometeorology/CAMELS&quot;</span>
+    <span class="k">return</span> <span class="n">root</span><span class="p">,</span> <span class="n">home</span></div>
+
+
+
+<div class="viewcode-block" id="exportToCsv">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.exportToCsv">[docs]</a>
+<span class="k">def</span> <span class="nf">exportToCsv</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">fpath_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exports data from the provided basin shapefile to CSV files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_shp : `geopandas.GeoDataFrame`</span>
+<span class="sd">        The basin shapefile containing the required data.</span>
+<span class="sd">        </span>
+<span class="sd">    fpath_dir : str</span>
+<span class="sd">        The directory path to save the exported CSV files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="n">basin_shp</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">streamflow</span> <span class="o">=</span> <span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">11</span><span class="p">)]</span>
+    <span class="n">prep</span> <span class="o">=</span> <span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">11</span><span class="p">)]</span>
+    <span class="n">gleam_e_daily</span> <span class="o">=</span> <span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+    <span class="n">columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+    <span class="c1"># columns.remove(&quot;intersects_grids&quot;)</span>
+
+    <span class="n">csv_df</span> <span class="o">=</span> <span class="n">basin_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="p">]</span>
+
+    <span class="c1"># save</span>
+    <span class="n">csv_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;basin_shp.csv&quot;</span><span class="p">))</span>
+
+    <span class="c1"># save streamflow</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;streamflow&quot;</span><span class="p">)):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;streamflow&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+        <span class="n">streamflow</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;loop for basins to save streamflow&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
+    <span class="p">):</span>
+        <span class="n">streamflow</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;streamflow&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">))</span>
+
+    <span class="c1"># save prep</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;prep&quot;</span><span class="p">)):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;prep&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">prep</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;loop for basins to save prep&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">):</span>
+        <span class="n">prep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;prep&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">))</span>
+
+    <span class="c1"># save gleam_e_daily</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;gleam_e_daily&quot;</span><span class="p">)):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;gleam_e_daily&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+        <span class="n">gleam_e_daily</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;loop for basins to save gleam_e_daily&quot;</span><span class="p">,</span>
+        <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">gleam_e_daily</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fpath_dir</span><span class="p">,</span> <span class="s2">&quot;gleam_e_daily&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="checkGaugeBasin">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.checkGaugeBasin">[docs]</a>
+<span class="k">def</span> <span class="nf">checkGaugeBasin</span><span class="p">(</span>
+    <span class="n">basinShp</span><span class="p">,</span> <span class="n">usgs_streamflow</span><span class="p">,</span> <span class="n">BasinAttribute</span><span class="p">,</span> <span class="n">forcingDaymetGaugeAttributes</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compares the basin shapefile data with the USGS streamflow, BasinAttribute,</span>
+<span class="sd">    and forcingDaymet gauge attributes to check for mismatches.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basinShp : `geopandas.GeoDataFrame`</span>
+<span class="sd">        The basin shapefile containing basin IDs.</span>
+<span class="sd">        </span>
+<span class="sd">    usgs_streamflow : list</span>
+<span class="sd">        A list of USGS streamflow data.</span>
+<span class="sd">        </span>
+<span class="sd">    BasinAttribute : `pandas.DataFrame`</span>
+<span class="sd">        A dataframe containing basin attributes.</span>
+<span class="sd">        </span>
+<span class="sd">    forcingDaymetGaugeAttributes : list</span>
+<span class="sd">        A list of forcing Daymet gauge attributes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">id_basin_shp</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">basinShp</span><span class="o">.</span><span class="n">hru_id</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">id_usgs_streamflow</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">usgs_streamflow</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usgs_streamflow</span><span class="p">))]</span>
+    <span class="p">)</span>
+    <span class="n">id_BasinAttribute</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">BasinAttribute</span><span class="p">[</span><span class="s2">&quot;camels_clim&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">gauge_id</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">id_forcingDaymet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">forcingDaymetGaugeAttributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;gauge_id&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">forcingDaymetGaugeAttributes</span><span class="p">))</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;id_HCDN_shp: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">id_basin_shp</span><span class="p">)</span><span class="si">}</span><span class="s2">, id_usgs_streamflow: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">id_usgs_streamflow</span><span class="p">)</span><span class="si">}</span><span class="s2">, id_BasinAttribute: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">id_BasinAttribute</span><span class="p">)</span><span class="si">}</span><span class="s2">, id_forcingDatmet: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">id_forcingDaymet</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id_usgs_streamflow - id_HCDN_shp: </span><span class="si">{</span><span class="n">id_usgs_streamflow</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">id_basin_shp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id_BasinAttribute - id_HCDN_shp: </span><span class="si">{</span><span class="n">id_BasinAttribute</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">id_basin_shp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id_forcingDatmet - id_HCDN_shp: </span><span class="si">{</span><span class="n">id_forcingDaymet</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">id_basin_shp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    <span class="c1"># result</span>
+    <span class="c1"># id_usgs_streamflow - id_HCDN_shp: {9535100, 6775500, 6846500}</span>
+    <span class="c1"># id_forcingDatmet - id_HCDN_shp: {6846500, 6775500, 3448942, 1150900, 2081113, 9535100}</span>
+
+
+<span class="c1">## ------------------------ read function ------------------------</span>
+
+
+<div class="viewcode-block" id="read_NLDAS_annual_prec">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_NLDAS_annual_prec">[docs]</a>
+<span class="k">def</span> <span class="nf">read_NLDAS_annual_prec</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the NLDAS annual precipitation data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_annual_P: `np.ndarray`</span>
+<span class="sd">        The annual precipitation data.</span>
+<span class="sd">        </span>
+<span class="sd">    annual_P_lon: `np.ndarray`</span>
+<span class="sd">        The longitude data.</span>
+<span class="sd">        </span>
+<span class="sd">    annual_P_lat: `np.ndarray`</span>
+<span class="sd">        The latitude data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/NLDAS_annual_prec.npy&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data_annual_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/annual_prec_lon.txt&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">annual_P_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/annual_prec_lat.txt&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">annual_P_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data_annual_P</span><span class="p">,</span> <span class="n">annual_P_lon</span><span class="p">,</span> <span class="n">annual_P_lat</span></div>
+
+
+
+<div class="viewcode-block" id="read_globalParam_reference">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_globalParam_reference">[docs]</a>
+<span class="k">def</span> <span class="nf">read_globalParam_reference</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the global parameter reference file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    globalParam: `GlobalParamParser`</span>
+<span class="sd">        The global parameter object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span>
+        <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/global_param_reference.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">globalParam</span> <span class="o">=</span> <span class="n">GlobalParamParser</span><span class="p">()</span>
+        <span class="n">globalParam</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">globalParam</span></div>
+
+
+
+<div class="viewcode-block" id="read_rvic_param_cfg_file_reference">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_rvic_param_cfg_file_reference">[docs]</a>
+<span class="k">def</span> <span class="nf">read_rvic_param_cfg_file_reference</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the RVIC parameter configuration reference file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cfg_file: `ConfigParser`</span>
+<span class="sd">        The configuration file parser object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span>
+        <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/rvic.parameters.reference.cfg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+            <span class="s2">&quot;utf-8&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">cfg_file</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+        <span class="n">cfg_file</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">cfg_file</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cfg_file</span></div>
+
+
+
+<div class="viewcode-block" id="read_rvic_conv_cfg_file_reference">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_rvic_conv_cfg_file_reference">[docs]</a>
+<span class="k">def</span> <span class="nf">read_rvic_conv_cfg_file_reference</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the RVIC convolution configuration reference file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cfg_file: `ConfigParser`</span>
+<span class="sd">        The configuration file parser object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span>
+        <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/rvic.convolution.reference.cfg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+            <span class="s2">&quot;utf-8&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">cfg_file</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+        <span class="n">cfg_file</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">cfg_file</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cfg_file</span></div>
+
+
+
+<div class="viewcode-block" id="read_veg_type_attributes_umd">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_veg_type_attributes_umd">[docs]</a>
+<span class="k">def</span> <span class="nf">read_veg_type_attributes_umd</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads vegetation type attributes from UMD.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    veg_params_json: dict</span>
+<span class="sd">        A dictionary of vegetation parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span>
+        <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/veg_type_attributes_umd.json&quot;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">veg_params_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">veg_params_json</span> <span class="o">=</span> <span class="n">veg_params_json</span><span class="p">[</span><span class="s2">&quot;classAttributes&quot;</span><span class="p">]</span>
+        <span class="n">veg_keys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">veg_params_json</span><span class="p">]</span>
+        <span class="n">veg_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">veg_params_json</span><span class="p">]</span>
+        <span class="n">veg_params_json</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">veg_keys</span><span class="p">,</span> <span class="n">veg_params</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">veg_params_json</span></div>
+
+
+
+<div class="viewcode-block" id="read_NLDAS_Veg_monthly">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_NLDAS_Veg_monthly">[docs]</a>
+<span class="k">def</span> <span class="nf">read_NLDAS_Veg_monthly</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads monthly vegetation data from NLDAS.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    NLDAS_Veg_monthly_veg_rough: `pandas.DataFrame`</span>
+<span class="sd">        A dataframe containing vegetation roughness data.</span>
+<span class="sd">        </span>
+<span class="sd">    NLDAS_Veg_monthly_veg_displacement: `pandas.DataFrame`</span>
+<span class="sd">        A dataframe containing vegetation displacement data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/NLDAS_Veg_monthly.xlsx&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">NLDAS_Veg_monthly_veg_rough</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">NLDAS_Veg_monthly_veg_displacement</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">NLDAS_Veg_monthly_veg_rough</span><span class="p">,</span> <span class="n">NLDAS_Veg_monthly_veg_displacement</span></div>
+
+
+
+<div class="viewcode-block" id="read_veg_param_json">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_veg_param_json">[docs]</a>
+<span class="k">def</span> <span class="nf">read_veg_param_json</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads updated vegetation attributes from a JSON file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    veg_params_json: dict</span>
+<span class="sd">        A dictionary of updated vegetation parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span>
+        <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">top_package</span><span class="p">,</span> <span class="s2">&quot;data/veg_type_attributes_umd_updated.json&quot;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">veg_params_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">veg_params_json</span></div>
+
+
+
+<div class="viewcode-block" id="readHCDNGrids">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readHCDNGrids">[docs]</a>
+<span class="k">def</span> <span class="nf">readHCDNGrids</span><span class="p">(</span><span class="n">home</span><span class="o">=</span><span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">hydrometeorology</span><span class="se">\\</span><span class="s2">CAMELS&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads HCDN grid data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    home : str, optional</span>
+<span class="sd">        The directory containing the grid data, default is &quot;E:\\data\\hydrometeorology\\CAMELS&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grid_shp: `geopandas.GeoDataFrame`</span>
+<span class="sd">        The grid shapefile data with added point geometry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_shp_label_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span> <span class="s2">&quot;grids_0_25_label.shp&quot;</span><span class="p">)</span>
+    <span class="n">grid_shp_label</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">grid_shp_label_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">grid_shp_label</span><span class="p">)</span>
+
+    <span class="n">grid_shp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span> <span class="s2">&quot;grids_0_25.shp&quot;</span><span class="p">)</span>
+    <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">grid_shp_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">)</span>
+
+    <span class="c1"># combine grid_shp_lable into grid_shp</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp_label</span><span class="o">.</span><span class="n">geometry</span>
+
+    <span class="k">return</span> <span class="n">grid_shp</span></div>
+
+
+
+<div class="viewcode-block" id="readHCDNBasins">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readHCDNBasins">[docs]</a>
+<span class="k">def</span> <span class="nf">readHCDNBasins</span><span class="p">(</span><span class="n">home</span><span class="o">=</span><span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">hydrometeorology</span><span class="se">\\</span><span class="s2">CAMELS&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read HCDN basin polygons and add ``AREA_km2``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    home : str, optional</span>
+<span class="sd">        The root directory where the CAMELS dataset is stored, by default &quot;E:\\data\\hydrometeorology\\CAMELS&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HCDN_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin shapefile with area converted from ``m2`` to ``km2``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read data: HCDN</span>
+    <span class="n">HCDN_shp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;basin_set_full_res&quot;</span><span class="p">,</span> <span class="s2">&quot;HCDN_nhru_final_671.shp&quot;</span><span class="p">)</span>
+    <span class="n">HCDN_shp</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">HCDN_shp_path</span><span class="p">)</span>
+    <span class="n">HCDN_shp</span><span class="p">[</span><span class="s2">&quot;AREA_km2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">HCDN_shp</span><span class="o">.</span><span class="n">AREA</span> <span class="o">/</span> <span class="mi">1000000</span>  <span class="c1"># m2 -&gt; km2</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">HCDN_shp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">HCDN_shp</span></div>
+
+
+
+<div class="viewcode-block" id="read_one_HCDN_basin_shp">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_one_HCDN_basin_shp">[docs]</a>
+<span class="k">def</span> <span class="nf">read_one_HCDN_basin_shp</span><span class="p">(</span><span class="n">basin_index</span><span class="p">,</span> <span class="n">home</span><span class="o">=</span><span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">hydrometeorology</span><span class="se">\\</span><span class="s2">CAMELS&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a specific basin shapefile from the HCDN dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_index : int</span>
+<span class="sd">        The index of the basin to read from the HCDN shapefile.</span>
+<span class="sd">        </span>
+<span class="sd">    home : str, optional</span>
+<span class="sd">        The root directory where the CAMELS dataset is stored, by default &quot;E:\\data\\hydrometeorology\\CAMELS&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    basin_shp_all: `geopandas.GeoDataFrame`</span>
+<span class="sd">        The full HCDN shapefile GeoDataFrame.</span>
+<span class="sd">        </span>
+<span class="sd">    basin_shp: `geopandas.GeoDataFrame`</span>
+<span class="sd">        The specific basin&#39;s GeoDataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">HCDN_shp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">home</span><span class="p">,</span> <span class="s2">&quot;basin_set_full_res&quot;</span><span class="p">,</span> <span class="s2">&quot;HCDN_nhru_final_671.shp&quot;</span>
+    <span class="p">)</span>
+    <span class="n">basin_shp_all</span> <span class="o">=</span> <span class="n">Basins</span><span class="o">.</span><span class="n">from_shapefile</span><span class="p">(</span><span class="n">HCDN_shp_path</span><span class="p">)</span>
+    <span class="n">basin_shp_all</span><span class="p">[</span><span class="s2">&quot;AREA_km2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">basin_shp_all</span><span class="o">.</span><span class="n">AREA</span> <span class="o">/</span> <span class="mi">1000000</span>  <span class="c1"># m2 -&gt; km2</span>
+    <span class="n">basin_shp</span> <span class="o">=</span> <span class="n">basin_shp_all</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">basin_index</span><span class="p">:</span><span class="n">basin_index</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">return</span> <span class="n">basin_shp_all</span><span class="p">,</span> <span class="n">basin_shp</span></div>
+
+
+
+<div class="viewcode-block" id="readdpc">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readdpc">[docs]</a>
+<span class="k">def</span> <span class="nf">readdpc</span><span class="p">(</span>
+    <span class="n">dpc_fpath</span><span class="p">,</span>
+    <span class="n">dpc_class</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiate a DPC object from a serialized path.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dpc_fpath : str</span>
+<span class="sd">        Path to DPC serialized data.</span>
+<span class="sd">    dpc_class : type</span>
+<span class="sd">        DPC class constructor that accepts ``dpc_fpath``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        DPC instance created by ``dpc_class``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read</span>
+    <span class="n">dpc_instance</span> <span class="o">=</span> <span class="n">dpc_class</span><span class="p">(</span><span class="n">dpc_fpath</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dpc_instance</span></div>
+
+
+
+<div class="viewcode-block" id="readDomain">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readDomain">[docs]</a>
+<span class="k">def</span> <span class="nf">readDomain</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the domain data from a NetCDF file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Optional suffix; if provided, read ``domain_&lt;name&gt;.nc``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    domain_dataset : netCDF4.Dataset</span>
+<span class="sd">        The domain dataset loaded from the NetCDF file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">domain_path</span> <span class="o">=</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">domainFile_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.nc&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.nc&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">domain_path</span> <span class="o">=</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">domainFile_path</span>
+        
+    <span class="n">domain_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">domain_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">domain_dataset</span></div>
+
+
+
+<div class="viewcode-block" id="readParam">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readParam">[docs]</a>
+<span class="k">def</span> <span class="nf">readParam</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads parameter data from NetCDF files at levels 0 and 1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+<span class="sd">        </span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        The mode to open the files, by default &quot;r&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    params_dataset_level0: `netCDF4.Dataset`</span>
+<span class="sd">        The parameter dataset at level 0.</span>
+<span class="sd">        </span>
+<span class="sd">    params_dataset_level1: `netCDF4.Dataset`</span>
+<span class="sd">        The parameter dataset at level 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read</span>
+    <span class="n">params_dataset_level0</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">evb_dir</span><span class="o">.</span><span class="n">params_dataset_level0_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span>
+    <span class="p">)</span>
+    <span class="n">params_dataset_level1</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">evb_dir</span><span class="o">.</span><span class="n">params_dataset_level1_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">params_dataset_level0</span><span class="p">,</span> <span class="n">params_dataset_level1</span></div>
+
+
+
+<div class="viewcode-block" id="clearParam">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.clearParam">[docs]</a>
+<span class="k">def</span> <span class="nf">clearParam</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deletes the parameter NetCDF files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">params_dataset_level0_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">params_dataset_level0_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">params_dataset_level1_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">params_dataset_level1_path</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICParam_dir</span><span class="p">,</span> <span class="s2">&quot;flow_direction_file.nc&quot;</span><span class="p">)):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">RVICParam_dir</span><span class="p">,</span> <span class="s2">&quot;flow_direction_file.nc&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="readRVICParam">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readRVICParam">[docs]</a>
+<span class="k">def</span> <span class="nf">readRVICParam</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the RVIC parameter files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager. Also expects ``evb_dir.cfg_file_path``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flow_direction_dataset: `netCDF4.Dataset`</span>
+<span class="sd">        The flow direction dataset.</span>
+<span class="sd">        </span>
+<span class="sd">    pourpoint_file: `pandas.DataFrame`</span>
+<span class="sd">        The pourpoint file data.</span>
+<span class="sd">        </span>
+<span class="sd">    uhbox_file: `pandas.DataFrame`</span>
+<span class="sd">        The unit hydrograph box file data.</span>
+<span class="sd">        </span>
+<span class="sd">    cfg_file: `ConfigParser`</span>
+<span class="sd">        The configuration file parser object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read</span>
+    <span class="n">flow_direction_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">flow_direction_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;NETCDF4&quot;</span><span class="p">)</span>
+    <span class="n">pourpoint_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">pourpoint_file_path</span><span class="p">)</span>
+    <span class="n">uhbox_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">uhbox_file_path</span><span class="p">)</span>
+    <span class="n">cfg_file</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">cfg_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">cfg_file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">flow_direction_dataset</span><span class="p">,</span> <span class="n">pourpoint_file</span><span class="p">,</span> <span class="n">uhbox_file</span><span class="p">,</span> <span class="n">cfg_file</span></div>
+
+
+
+<div class="viewcode-block" id="read_cfg_to_dict">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.read_cfg_to_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">read_cfg_to_dict</span><span class="p">(</span><span class="n">cfg_file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a configuration file and converts it to a dictionary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg_file_path : str</span>
+<span class="sd">        The path to the configuration file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cfg_file_dict: dict</span>
+<span class="sd">        A dictionary containing the configuration parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cfg_file</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">cfg_file</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">cfg_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cfg_file_path</span><span class="p">)</span>
+    <span class="n">cfg_file_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">section</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cfg_file</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">section</span><span class="p">))</span> <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">cfg_file</span><span class="o">.</span><span class="n">sections</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">cfg_file_dict</span></div>
+
+
+
+<div class="viewcode-block" id="readGlobalParam">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readGlobalParam">[docs]</a>
+<span class="k">def</span> <span class="nf">readGlobalParam</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the global parameters from a configuration file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    globalParam: `GlobalParamParser`</span>
+<span class="sd">        A global parameter object loaded from the specified file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">globalParam</span> <span class="o">=</span> <span class="n">GlobalParamParser</span><span class="p">()</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">globalParam_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">globalParam</span></div>
+
+
+
+<div class="viewcode-block" id="readCalibrateCp">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readCalibrateCp">[docs]</a>
+<span class="k">def</span> <span class="nf">readCalibrateCp</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the calibration control points from a pickle file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    state: dict</span>
+<span class="sd">        A dictionary containing the state information from the calibration file. The keys of the dictionary are:</span>
+<span class="sd">            - current_generation</span>
+<span class="sd">            - initial_population</span>
+<span class="sd">            - population</span>
+<span class="sd">            - history</span>
+<span class="sd">            - front_fitness</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">calibrate_cp_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="c1"># current_generation = state[&quot;current_generation&quot;]</span>
+        <span class="c1"># initial_population = state[&quot;initial_population&quot;]</span>
+        <span class="c1"># population = state[&quot;population&quot;]</span>
+        <span class="c1"># history = state[&quot;history&quot;]</span>
+        <span class="c1"># front_fitness = [history[i][1][0][0].fitness.values for i in range(len(history))]</span>
+        <span class="c1"># plt.plot(front_fitness)</span>
+    <span class="k">return</span> <span class="n">state</span></div>
+
+
+
+<div class="viewcode-block" id="readBasinMap">
+<a class="viewcode-back" href="../../../_autosummary/easy_vic_build.tools.utilities.html#easy_vic_build.tools.utilities.readBasinMap">[docs]</a>
+<span class="k">def</span> <span class="nf">readBasinMap</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the basin map shapefile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    stream_gdf: `geopandas.GeoDataFrame`</span>
+<span class="sd">        The stream basin shapefile data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stream_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">BasinMap_dir</span><span class="p">,</span> <span class="s2">&quot;stream_raster_shp_clip.shp&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">stream_gdf</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

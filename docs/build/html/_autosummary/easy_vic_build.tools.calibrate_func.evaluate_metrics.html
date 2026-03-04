@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.evaluate_metrics &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.calibrate_func.sampling" href="easy_vic_build.tools.calibrate_func.sampling.html" />
+    <link rel="prev" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII" href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.calibrate_func.evaluate_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.sampling.html">easy_vic_build.tools.calibrate_func.sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.evaluate_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.calibrate_func.evaluate_metrics">
+<span id="easy-vic-build-tools-calibrate-func-evaluate-metrics"></span><h1>easy_vic_build.tools.calibrate_func.evaluate_metrics<a class="headerlink" href="#module-easy_vic_build.tools.calibrate_func.evaluate_metrics" title="Link to this heading"></a></h1>
+<p>Evaluation metrics for continuous, categorical, and signature analysis.</p>
+<p>The module provides:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvaluationMetric</span></code></a> for classic scalar and spatial skill scores;</p></li>
+<li><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalEvaluationMetric</span></code></a> for event-based contingency metrics;</p></li>
+<li><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">SignatureEvaluationMetric</span></code></a> for flow-duration-curve based signatures.</p></li>
+</ul>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_test_data</span></code></a>([seed])</p></td>
+<td><p>Create synthetic spatiotemporal fields for metric testing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data2" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_test_data2</span></code></a>()</p></td>
+<td><p>Create synthetic dataset pair with time-varying noise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CategoricalEvaluationMetric</span></code></a>(sim, obs)</p></td>
+<td><p>Event-based verification metrics from a contingency table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvaluationMetric</span></code></a>(sim, obs)</p></td>
+<td><p>Continuous-value evaluation metrics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric" title="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SignatureEvaluationMetric</span></code></a>(sim, obs)</p></td>
+<td><p>Hydrologic signature metrics based on discharge series.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.evaluate_metrics.</span></span><span class="sig-name descname"><span class="pre">EvaluationMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Continuous-value evaluation metrics.</p>
+<p>Initialize the metric class with simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim</strong> (<em>array-like</em>) – Simulated values.</p></li>
+<li><p><strong>obs</strong> (<em>array-like</em>) – Observed values.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the metric class with simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim</strong> (<em>array-like</em>) – Simulated values.</p></li>
+<li><p><strong>obs</strong> (<em>array-like</em>) – Observed values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.MSE">
+<span class="sig-name descname"><span class="pre">MSE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.MSE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.MSE" title="Link to this definition"></a></dt>
+<dd><p>Computes the Mean Squared Error (MSE) between the simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated MSE.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.RMSE">
+<span class="sig-name descname"><span class="pre">RMSE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.RMSE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.RMSE" title="Link to this definition"></a></dt>
+<dd><p>Computes the Root Mean Squared Error (RMSE) between the simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated RMSE.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.RRMSE">
+<span class="sig-name descname"><span class="pre">RRMSE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.RRMSE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.RRMSE" title="Link to this definition"></a></dt>
+<dd><p>Computes the Relative Root Mean Squared Error (RRMSE) between the simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated RRMSE.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.R">
+<span class="sig-name descname"><span class="pre">R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">confidence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.R"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.R" title="Link to this definition"></a></dt>
+<dd><p>Computes the Pearson correlation coefficient (R) and its significance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>confidence</strong> (<em>float</em><em>, </em><em>optional</em>) – The confidence level to determine the significance, by default 0.95.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing the correlation coefficient (r), p-value, and significance:
+- r : float</p>
+<blockquote>
+<div><p>The Pearson correlation coefficient.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value corresponding to the correlation coefficient.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>significance<span class="classifier">int</span></dt><dd><p>A value indicating the significance of the correlation:
+1 for positive correlation, -1 for negative, and 0 for no significant correlation.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.R2">
+<span class="sig-name descname"><span class="pre">R2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.R2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.R2" title="Link to this definition"></a></dt>
+<dd><p>Computes the R-squared (R2) value of the linear fit between the simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated R2 value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.NSE">
+<span class="sig-name descname"><span class="pre">NSE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.NSE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.NSE" title="Link to this definition"></a></dt>
+<dd><p>Computes the Nash-Sutcliffe Efficiency (NSE) coefficient.</p>
+<p>The NSE measures how well the simulated values match the observed values,
+with higher values indicating better performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated NSE value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.Bias">
+<span class="sig-name descname"><span class="pre">Bias</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.Bias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.Bias" title="Link to this definition"></a></dt>
+<dd><p>Computes the bias between the simulated and observed values.</p>
+<p>The bias is the mean difference between the observed and simulated values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated bias.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.PBias">
+<span class="sig-name descname"><span class="pre">PBias</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.PBias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.PBias" title="Link to this definition"></a></dt>
+<dd><p>Computes the Percent Bias (PBias) between the simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated PBias.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.KGE">
+<span class="sig-name descname"><span class="pre">KGE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.KGE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.KGE" title="Link to this definition"></a></dt>
+<dd><p>Computes the Kling-Gupta Efficiency (KGE) metric between the simulated and observed values.</p>
+<p>The KGE metric is based on the correlation coefficient (r), the ratio of means (beta),
+and the ratio of standard deviations (gamma).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated KGE value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.KGE_m">
+<span class="sig-name descname"><span class="pre">KGE_m</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.KGE_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.KGE_m" title="Link to this definition"></a></dt>
+<dd><p>Computes the modified Kling-Gupta Efficiency (KGE-m) metric between the simulated and observed values.</p>
+<p>The KGE-m metric is similar to KGE but adjusts the gamma term to account for
+the relative standard deviations of the observed and simulated values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated KGE-m value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.ESS">
+<span class="sig-name descname"><span class="pre">ESS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.ESS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.ESS" title="Link to this definition"></a></dt>
+<dd><p>Compute EOF-based error similarity score for spatiotemporal fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lats</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Latitude values used to build cosine-latitude weights.</p></li>
+<li><p><strong>n_modes</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of EOF modes used in the score.</p></li>
+<li><p><strong>remove_mean</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to remove the temporal mean before EOF decomposition.</p></li>
+<li><p><strong>mask</strong> (<em>ndarray</em><em> of </em><em>bool</em><em>, </em><em>optional</em>) – Spatial mask of shape <code class="docutils literal notranslate"><span class="pre">(nlat,</span> <span class="pre">nlon)</span></code>. Masked cells are excluded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Score series with length <code class="docutils literal notranslate"><span class="pre">ntime</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.spatialPCC">
+<span class="sig-name descname"><span class="pre">spatialPCC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#EvaluationMetric.spatialPCC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.spatialPCC" title="Link to this definition"></a></dt>
+<dd><p>Compute spatial Pearson correlation for each time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> (<em>ndarray</em><em> of </em><em>bool</em><em>, </em><em>optional</em>) – Spatial mask of shape <code class="docutils literal notranslate"><span class="pre">(nlat,</span> <span class="pre">nlon)</span></code>. <code class="docutils literal notranslate"><span class="pre">True</span></code> cells are ignored.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One correlation value per time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.evaluate_metrics.</span></span><span class="sig-name descname"><span class="pre">CategoricalEvaluationMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Event-based verification metrics from a contingency table.</p>
+<p>Initialize the metric class with simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim</strong> (<em>array-like</em>) – Simulated values.</p></li>
+<li><p><strong>obs</strong> (<em>array-like</em>) – Observed values.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the metric class with simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim</strong> (<em>array-like</em>) – Simulated values.</p></li>
+<li><p><strong>obs</strong> (<em>array-like</em>) – Observed values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.binarize">
+<span class="sig-name descname"><span class="pre">binarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.binarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.binarize" title="Link to this definition"></a></dt>
+<dd><p>Convert continuous values to binary events based on threshold
+Values &gt; threshold are considered ‘event occurred’ (1), else ‘no event’ (0).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>threshold</strong> (<em>float</em>) – Threshold for event occurrence.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.POD">
+<span class="sig-name descname"><span class="pre">POD</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.POD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.POD" title="Link to this definition"></a></dt>
+<dd><p>POD (Probability of Detection)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.FAR">
+<span class="sig-name descname"><span class="pre">FAR</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.FAR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.FAR" title="Link to this definition"></a></dt>
+<dd><p>FAR (False Alarm Ratio)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.CSI">
+<span class="sig-name descname"><span class="pre">CSI</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.CSI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.CSI" title="Link to this definition"></a></dt>
+<dd><p>CSI (Critical Success Index)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.HSS">
+<span class="sig-name descname"><span class="pre">HSS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.HSS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.HSS" title="Link to this definition"></a></dt>
+<dd><p>HSS (Heidke Skill Score)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.ETS">
+<span class="sig-name descname"><span class="pre">ETS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#CategoricalEvaluationMetric.ETS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.ETS" title="Link to this definition"></a></dt>
+<dd><p>ETS (Equitable Threat Score)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.evaluate_metrics.</span></span><span class="sig-name descname"><span class="pre">SignatureEvaluationMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hydrologic signature metrics based on discharge series.</p>
+<p>Initialize the metric class with simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim</strong> (<em>array-like</em>) – Simulated values.</p></li>
+<li><p><strong>obs</strong> (<em>array-like</em>) – Observed values.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the metric class with simulated and observed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim</strong> (<em>array-like</em>) – Simulated values.</p></li>
+<li><p><strong>obs</strong> (<em>array-like</em>) – Observed values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasRR">
+<span class="sig-name descname"><span class="pre">BiasRR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.BiasRR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasRR" title="Link to this definition"></a></dt>
+<dd><p>Compute runoff-ratio bias in percent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>precip</strong> (<em>array-like</em>) – Precipitation series aligned with <code class="docutils literal notranslate"><span class="pre">sim</span></code> and <code class="docutils literal notranslate"><span class="pre">obs</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relative runoff-ratio bias in percent.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFHV">
+<span class="sig-name descname"><span class="pre">BiasFHV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.BiasFHV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFHV" title="Link to this definition"></a></dt>
+<dd><p>High-flow volume bias (FHV), computed from the upper segment
+of the flow duration curve.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFLV">
+<span class="sig-name descname"><span class="pre">BiasFLV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.BiasFLV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFLV" title="Link to this definition"></a></dt>
+<dd><p>Low-flow volume bias (FLV), computed in log space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q_low</strong> (<em>float</em><em>, </em><em>optional</em><em> (</em><em>default=0.7</em><em>)</em>) – Quantile threshold defining low flows on the FDC
+(e.g., q_low=0.7 corresponds to the lowest 30% flows).</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small constant added to avoid log(0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relative bias of low flows in log space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFMS">
+<span class="sig-name descname"><span class="pre">BiasFMS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.BiasFMS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFMS" title="Link to this definition"></a></dt>
+<dd><p>Flow duration curve mid-segment slope bias (BiasFMS).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<em>float</em>) – Exceedance probability bounds defining the mid-segment
+of the FDC (default: 0.2-0.7).</p></li>
+<li><p><strong>p2</strong> (<em>float</em>) – Exceedance probability bounds defining the mid-segment
+of the FDC (default: 0.2-0.7).</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – Small constant to avoid log(0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relative bias of the FDC mid-segment slope.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFMM">
+<span class="sig-name descname"><span class="pre">BiasFMM</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.BiasFMM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFMM" title="Link to this definition"></a></dt>
+<dd><p>Flow duration curve median magnitude bias (BiasFMM).</p>
+<dl class="simple">
+<dt>Defined as:</dt><dd><p>(median(FDC_sim) - median(FDC_obs)) / median(FDC_obs)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.get_fdc">
+<span class="sig-name descname"><span class="pre">get_fdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#SignatureEvaluationMetric.get_fdc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.get_fdc" title="Link to this definition"></a></dt>
+<dd><p>Compute FDC curves for observed and simulated series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul>
+<li><p><strong>fdc</strong> (<em>dict</em>) – Dictionary containing FDC data:
+{</p>
+<blockquote>
+<div><p>’obs’: {‘p’: p_obs, ‘q’: q_obs},
+‘sim’: {‘p’: p_sim, ‘q’: q_sim}</p>
+</div></blockquote>
+<p>}</p>
+</li>
+<li><p><em>example</em> – plt.plot(r[“obs”][“p”], r[“obs”][“q”], “r-”, label=”Observed”)
+plt.plot(r[“sim”][“p”], r[“sim”][“q”], “b-”, label=”sim”)
+xs = [0.02, 0.2, 0.7]
+for x in xs:</p>
+<blockquote>
+<div><p>plt.axvline(x, color=”gray”, linestyle=”–”, linewidth=1.0, alpha=0.7)
+plt.text(</p>
+<blockquote>
+<div><p>x+0.01,
+plt.ylim()[1],
+f”{x:.2f}”,
+rotation=90,
+va=”top”,
+ha=”left”,
+fontsize=9,
+color=”gray”,
+weight=”bold”,</p>
+</div></blockquote>
+<p>)</p>
+</div></blockquote>
+<p>plt.yscale(“log”)
+plt.legend()
+plt.xlim(0, 1)
+plt.ylabel(“Discharge (m$^3$/s)”)
+plt.xlabel(“Flow exceedance probability [-]”)
+plt.show(block=True)</p>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.evaluate_metrics.</span></span><span class="sig-name descname"><span class="pre">create_test_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#create_test_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data" title="Link to this definition"></a></dt>
+<dd><p>Create synthetic spatiotemporal fields for metric testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(reference,</span> <span class="pre">perturbed)</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(T,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data2">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.evaluate_metrics.</span></span><span class="sig-name descname"><span class="pre">create_test_data2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/evaluate_metrics.html#create_test_data2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data2" title="Link to this definition"></a></dt>
+<dd><p>Create synthetic dataset pair with time-varying noise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(obs_data,</span> <span class="pre">sim_data)</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(n_time,</span> <span class="pre">n_lat,</span> <span class="pre">n_lon)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.calibrate_func.sampling.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.calibrate_func.sampling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

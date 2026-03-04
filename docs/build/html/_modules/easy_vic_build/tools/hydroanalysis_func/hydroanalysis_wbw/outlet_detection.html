@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Outlet detection and snapping helpers for watershed delineation.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">...geo_func.create_gdf</span> <span class="kn">import</span> <span class="n">CreateGDF</span>
+
+<div class="viewcode-block" id="detect_main_outlet">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection.detect_main_outlet">[docs]</a>
+<span class="k">def</span> <span class="nf">detect_main_outlet</span><span class="p">(</span>
+    <span class="n">flow_acc_path</span><span class="p">,</span>
+    <span class="n">output_file_path</span><span class="o">=</span><span class="s2">&quot;main_outlet.shp&quot;</span><span class="p">,</span>
+    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect the primary outlet from a flow-accumulation raster.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flow_acc_path : str</span>
+<span class="sd">        Path to the flow accumulation raster file.</span>
+<span class="sd">        </span>
+<span class="sd">    output_file_path : str, optional</span>
+<span class="sd">        Output path for the main outlet shapefile (default &quot;main_outlet.shp&quot;).</span>
+<span class="sd">        </span>
+<span class="sd">    crs_str : str, optional</span>
+<span class="sd">        Coordinate reference system string (default &quot;EPSG:4326&quot;).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``((x_coord, y_coord), (max_col, max_row))`` where the first tuple is</span>
+<span class="sd">        outlet coordinates and the second is raster index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">flow_acc_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">flow_acc_array</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span>
+        
+        <span class="n">masked_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">flow_acc_array</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
+        <span class="n">max_row</span><span class="p">,</span> <span class="n">max_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">masked_array</span><span class="p">),</span>
+            <span class="n">masked_array</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>
+        
+        <span class="n">x_coord</span><span class="p">,</span> <span class="n">y_coord</span> <span class="o">=</span> <span class="n">transform</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_col</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">max_row</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+        
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">rasterio</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># create outlet gdf</span>
+        <span class="n">cgdf</span> <span class="o">=</span> <span class="n">CreateGDF</span><span class="p">()</span>
+        <span class="n">outlet_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_points</span><span class="p">([</span><span class="n">x_coord</span><span class="p">],</span> <span class="p">[</span><span class="n">y_coord</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs_str</span><span class="p">)</span>
+        
+        <span class="c1"># save</span>
+        <span class="n">outlet_gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">x_coord</span><span class="p">,</span> <span class="n">y_coord</span><span class="p">),</span> <span class="p">(</span><span class="n">max_col</span><span class="p">,</span> <span class="n">max_row</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="snap_outlet_to_stream">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection.snap_outlet_to_stream">[docs]</a>
+<span class="k">def</span> <span class="nf">snap_outlet_to_stream</span><span class="p">(</span>
+    <span class="n">wbe</span><span class="p">,</span>
+    <span class="n">outlet_vector_path</span><span class="p">,</span>
+    <span class="n">stream_raster</span><span class="p">,</span>
+    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;snaped_outlet.shp&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Snap outlet points to the nearest stream cell.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wbe : `WbEnvironment`</span>
+<span class="sd">        WhiteboxTools workflow environment instance.</span>
+<span class="sd">        </span>
+<span class="sd">    outlet_vector_path : str</span>
+<span class="sd">        Path to the outlet point vector file.</span>
+<span class="sd">        </span>
+<span class="sd">    stream_raster : `WbRaster`</span>
+<span class="sd">        Extracted stream raster (binary).</span>
+<span class="sd">                </span>
+<span class="sd">    output_file : str, optional</span>
+<span class="sd">        Output path for the snapped outlet shapefile (default</span>
+<span class="sd">        ``&quot;snaped_outlet.shp&quot;``).</span>
+<span class="sd">        </span>
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        Additional keyword arguments passed to ``jenson_snap_pour_points``.</span>
+<span class="sd">            - snap_dist: float</span>
+<span class="sd">                Maximum snap distance for snapping outlets to streams.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `WbVector`</span>
+<span class="sd">        Snapped outlet vector object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Let&#39;s extract the watershed for a specific outlet point</span>
+    <span class="n">outlet_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">read_vector</span><span class="p">(</span><span class="n">outlet_vector_path</span><span class="p">)</span> <span class="c1"># This is a vector point that was included when we downloaded the `mill_brook` dataset.</span>
+    
+    <span class="c1"># Make sure that the outlet is positioned along the stream</span>
+    <span class="n">snaped_outlet_vector</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">jenson_snap_pour_points</span><span class="p">(</span><span class="n">outlet_vector</span><span class="p">,</span> <span class="n">stream_raster</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="n">wbe</span><span class="o">.</span><span class="n">write_vector</span><span class="p">(</span><span class="n">snaped_outlet_vector</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">snaped_outlet_vector</span></div>
+
+
+
+<div class="viewcode-block" id="detect_outlets_with_reference">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.outlet_detection.detect_outlets_with_reference">[docs]</a>
+<span class="k">def</span> <span class="nf">detect_outlets_with_reference</span><span class="p">(</span>
+    <span class="n">wbe</span><span class="p">,</span>
+    <span class="n">x_coords</span><span class="p">,</span>
+    <span class="n">y_coords</span><span class="p">,</span>
+    <span class="n">stream_raster</span><span class="p">,</span>
+    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+    <span class="n">output_file_path</span><span class="o">=</span><span class="s2">&quot;outlets_with_reference.shp&quot;</span><span class="p">,</span>
+    <span class="n">snaped_output_file_path</span><span class="o">=</span><span class="s2">&quot;snaped_outlets_with_reference.shp&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create outlet points from coordinates and snap them to streams.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wbe : `WbEnvironment`</span>
+<span class="sd">        WhiteboxTools workflow environment instance.</span>
+<span class="sd">        </span>
+<span class="sd">    x_coords : sequence of float</span>
+<span class="sd">        X coordinates for outlet points.</span>
+<span class="sd">    y_coords : sequence of float</span>
+<span class="sd">        Y coordinates for outlet points.</span>
+<span class="sd">        </span>
+<span class="sd">    stream_raster : `WbRaster`</span>
+<span class="sd">        Extracted stream raster (binary).</span>
+<span class="sd">        </span>
+<span class="sd">    crs_str : str, optional</span>
+<span class="sd">        Coordinate reference system string (default &quot;EPSG:4326&quot;).</span>
+<span class="sd">        </span>
+<span class="sd">    output_file_path : str, optional</span>
+<span class="sd">        Output path for initial outlet points shapefile (default &quot;outlets_with_reference.shp&quot;).</span>
+<span class="sd">        </span>
+<span class="sd">    snaped_output_file_path : str, optional</span>
+<span class="sd">        Output path for snapped outlet points shapefile (default &quot;snaped_outlets_with_reference.shp&quot;).</span>
+<span class="sd">        </span>
+<span class="sd">    **snap_outlet_to_stream_kwargs : dict</span>
+<span class="sd">        Additional keyword arguments forwarded to ``snap_outlet_to_stream``.</span>
+<span class="sd">            - snap_dist: float</span>
+<span class="sd">                Maximum snap distance for snapping outlets to streams.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(outlet_gdf, snaped_outlet_vector)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create outlet gdf</span>
+    <span class="n">cgdf</span> <span class="o">=</span> <span class="n">CreateGDF</span><span class="p">()</span>
+    <span class="n">outlet_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_points</span><span class="p">(</span><span class="n">x_coords</span><span class="p">,</span> <span class="n">y_coords</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs_str</span><span class="p">)</span>
+    
+    <span class="c1"># save</span>
+    <span class="n">outlet_gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">)</span>
+    
+    <span class="c1"># snap to stream</span>
+    <span class="n">snaped_outlet_vector</span> <span class="o">=</span> <span class="n">snap_outlet_to_stream</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">outlet_vector_path</span><span class="o">=</span><span class="n">output_file_path</span><span class="p">,</span>
+        <span class="n">stream_raster</span><span class="o">=</span><span class="n">stream_raster</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="o">=</span><span class="n">snaped_output_file_path</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">outlet_gdf</span><span class="p">,</span> <span class="n">snaped_outlet_vector</span></div>
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.plot_func.plot_map &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.plot_func.plot_utilities" href="easy_vic_build.tools.plot_func.plot_utilities.html" />
+    <link rel="prev" title="easy_vic_build.tools.plot_func.plot_evaluation" href="easy_vic_build.tools.plot_func.plot_evaluation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.plot_func.plot_evaluation.html">easy_vic_build.tools.plot_func.plot_evaluation</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.plot_func.plot_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.plot_func.plot_utilities.html">easy_vic_build.tools.plot_func.plot_utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.plot_func.plot_map</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.plot_func.plot_map.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.plot_func.plot_map">
+<span id="easy-vic-build-tools-plot-func-plot-map"></span><h1>easy_vic_build.tools.plot_func.plot_map<a class="headerlink" href="#module-easy_vic_build.tools.plot_func.plot_map" title="Link to this heading"></a></h1>
+<p>Module <code class="docutils literal notranslate"><span class="pre">easy_vic_build.tools.plot_func.plot_map</span></code>.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.light_gray_dem" title="easy_vic_build.tools.plot_func.plot_map.light_gray_dem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">light_gray_dem</span></code></a>(dem)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plotBackground" title="easy_vic_build.tools.plot_func.plot_map.plotBackground"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotBackground</span></code></a>(basin_shp, grid_shp[, fig, ax])</p></td>
+<td><p>Plot the background for a given basin and grid shape.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plotBasins" title="easy_vic_build.tools.plot_func.plot_map.plotBasins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotBasins</span></code></a>(basin_shp[, column, fig, ax, ...])</p></td>
+<td><p>Plot basin shapes on a given axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plotGrids" title="easy_vic_build.tools.plot_func.plot_map.plotGrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotGrids</span></code></a>(grid_shp[, column, fig, ax, ...])</p></td>
+<td><p>Plot grid shapes and point geometries on a given axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plotHWSDSoilData" title="easy_vic_build.tools.plot_func.plot_map.plotHWSDSoilData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotHWSDSoilData</span></code></a>(basinShp_original, ...[, ...])</p></td>
+<td><p>Plot soil data from HWSD, USDA texture classes, and basin information on multiple maps.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plotLandCover" title="easy_vic_build.tools.plot_func.plot_map.plotLandCover"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotLandCover</span></code></a>(basinShp_original, basinShp, ...)</p></td>
+<td><p>Plot land cover data along with basin, grid, and intersection information on a map.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plotShp" title="easy_vic_build.tools.plot_func.plot_map.plotShp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotShp</span></code></a>(basinShp_original, basinShp, ...[, ...])</p></td>
+<td><p>Plot shapefiles of basins, grids, and intersecting grids on a map with specified boundaries.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_Basin_map" title="easy_vic_build.tools.plot_func.plot_map.plot_Basin_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_Basin_map</span></code></a>(dpc_VIC_level0, ...[, ...])</p></td>
+<td><p>Plot the basin map including elevation, basin boundary, river network, and gauge location.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_Orthographic_basin_shp" title="easy_vic_build.tools.plot_func.plot_map.plot_Orthographic_basin_shp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_Orthographic_basin_shp</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_basemap" title="easy_vic_build.tools.plot_func.plot_map.plot_basemap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_basemap</span></code></a>([fig, ax, set_xyticks_bool, ...])</p></td>
+<td><p>Plot a basemap of the United States with customizable tick settings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_basin_map_combine" title="easy_vic_build.tools.plot_func.plot_map.plot_basin_map_combine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_basin_map_combine</span></code></a>(evb_dir, ...[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_dem" title="easy_vic_build.tools.plot_func.plot_map.plot_dem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_dem</span></code></a>(grid_shp_level0[, ax])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_river_network" title="easy_vic_build.tools.plot_func.plot_map.plot_river_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_river_network</span></code></a>(G[, river_paths, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.plot_selected_map" title="easy_vic_build.tools.plot_func.plot_map.plot_selected_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_selected_map</span></code></a>(basin_index, dpc[, ...])</p></td>
+<td><p>Plot selected basins on a map and optionally annotate and plot basins individually.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.setBoundary" title="easy_vic_build.tools.plot_func.plot_map.setBoundary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setBoundary</span></code></a>(ax, boundary_x_min, ...)</p></td>
+<td><p>Set the boundary limits for the x and y axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.plot_func.plot_map.soft_hillshade" title="easy_vic_build.tools.plot_func.plot_map.soft_hillshade"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soft_hillshade</span></code></a>(dem[, vert_exag, azdeg, altdeg])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plotBackground">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plotBackground</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plotBackground"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plotBackground" title="Link to this definition"></a></dt>
+<dd><p>Plot the background for a given basin and grid shape.</p>
+<p>This function plots the background for a given basin and grid shape on a figure
+and axis. If no axis object is provided, a new figure and axis are created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>shapefile</em>) – The shapefile object containing basin boundaries.</p></li>
+<li><p><strong>grid_shp</strong> (<em>shapefile</em>) – The shapefile object containing grid boundaries.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object to plot on (default is None, a new figure is created).</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object to plot on (default is None, a new axis is created).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object with the background plot.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object with the background plot.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plotGrids">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plotGrids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwgs1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwgs2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plotGrids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plotGrids" title="Link to this definition"></a></dt>
+<dd><p>Plot grid shapes and point geometries on a given axis.</p>
+<p>This function plots the grid shapes from the <cite>grid_shp</cite> object on the given <cite>ax</cite> (or creates a new
+figure and axis if <cite>ax</cite> is not provided). Two sets of keyword arguments can be used to customize
+the appearance of the grid shapes and the point geometries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – A GeoDataFrame containing the grid shapes and point geometries to be plotted.</p></li>
+<li><p><strong>column</strong> (<em>str</em><em>, </em><em>optional</em>) – The column in <cite>grid_shp</cite> to use for coloring the grid shapes. If not provided, no coloring is applied.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure to plot on. If not provided, a new figure is created.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis to plot on. If not provided, a new axis is created.</p></li>
+<li><p><strong>plot_kwgs1</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary of keyword arguments for customizing the grid shape plot. Defaults to an empty dictionary.</p></li>
+<li><p><strong>plot_kwgs2</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary of keyword arguments for customizing the point geometry plot. Defaults to an empty dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object with the grid shapes and point geometries plotted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object with the grid shapes and point geometries plotted.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plotBasins">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plotBasins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plotBasins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plotBasins" title="Link to this definition"></a></dt>
+<dd><p>Plot basin shapes on a given axis.</p>
+<p>This function plots the basin shapes from the <cite>basin_shp</cite> object on the given <cite>ax</cite> (or creates a new
+figure and axis if <cite>ax</cite> is not provided). Additional customization can be done using the <cite>plot_kwgs</cite>
+dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – A GeoDataFrame containing the basin shapes to be plotted.</p></li>
+<li><p><strong>column</strong> (<em>str</em><em>, </em><em>optional</em>) – The column in <cite>basin_shp</cite> to use for coloring the basin shapes. If not provided, no coloring is applied.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure to plot on. If not provided, a new figure is created.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis to plot on. If not provided, a new axis is created.</p></li>
+<li><p><strong>plot_kwgs</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary of keyword arguments for customizing the basin plot. Defaults to an empty dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object with the basin shapes plotted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object with the basin shapes plotted.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.setBoundary">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">setBoundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#setBoundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.setBoundary" title="Link to this definition"></a></dt>
+<dd><p>Set the boundary limits for the x and y axes.</p>
+<p>This function adjusts the x and y axis limits of the provided axis object (<cite>ax</cite>) based on the
+given boundary values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object to set the boundaries on.</p></li>
+<li><p><strong>boundary_x_min</strong> (<em>float</em>) – The minimum value for the x-axis.</p></li>
+<li><p><strong>boundary_x_max</strong> (<em>float</em>) – The maximum value for the x-axis.</p></li>
+<li><p><strong>boundary_y_min</strong> (<em>float</em>) – The minimum value for the y-axis.</p></li>
+<li><p><strong>boundary_y_max</strong> (<em>float</em>) – The maximum value for the y-axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ax</strong> – The axis object with the updated boundaries.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_basemap">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_basemap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_xyticks_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_locator_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_locator_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_basemap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_basemap" title="Link to this definition"></a></dt>
+<dd><p>Plot a basemap of the United States with customizable tick settings.</p>
+<p>This function creates a map of the United States, including coastlines, rivers, lakes, and state
+boundaries, and allows for customization of x and y axis ticks, including their interval and rotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure to plot on. If not provided, a new figure is created.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis to plot on. If not provided, a new axis is created.</p></li>
+<li><p><strong>set_xyticks_bool</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, sets the x and y axis ticks to a specified interval (default is True).</p></li>
+<li><p><strong>x_locator_interval</strong> (<em>int</em><em>, </em><em>optional</em>) – The interval for the x-axis ticks (default is 15).</p></li>
+<li><p><strong>y_locator_interval</strong> (<em>int</em><em>, </em><em>optional</em>) – The interval for the y-axis ticks (default is 10).</p></li>
+<li><p><strong>yticks_rotation</strong> (<em>int</em><em>, </em><em>optional</em>) – The rotation angle for the y-axis ticks (default is 0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object with the US basemap plotted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object with the US basemap plotted.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_selected_map">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_selected_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'basin_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_solely</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwgs_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_selected_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_selected_map" title="Link to this definition"></a></dt>
+<dd><p>Plot selected basins on a map and optionally annotate and plot basins individually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_index</strong> (<em>list</em>) – List of basin indices to be plotted.</p></li>
+<li><p><strong>dpc</strong> (<em>object</em>) – Data processing class instance containing the basin shapefile and related data.</p></li>
+<li><p><strong>text_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of text annotation to plot. Defaults to “basin_index”.</p></li>
+<li><p><strong>plot_solely</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to plot each selected basin separately. Defaults to True.</p></li>
+<li><p><strong>column</strong> (<em>str</em><em>, </em><em>optional</em>) – The column name from the shapefile to be used for coloring. Defaults to None.</p></li>
+<li><p><strong>plot_kwgs_set</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments to customize the plot (e.g., color map). Defaults to an empty dictionary.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object containing the plot.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object containing the plot.</p></li>
+<li><p><strong>fig_solely</strong> (<em>dict or None</em>) – A dictionary of figures and axes for each basin if <cite>plot_solely</cite> is True, otherwise None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function uses a PlateCarree projection for the map.</p></li>
+<li><p>The function can annotate each basin with its <cite>basin_index</cite> or other attributes (e.g., <cite>hru_id</cite> or <cite>gauge_id</cite>).</p></li>
+<li><p>The basins are plotted using the <cite>plotBasins</cite> function.</p></li>
+</ul>
+<section id="usages">
+<h2>Usages:<a class="headerlink" href="#usages" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>fig, ax, fig_solely = plot_selected_map(basin_shp_area_excluding.index.to_list(), # [0, 1, 2]</dt><dd><p>dpc,
+text_name=”basin_index”,  # “basin_index”, None,
+plot_solely=False,
+column=None,  # “camels_clim:aridity”,  # None
+plot_kwgs_set=dict()) # {“cmap”: plt.cm.hot})  # dict()</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plotShp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plotShp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basinShp_original</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basinShp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersects_grids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plotShp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plotShp" title="Link to this definition"></a></dt>
+<dd><p>Plot shapefiles of basins, grids, and intersecting grids on a map with specified boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basinShp_original</strong> (<em>geopandas.GeoDataFrame</em>) – Original basin shapefile to be plotted with an outline.</p></li>
+<li><p><strong>basinShp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin shapefile to be plotted on top of the original basin shapefile.</p></li>
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid shapefile containing the geometry and point geometry to be plotted.</p></li>
+<li><p><strong>intersects_grids</strong> (<em>geopandas.GeoDataFrame</em>) – Shapefile representing the intersection of grids to be plotted.</p></li>
+<li><p><strong>boundary_x_min</strong> (<em>float</em>) – Minimum x-coordinate (longitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_x_max</strong> (<em>float</em>) – Maximum x-coordinate (longitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_y_min</strong> (<em>float</em>) – Minimum y-coordinate (latitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_y_max</strong> (<em>float</em>) – Maximum y-coordinate (latitude) for the plot boundary.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object containing the plot.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object containing the plot.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The plot includes multiple layers: original basin, basin, grid geometry, grid points, and intersecting grids.</p></li>
+<li><p>The boundaries of the plot are set using the provided min and max x and y coordinates.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plotLandCover">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plotLandCover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basinShp_original</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basinShp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersects_grids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plotLandCover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plotLandCover" title="Link to this definition"></a></dt>
+<dd><p>Plot land cover data along with basin, grid, and intersection information on a map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basinShp_original</strong> (<em>geopandas.GeoDataFrame</em>) – Original basin shapefile to be plotted with an outline.</p></li>
+<li><p><strong>basinShp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin shapefile to be plotted on top of the original basin shapefile.</p></li>
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid shapefile containing land cover classification data.</p></li>
+<li><p><strong>intersects_grids</strong> (<em>geopandas.GeoDataFrame</em>) – Shapefile representing the intersection of grids to be plotted.</p></li>
+<li><p><strong>boundary_x_min</strong> (<em>float</em>) – Minimum x-coordinate (longitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_x_max</strong> (<em>float</em>) – Maximum x-coordinate (longitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_y_min</strong> (<em>float</em>) – Minimum y-coordinate (latitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_y_max</strong> (<em>float</em>) – Maximum y-coordinate (latitude) for the plot boundary.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object containing the plot.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object containing the plot.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The plot includes multiple layers: original basin, basin, grid land cover classification,
+and intersecting grids.</p></li>
+<li><p>A color map is applied to the land cover classification with corresponding ticks in the legend.</p></li>
+<li><p>The boundaries of the plot are set using the provided min and max x and y coordinates.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plotHWSDSoilData">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plotHWSDSoilData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basinShp_original</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basinShp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersects_grids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_S</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax_S</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plotHWSDSoilData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plotHWSDSoilData" title="Link to this definition"></a></dt>
+<dd><p>Plot soil data from HWSD, USDA texture classes, and basin information on multiple maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basinShp_original</strong> (<em>geopandas.GeoDataFrame</em>) – Original basin shapefile to be plotted with an outline.</p></li>
+<li><p><strong>basinShp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin shapefile to be plotted on top of the original basin shapefile.</p></li>
+<li><p><strong>grid_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Grid shapefile containing soil data including HWSD and USDA texture classes.</p></li>
+<li><p><strong>intersects_grids</strong> (<em>geopandas.GeoDataFrame</em>) – Shapefile representing the intersection of grids to be plotted.</p></li>
+<li><p><strong>boundary_x_min</strong> (<em>float</em>) – Minimum x-coordinate (longitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_x_max</strong> (<em>float</em>) – Maximum x-coordinate (longitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_y_min</strong> (<em>float</em>) – Minimum y-coordinate (latitude) for the plot boundary.</p></li>
+<li><p><strong>boundary_y_max</strong> (<em>float</em>) – Maximum y-coordinate (latitude) for the plot boundary.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</p></li>
+<li><p><strong>fig_T</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object for T_USDA_TEX_CLASS plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax_T</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object for T_USDA_TEX_CLASS plot. If None, a new axis will be created. Defaults to None.</p></li>
+<li><p><strong>fig_S</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object for S_USDA_TEX_CLASS plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax_S</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object for S_USDA_TEX_CLASS plot. If None, a new axis will be created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object containing the main plot.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axis object containing the main plot.</p></li>
+<li><p><strong>fig_S</strong> (<em>matplotlib.figure.Figure</em>) – The figure object containing the S_USDA_TEX_CLASS plot.</p></li>
+<li><p><strong>ax_S</strong> (<em>matplotlib.axes.Axes</em>) – The axis object containing the S_USDA_TEX_CLASS plot.</p></li>
+<li><p><strong>fig_T</strong> (<em>matplotlib.figure.Figure</em>) – The figure object containing the T_USDA_TEX_CLASS plot.</p></li>
+<li><p><strong>ax_T</strong> (<em>matplotlib.axes.Axes</em>) – The axis object containing the T_USDA_TEX_CLASS plot.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Three different maps are created for HWSD soil data, T_USDA_TEX_CLASS, and S_USDA_TEX_CLASS.</p></li>
+<li><p>Each map is plotted with the corresponding soil classification data overlaid on the basin and grid shapefiles.</p></li>
+<li><p>The boundaries of the plots are set using the provided min and max x and y coordinates.</p></li>
+<li><p>Legends for each map are created with the respective soil classification.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_Basin_map">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_Basin_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_gdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gauge_coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_locator_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_locator_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dem_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SrtmDEM_mean_Value'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_Basin_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_Basin_map" title="Link to this definition"></a></dt>
+<dd><p>Plot the basin map including elevation, basin boundary, river network, and gauge location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dpc_VIC_level0</strong> (<em>object</em>) – A VIC model object at level 0 containing grid and basin shapefiles.</p></li>
+<li><p><strong>dpc_VIC_level1</strong> (<em>object</em>) – A VIC model object at level 1 containing grid and basin shapefiles.</p></li>
+<li><p><strong>dpc_VIC_level2</strong> (<em>object</em>) – A VIC model object at level 2 containing grid and basin shapefiles.</p></li>
+<li><p><strong>stream_gdf</strong> (<em>geopandas.GeoDataFrame</em>) – A GeoDataFrame containing the river network to be plotted.</p></li>
+<li><p><strong>gauge_coord</strong> (<em>[</em><em>lon</em><em>, </em><em>lat</em><em>]</em>)</p></li>
+<li><p><strong>x_locator_interval</strong> (<em>float</em><em>, </em><em>optional</em>) – The interval for x-axis ticks. Defaults to 0.3.</p></li>
+<li><p><strong>y_locator_interval</strong> (<em>float</em><em>, </em><em>optional</em>) – The interval for y-axis ticks. Defaults to 0.2.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – The figure object to use for the plot. If None, a new figure will be created. Defaults to None.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – The axis object to use for the plot. If None, a new axis will be created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig_dict</strong> (<em>dict</em>) – A dictionary containing the figure objects for the basin map and grid basins.</p></li>
+<li><p><strong>ax_dict</strong> (<em>dict</em>) – A dictionary containing the axis objects for the basin map and grid basins.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function plots the basin map with layers including the DEM (elevation),
+basin boundary, river network, and gauge location.</p></li>
+<li><p>It also generates plots for different grid levels (level 0, 1, and 2) of the VIC model.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_basin_map_combine">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_basin_map_combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evb_dir_hydroanalysis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_VIC_level3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_kwarg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bottom':</span> <span class="pre">0.05,</span> <span class="pre">'hspace':</span> <span class="pre">0.1,</span> <span class="pre">'left':</span> <span class="pre">0.06,</span> <span class="pre">'right':</span> <span class="pre">0.99,</span> <span class="pre">'top':</span> <span class="pre">0.98,</span> <span class="pre">'wspace':</span> <span class="pre">0.15}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax1_box_aspect_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_locator_interval_landsurface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.47</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_locator_interval_landsurface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_locator_interval_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_locator_interval_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_basin_map_combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_basin_map_combine" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_river_network">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_river_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">river_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labeled_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_river_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_river_network" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.soft_hillshade">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">soft_hillshade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vert_exag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azdeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">280</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altdeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#soft_hillshade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.soft_hillshade" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.light_gray_dem">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">light_gray_dem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dem</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#light_gray_dem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.light_gray_dem" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_dem">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_dem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp_level0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_dem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_dem" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.plot_func.plot_map.plot_Orthographic_basin_shp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.plot_func.plot_map.</span></span><span class="sig-name descname"><span class="pre">plot_Orthographic_basin_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/plot_func/plot_map.html#plot_Orthographic_basin_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.plot_func.plot_map.plot_Orthographic_basin_shp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.plot_func.plot_evaluation.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.plot_func.plot_evaluation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.plot_func.plot_utilities.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.plot_func.plot_utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.aggregate &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.dpc_func.basin_grid_class" href="easy_vic_build.tools.dpc_func.basin_grid_class.html" />
+    <link rel="prev" title="easy_vic_build.tools.dpc_func" href="easy_vic_build.tools.dpc_func.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html#modules">Modules</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.dpc_func.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html">easy_vic_build.tools.dpc_func.basin_grid_class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_func.html">easy_vic_build.tools.dpc_func.basin_grid_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html">easy_vic_build.tools.dpc_func.dpc_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_subclass.html">easy_vic_build.tools.dpc_func.dpc_subclass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.extractData_func.html">easy_vic_build.tools.dpc_func.extractData_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.select_basin_shp.html">easy_vic_build.tools.dpc_func.select_basin_shp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.aggregate</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.dpc_func.aggregate.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.dpc_func.aggregate">
+<span id="easy-vic-build-tools-dpc-func-aggregate"></span><h1>easy_vic_build.tools.dpc_func.aggregate<a class="headerlink" href="#module-easy_vic_build.tools.dpc_func.aggregate" title="Link to this heading"></a></h1>
+<p>Aggregation utilities for basin-level time series.</p>
+<p>This module aggregates grid-level time-series products (for example
+precipitation, soil moisture, evaporation, and snow water equivalent) into
+basin-level series using mean-based aggregation rules.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_ERA5_SM" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_ERA5_SM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_ERA5_SM</span></code></a>(basin_shp[, aggregate_column])</p></td>
+<td><p>Aggregate ERA5 soil-moisture series for each basin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GLDAS_CanopInt" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_GLDAS_CanopInt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_GLDAS_CanopInt</span></code></a>(basin_shp[, ...])</p></td>
+<td><p>Aggregate GLDAS canopy interception for each basin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEDaily" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEDaily"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_GLEAMEDaily</span></code></a>(basin_shp)</p></td>
+<td><p>Aggregate daily GLEAM evaporation (<code class="docutils literal notranslate"><span class="pre">E</span></code>) for each basin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEpDaily" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEpDaily"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_GLEAMEpDaily</span></code></a>(basin_shp)</p></td>
+<td><p>Aggregate daily GLEAM potential evaporation (<code class="docutils literal notranslate"><span class="pre">Ep</span></code>) for each basin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GlobalSnow_SWE" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_GlobalSnow_SWE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_GlobalSnow_SWE</span></code></a>(basin_shp[, ...])</p></td>
+<td><p>Aggregate GlobalSnow SWE series for each basin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_TRMM_P" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_TRMM_P"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_TRMM_P</span></code></a>(basin_shp)</p></td>
+<td><p>Aggregate TRMM precipitation for each basin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis0" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_func_SWE_axis0</span></code></a>(data_array)</p></td>
+<td><p>Aggregate SWE values with invalid-code filtering (axis-0 variant).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis1" title="easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_func_SWE_axis1</span></code></a>(data_array)</p></td>
+<td><p>Aggregate SWE values with invalid-code filtering (axis-1 variant).</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEDaily">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_GLEAMEDaily</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_GLEAMEDaily"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEDaily" title="Link to this definition"></a></dt>
+<dd><p>Aggregate daily GLEAM evaporation (<code class="docutils literal notranslate"><span class="pre">E</span></code>) for each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset containing an <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input dataset with an added <code class="docutils literal notranslate"><span class="pre">aggregated_E</span></code> column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEpDaily">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_GLEAMEpDaily</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_GLEAMEpDaily"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GLEAMEpDaily" title="Link to this definition"></a></dt>
+<dd><p>Aggregate daily GLEAM potential evaporation (<code class="docutils literal notranslate"><span class="pre">Ep</span></code>) for each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset containing an <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input dataset with an added <code class="docutils literal notranslate"><span class="pre">aggregated_Ep</span></code> column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_TRMM_P">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_TRMM_P</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_TRMM_P"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_TRMM_P" title="Link to this definition"></a></dt>
+<dd><p>Aggregate TRMM precipitation for each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset containing an <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input dataset with an added <code class="docutils literal notranslate"><span class="pre">aggregated_precipitation</span></code> column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_ERA5_SM">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_ERA5_SM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'swvl1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_ERA5_SM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_ERA5_SM" title="Link to this definition"></a></dt>
+<dd><p>Aggregate ERA5 soil-moisture series for each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset containing an <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column.</p></li>
+<li><p><strong>aggregate_column</strong> (<em>str</em><em>, </em><em>optional</em>) – Grid column name to aggregate (default is <code class="docutils literal notranslate"><span class="pre">&quot;swvl1&quot;</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input dataset with an added <code class="docutils literal notranslate"><span class="pre">aggregated_&lt;aggregate_column&gt;</span></code> column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis1">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_func_SWE_axis1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_func_SWE_axis1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis1" title="Link to this definition"></a></dt>
+<dd><p>Aggregate SWE values with invalid-code filtering (axis-1 variant).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_array</strong> (<em>array-like</em>) – SWE values to aggregate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean SWE after removing invalid values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Values <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, and <code class="docutils literal notranslate"><span class="pre">0.001</span></code> are excluded before averaging.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis0">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_func_SWE_axis0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_func_SWE_axis0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_func_SWE_axis0" title="Link to this definition"></a></dt>
+<dd><p>Aggregate SWE values with invalid-code filtering (axis-0 variant).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_array</strong> (<em>array-like</em>) – SWE values to aggregate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean SWE after removing invalid values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Values <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, and <code class="docutils literal notranslate"><span class="pre">0.001</span></code> are excluded before averaging.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_GlobalSnow_SWE">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_GlobalSnow_SWE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'swe'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_GlobalSnow_SWE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GlobalSnow_SWE" title="Link to this definition"></a></dt>
+<dd><p>Aggregate GlobalSnow SWE series for each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset containing an <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column.</p></li>
+<li><p><strong>aggregate_column</strong> (<em>str</em><em>, </em><em>optional</em>) – Grid column name to aggregate (default is <code class="docutils literal notranslate"><span class="pre">&quot;swe&quot;</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input dataset with an added <code class="docutils literal notranslate"><span class="pre">aggregated_&lt;aggregate_column&gt;</span></code> column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.aggregate.aggregate_GLDAS_CanopInt">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.aggregate.</span></span><span class="sig-name descname"><span class="pre">aggregate_GLDAS_CanopInt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CanopInt_tavg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/aggregate.html#aggregate_GLDAS_CanopInt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.aggregate.aggregate_GLDAS_CanopInt" title="Link to this definition"></a></dt>
+<dd><p>Aggregate GLDAS canopy interception for each basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<em>geopandas.GeoDataFrame</em>) – Basin dataset containing an <code class="docutils literal notranslate"><span class="pre">intersects_grids</span></code> column.</p></li>
+<li><p><strong>aggregate_column</strong> (<em>str</em><em>, </em><em>optional</em>) – Grid column name to aggregate (default is <code class="docutils literal notranslate"><span class="pre">&quot;CanopInt_tavg&quot;</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Input dataset with an added <code class="docutils literal notranslate"><span class="pre">aggregated_&lt;aggregate_column&gt;</span></code> column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.dpc_func.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.dpc_func" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.dpc_func.basin_grid_class.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.dpc_func.basin_grid_class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.algorithm_CMA_ES &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+<span class="sd">&quot;&quot;&quot;CMA-ES base algorithm used by calibration workflows.</span>
+
+<span class="sd">This module provides :class:`CMA_ES_Base`, a lightweight wrapper around</span>
+<span class="sd">``deap.cma.Strategy`` with:</span>
+
+<span class="sd">- checkpoint save/load support;</span>
+<span class="sd">- generation history recording;</span>
+<span class="sd">- optional convergence plotting.</span>
+
+<span class="sd">Users typically subclass :class:`CMA_ES_Base` and override :meth:`evaluate`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">deap</span> <span class="kn">import</span> <span class="n">base</span><span class="p">,</span> <span class="n">creator</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">cma</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">..decoractors</span> <span class="kn">import</span> <span class="n">clock_decorator</span>
+
+
+<div class="viewcode-block" id="CMA_ES_Base">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base">[docs]</a>
+<span class="k">class</span> <span class="nc">CMA_ES_Base</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for single-objective CMA-ES optimization.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    algParams : dict, optional</span>
+<span class="sd">        Algorithm configuration dictionary. Expected keys are:</span>
+
+<span class="sd">        - ``dim``: problem dimension.</span>
+<span class="sd">        - ``popSize``: population size (``lambda`` in CMA-ES).</span>
+<span class="sd">        - ``maxGen``: number of generations.</span>
+<span class="sd">        - ``sigma``: initial global step size.</span>
+<span class="sd">    save_path : str, optional</span>
+<span class="sd">        Checkpoint path used by :meth:`load_state` and :meth:`save_state`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dim : int</span>
+<span class="sd">        Problem dimension.</span>
+<span class="sd">    popSize : int</span>
+<span class="sd">        Population size.</span>
+<span class="sd">    maxGen : int</span>
+<span class="sd">        Maximum number of generations.</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Initial CMA-ES sigma.</span>
+<span class="sd">    history : list of dict</span>
+<span class="sd">        Per-generation records containing population snapshots and best</span>
+<span class="sd">        individual snapshots.</span>
+<span class="sd">    current_generation : int</span>
+<span class="sd">        Current generation index.</span>
+<span class="sd">    population : list</span>
+<span class="sd">        Current population.</span>
+<span class="sd">    initial_population : list</span>
+<span class="sd">        Population right after initialization or checkpoint loading.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CMA_ES_Base.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">algParams</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;dim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;popSize&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;maxGen&quot;</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">},</span>
+        <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;checkpoint.pkl&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the algorithm state and register DEAP operations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        algParams : dict, optional</span>
+<span class="sd">            Algorithm configuration. See class docstring for accepted keys.</span>
+<span class="sd">        save_path : str, optional</span>
+<span class="sd">            Checkpoint file path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set algorithm params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">algParams</span><span class="p">[</span><span class="s2">&quot;dim&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popSize</span> <span class="o">=</span> <span class="n">algParams</span><span class="p">[</span><span class="s2">&quot;popSize&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxGen</span> <span class="o">=</span> <span class="n">algParams</span><span class="p">[</span><span class="s2">&quot;maxGen&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">algParams</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algParams</span> <span class="o">=</span> <span class="n">algParams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">Toolbox</span><span class="p">()</span>
+
+        <span class="c1"># create base types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">createFitness</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">createInd</span><span class="p">()</span>
+
+        <span class="c1"># internal variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+
+        <span class="c1"># load or create population</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_state</span><span class="p">()</span>
+        
+        <span class="c1"># register DEAP functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerEvaluate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerGenerate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerUpdate</span><span class="p">()</span>
+        
+        <span class="c1"># init pop</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[:]</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  set algorithm parameters</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.init_cma_strategy">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.init_cma_strategy">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_cma_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">popSize</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create and return a DEAP CMA strategy object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dim : int</span>
+<span class="sd">            Problem dimension.</span>
+<span class="sd">        popSize : int</span>
+<span class="sd">            Population size (``lambda_``).</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            Initial global step size.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Extra keyword arguments forwarded to :class:`deap.cma.Strategy`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        deap.cma.Strategy</span>
+<span class="sd">            Configured CMA-ES strategy instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">cma</span><span class="o">.</span><span class="n">Strategy</span><span class="p">(</span>
+            <span class="n">centroid</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">]</span><span class="o">*</span><span class="n">dim</span><span class="p">,</span>
+            <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+            <span class="n">lambda_</span><span class="o">=</span><span class="n">popSize</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">strategy</span></div>
+
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  User should define these</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.get_obs">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.get_obs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Placeholder for loading observed values used by subclasses.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CMA_ES_Base.get_sim">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.get_sim">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Placeholder for loading simulated values used by subclasses.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CMA_ES_Base.createFitness">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.createFitness">[docs]</a>
+    <span class="k">def</span> <span class="nf">createFitness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create DEAP fitness type for single-objective minimization.&quot;&quot;&quot;</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Fitness&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">Fitness</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="CMA_ES_Base.createInd">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.createInd">[docs]</a>
+    <span class="k">def</span> <span class="nf">createInd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create DEAP individual type bound to ``creator.Fitness``.&quot;&quot;&quot;</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">Fitness</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CMA_ES_Base.evaluate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate one individual.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a default demo objective and should be overridden by subclasses.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ind : sequence</span>
+<span class="sd">            Candidate solution.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple of float</span>
+<span class="sd">            Fitness tuple compatible with DEAP.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ind</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">,)</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Registering DEAP components</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.registerEvaluate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerEvaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerEvaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the fitness evaluation function in ``self.toolbox``.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;evaluate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="CMA_ES_Base.registerGenerate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerGenerate">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerGenerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register offspring generation based on current CMA strategy.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;generate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">generate</span><span class="p">,</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="CMA_ES_Base.registerUpdate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerUpdate">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register CMA strategy update operation.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;update&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">update</span><span class="p">)</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Generation in CMA_ES</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.evaluatePop">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.evaluatePop">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluatePop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate all individuals in a population in-place.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : list</span>
+<span class="sd">            Population to evaluate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fitnesses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="n">population</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">fit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitnesses</span><span class="p">):</span>
+            <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">fit</span></div>
+
+    
+<div class="viewcode-block" id="CMA_ES_Base.updatePop">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.updatePop">[docs]</a>
+    <span class="k">def</span> <span class="nf">updatePop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offspring</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update and return population for the next iteration.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        offspring : list</span>
+<span class="sd">            Newly generated and evaluated offspring.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            Population for next generation.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Default behavior is ``(mu, lambda)`` style replacement with offspring</span>
+<span class="sd">        only. Subclasses may override this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">offspring</span>
+        <span class="k">return</span> <span class="n">population</span></div>
+
+        
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Save &amp; Load</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.load_state">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.load_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load checkpoint from :attr:`save_path` if available.</span>
+
+<span class="sd">        When checkpoint does not exist, initialize a fresh CMA strategy and</span>
+<span class="sd">        leave population creation to :meth:`__init__`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;current_generation&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;initial_population&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;strategy&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_cma_strategy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">popSize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CMA_ES_Base.save_state">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.save_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize current algorithm state to :attr:`save_path`.&quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;current_generation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span><span class="p">,</span>
+            <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">),</span>
+            <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">),</span>
+            <span class="s2">&quot;initial_population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span><span class="p">),</span>
+            <span class="s2">&quot;strategy&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Print and Plot</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.print_results">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.print_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log best individual and fitness for a population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : list</span>
+<span class="sd">            Population to summarize.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">best_ind</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">selBest</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best individual: </span><span class="si">{</span><span class="n">best_ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fitness: </span><span class="si">{</span><span class="n">best_ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="CMA_ES_Base.plot_progress">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.plot_progress">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_dir</span><span class="o">=</span><span class="s2">&quot;cmaes_progress&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot per-generation fitness scatter and best-fitness curve.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        plot_dir : str, optional</span>
+<span class="sd">            Output directory for figure files.</span>
+<span class="sd">        ylim : float or tuple(float, float), optional</span>
+<span class="sd">            If float, used as lower bound of y-axis. If 2-tuple/list, used as</span>
+<span class="sd">            explicit ``(ymin, ymax)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check plot_dir</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
+        
+        <span class="c1"># Extract history</span>
+        <span class="n">all_pop_fitness</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_best_ind_fitness</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">:</span>
+            <span class="n">pop</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span>
+            <span class="n">best_ind</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;best_ind&quot;</span><span class="p">]</span>
+            
+            <span class="n">pop_fitness</span> <span class="o">=</span> <span class="p">[</span><span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">pop</span><span class="p">]</span>
+            <span class="n">best_ind_fitness</span> <span class="o">=</span> <span class="n">best_ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">all_pop_fitness</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pop_fitness</span><span class="p">)</span>
+            <span class="n">all_best_ind_fitness</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_ind_fitness</span><span class="p">)</span>
+
+        <span class="n">generations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_best_ind_fitness</span><span class="p">))</span>
+        
+        <span class="c1"># plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">gen</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_pop_fitness</span><span class="p">):</span>
+            <span class="n">gens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">),</span> <span class="n">gen</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">gens</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">generations</span><span class="p">,</span> <span class="n">all_best_ind_fitness</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">generations</span><span class="p">,</span> <span class="n">all_best_ind_fitness</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Best fitness curve&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ylim</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>  
+                <span class="c1"># only bottom is given</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="n">ylim</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ylim</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ylim must be a number or a tuple/list of two numbers&quot;</span><span class="p">)</span>
+            
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Generation&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Fitness&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;CMA-ES Fitness Convergence Curve&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;CMAES_process.png&quot;</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+        
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Run</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="CMA_ES_Base.run">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.run">[docs]</a>
+    <span class="nd">@clock_decorator</span><span class="p">(</span><span class="n">print_arg_ret</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">plot_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">plot_dir</span><span class="o">=</span><span class="s2">&quot;cmaes_progress&quot;</span><span class="p">,</span>
+        <span class="n">plot_ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run CMA-ES optimization loop.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        plot_progress : bool, optional</span>
+<span class="sd">            Whether to generate convergence plot at each generation.</span>
+<span class="sd">        plot_dir : str, optional</span>
+<span class="sd">            Plot output directory.</span>
+<span class="sd">        plot_ylim : float or tuple(float, float), optional</span>
+<span class="sd">            Y-axis setting passed to :meth:`plot_progress`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            Final population.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># evaluate initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluatePop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+
+        <span class="n">start_gen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span>
+
+        <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">start_gen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxGen</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;eaMuPlusLambda generation&quot;</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span> <span class="o">=</span> <span class="n">gen</span>
+
+            <span class="c1"># offspring</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluatePop</span><span class="p">(</span><span class="n">offspring</span><span class="p">)</span>
+            
+            <span class="c1"># update</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">offspring</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updatePop</span><span class="p">(</span><span class="n">offspring</span><span class="p">)</span>
+            
+            <span class="c1"># get best</span>
+            <span class="n">best_ind</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">selBest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            
+            <span class="c1"># save history</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">),</span>
+                <span class="s2">&quot;best_ind&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">best_ind</span><span class="p">)</span>
+            <span class="p">})</span>
+            
+            <span class="c1"># save state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_state</span><span class="p">()</span>
+            
+            <span class="c1"># plot</span>
+            <span class="k">if</span> <span class="n">plot_progress</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot_progress</span><span class="p">(</span>
+                    <span class="n">plot_dir</span><span class="o">=</span><span class="n">plot_dir</span><span class="p">,</span>
+                    <span class="n">ylim</span><span class="o">=</span><span class="n">plot_ylim</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

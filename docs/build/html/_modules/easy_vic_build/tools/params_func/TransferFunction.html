@@ -1,0 +1,1578 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.params_func.TransferFunction &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.params_func.TransferFunction</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.params_func.TransferFunction</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Transfer functions and soil-layer resampling utilities for VIC parameters.&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="TF_VIC">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC">[docs]</a>
+<span class="k">class</span> <span class="nc">TF_VIC</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transfer-function collection for VIC parameter derivation.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TF_VIC.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.b_infilt">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.b_infilt">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">b_infilt</span><span class="p">(</span><span class="n">elev_std</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate VIC infiltration parameter ``b_infilt``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        elev_std : ndarray</span>
+<span class="sd">            Elevation standard-deviation values.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            Calibration coefficient.</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            Calibration coefficient.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            ``b_infilt`` values clipped to valid range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.</span>
+        <span class="c1"># Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.</span>
+        <span class="c1"># b_infilt, N/A, 0.01~0.5 = log(elev_std) - elev_std_min / log(elev_std) + elev_std_max</span>
+        <span class="c1"># g1, g2: 0.0 (-2.0, 1.0), 1.0 (0.8, 1.2)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">b_infilt_min</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="n">b_infilt_max</span> <span class="o">=</span> <span class="mf">0.50</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">elev_std</span><span class="p">)</span> <span class="o">-</span> <span class="n">g1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">elev_std</span><span class="p">)</span> <span class="o">+</span> <span class="n">g2</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">b_infilt_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_infilt_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">b_infilt_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_infilt_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.total_depth">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.total_depth">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">total_depth</span><span class="p">(</span><span class="n">total_depth_original</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale total soil depth.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        total_depth_original : ndarray</span>
+<span class="sd">            Original total depth values.</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Multiplicative scaling factor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Scaled total depth values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># total_depth, m</span>
+        <span class="c1"># g: 1.0 (0.1, 4.0)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">total_depth_original</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.depth">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.depth">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">depth</span><span class="p">(</span><span class="n">total_depth</span><span class="p">,</span> <span class="n">soillayerresampler</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Distribute total depth into VIC layers using breakpoints.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        total_depth : ndarray</span>
+<span class="sd">            Total soil depth.</span>
+<span class="sd">        soillayerresampler : SoilLayerResampler</span>
+<span class="sd">            Layer resampler instance used to create grouping.</span>
+<span class="sd">        g : sequence of int</span>
+<span class="sd">            Breakpoint indices, for example ``[2, 6]``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ndarray</span>
+<span class="sd">            Depth values of each aggregated layer.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        ``g`` is treated as breakpoint indices of original layers.</span>
+<span class="sd">        For example, with 11 source layers and ``g=[2, 6]``, grouped layers are:</span>
+<span class="sd">        ``[0,1]``, ``[2,3,4,5]``, and ``[6,7,8,9,10]``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])</span>
+<span class="sd">        &gt;&gt;&gt; TF_VIC.depth(np.array([320.0]), resampler, [2, 6])</span>
+<span class="sd">        [array([20.]), array([80.]), array([220.])]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># total_depth, m</span>
+        <span class="c1"># depth, m</span>
+        <span class="c1"># g: </span>
+        <span class="c1"># g1, g2: num1 (1, 3), num2 (3, 8), int</span>
+        <span class="c1"># set num1 as the num of end CONUS layer num of the first layer</span>
+        <span class="c1"># set num2 as the num of end CONUS layer num of the second layer</span>
+        <span class="c1"># d1 0~0.15, d2 0.2~0.5, d3 0.7~1.5, d2 &gt; d1, default d1 (0.1), d2 (0.5), d3 (3.0)</span>
+        <span class="c1"># Arithmetic mean</span>
+        
+        <span class="c1"># resampler</span>
+        <span class="n">soillayerresampler</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+        <span class="n">grouping</span> <span class="o">=</span> <span class="n">soillayerresampler</span><span class="o">.</span><span class="n">grouping</span>
+        
+        <span class="c1"># transfer into percent</span>
+        <span class="n">depth_percentages</span> <span class="o">=</span> <span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;depth_percentages&#39;</span><span class="p">]</span>
+        
+        <span class="c1"># transfer g1, g2 into percentile</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_depth</span> <span class="o">*</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">depth_percentages</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.ksat">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.ksat">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">ksat</span><span class="p">(</span><span class="n">sand</span><span class="p">,</span> <span class="n">clay</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the saturated hydraulic conductivity (Ks) using the formula from Cosby et al. (1984).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sand : float</span>
+<span class="sd">            The percentage of sand in the soil.</span>
+<span class="sd">        clay : float</span>
+<span class="sd">            The percentage of clay in the soil.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g3 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The saturated hydraulic conductivity in mm/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Cosby et al. WRR 1984, log Ks = 0.0126x1 (- 0.0064x3) -0.6</span>
+        <span class="c1"># sand/clay: %</span>
+        <span class="c1"># inches/hour -&gt; 25.4 -&gt; mm/hour -&gt; /3600 -&gt; mm/s</span>
+        <span class="c1"># g1, g2, g3: -0.6 (-0.66, -0.54), 0.0126 (0.0113, 0.0139), -0.0064 (-0.0070, -0.0058)</span>
+        <span class="c1"># Harmonic mean</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mf">25.4</span>
+        <span class="n">unit_factor2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3600</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">g1</span> <span class="o">+</span> <span class="n">g2</span> <span class="o">*</span> <span class="n">sand</span> <span class="o">+</span> <span class="n">g3</span> <span class="o">*</span> <span class="n">clay</span><span class="p">))</span> <span class="o">*</span> <span class="n">unit_factor1</span> <span class="o">*</span> <span class="n">unit_factor2</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+    <span class="c1"># def ksat(sand, silt, g1, g2, g3):</span>
+    <span class="c1">#     # campbell &amp; shiozawa 1994</span>
+    <span class="c1">#     # factor_unit</span>
+    <span class="c1">#     clay = 100 - sand - silt</span>
+    <span class="c1">#     ret = g1 * np.exp(g2 * sand + g3 * clay)</span>
+    <span class="c1">#     return ret</span>
+
+<div class="viewcode-block" id="TF_VIC.phi_s">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.phi_s">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">phi_s</span><span class="p">(</span><span class="n">sand</span><span class="p">,</span> <span class="n">clay</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the saturated water content (phi_s) or porosity using the formula from Cosby et al. (1984).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sand : float</span>
+<span class="sd">            The percentage of sand in the soil.</span>
+<span class="sd">        clay : float</span>
+<span class="sd">            The percentage of clay in the soil.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g3 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The saturated water content in m3/m3 (or mm/mm).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Cosby et al. WRR 1984, Qs (φs) = -0.142x1 (- 0.037x3) + 50.5</span>
+        <span class="c1"># Qs, saturated water content, namely, the porosity, namely the phi_s, m3/m3 or mm/mm</span>
+        <span class="c1"># g1, g2, g3: 50.05 (45.5, 55.5), -0.142 (-0.3, -0.01), -0.037 (-0.1, -0.01)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">g1</span> <span class="o">+</span> <span class="n">g2</span> <span class="o">*</span> <span class="n">sand</span> <span class="o">+</span> <span class="n">g3</span> <span class="o">*</span> <span class="n">clay</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+    <span class="c1"># def phi_s(sand, silt, bd_in, g1, g2, g3):</span>
+    <span class="c1">#     # Zacharias &amp; Wessolek 2007</span>
+    <span class="c1">#     clay = 100 - sand - silt</span>
+    <span class="c1">#     if sand &lt; 66.5:</span>
+    <span class="c1">#         ret = g1 + g2 * clay + g3 * bd_in / 1000</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         ret = g1 + g2 * clay + g3 * bd_in / 1000</span>
+    <span class="c1">#     return ret</span>
+
+    <span class="c1"># def phi_s(phi_s):</span>
+    <span class="c1">#     # read from file</span>
+    <span class="c1">#     phi_s_min = 0.0</span>
+    <span class="c1">#     phi_s_max = 1.0</span>
+
+    <span class="c1">#     ret = phi_s</span>
+    <span class="c1">#     ret = ret / 100.0</span>
+
+    <span class="c1">#     ret = ret if ret &lt; phi_s_max else phi_s_max</span>
+    <span class="c1">#     ret = ret if ret &gt; phi_s_min else phi_s_min</span>
+    <span class="c1">#     return ret</span>
+
+<div class="viewcode-block" id="TF_VIC.psis">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.psis">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">psis</span><span class="p">(</span><span class="n">sand</span><span class="p">,</span> <span class="n">silt</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the saturation matric potential (psis) using the formula from Cosby et al. (1984).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sand : float</span>
+<span class="sd">            The percentage of sand in the soil.</span>
+<span class="sd">        silt : float</span>
+<span class="sd">            The percentage of silt in the soil.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g3 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The saturation matric potential in kPa.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># saturation matric potential, ψs, Cosby et al. WRR 1984, logψs = -0.0095x1 (+ 0.0063x2) + 1.54</span>
+        <span class="c1"># kPa/cm-H2O</span>
+        <span class="c1"># g1, g2, g3: 1.54 (1.0, 2.0), -0.0095 (-0.01, -0.009), 0.0063 (0.006, 0.0066)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g1</span> <span class="o">+</span> <span class="n">g2</span> <span class="o">*</span> <span class="n">sand</span> <span class="o">+</span> <span class="n">g3</span> <span class="o">*</span> <span class="n">silt</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mf">0.0980665</span>  <span class="c1"># 0.0980665 kPa/cm-H2O. Cosby give psi_sat in cm of water (cm-H2O), 1cm H₂O=0.0980665 kPa</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">ret</span><span class="p">))</span> <span class="o">*</span> <span class="n">unit_factor1</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.b_retcurve">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.b_retcurve">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">b_retcurve</span><span class="p">(</span><span class="n">sand</span><span class="p">,</span> <span class="n">clay</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the slope of the retention curve (b) using the formula from Cosby et al. (1984).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sand : float</span>
+<span class="sd">            The percentage of sand in the soil.</span>
+<span class="sd">        clay : float</span>
+<span class="sd">            The percentage of clay in the soil.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g3 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The slope of the retention curve.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># b (slope of cambell retention curve in log space), N/A, ψ = ψc(θ/θs)-b</span>
+        <span class="c1"># Cosby et al. WRR 1984, b = 0.157x3 (- 0.003x1) + 3.10, b~=0~20</span>
+        <span class="c1"># g1, g2, g3: 3.1 (2.5, 3.6), 0.157 (0.1, 0.2), -0.003 (-0.005, -0.001)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g1</span> <span class="o">+</span> <span class="n">g2</span> <span class="o">*</span> <span class="n">clay</span> <span class="o">+</span> <span class="n">g3</span> <span class="o">*</span> <span class="n">sand</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.expt">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.expt">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">expt</span><span class="p">(</span><span class="n">b_retcurve</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the exponent in Campbell&#39;s equation for hydraulic conductivity.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        b_retcurve : float</span>
+<span class="sd">            The slope of the retention curve.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The exponent in Campbell&#39;s equation for hydraulic conductivity (k = ks (θ/θs)^(2b+3)).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the exponent in Campbell&#39;s equation for hydraulic conductivity, k = ks (θ/θs)2b+3</span>
+        <span class="c1"># expt = 2b+3 should be &gt; 3</span>
+        <span class="c1"># g1, g2: 3.0 (2.8, 3.2), 2.0 (1.5, 2.5)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g1</span> <span class="o">+</span> <span class="n">g2</span> <span class="o">*</span> <span class="n">b_retcurve</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.fc">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.fc">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">fc</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">b_retcurve</span><span class="p">,</span> <span class="n">psis</span><span class="p">,</span> <span class="n">sand</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the field capacity (fc) using Campbell&#39;s equation for hydraulic conductivity.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated water content (porosity).</span>
+<span class="sd">        b_retcurve : float</span>
+<span class="sd">            The slope of the retention curve (b).</span>
+<span class="sd">        psis : float</span>
+<span class="sd">            The saturation matric potential (ψs).</span>
+<span class="sd">        sand : float</span>
+<span class="sd">            The percentage of sand in the soil.</span>
+<span class="sd">        g : float</span>
+<span class="sd">            The constant parameter for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The field capacity (θ) in m³/m³ or %.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># campbell 1974, ψ = ψc(θ/θs)^-b, saturation condition</span>
+        <span class="c1"># ψ = ψc(θ/θs)^-b -&gt; ψ/ψc = (θ/θs)^-b -&gt; θ/θs = (ψ/ψc)^(-1/b) -&gt; θ = θs * ψ/ψc^(-1/b)</span>
+        <span class="c1"># m3/m3 or %</span>
+        <span class="c1"># g: 1.0 (0.8, 1.2)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">psi_fc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># ψfc kPa/cm-H2O, -30~-10kPa</span>
+        <span class="n">psi_fc</span><span class="p">[</span><span class="n">sand</span> <span class="o">&lt;</span> <span class="mi">70</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">20</span>
+        <span class="n">psi_fc</span><span class="p">[</span><span class="n">sand</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">33</span>
+
+        <span class="c1"># psi_fc = np.full_like(phi_s, fill_value=-10)  # ψfc kPa/cm-H2O, -30~-10kPa or -33kPa？</span>
+        <span class="c1"># psi_fc[sand &lt;= 69] = -20</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">phi_s</span> <span class="o">*</span> <span class="p">(</span><span class="n">psi_fc</span> <span class="o">/</span> <span class="n">psis</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="n">b_retcurve</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.d1">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d1">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">d1</span><span class="p">(</span><span class="n">Ks</span><span class="p">,</span> <span class="n">slope_mean</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the d1 parameter, with units of day^-1, the coefficient of the linear reservoir (baseflow, bottom layer).</span>
+<span class="sd">        Darcy law.</span>
+<span class="sd">        Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Ks : float</span>
+<span class="sd">            Hydraulic conductivity at layer 3 (m/s).</span>
+<span class="sd">        slope_mean : float</span>
+<span class="sd">            Mean slope value.</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (2.0 (1.75, 3.5)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The d1 value in day^-1, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ks: layer3</span>
+        <span class="c1"># d1, [day^-1]</span>
+        <span class="c1"># Harmonic mean</span>
+        <span class="n">d1_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">d1_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span>
+        <span class="n">unit_factor2</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">Sf</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Sf is a normalization factor of soil moisture [L] set to one</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ks</span> <span class="o">*</span> <span class="n">unit_factor1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">slope_mean</span> <span class="o">*</span> <span class="n">unit_factor2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">g</span><span class="p">)</span> <span class="o">/</span> <span class="n">Sf</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">d1_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">d1_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.d2">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d2">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">d2</span><span class="p">(</span><span class="n">Ks</span><span class="p">,</span> <span class="n">slope_mean</span><span class="p">,</span> <span class="n">d4</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the d2 parameter with units of day^-d4, the coefficient of the nonlinear reservoir (baseflow, bottom layer).</span>
+<span class="sd">        Darcy law.</span>
+<span class="sd">        Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Ks : float</span>
+<span class="sd">            Hydraulic conductivity at layer 3 (m/s).</span>
+<span class="sd">        slope_mean : float</span>
+<span class="sd">            Mean slope value.</span>
+<span class="sd">        d4 : float</span>
+<span class="sd">            Exponent for d4.</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (2.0 (1.75, 3.5)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The d2 value, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ks: layer3</span>
+        <span class="c1"># d2, [day^-d4]</span>
+        <span class="c1"># Harmonic mean</span>
+        <span class="n">d2_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">d2_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span>
+        <span class="n">unit_factor2</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">Sf</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Sf is a normalization factor of soil moisture [L] set to one</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ks</span> <span class="o">*</span> <span class="n">unit_factor1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">slope_mean</span> <span class="o">*</span> <span class="n">unit_factor2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">g</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Sf</span><span class="o">**</span><span class="n">d4</span><span class="p">)</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">d2_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">d2_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2_min</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.d3">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d3">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">d3</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the d3 parameter in mm, the soil mois-ture level at which the baseflow transitions from linear to nonlinear.</span>
+<span class="sd">        Darcy law.</span>
+<span class="sd">        Mizukami, N., Clark, M., Newman, A., Wood, A., Gutmann, E., Nijssen, B., Rakovec, O., and Samaniego, L.: Toward seamless large domain parameter estimation for hydrologic models, Water Resources Research, 53, 10.1002/2017wr020401, 2017.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fc : float</span>
+<span class="sd">            Field capacity (m³/m³).</span>
+<span class="sd">        depth : float</span>
+<span class="sd">            Depth of the soil layer (m).</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (1.0 (0.001, 2.0)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The d3 value in mm, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># depth: layer3, m</span>
+        <span class="c1"># d3, [mm]</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">depth_mm</span> <span class="o">=</span> <span class="n">depth</span> <span class="o">*</span> <span class="n">unit_factor1</span>
+
+        <span class="n">d3_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">d3_max</span> <span class="o">=</span> <span class="n">phi_s</span> <span class="o">*</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">depth_mm</span>  <span class="c1"># &lt;= 80% phi_s * depth_mm</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">fc</span> <span class="o">*</span> <span class="n">depth_mm</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">d3_max</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">d3_min</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.d4">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.d4">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">d4</span><span class="p">(</span><span class="n">g</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>  <span class="c1"># set to 2</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the value for d4, typically set to 2, the exponent of the nonlinear part of the outflow curve (note that d4&gt;=1).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        g : float, optional</span>
+<span class="sd">            Constant parameter for the model (default is 2.0 (1.2, 2.5)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The value of d4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># g: 2.0 (1.2, 2.5)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.cexpt">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.cexpt">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">cexpt</span><span class="p">(</span><span class="n">d4</span><span class="p">):</span>  <span class="c1"># set to d4</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the value for cexpt, which is equal to d4.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d4 : float</span>
+<span class="sd">            Exponent value for the d4 parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The value of cexpt.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># cexpt is c</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">d4</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.Dsmax">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Dsmax">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">Dsmax</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">d3</span><span class="p">,</span> <span class="n">cexpt</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the maximum soil moisture (Dsmax).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d1 : float</span>
+<span class="sd">            The d1 parameter value.</span>
+<span class="sd">        d2 : float</span>
+<span class="sd">            The d2 parameter value.</span>
+<span class="sd">        d3 : float</span>
+<span class="sd">            The d3 parameter value.</span>
+<span class="sd">        cexpt : float</span>
+<span class="sd">            The cexpt parameter value, typically equal to d4.</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated soil water content (m³/m³).</span>
+<span class="sd">        depth : float</span>
+<span class="sd">            Depth of the soil layer (m).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The maximum soil moisture (Dsmax) in mm or mm/day.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ceta_s (maximum soil moisture, mm) = phi_s * (depth * unit_factor1), phi_s (Saturated soil water content, m3/m3)</span>
+        <span class="c1"># Dsmax, mm or mm/day, 0.1~30.0, 10 is a common value</span>
+        <span class="c1"># layer3</span>
+        <span class="c1"># Harmonic mean</span>
+        <span class="n">Dsmax_min</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">Dsmax_max</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">d2</span> <span class="o">+</span> <span class="n">d1</span> <span class="o">*</span> <span class="p">(</span><span class="n">phi_s</span> <span class="o">*</span> <span class="p">(</span><span class="n">depth</span> <span class="o">*</span> <span class="n">unit_factor1</span><span class="p">))</span>
+        <span class="c1"># ret = d2 * (phi_s * (depth * unit_factor1) - d3) ** cexpt + d1*(phi_s * (depth * unit_factor1))</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">Dsmax_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">Dsmax_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">Dsmax_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">Dsmax_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.Ds">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Ds">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">Ds</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d3</span><span class="p">,</span> <span class="n">Dsmax</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the Ds parameter, typically used as a fraction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d1 : float</span>
+<span class="sd">            The d1 parameter value.</span>
+<span class="sd">        d3 : float</span>
+<span class="sd">            The d3 parameter value.</span>
+<span class="sd">        Dsmax : float</span>
+<span class="sd">            The maximum soil moisture (Dsmax).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The Ds value, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># [day^-d4] or fraction, 0.0001~1, 0.02 is a common value</span>
+        <span class="c1"># Harmonic mean</span>
+        <span class="n">Ds_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">Ds_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">d1</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">/</span> <span class="n">Dsmax</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">Ds_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ds_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">Ds_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ds_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.Ws">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Ws">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">Ws</span><span class="p">(</span><span class="n">d3</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the fraction of water available in the soil (Ws).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d3 : float</span>
+<span class="sd">            The d3 parameter value (mm).</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated soil water content (m³/m³).</span>
+<span class="sd">        depth : float</span>
+<span class="sd">            The depth of the soil layer (m).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The fraction of available water in the soil (Ws), bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># fraction, 0.0001~1, 0.8 is a common value</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">Ws_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">Ws_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">d3</span> <span class="o">/</span> <span class="p">(</span><span class="n">phi_s</span> <span class="o">*</span> <span class="n">depth</span> <span class="o">*</span> <span class="n">unit_factor1</span><span class="p">)</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">Ws_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ws_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">Ws_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ws_min</span>
+        <span class="c1"># ret = ret if ret &lt; Ws_max else Ws_max</span>
+        <span class="c1"># ret = ret if ret &gt; Ws_min else Ws_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+    <span class="c1"># def Ds():</span>
+    <span class="c1">#     pass</span>
+
+    <span class="c1"># def Dsmax(Ks, slope, beta):</span>
+    <span class="c1">#     return Ks * slope / (10 ** beta)</span>
+
+    <span class="c1"># def Ws(Wf, Wm, beta):</span>
+    <span class="c1">#     return Wf / Wm * beta</span>
+
+<div class="viewcode-block" id="TF_VIC.init_moist">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.init_moist">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">init_moist</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the soil moisture (init_moist) in mm.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated soil water content (m³/m³).</span>
+<span class="sd">        depth : float</span>
+<span class="sd">            The depth of the soil layer (m).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The initialized soil moisture in mm.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># init_moist, mm</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mf">1000.0</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">phi_s</span> <span class="o">*</span> <span class="p">(</span><span class="n">depth</span> <span class="o">*</span> <span class="n">unit_factor1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.dp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.dp">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">dp</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the dp parameter based on the given constant (g).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        g : float</span>
+<span class="sd">            A constant parameter for the model (typically 1.0 (0.9, 1.1)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The dp value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 1.0 (0.9, 1.1)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.bubble">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.bubble">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">bubble</span><span class="p">(</span><span class="n">expt</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the bubble parameter based on Schaperow et al. (2021).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expt : float</span>
+<span class="sd">            The exponent in Campbell&#39;s equation.</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            Constant parameter for the model (typically 0.32 (0.1, 0.8)).</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            Constant parameter for the model (typically 4.3 (0.0, 10.0)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The bubble parameter value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Schaperow, J., Li, D., Margulis, S., and Lettenmaier, D.: A near-global, high resolution land surface parameter dataset for the variable infiltration capacity model, Scientific Data, 8, 216, 10.1038/s41597-021-00999-4, 2021.</span>
+        <span class="c1"># g1, g2: 0.32 (0.1, 0.8), 4.3 (0.0, 10.0)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g1</span> <span class="o">*</span> <span class="n">expt</span> <span class="o">+</span> <span class="n">g2</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.quartz">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.quartz">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">quartz</span><span class="p">(</span><span class="n">sand</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the quartz content in the soil based on sand content and g.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sand : float</span>
+<span class="sd">            The sand content in the soil (%).</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 0.8 (0.7, 0.9)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The quartz content, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># g: 0.8 (0.7, 0.9)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">quartz_min</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">quartz_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">unit_factor1</span> <span class="o">=</span> <span class="mi">100</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">sand</span> <span class="o">*</span> <span class="n">g</span> <span class="o">/</span> <span class="n">unit_factor1</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">quartz_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">quartz_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">quartz_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">quartz_min</span>
+        <span class="c1"># ret = ret if ret &lt; quartz_max else quartz_max</span>
+        <span class="c1"># ret = ret if ret &gt; quartz_min else quartz_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.bulk_density">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.bulk_density">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">bulk_density</span><span class="p">(</span><span class="n">bulk_density</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the bulk density of the soil based on the given value and g.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bulk_density : float</span>
+<span class="sd">            The bulk density of the soil (kg/m³), read from file.</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.9, 1.1)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The bulk density value, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># read from file</span>
+        <span class="c1"># g: 1.0 (0.9, 1.1)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">bd_min</span> <span class="o">=</span> <span class="mf">805.0</span>
+        <span class="n">bd_max</span> <span class="o">=</span> <span class="mf">1880.0</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">bulk_density</span> <span class="o">*</span> <span class="n">g</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">bd_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">bd_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">bd_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">bd_min</span>
+
+        <span class="c1"># bd_slope = (bd_temp - bd_min) / (bd_max - bd_min)</span>
+        <span class="c1"># bd_slope[bd_slope &gt; 1.0] = 1.0</span>
+        <span class="c1"># bd_slope[bd_slope &lt; 0.0] = 0.0</span>
+        <span class="c1"># ret = bd_slope * (bd_max - bd_min) + bd_min</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+    <span class="c1"># def bulk_density(bd_in, g):</span>
+    <span class="c1">#     bd_min = 805.0</span>
+    <span class="c1">#     bd_max = 1880.0</span>
+    <span class="c1">#     bd_temp = g * bd_in</span>
+    <span class="c1">#     bdslope = (bd_temp - bd_min) / (bd_max - bd_min)</span>
+
+    <span class="c1">#     ret = bdslope * (bd_max - bd_min) + bd_min</span>
+    <span class="c1">#     return ret</span>
+
+<div class="viewcode-block" id="TF_VIC.soil_density">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.soil_density">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">soil_density</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the soil mineral density based on a scaling factor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.9, 1.1)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The soil mineral density (kg/cm³), scaled by the factor `g`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># g: 1.0 (0.9, 1.1)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">srho</span> <span class="o">=</span> <span class="mf">2685.0</span>  <span class="c1"># mineral density kg/cm3</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">srho</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.Wcr_FRACT">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Wcr_FRACT">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">Wcr_FRACT</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the fraction of water retention at field capacity (Wcr) based on soil properties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fc : float</span>
+<span class="sd">            The field capacity of the soil (m³/m³).</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated soil water content (m³/m³).</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.8, 1.2)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The fraction of water retention, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># g: 1.0 (0.8, 1.2), ~=70%*fc</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">fract_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">fract_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">fc</span> <span class="o">/</span> <span class="n">phi_s</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">fract_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">fract_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">fract_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">fract_min</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.wp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.wp">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">wp</span><span class="p">(</span><span class="n">phi_s</span><span class="p">,</span> <span class="n">b_retcurve</span><span class="p">,</span> <span class="n">psis</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the wilting point based on Campbell&#39;s (1974) equation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated soil water content (m³/m³).</span>
+<span class="sd">        b_retcurve : float</span>
+<span class="sd">            The exponent of the retention curve.</span>
+<span class="sd">        psis : float</span>
+<span class="sd">            The soil water potential at saturation (kPa).</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.8, 1.2)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The wilting point (θ), computed based on the Campbell equation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># campbell 1974, ψ = ψc(θ/θs)^-b, saturation condition</span>
+        <span class="c1"># ψ = ψc(θ/θs)^-b -&gt; ψ/ψc = (θ/θs)^-b -&gt; θ/θs = (ψ/ψc)^(-1/b) -&gt; θ = θs * ψ/ψc^(-1/b)</span>
+        <span class="c1"># g: 1.0 (0.8, 1.2)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">psi_wp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1500</span>  <span class="c1"># -1500~-2000kPa</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">phi_s</span> <span class="o">*</span> <span class="p">(</span><span class="n">psi_wp</span> <span class="o">/</span> <span class="n">psis</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="n">b_retcurve</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.Wpwp_FRACT">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.Wpwp_FRACT">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">Wpwp_FRACT</span><span class="p">(</span><span class="n">wp</span><span class="p">,</span> <span class="n">phi_s</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>  <span class="c1"># wp: wilting point</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the fraction of the wilting point moisture content (Wpwp) based on soil properties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wp : float</span>
+<span class="sd">            The wilting point moisture content (m³/m³).</span>
+<span class="sd">        phi_s : float</span>
+<span class="sd">            The saturated soil water content (m³/m³).</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.8, 1.2)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The fraction of the wilting point moisture content, bounded between a minimum and maximum range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># g: 1.0 (0.8, 1.2)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">fract_min</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">fract_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">wp</span> <span class="o">/</span> <span class="n">phi_s</span>
+
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">fract_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">fract_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">fract_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">fract_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.rough">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.rough">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">rough</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the soil surface roughness based on a scaling factor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.9, 1.1)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The surface roughness (m), scaled by the factor `g`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># g: 1.0 (0.9, 1.1)</span>
+        <span class="c1"># Arithmetic mean</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.snow_rough">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.snow_rough">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">snow_rough</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the snow surface roughness based on a scaling factor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        g : float</span>
+<span class="sd">            Constant parameter for the model (typically 1.0 (0.9, 1.1)).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The snow surface roughness (m), scaled by the factor `g`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># snow roughness of snowpack, 0.001~0.03</span>
+        <span class="c1"># g: 1.0 (0.9, 1.1)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="mf">0.0005</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+    <span class="c1"># def avg_T():</span>
+    <span class="c1">#     # read from file</span>
+    <span class="c1">#     pass</span>
+
+    <span class="c1"># def annual_prec():</span>
+    <span class="c1">#     # read from file</span>
+    <span class="c1">#     pass</span>
+
+<div class="viewcode-block" id="TF_VIC.off_gmt">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.off_gmt">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">off_gmt</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the offset from GMT based on longitude.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lon : float</span>
+<span class="sd">            The longitude of the location (degrees).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The offset from GMT in hours.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">360</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="TF_VIC.fs_active">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.fs_active">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">fs_active</span><span class="p">(</span><span class="n">activate</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Activate or deactivate a flag.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        activate : int, optional</span>
+<span class="sd">            A flag to activate or deactivate (default is 0, which means inactive).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The activation flag value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">activate</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+    <span class="c1"># def resid_moist(): # set as 0</span>
+    <span class="c1">#     ret = 0.0</span>
+    <span class="c1">#     return ret</span>
+    
+<div class="viewcode-block" id="TF_VIC.velocity">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.velocity">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="n">acc_km2</span><span class="p">,</span> <span class="n">slope_mean</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">,</span> <span class="n">landcover</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate spatially distributed velocity (m/s) for RVIC using a transfer function.</span>
+<span class="sd">        Chen, Y., Shi, P., Ji, X., Qu, S., Zhao, L., and Dong, F.: New method to calculate the dynamic factor-flow velocity in Geomorphologic instantaneous unit hydrograph, Scientific Reports, 9, 10.1038/s41598-019-50723-x, 2019.</span>
+<span class="sd">        Duc, N., Oki, T., and Kanae, S.: A variable streamflow velocity method for global river routing model: Model description and preliminary results, Hydrology and Earth System Sciences Discussions, 4, 10.5194/hessd-4-4389-2007, 2007.</span>
+<span class="sd">        K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        acc : float</span>
+<span class="sd">            Flow accumulation / upstream area (km^2).</span>
+<span class="sd">        slope : float</span>
+<span class="sd">            Local slope (m/m).</span>
+<span class="sd">        g1 : float</span>
+<span class="sd">            Global calibration parameter (scale factor).</span>
+<span class="sd">        g2 : float</span>
+<span class="sd">            Exponent for flow accumulation.</span>
+<span class="sd">        g3 : float</span>
+<span class="sd">            Exponent for slope.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Estimated flow velocity in m/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Transfer function: v = g0 * acc^g1 * slope^g2 (ManningStrickler formula: v = n−1 · R2/3 · S1/2 [m/s])</span>
+        <span class="c1"># K, S., M, H., and Doell, P.: Simulating river flow velocity on global scale, Advances in Geosciences, 5, 10.5194/adgeo-5-133-2005, 2005.</span>
+        <span class="c1"># acc: km2, slope: m/m</span>
+        <span class="c1">#g1, g2, g3: 0.2 (0.01, 0.5), 0.15 (0.1, 0.3), 0.3 (0.2, 0.4)</span>
+        <span class="c1"># Ensure slope &gt; 0 to avoid zero or negative values</span>
+        <span class="n">velocity_min</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">velocity_max</span> <span class="o">=</span> <span class="mf">3.0</span>
+        
+        <span class="n">unit_factor</span> <span class="o">=</span> <span class="mf">0.01</span>
+        
+        <span class="n">slope_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">slope_mean</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">g1</span> <span class="o">*</span> <span class="p">(</span><span class="n">acc_km2</span> <span class="o">**</span> <span class="n">g2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">slope_safe</span> <span class="o">*</span> <span class="n">unit_factor</span><span class="p">)</span> <span class="o">**</span> <span class="n">g3</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">landcover</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">landcover</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="c1"># coef[landcover==1] = 1.2  # TODO</span>
+            <span class="c1"># coef[landcover==2] = 0.9</span>
+            <span class="n">ret</span> <span class="o">*=</span> <span class="n">coef</span>
+        
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">velocity_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">velocity_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">velocity_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">velocity_min</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+    
+<div class="viewcode-block" id="TF_VIC.diffusion">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.TF_VIC.diffusion">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">diffusion</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">flow_distance_m</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate diffusion coefficient matrix D from flow velocity and river segment length.</span>
+<span class="sd">        Yang, Y., Endreny, T. A., and Nowak, D. J. J. J. o. E. s.: Application of advection-diffusion routing model to flood wave propagation: A case study on Big Piney River, Missouri USA, 27, 9-14, 2016.</span>
+<span class="sd">        D=alpha*v*L</span>
+<span class="sd">        g: alpha, 0.1, (0.001, 0.5)</span>
+<span class="sd">        </span>
+<span class="sd">        Units: D in m^2/s, v in m/s, flow_distance in m.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        v : np.ndarray</span>
+<span class="sd">            Flow velocity matrix (m/s), same shape as the grid.</span>
+<span class="sd">        flow_distance_m : np.ndarray</span>
+<span class="sd">            River segment length or flow distance matrix (m), same shape as v.</span>
+<span class="sd">        alpha : float, optional</span>
+<span class="sd">            Scaling factor for diffusion coefficient, default 0.1.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        D : np.ndarray</span>
+<span class="sd">            Diffusion coefficient matrix (m^2/s), same shape as input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">diffusion_min</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">diffusion_max</span> <span class="o">=</span> <span class="mi">4000</span>
+        
+        <span class="n">D</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">velocity</span> <span class="o">*</span> <span class="n">flow_distance_m</span>
+        
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">D</span>
+        
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&gt;</span> <span class="n">diffusion_max</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffusion_max</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="n">diffusion_min</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffusion_min</span>
+        
+        <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+    
+<div class="viewcode-block" id="SoilLayerResampler">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler">[docs]</a>
+<span class="k">class</span> <span class="nc">SoilLayerResampler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resample original soil layers into grouped layers by breakpoints.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    orig_depths : numpy.ndarray</span>
+<span class="sd">        Thickness of original layers.</span>
+<span class="sd">    n_orig : int</span>
+<span class="sd">        Number of original layers.</span>
+<span class="sd">    orig_total : float</span>
+<span class="sd">        Total original depth.</span>
+<span class="sd">    orig_cumsum : numpy.ndarray</span>
+<span class="sd">        Cumulative depth of original layers.</span>
+<span class="sd">    orig_boundaries : numpy.ndarray</span>
+<span class="sd">        Layer boundaries with leading zero.</span>
+<span class="sd">    grouping : dict or None</span>
+<span class="sd">        Group metadata after :meth:`create_grouping`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; # Original 11 layers</span>
+<span class="sd">    &gt;&gt;&gt; original_depths = [10,10,10,20,20,30,30,40,50,50,50]</span>
+<span class="sd">    &gt;&gt;&gt; resampler = SoilLayerResampler(original_depths)</span>
+<span class="sd">    &gt;&gt;&gt; resampler.create_grouping([2, 6])</span>
+
+<span class="sd">    &gt;&gt;&gt; # 1) Create grouping</span>
+<span class="sd">    &gt;&gt;&gt; grouping = resampler.grouping</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Original grouping:&quot;)</span>
+<span class="sd">    Original grouping:</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Depths:&quot;, grouping[&quot;depths&quot;])</span>
+<span class="sd">    Depths: [ 20.  80. 220.]</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Depth percentages:&quot;, grouping[&quot;depth_percentages&quot;])</span>
+<span class="sd">    Depth percentages: [0.0625 0.25   0.6875]</span>
+
+<span class="sd">    &gt;&gt;&gt; # 2) Scale to new total depth</span>
+<span class="sd">    &gt;&gt;&gt; scaled_grouping = resampler.scale_grouping(grouping, 500)</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Scaled grouping (500cm total):&quot;)</span>
+<span class="sd">    Scaled grouping (500cm total):</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Scaled depths:&quot;, scaled_grouping[&quot;depths&quot;])</span>
+<span class="sd">    Scaled depths: [ 31.25 125.   343.75]</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Boundaries:&quot;, scaled_grouping[&quot;boundaries&quot;])</span>
+<span class="sd">    Boundaries: [  0.    31.25 156.25 500.  ]</span>
+
+<span class="sd">    &gt;&gt;&gt; # 3) Value conversion</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;=== Value conversion ===&quot;)</span>
+<span class="sd">    === Value conversion ===</span>
+<span class="sd">    &gt;&gt;&gt; orig_values = np.array([1,2,3,4,5,6,7,8,9,10,11])</span>
+<span class="sd">    &gt;&gt;&gt; grouped_values = resampler.convert_to_grouping(orig_values, grouping, method=&quot;mean&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Original:&quot;, orig_values)</span>
+<span class="sd">    Original: [ 1  2  3  4  5  6  7  8  9 10 11]</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;Grouped (mean):&quot;, grouped_values)</span>
+<span class="sd">    Grouped (mean): [1.5 4.5 9. ]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="SoilLayerResampler.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_depths</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize resampler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        original_depths : sequence of float</span>
+<span class="sd">            Thickness of each original soil layer.</span>
+<span class="sd">        breakpoints : sequence of int, optional</span>
+<span class="sd">            Breakpoint indices used to build grouping at initialization.</span>
+<span class="sd">            Example: ``[2, 6]`` creates three groups from 11 original layers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_depths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">original_depths</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_depths</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_depths</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_cumsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_depths</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_boundaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_cumsum</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">breakpoints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grouping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grouping</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+        
+<div class="viewcode-block" id="SoilLayerResampler.create_grouping">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.create_grouping">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">breakpoints</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create grouped-layer metadata from breakpoints.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        breakpoints : sequence of int</span>
+<span class="sd">            Group end indices (exclusive in group construction).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Grouping is stored in ``self.grouping``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If breakpoints are invalid or do not cover full layer range.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Breakpoints are interpreted as group end indices in the original-layer</span>
+<span class="sd">        index space. Internally, ``0`` and ``n_orig`` are added automatically.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])</span>
+<span class="sd">        &gt;&gt;&gt; resampler.create_grouping([2, 6])</span>
+<span class="sd">        &gt;&gt;&gt; resampler.grouping[&quot;grouping_scheme&quot;]</span>
+<span class="sd">        [[0, 1], [2, 3, 4, 5], [6, 7, 8, 9, 10]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Process breakpoints</span>
+        <span class="n">breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">0</span><span class="p">],</span> <span class="n">breakpoints</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="p">])))</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Breakpoints must be strictly increasing and unique&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">breakpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">breakpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Breakpoints must cover all layers from 0 to n_orig-1&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Generate grouping scheme</span>
+        <span class="n">grouping_scheme</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">grouping_scheme</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">breakpoints</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])))</span>
+        
+        <span class="c1"># Calculate layer parameters</span>
+        <span class="n">new_depths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">group_info</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">grouping_scheme</span><span class="p">:</span>
+            <span class="n">total_depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_depths</span><span class="p">[</span><span class="n">group</span><span class="p">])</span>
+            <span class="n">group_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_boundaries</span><span class="p">[</span><span class="n">group</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">group_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_boundaries</span><span class="p">[</span><span class="n">group</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            
+            <span class="n">new_depths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_depth</span><span class="p">)</span>
+            <span class="n">new_boundaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group_end</span><span class="p">)</span>
+            <span class="n">group_info</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;orig_indices&#39;</span><span class="p">:</span> <span class="n">group</span><span class="p">,</span>
+                <span class="s1">&#39;start_depth&#39;</span><span class="p">:</span> <span class="n">group_start</span><span class="p">,</span>
+                <span class="s1">&#39;end_depth&#39;</span><span class="p">:</span> <span class="n">group_end</span><span class="p">,</span>
+                <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="n">total_depth</span><span class="p">,</span>
+                <span class="s1">&#39;n_orig_layers&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+            <span class="p">})</span>
+        
+        <span class="c1"># Calculate percentages</span>
+        <span class="n">new_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">new_depths</span><span class="p">)</span>
+        <span class="n">depth_percentages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_depths</span><span class="p">)</span> <span class="o">/</span> <span class="n">new_total</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">grouping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;n_layers&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">grouping_scheme</span><span class="p">),</span>
+            <span class="s1">&#39;depths&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_depths</span><span class="p">),</span>
+            <span class="s1">&#39;boundaries&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_boundaries</span><span class="p">),</span>
+            <span class="s1">&#39;depth_percentages&#39;</span><span class="p">:</span> <span class="n">depth_percentages</span><span class="p">,</span>
+            <span class="s1">&#39;total_depth&#39;</span><span class="p">:</span> <span class="n">new_total</span><span class="p">,</span>
+            <span class="s1">&#39;group_info&#39;</span><span class="p">:</span> <span class="n">group_info</span><span class="p">,</span>
+            <span class="s1">&#39;grouping_scheme&#39;</span><span class="p">:</span> <span class="n">grouping_scheme</span>
+        <span class="p">}</span></div>
+
+        
+<div class="viewcode-block" id="SoilLayerResampler.scale_grouping">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.scale_grouping">[docs]</a>
+    <span class="k">def</span> <span class="nf">scale_grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grouping</span><span class="p">,</span> <span class="n">new_total_depth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale grouped layers to a new total depth.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grouping : dict</span>
+<span class="sd">            Grouping dictionary generated by ``create_grouping``.</span>
+<span class="sd">        new_total_depth : float</span>
+<span class="sd">            Target total depth after scaling.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Grouping dictionary with updated ``depths`` and ``boundaries``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])</span>
+<span class="sd">        &gt;&gt;&gt; resampler.create_grouping([2, 6])</span>
+<span class="sd">        &gt;&gt;&gt; scaled = resampler.scale_grouping(resampler.grouping, 500.0)</span>
+<span class="sd">        &gt;&gt;&gt; scaled[&quot;depths&quot;]</span>
+<span class="sd">        array([ 31.25, 125.  , 343.75])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scaled_depths</span> <span class="o">=</span> <span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;depth_percentages&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">new_total_depth</span>
+        <span class="n">scaled_boundaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">0</span><span class="p">],</span> <span class="n">scaled_depths</span><span class="p">)))</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">grouping</span><span class="p">,</span>
+            <span class="s1">&#39;depths&#39;</span><span class="p">:</span> <span class="n">scaled_depths</span><span class="p">,</span>
+            <span class="s1">&#39;boundaries&#39;</span><span class="p">:</span> <span class="n">scaled_boundaries</span><span class="p">,</span>
+            <span class="s1">&#39;total_depth&#39;</span><span class="p">:</span> <span class="n">new_total_depth</span>
+        <span class="p">}</span></div>
+
+        
+<div class="viewcode-block" id="SoilLayerResampler.convert_to_grouping">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.convert_to_grouping">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_to_grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">grouping</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;orig_to_new&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert values between original layers and grouped layers.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        values : array-like</span>
+<span class="sd">            Input values to convert.</span>
+<span class="sd">        grouping : dict</span>
+<span class="sd">            Grouping dictionary from ``create_grouping``.</span>
+<span class="sd">        direction : {&#39;orig_to_new&#39;, &#39;new_to_orig&#39;}, optional</span>
+<span class="sd">            Conversion direction.</span>
+<span class="sd">        method : {&#39;mean&#39;, &#39;sum&#39;}, optional</span>
+<span class="sd">            Aggregation method used for ``orig_to_new``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Converted values in the target layer space.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If direction/method is invalid or input length is inconsistent.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])</span>
+<span class="sd">        &gt;&gt;&gt; resampler.create_grouping([2, 6])</span>
+<span class="sd">        &gt;&gt;&gt; vals = np.array([1,2,3,4,5,6,7,8,9,10,11])</span>
+<span class="sd">        &gt;&gt;&gt; resampler.convert_to_grouping(vals, resampler.grouping, method=&quot;mean&quot;)</span>
+<span class="sd">        array([1.5, 4.5, 9. ])</span>
+<span class="sd">        &gt;&gt;&gt; resampler.convert_to_grouping(np.array([1.5, 4.5, 9. ]), resampler.grouping, direction=&quot;new_to_orig&quot;)</span>
+<span class="sd">        array([1.5, 1.5, 4.5, 4.5, 4.5, 4.5, 9. , 9. , 9. , 9. , 9. ])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;orig_to_new&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="si">}</span><span class="s2"> original values&quot;</span><span class="p">)</span>
+                
+            <span class="n">converted</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;grouping_scheme&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+                    <span class="n">converted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">group</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+                    <span class="n">converted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">group</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method must be &#39;mean&#39; or &#39;sum&#39;&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
+            
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;new_to_orig&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;n_layers&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;n_layers&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> grouped values&quot;</span><span class="p">)</span>
+                
+            <span class="n">converted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;grouping_scheme&#39;</span><span class="p">]):</span>
+                <span class="n">converted</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">converted</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Direction must be &#39;orig_to_new&#39; or &#39;new_to_orig&#39;&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="SoilLayerResampler.get_optimal_grouping">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.TransferFunction.html#easy_vic_build.tools.params_func.TransferFunction.SoilLayerResampler.get_optimal_grouping">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_optimal_grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_n_layers</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;equal_thickness&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate breakpoint proposal for a target layer count.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_n_layers : int</span>
+<span class="sd">            Desired number of grouped layers.</span>
+<span class="sd">        method : {&#39;equal_thickness&#39;, &#39;equal_layers&#39;}, optional</span>
+<span class="sd">            Strategy for generating breakpoints.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of int</span>
+<span class="sd">            Breakpoints that can be passed to ``create_grouping``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If method is unsupported.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Returned breakpoints can be passed directly to</span>
+<span class="sd">        :meth:`create_grouping`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])</span>
+<span class="sd">        &gt;&gt;&gt; bp = resampler.get_optimal_grouping(3, method=&quot;equal_thickness&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(bp, list)</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;equal_thickness&#39;</span><span class="p">:</span>
+            <span class="n">target_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_total</span> <span class="o">/</span> <span class="n">target_n_layers</span>
+            <span class="n">breakpoints</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">cum_depth</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_n_layers</span><span class="p">):</span>
+                <span class="n">cum_depth</span> <span class="o">+=</span> <span class="n">target_depth</span>
+                <span class="n">breakpoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_cumsum</span> <span class="o">&gt;=</span> <span class="n">cum_depth</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;equal_layers&#39;</span><span class="p">:</span>
+            <span class="n">layers_per_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span> <span class="o">//</span> <span class="n">target_n_layers</span>
+            <span class="n">breakpoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">layers_per_group</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_n_layers</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Method must be &#39;equal_thickness&#39; or &#39;equal_layers&#39;&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Ensure we cover all layers</span>
+        <span class="n">breakpoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">bp</span> <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="n">breakpoints</span> <span class="k">if</span> <span class="n">bp</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="p">]</span>
+        <span class="n">breakpoints</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">breakpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">breakpoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_orig</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">breakpoints</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Original 11 layers</span>
+    <span class="n">original_depths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">]</span>
+    <span class="n">resampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">(</span><span class="n">original_depths</span><span class="p">)</span>
+    <span class="n">resampler</span><span class="o">.</span><span class="n">create_grouping</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    
+    <span class="c1"># Create grouping</span>
+    <span class="n">grouping</span> <span class="o">=</span> <span class="n">resampler</span><span class="o">.</span><span class="n">grouping</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original grouping:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Depths:&quot;</span><span class="p">,</span> <span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;depths&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Depth percentages:&quot;</span><span class="p">,</span> <span class="n">grouping</span><span class="p">[</span><span class="s1">&#39;depth_percentages&#39;</span><span class="p">])</span>
+    
+    <span class="c1"># # Scale to new total depth</span>
+    <span class="c1"># scaled_grouping = resampler.scale_grouping(grouping, 500)  # Scale to 500cm total</span>
+    <span class="c1"># print(&quot;\nScaled grouping (500cm total):&quot;)</span>
+    <span class="c1"># print(&quot;Scaled depths:&quot;, scaled_grouping[&#39;depths&#39;])</span>
+    <span class="c1"># print(&quot;Boundaries:&quot;, scaled_grouping[&#39;boundaries&#39;])</span>
+    
+    <span class="c1"># # Value conversion</span>
+    <span class="c1"># print(&quot;\n=== Value conversion ===&quot;)</span>
+    <span class="c1"># orig_values = np.array([1,2,3,4,5,6,7,8,9,10,11])</span>
+    <span class="c1"># grouped_values = resampler.convert_to_grouping(orig_values, grouping, method=&#39;mean&#39;)</span>
+    <span class="c1"># print(&quot;Original:&quot;, orig_values)</span>
+    <span class="c1"># print(&quot;Grouped (mean):&quot;, grouped_values)</span>
+    <span class="c1"># pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

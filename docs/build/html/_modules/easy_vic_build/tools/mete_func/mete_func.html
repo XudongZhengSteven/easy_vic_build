@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.mete_func.mete_func &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.mete_func.mete_func</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.mete_func.mete_func</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Meteorological utility functions for VIC forcing preparation.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">time</span>
+
+
+<div class="viewcode-block" id="cal_es_Tetens_eq">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_es_Tetens_eq">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_es_Tetens_eq</span><span class="p">(</span><span class="n">Ta_C</span><span class="p">,</span> <span class="n">es_ref</span><span class="o">=</span><span class="mf">0.6112</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate saturation vapor pressure from air temperature.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Ta_C : float or numpy.ndarray</span>
+<span class="sd">        Air temperature in degrees Celsius.</span>
+<span class="sd">    es_ref : float, optional</span>
+<span class="sd">        Reference saturation vapor pressure constant in kPa.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Saturation vapor pressure in kPa.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Piecewise Tetens form is used:</span>
+
+<span class="sd">    - For ``Ta_C &gt;= 0``:</span>
+<span class="sd">      ``es = es_ref * exp(17.67 * Ta_C / (Ta_C + 243.5))``</span>
+<span class="sd">    - For ``Ta_C &lt; 0``:</span>
+<span class="sd">      ``es = es_ref * exp(21.875 * Ta_C / (Ta_C + 265.5))``</span>
+
+<span class="sd">    Unit of ``es`` is kPa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># water</span>
+    <span class="k">if</span> <span class="n">Ta_C</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="n">es_ref</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">17.67</span> <span class="o">*</span> <span class="n">Ta_C</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Ta_C</span> <span class="o">+</span> <span class="mf">243.5</span><span class="p">))</span>
+    
+    <span class="c1"># ice</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="n">es_ref</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="mf">21.875</span> <span class="o">*</span> <span class="n">Ta_C</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Ta_C</span> <span class="o">+</span> <span class="mf">265.5</span><span class="p">))</span>
+        
+    <span class="k">return</span> <span class="n">es</span></div>
+
+    
+    
+<div class="viewcode-block" id="cal_VP_from_RH_es">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_VP_from_RH_es">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_VP_from_RH_es</span><span class="p">(</span><span class="n">RH_100</span><span class="p">,</span> <span class="n">es_kPa</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate vapor pressure from relative humidity and saturation pressure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    RH_100 : float or numpy.ndarray</span>
+<span class="sd">        Relative humidity in percent (0-100).</span>
+<span class="sd">    es_kPa : float or numpy.ndarray</span>
+<span class="sd">        Saturation vapor pressure in kPa.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Vapor pressure in kPa.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Formula:</span>
+<span class="sd">    ``e = (RH / 100) * es``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e_kPa</span> <span class="o">=</span> <span class="p">(</span><span class="n">RH_100</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">es_kPa</span>
+    <span class="k">return</span> <span class="n">e_kPa</span></div>
+
+
+
+<div class="viewcode-block" id="cal_VP_from_prs_sh">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_VP_from_prs_sh">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_VP_from_prs_sh</span><span class="p">(</span><span class="n">prs_kPa</span><span class="p">,</span> <span class="n">sh_kg_per_kg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate vapor pressure from air pressure and specific humidity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prs_kPa : float or numpy.ndarray</span>
+<span class="sd">        Air pressure in kPa.</span>
+<span class="sd">    sh_kg_per_kg : float or numpy.ndarray</span>
+<span class="sd">        Specific humidity in kg/kg.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Vapor pressure in kPa.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Formula:</span>
+<span class="sd">    ``e = q * p / (0.622 + q)``,</span>
+<span class="sd">    where ``q`` is specific humidity (kg kg-1) and ``p`` is pressure (kPa).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate vapor pressure using the formula: VP = sh * prs / (0.622 + sh)</span>
+    <span class="n">e_kPa</span> <span class="o">=</span> <span class="n">sh_kg_per_kg</span> <span class="o">*</span> <span class="n">prs_kPa</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.622</span> <span class="o">+</span> <span class="n">sh_kg_per_kg</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">e_kPa</span></div>
+
+
+<div class="viewcode-block" id="cal_SWDOWN_Angstrom_Prescott_eq">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_SWDOWN_Angstrom_Prescott_eq">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_SWDOWN_Angstrom_Prescott_eq</span><span class="p">(</span><span class="n">ssd_h</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">clearsky</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate downward shortwave radiation using Angstrom-Prescott equation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ssd_h : float</span>
+<span class="sd">        Observed sunshine duration in hours.</span>
+<span class="sd">    lat : float</span>
+<span class="sd">        Latitude in degrees.</span>
+<span class="sd">    date : datetime.date or datetime.datetime</span>
+<span class="sd">        Date used to compute solar geometry.</span>
+<span class="sd">    a : float, optional</span>
+<span class="sd">        Angstrom coefficient ``a``.</span>
+<span class="sd">    b : float, optional</span>
+<span class="sd">        Angstrom coefficient ``b``.</span>
+<span class="sd">    clearsky : bool, optional</span>
+<span class="sd">        If ``True``, return clear-sky shortwave radiation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Downward shortwave radiation in W/m2.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Angstrom-Prescott relation:</span>
+<span class="sd">    ``Rs = (a + b * n / N) * Ra``.</span>
+
+<span class="sd">    - ``n`` is observed sunshine duration (hours).</span>
+<span class="sd">    - ``N`` is astronomical maximum sunshine duration (hours).</span>
+<span class="sd">    - ``Ra`` is extraterrestrial radiation (MJ m-2 day-1, FAO-56 form).</span>
+
+<span class="sd">    Output is converted from MJ m-2 day-1 to W m-2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># lat to radian</span>
+    <span class="n">lat_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    
+    <span class="c1"># doy</span>
+    <span class="n">doy</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span>
+    
+    <span class="c1"># solar constant</span>
+    <span class="n">G_sc</span> <span class="o">=</span> <span class="mf">0.0820</span> <span class="c1"># MJ m-2 min-1, per FAO-56</span>
+    
+    <span class="c1"># dr</span>
+    <span class="n">dr</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">0.033</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">doy</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span>
+    
+    <span class="c1"># delta</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.409</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">365</span> <span class="o">*</span> <span class="n">doy</span> <span class="o">-</span> <span class="mf">1.39</span><span class="p">)</span>
+    
+    <span class="c1"># omega_s</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+    
+    <span class="c1"># Ra, MJ m-2 day-1</span>
+    <span class="n">Ra</span> <span class="o">=</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">G_sc</span> <span class="o">*</span> <span class="n">dr</span> <span class="o">*</span> <span class="p">(</span><span class="n">ws</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">+</span> 
+        <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ws</span><span class="p">))</span>
+    
+    <span class="c1"># N</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">24</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">ws</span>
+    
+    <span class="c1"># Rs</span>
+    <span class="k">if</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">Rs</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="n">ssd_h</span> <span class="o">/</span> <span class="n">N</span><span class="p">))</span> <span class="o">*</span> <span class="n">Ra</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Rs</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1"># clearsky condition</span>
+    <span class="n">Rs_clearsky</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ra</span>
+            
+    <span class="c1"># SWDOWN</span>
+    <span class="k">if</span> <span class="n">clearsky</span><span class="p">:</span>
+        <span class="n">SWDOWN</span> <span class="o">=</span> <span class="n">Rs_clearsky</span> <span class="o">*</span> <span class="mf">1e6</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span>  <span class="c1"># Convert from MJ m-2 day-1 to W m-2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">SWDOWN</span> <span class="o">=</span> <span class="n">Rs</span> <span class="o">*</span> <span class="mf">1e6</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span>  <span class="c1"># Convert from MJ m-2 day-1 to W m-2</span>
+    
+    <span class="k">return</span> <span class="n">SWDOWN</span></div>
+
+
+
+<div class="viewcode-block" id="cal_clearsky_SWDOWN_Dudhia89_eq">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_clearsky_SWDOWN_Dudhia89_eq">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_clearsky_SWDOWN_Dudhia89_eq</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">elevation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_UTC</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">ESRA</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate clear-sky shortwave radiation at the surface.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    date : datetime.date or datetime.datetime</span>
+<span class="sd">        Date of calculation.</span>
+<span class="sd">    lat : float</span>
+<span class="sd">        Latitude in degrees.</span>
+<span class="sd">    elevation : float, optional</span>
+<span class="sd">        Elevation in meters.</span>
+<span class="sd">    time_UTC : int or float, optional</span>
+<span class="sd">        UTC hour of day.</span>
+<span class="sd">    ESRA : bool, optional</span>
+<span class="sd">        If ``True``, use ESRA transmissivity; otherwise use Dudhia (1989).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Clear-sky shortwave radiation in W/m2.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Surface clear-sky shortwave radiation is computed as:</span>
+<span class="sd">    ``SWDOWN_clear = S0 * cos(theta_z) * tau``.</span>
+
+<span class="sd">    - ``S0 = 1361`` W m-2.</span>
+<span class="sd">    - ``theta_z`` is solar zenith angle at ``time_UTC``.</span>
+<span class="sd">    - ``tau`` is atmospheric transmissivity.</span>
+
+<span class="sd">    If ``ESRA=True``, this implementation uses</span>
+<span class="sd">    ``tau = 0.664 + 0.163 / cos(theta_z)`` (clipped to [0, 1]),</span>
+<span class="sd">    then applies a simple elevation correction.</span>
+<span class="sd">    Otherwise, Dudhia (1989) approximation is used:</span>
+<span class="sd">    ``tau = max(0.6, 0.75 - 0.00002 * elevation)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Solar constant (W m-2)</span>
+    <span class="n">S0</span> <span class="o">=</span> <span class="mf">1361.0</span>
+    
+    <span class="c1"># Day of year (1-365)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span>
+    
+    <span class="c1"># Solar declination (radians)</span>
+    <span class="n">decl_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">23.45</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span> <span class="p">(</span><span class="mi">284</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)))</span>
+    
+    <span class="c1"># Convert latitude to radians</span>
+    <span class="n">lat_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    
+    <span class="c1"># 15 degrees per hour, 0 at solar noon</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">15</span> <span class="o">*</span> <span class="p">(</span><span class="n">time_UTC</span> <span class="o">-</span> <span class="mi">12</span><span class="p">))</span>
+    
+    <span class="c1"># Solar zenith angle (theta_z)</span>
+    <span class="n">cos_theta_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">decl_rad</span><span class="p">)</span> <span class="o">+</span> 
+                  <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">decl_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+    <span class="n">cos_theta_z</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cos_theta_z</span><span class="p">)</span>  <span class="c1"># avoid negative values (night)</span>
+    
+    <span class="k">if</span> <span class="n">ESRA</span><span class="p">:</span>
+        <span class="c1"># ESRA clear-sky transmissivity model</span>
+        <span class="c1"># ESRA model: tau = 0.664 + 0.163 / cos(theta_z)</span>
+        <span class="k">if</span> <span class="n">cos_theta_z</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
+            <span class="n">transmissivity</span> <span class="o">=</span> <span class="mf">0.664</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.163</span> <span class="o">/</span> <span class="n">cos_theta_z</span><span class="p">)</span> <span class="k">if</span> <span class="n">cos_theta_z</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">transmissivity</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">transmissivity</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">transmissivity</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+        <span class="c1"># Thin-air effect: ~10% increase per 1000m (empirical</span>
+        <span class="n">transmissivity</span> <span class="o">*=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.0001</span> <span class="o">*</span> <span class="n">elevation</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Dudhia-like clear-sky transmissivity (tau)</span>
+        <span class="n">transmissivity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.75</span> <span class="o">-</span> <span class="mf">0.00002</span> <span class="o">*</span> <span class="n">elevation</span><span class="p">)</span>  <span class="c1"># Dudhia (1989) approximation</span>
+    
+    <span class="c1"># Clearsky SWDOWN (W m-2)</span>
+    <span class="n">swdown_clearsky</span> <span class="o">=</span> <span class="n">S0</span> <span class="o">*</span> <span class="n">cos_theta_z</span> <span class="o">*</span> <span class="n">transmissivity</span>
+    
+    <span class="k">return</span> <span class="n">swdown_clearsky</span></div>
+
+
+
+<div class="viewcode-block" id="cal_LWDOWN_Brutsaert_eq">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_Brutsaert_eq">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_LWDOWN_Brutsaert_eq</span><span class="p">(</span><span class="n">Ta_K</span><span class="p">,</span> <span class="n">VP_kPa</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate downward longwave radiation using Brutsaert equation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Ta_K : float or numpy.ndarray</span>
+<span class="sd">        Air temperature in Kelvin.</span>
+<span class="sd">    VP_kPa : float or numpy.ndarray</span>
+<span class="sd">        Vapor pressure in kPa.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Downward longwave radiation in W/m2.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Brutsaert clear-sky form:</span>
+
+<span class="sd">    - ``eps_a = 1.24 * (e / Ta_K) ** (1/7)``</span>
+<span class="sd">    - ``LWDOWN = eps_a * sigma * Ta_K ** 4``</span>
+
+<span class="sd">    where ``sigma = 5.670374419e-8`` W m-2 K-4 and ``e`` is vapor pressure in kPa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mf">5.670374419e-8</span>  <span class="c1"># Stefan-Boltzmann constant (W m-2 K-4)</span>
+    <span class="n">VP_kPa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">VP_kPa</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>  <span class="c1"># avoid emissivity becoming zero</span>
+    <span class="n">eps_a</span> <span class="o">=</span> <span class="mf">1.24</span> <span class="o">*</span> <span class="p">(</span><span class="n">VP_kPa</span> <span class="o">/</span> <span class="n">Ta_K</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="n">LWDOWN</span> <span class="o">=</span> <span class="n">eps_a</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">Ta_K</span> <span class="o">**</span> <span class="mi">4</span>  <span class="c1"># W m-2</span>
+    
+    <span class="k">return</span> <span class="n">LWDOWN</span></div>
+
+
+
+<div class="viewcode-block" id="cal_LWDOWN_CD99_eq">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_LWDOWN_CD99_eq">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_LWDOWN_CD99_eq</span><span class="p">(</span><span class="n">Ta_K</span><span class="p">,</span> <span class="n">cloud_cover</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c_cloud</span><span class="o">=</span><span class="mf">0.22</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate downward longwave radiation using CD99 emissivity equation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Ta_K : float or numpy.ndarray</span>
+<span class="sd">        Air temperature in Kelvin.</span>
+<span class="sd">    cloud_cover : float, optional</span>
+<span class="sd">        Cloud fraction in [0, 1]. If provided, cloudy-sky correction is applied.</span>
+<span class="sd">    c_cloud : float, optional</span>
+<span class="sd">        Cloud correction coefficient.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Downward longwave radiation in W/m2.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If ``cloud_cover`` is outside [0, 1].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    CD99 emissivity:</span>
+<span class="sd">    ``eps_a = 1 - 0.261 * exp(-7.77e-4 * (273.15 - Ta_K)^2)``.</span>
+
+<span class="sd">    Clear-sky longwave:</span>
+<span class="sd">    ``LWDOWN_clear = eps_a * sigma * Ta_K^4``.</span>
+
+<span class="sd">    Cloud correction (if ``cloud_cover`` is provided):</span>
+<span class="sd">    ``LWDOWN = LWDOWN_clear * (1 + c_cloud * cloud_cover^2)``.</span>
+
+<span class="sd">    Reference: Crawford and Duchon (1999),</span>
+<span class="sd">    Journal of Applied Meteorology, 38(4), 474-480.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mf">5.670374419e-8</span>  <span class="c1"># Stefan-Boltzmann constant (W m-2 K-4)</span>
+    <span class="n">eps_a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.261</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">7.77e-4</span> <span class="o">*</span> <span class="p">(</span><span class="mf">273.15</span> <span class="o">-</span> <span class="n">Ta_K</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># CD99</span>
+    <span class="n">LWDOWN_clear</span> <span class="o">=</span> <span class="n">eps_a</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">Ta_K</span> <span class="o">**</span> <span class="mi">4</span>  <span class="c1"># W m-2</span>
+    
+    <span class="k">if</span> <span class="n">cloud_cover</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">cloud_cover</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Cloud cover must be between 0 and 1.&quot;</span>
+        <span class="n">LWDOWN_cloudy</span> <span class="o">=</span> <span class="n">LWDOWN_clear</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">c_cloud</span> <span class="o">*</span> <span class="n">cloud_cover</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LWDOWN_cloudy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LWDOWN_clear</span></div>
+
+
+
+<div class="viewcode-block" id="cal_max_ssd">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_max_ssd">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_max_ssd</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">lat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate astronomical maximum sunshine duration for a given day.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    date : datetime.date or datetime.datetime</span>
+<span class="sd">        Date of calculation.</span>
+<span class="sd">    lat : float</span>
+<span class="sd">        Latitude in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Maximum sunshine duration in hours.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses declination approximation:</span>
+<span class="sd">    ``decl = 23.45 * sin(2*pi*(284 + n)/365)`` (degrees),</span>
+<span class="sd">    then sunrise/sunset hour-angle ``omega`` to compute:</span>
+<span class="sd">    ``N = 2 * degrees(omega) / 15``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span>
+    
+    <span class="c1"># declination approximation in degrees</span>
+    <span class="n">decl</span> <span class="o">=</span> <span class="mf">23.45</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span> <span class="p">(</span><span class="mi">284</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="mi">365</span><span class="p">))</span>
+    
+    <span class="c1"># hour angle at sunrise/sunset</span>
+    <span class="n">lat_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    <span class="n">decl_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">decl</span><span class="p">)</span>
+    <span class="n">cos_omega</span> <span class="o">=</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">decl_rad</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cos_omega</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">elif</span> <span class="n">cos_omega</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">24.0</span>
+
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_omega</span><span class="p">)</span>  <span class="c1"># degree</span>
+    <span class="n">max_ssd</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">omega</span><span class="p">))</span> <span class="o">/</span> <span class="mi">15</span>  <span class="c1"># 15 degree = 1h</span>
+
+    <span class="k">return</span> <span class="n">max_ssd</span></div>
+
+
+
+<div class="viewcode-block" id="cal_cloud_fraction_from_ssd">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_ssd">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_cloud_fraction_from_ssd</span><span class="p">(</span><span class="n">ssd_h</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">lat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate cloud fraction from sunshine duration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ssd_h : float</span>
+<span class="sd">        Observed sunshine duration in hours.</span>
+<span class="sd">    date : datetime.date or datetime.datetime</span>
+<span class="sd">        Date of calculation.</span>
+<span class="sd">    lat : float</span>
+<span class="sd">        Latitude in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Cloud fraction in [0, 1].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Formula:</span>
+<span class="sd">    ``cloud_fraction = 1 - min(ssd_h / max_ssd, 1.0)``,</span>
+<span class="sd">    then clipped to [0, 1].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_ssd</span> <span class="o">=</span> <span class="n">cal_max_ssd</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
+    <span class="n">cloud_cover</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">ssd_h</span> <span class="o">/</span> <span class="n">max_ssd</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cloud_cover</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+    
+    
+<div class="viewcode-block" id="cal_cloud_fraction_from_swdown">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.mete_func.mete_func.html#easy_vic_build.tools.mete_func.mete_func.cal_cloud_fraction_from_swdown">[docs]</a>
+<span class="k">def</span> <span class="nf">cal_cloud_fraction_from_swdown</span><span class="p">(</span><span class="n">sw_measure</span><span class="p">,</span> <span class="n">sw_clearsky</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate cloud fraction from measured and clear-sky shortwave radiation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sw_measure : float or numpy.ndarray</span>
+<span class="sd">        Measured downward shortwave radiation.</span>
+<span class="sd">    sw_clearsky : float or numpy.ndarray</span>
+<span class="sd">        Clear-sky downward shortwave radiation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Cloud fraction in [0, 1].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Formula:</span>
+<span class="sd">    ``cloud_fraction = 1 - clip(sw_measure / sw_clearsky, 0, 1)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sw_measure</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sw_clearsky</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">cloud_fraction</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ratio</span>
+    <span class="k">return</span> <span class="n">cloud_fraction</span></div>
+
+    
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

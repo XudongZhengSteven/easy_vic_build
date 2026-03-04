@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.sampling &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.decoractors" href="easy_vic_build.tools.decoractors.html" />
+    <link rel="prev" title="easy_vic_build.tools.calibrate_func.evaluate_metrics" href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html">easy_vic_build.tools.calibrate_func.evaluate_metrics</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.calibrate_func.sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.sampling</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.calibrate_func.sampling.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.calibrate_func.sampling">
+<span id="easy-vic-build-tools-calibrate-func-sampling"></span><h1>easy_vic_build.tools.calibrate_func.sampling<a class="headerlink" href="#module-easy_vic_build.tools.calibrate_func.sampling" title="Link to this heading"></a></h1>
+<p>Sampling utilities for calibration and parameter exploration.</p>
+<p>This module provides commonly used random and quasi-random sampling routines:</p>
+<ul class="simple">
+<li><p>uniform and Gaussian sampling,</p></li>
+<li><p>Latin Hypercube Sampling (LHS),</p></li>
+<li><p>Sobol and Halton low-discrepancy sequences,</p></li>
+<li><p>discrete sampling with optional constraints.</p></li>
+</ul>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.mixed_sampling" title="easy_vic_build.tools.calibrate_func.sampling.mixed_sampling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixed_sampling</span></code></a>(n_samples)</p></td>
+<td><p>Reserved interface for mixed sampling strategies.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_Halton" title="easy_vic_build.tools.calibrate_func.sampling.sampling_Halton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_Halton</span></code></a>(n_samples, bounds)</p></td>
+<td><p>Generate random samples using the Halton sequence method within the specified bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_1" title="easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_LHS_1</span></code></a>(n_samples, n_dimensions, bounds)</p></td>
+<td><p>Generate random samples using Latin Hypercube Sampling (LHS) method, variant 1, within the specified bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_2" title="easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_LHS_2</span></code></a>(n_samples, bounds[, seed])</p></td>
+<td><p>Generate random samples using Latin Hypercube Sampling (LHS) method, variant 2, within the specified bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_Sobol" title="easy_vic_build.tools.calibrate_func.sampling.sampling_Sobol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_Sobol</span></code></a>(n_samples, bounds)</p></td>
+<td><p>Generate random samples using the Sobol sequence method within the specified bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_discrete" title="easy_vic_build.tools.calibrate_func.sampling.sampling_discrete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_discrete</span></code></a>(discrete_values, n_samples)</p></td>
+<td><p>Generate random samples from a set of discrete values, optionally with weights.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_discrete_constrained" title="easy_vic_build.tools.calibrate_func.sampling.sampling_discrete_constrained"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_discrete_constrained</span></code></a>(...)</p></td>
+<td><p>Generate random samples from discrete values, with the constraint that the sum of the samples equals target_sum.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian" title="easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_gaussian</span></code></a>(n_samples, mean, std)</p></td>
+<td><p>Generate random samples from a Gaussian (normal) distribution with specified mean and standard deviation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian_clip" title="easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian_clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_gaussian_clip</span></code></a>(n_samples, mean, std)</p></td>
+<td><p>Generate random samples from a Gaussian distribution with specified mean and standard deviation, and clip the samples to the specified range [low, up].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_uniform" title="easy_vic_build.tools.calibrate_func.sampling.sampling_uniform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_uniform</span></code></a>(n_samples, bounds)</p></td>
+<td><p>Generate random samples from a uniform distribution within the specified bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_uniform_int" title="easy_vic_build.tools.calibrate_func.sampling.sampling_uniform_int"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_uniform_int</span></code></a>(n_samples, bounds)</p></td>
+<td><p>Generate random integer samples from a uniform distribution within the specified bounds.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_uniform">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_uniform" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples from a uniform distribution within the specified bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>bounds</strong> (<em>tuple</em><em> of </em><em>float</em>) – The lower and upper bounds for the uniform distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated random samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_uniform_int">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_uniform_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_uniform_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_uniform_int" title="Link to this definition"></a></dt>
+<dd><p>Generate random integer samples from a uniform distribution within the specified bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of integer samples to generate.</p></li>
+<li><p><strong>bounds</strong> (<em>tuple</em><em> of </em><em>int</em>) – The lower and upper bounds for the uniform distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated random integer samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_gaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_gaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples from a Gaussian (normal) distribution with specified mean and standard deviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>mean</strong> (<em>float</em>) – The mean of the Gaussian distribution.</p></li>
+<li><p><strong>std</strong> (<em>float</em>) – The standard deviation of the Gaussian distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated random samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian_clip">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_gaussian_clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_gaussian_clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian_clip" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples from a Gaussian distribution with specified mean and standard deviation,
+and clip the samples to the specified range [low, up].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>mean</strong> (<em>float</em>) – The mean of the Gaussian distribution.</p></li>
+<li><p><strong>std</strong> (<em>float</em>) – The standard deviation of the Gaussian distribution.</p></li>
+<li><p><strong>low</strong> (<em>float</em><em>, </em><em>optional</em>) – The lower bound for clipping the samples.</p></li>
+<li><p><strong>up</strong> (<em>float</em><em>, </em><em>optional</em>) – The upper bound for clipping the samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated random samples, clipped to the specified range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_1">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_LHS_1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dimensions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_LHS_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_1" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples using Latin Hypercube Sampling (LHS) method, variant 1,
+within the specified bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>n_dimensions</strong> (<em>int</em>) – The number of dimensions for each sample.</p></li>
+<li><p><strong>bounds</strong> (<em>list</em><em> of </em><em>tuple</em>) – A list of tuples specifying the lower and upper bounds for each dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated Latin Hypercube samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_2">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_LHS_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_LHS_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_2" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples using Latin Hypercube Sampling (LHS) method, variant 2,
+within the specified bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>bounds</strong> (<em>list</em><em> of </em><em>tuple</em>) – A list of tuples specifying the lower and upper bounds for each dimension.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Seed used by <code class="docutils literal notranslate"><span class="pre">scipy.stats.qmc.LatinHypercube</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated Latin Hypercube samples, scaled to the specified bounds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If any bound does not satisfy <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">&lt;</span> <span class="pre">max</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_Sobol">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_Sobol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_Sobol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_Sobol" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples using the Sobol sequence method within the specified bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>bounds</strong> (<em>list</em><em> of </em><em>tuple</em>) – A list of tuples specifying the lower and upper bounds for each dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated Sobol samples, scaled to the specified bounds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_Halton">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_Halton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_Halton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_Halton" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples using the Halton sequence method within the specified bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>bounds</strong> (<em>list</em><em> of </em><em>tuple</em>) – A list of tuples specifying the lower and upper bounds for each dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated Halton samples, scaled to the specified bounds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_discrete">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_discrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discrete_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_discrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_discrete" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples from a set of discrete values, optionally with weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>discrete_values</strong> (<em>array-like</em>) – A list or array of discrete values to sample from.</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+<li><p><strong>weights</strong> (<em>array-like</em><em>, </em><em>optional</em>) – The weights associated with the discrete values. If None, the values are assumed to be equally likely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated discrete samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.sampling_discrete_constrained">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">sampling_discrete_constrained</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discrete_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#sampling_discrete_constrained"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.sampling_discrete_constrained" title="Link to this definition"></a></dt>
+<dd><p>Generate random samples from discrete values, with the constraint that the sum of the samples equals target_sum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>discrete_values</strong> (<em>array-like</em>) – A list or array of discrete values to sample from.</p></li>
+<li><p><strong>target_sum</strong> (<em>int</em>) – The target sum for the generated samples.</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>) – The number of samples to generate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated discrete samples with the constraint on their sum.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.sampling.mixed_sampling">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.sampling.</span></span><span class="sig-name descname"><span class="pre">mixed_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/sampling.html#mixed_sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.sampling.mixed_sampling" title="Link to this definition"></a></dt>
+<dd><p>Reserved interface for mixed sampling strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n_samples</strong> (<em>int</em>) – Requested number of samples.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This function currently has no implementation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function is intentionally left as a placeholder for future extension.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.calibrate_func.evaluate_metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.decoractors.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.decoractors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">...geo_func.format_conversion</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">...utilities</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="p">(</span><span class="n">set_workenv</span><span class="p">,</span> <span class="n">fill_dem</span><span class="p">,</span> <span class="n">flow_direction</span><span class="p">,</span> <span class="n">flow_accumulation</span><span class="p">,</span> <span class="n">stream_network</span><span class="p">,</span> <span class="n">outlet_detection</span><span class="p">,</span> <span class="n">basin_delineation</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="hydroanalysis_for_level0">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis.hydroanalysis_for_level0">[docs]</a>
+<span class="k">def</span> <span class="nf">hydroanalysis_for_level0</span><span class="p">(</span>
+    <span class="n">working_directory</span><span class="p">,</span>
+    <span class="n">dem_level0_path</span><span class="p">,</span>
+    <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">filldem_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">d8_flowdirection_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">d8_flowaccumulation_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">calculate_streamnetwork_threshold_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">d8_streamnetwork_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">snap_outlet_to_stream_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">delineate_basins_for_snaped_outlets_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+    <span class="n">esri_pointer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">outlets_with_reference_coords</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run full hydrological analysis at level-0 DEM resolution.</span>
+
+<span class="sd">    The workflow includes DEM filling, flow direction/accumulation, stream</span>
+<span class="sd">    extraction, outlet detection/snapping, basin delineation, and stream clipping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    working_directory : str</span>
+<span class="sd">        Path to working directory where outputs will be saved.</span>
+<span class="sd">    dem_level0_path : str</span>
+<span class="sd">        Path to input DEM file for level 0 analysis.</span>
+<span class="sd">    stream_acc_threshold : float, optional</span>
+<span class="sd">        Stream extraction threshold. If ``None``, it is estimated from inputs.</span>
+<span class="sd">    filldem_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments forwarded to ``fill_dem.filldem``.</span>
+<span class="sd">    d8_flowdirection_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for D8 flow direction.</span>
+<span class="sd">    d8_flowaccumulation_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for D8 flow accumulation.</span>
+<span class="sd">    calculate_streamnetwork_threshold_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for threshold estimation.</span>
+<span class="sd">    d8_streamnetwork_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for stream extraction.</span>
+<span class="sd">    snap_outlet_to_stream_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for outlet snapping.</span>
+<span class="sd">    delineate_basins_for_snaped_outlets_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for basin delineation.</span>
+<span class="sd">    crs_str : str, optional</span>
+<span class="sd">        CRS used when creating outlet vectors.</span>
+<span class="sd">    esri_pointer : bool, optional</span>
+<span class="sd">        Whether D8 direction encoding follows ESRI convention.</span>
+<span class="sd">    outlets_with_reference_coords : tuple, optional</span>
+<span class="sd">        Reference outlet coordinates as ``(x_coords, y_coords)``.</span>
+<span class="sd">        Each element should be an iterable of equal length.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if analysis completes successfully.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Typical outputs include ``filled_dem.tif``, ``flow_direction.tif``,</span>
+<span class="sd">    ``flow_acc.tif``, stream/outlet shapefiles, and basin polygons.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to performing hydroanalysis at level 0... ...&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># env set</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up WhiteboxTools environment... ...&quot;</span><span class="p">)</span>
+    <span class="n">wbe</span> <span class="o">=</span> <span class="n">set_workenv</span><span class="o">.</span><span class="n">setWorkenv</span><span class="p">(</span><span class="n">working_directory</span><span class="p">)</span>
+    
+    <span class="c1"># fill dem</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Filling DEM... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_filled_dem</span> <span class="o">=</span> <span class="n">fill_dem</span><span class="o">.</span><span class="n">filldem</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">dem_path</span><span class="o">=</span><span class="n">dem_level0_path</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;filled_dem.tif&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">filldem_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># flow direction</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating flow direction... ...&quot;</span><span class="p">)</span>
+    <span class="n">d8_flowdirection_kwargs</span><span class="p">[</span><span class="s2">&quot;esri_pointer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">esri_pointer</span>
+    <span class="n">dst_flow_direction</span> <span class="o">=</span> <span class="n">flow_direction</span><span class="o">.</span><span class="n">d8_flowdirection</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span> <span class="n">dst_filled_dem</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;flow_direction.tif&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">d8_flowdirection_kwargs</span>        
+    <span class="p">)</span>
+    
+    <span class="c1"># flow accumulation</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating flow accumulation... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_flow_acc</span> <span class="o">=</span> <span class="n">flow_accumulation</span><span class="o">.</span><span class="n">d8_flowaccumulation</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">dst_flow_direction</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;flow_acc.tif&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">d8_flowaccumulation_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># stream network</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating stream accumulation threshold... ...&quot;</span><span class="p">)</span>
+    <span class="n">stream_acc_threshold</span> <span class="o">=</span> <span class="n">stream_acc_threshold</span> <span class="k">if</span> <span class="n">stream_acc_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stream_network</span><span class="o">.</span><span class="n">calculate_streamnetwork_threshold</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;flow_acc.tif&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;filled_dem.tif&quot;</span><span class="p">),</span>
+        <span class="n">esri_pointer</span><span class="o">=</span><span class="n">esri_pointer</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">calculate_streamnetwork_threshold_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stream accumulation threshold: </span><span class="si">{</span><span class="n">stream_acc_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting stream network... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_stream_raster</span><span class="p">,</span> <span class="n">dst_stream_vector</span><span class="p">,</span> <span class="n">dst_repaired_stream_vector</span><span class="p">,</span> <span class="n">dst_vector_stream_network_analysis_result</span> <span class="o">=</span> <span class="n">stream_network</span><span class="o">.</span><span class="n">d8_streamnetwork</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">dst_flow_acc</span><span class="p">,</span>
+        <span class="n">dst_flow_direction</span><span class="p">,</span>
+        <span class="n">dst_filled_dem</span><span class="p">,</span>
+        <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="n">stream_acc_threshold</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">d8_streamnetwork_kwargs</span>
+    <span class="p">)</span>
+
+    <span class="c1"># main outlet</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Detecting main outlet... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_main_outlet_coord</span><span class="p">,</span> <span class="n">dst_main_outlet_col_row_index</span> <span class="o">=</span> <span class="n">outlet_detection</span><span class="o">.</span><span class="n">detect_main_outlet</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;flow_acc.tif&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;main_outlet.shp&quot;</span><span class="p">),</span>
+        <span class="n">crs_str</span><span class="o">=</span><span class="n">crs_str</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">dst_snaped_main_outlet_vector</span> <span class="o">=</span> <span class="n">outlet_detection</span><span class="o">.</span><span class="n">snap_outlet_to_stream</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;main_outlet.shp&quot;</span><span class="p">),</span>
+        <span class="n">dst_stream_raster</span><span class="p">,</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;snaped_main_outlet.shp&quot;</span><span class="p">),</span>
+        <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># outlets with reference</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detecting outlets with reference: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">,</span><span class="w"> </span><span class="n">outlets_with_reference_coords</span><span class="p">))</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">outlets_with_reference_coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dst_outlets_gdf_with_reference</span><span class="p">,</span> <span class="n">dst_snaped_outlets_vector_with_reference</span> <span class="o">=</span> <span class="n">outlet_detection</span><span class="o">.</span><span class="n">detect_outlets_with_reference</span><span class="p">(</span>
+            <span class="n">wbe</span><span class="p">,</span>
+            <span class="n">x_coords</span><span class="o">=</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">y_coords</span><span class="o">=</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">stream_raster</span><span class="o">=</span><span class="n">dst_stream_raster</span><span class="p">,</span>
+            <span class="n">crs_str</span><span class="o">=</span><span class="n">crs_str</span><span class="p">,</span>
+            <span class="n">output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;outlets_with_reference.shp&quot;</span><span class="p">),</span>
+            <span class="n">snaped_output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;snaped_outlets_with_reference.shp&quot;</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># detect_outlets_with_reference for each outlet</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">outlet_detection</span><span class="o">.</span><span class="n">detect_outlets_with_reference</span><span class="p">(</span>
+                    <span class="n">wbe</span><span class="p">,</span>
+                    <span class="n">x_coords</span><span class="o">=</span><span class="p">[</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]],</span>
+                    <span class="n">y_coords</span><span class="o">=</span><span class="p">[</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]],</span>
+                    <span class="n">stream_raster</span><span class="o">=</span><span class="n">dst_stream_raster</span><span class="p">,</span>
+                    <span class="n">crs_str</span><span class="o">=</span><span class="n">crs_str</span><span class="p">,</span>
+                    <span class="n">output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">),</span>
+                    <span class="n">snaped_output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;snaped_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">),</span>
+                    <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span>
+                <span class="p">)</span>
+            
+    <span class="c1"># basin delineation</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Delineating basins for snaped main outlet... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_basin_raster_main_outlet</span><span class="p">,</span> <span class="n">dst_basin_vector_main_outlet</span> <span class="o">=</span> <span class="n">basin_delineation</span><span class="o">.</span><span class="n">delineate_basins_for_snaped_outlets</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">dst_flow_direction</span><span class="p">,</span>
+        <span class="n">dst_snaped_main_outlet_vector</span><span class="p">,</span>
+        <span class="n">output_file_basins_raster</span><span class="o">=</span><span class="s2">&quot;basin_raster_main_outlet.tif&quot;</span><span class="p">,</span>
+        <span class="n">output_file_basins_vector</span><span class="o">=</span><span class="s2">&quot;basin_vector_main_outlet.shp&quot;</span><span class="p">,</span>
+        <span class="n">esri_pointer</span><span class="o">=</span><span class="n">esri_pointer</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">delineate_basins_for_snaped_outlets_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">outlets_with_reference_coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Delineating basins for snaped outlets with reference coords... ...&quot;</span><span class="p">)</span>
+        <span class="n">dst_basins_raster_outlets_with_reference</span><span class="p">,</span> <span class="n">dst_basins_vector_outlets_with_reference</span> <span class="o">=</span> <span class="n">basin_delineation</span><span class="o">.</span><span class="n">delineate_basins_for_snaped_outlets</span><span class="p">(</span>
+            <span class="n">wbe</span><span class="p">,</span>
+            <span class="n">dst_flow_direction</span><span class="p">,</span>
+            <span class="n">dst_snaped_outlets_vector_with_reference</span><span class="p">,</span>
+            <span class="n">output_file_basins_raster</span><span class="o">=</span><span class="s2">&quot;basins_raster_outlets_with_reference.tif&quot;</span><span class="p">,</span>
+            <span class="n">output_file_basins_vector</span><span class="o">=</span><span class="s2">&quot;basins_vector_outlets_with_reference.shp&quot;</span><span class="p">,</span>
+            <span class="n">esri_pointer</span><span class="o">=</span><span class="n">esri_pointer</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">delineate_basins_for_snaped_outlets_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># delineate_basins_for_snaped_outlets for each outlet</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">basin_delineation</span><span class="o">.</span><span class="n">delineate_basins_for_snaped_outlets</span><span class="p">(</span>
+                    <span class="n">wbe</span><span class="p">,</span>
+                    <span class="n">dst_flow_direction</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;snaped_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">,</span>
+                    <span class="n">output_file_basins_raster</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;basin_raster_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">,</span>
+                    <span class="n">output_file_basins_vector</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;basin_vector_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">,</span>
+                    <span class="n">esri_pointer</span><span class="o">=</span><span class="n">esri_pointer</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">delineate_basins_for_snaped_outlets_kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+    
+    <span class="c1"># clip streams within basins</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clipping streams within basins for main outlet... ...&quot;</span><span class="p">)</span>
+    
+    <span class="n">dst_clipped_stream_vector_basin_vector_main_outlet</span> <span class="o">=</span> <span class="n">stream_network</span><span class="o">.</span><span class="n">clip_stream_for_basin</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="s2">&quot;stream_raster_vector.shp&quot;</span><span class="p">,</span> <span class="c1"># &quot;stream_vector.shp&quot;,  stream_raster_vector</span>
+        <span class="s2">&quot;basin_vector_main_outlet.shp&quot;</span><span class="p">,</span>
+        <span class="n">output_file_clipped_stream_vector</span><span class="o">=</span><span class="s2">&quot;clipped_stream_vector_basin_vector_main_outlet.shp&quot;</span>
+    <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">outlets_with_reference_coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clipping streams within basins for outlets with reference... ...&quot;</span><span class="p">)</span>
+        <span class="n">dst_clipped_stream_vector_basins_vector_outlets_with_reference</span> <span class="o">=</span> <span class="n">stream_network</span><span class="o">.</span><span class="n">clip_stream_for_basin</span><span class="p">(</span>
+            <span class="n">wbe</span><span class="p">,</span>
+            <span class="s2">&quot;stream_raster_vector.shp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;basins_vector_outlets_with_reference.shp&quot;</span><span class="p">,</span>
+            <span class="n">output_file_clipped_stream_vector</span><span class="o">=</span><span class="s2">&quot;clipped_stream_vector_basins_vector_outlets_with_reference.shp&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">stream_network</span><span class="o">.</span><span class="n">clip_stream_for_basin</span><span class="p">(</span>
+                    <span class="n">wbe</span><span class="p">,</span>
+                    <span class="s2">&quot;stream_raster_vector.shp&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;basin_vector_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">,</span>
+                    <span class="n">output_file_clipped_stream_vector</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;clipped_stream_vector_basin_vector_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span>
+                <span class="p">)</span>
+                
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+    
+    
+<div class="viewcode-block" id="hydroanalysis_for_level1">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis.html#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.hydroanalysis.hydroanalysis_for_level1">[docs]</a>
+<span class="k">def</span> <span class="nf">hydroanalysis_for_level1</span><span class="p">(</span>
+    <span class="n">working_directory</span><span class="p">,</span>
+    <span class="n">dem_level1_path</span><span class="p">,</span>
+    <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">filldem_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">d8_flowdirection_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">d8_flowaccumulation_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">calculate_streamnetwork_threshold_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">d8_streamnetwork_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">snap_outlet_to_stream_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">crs_str</span><span class="o">=</span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+    <span class="n">esri_pointer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">outlets_with_reference_coords</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fill_dem_bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run hydrological analysis at level-1 (routing/model grid scale).</span>
+
+<span class="sd">    Outputs are used by downstream routing preparation workflows (for example,</span>
+<span class="sd">    RVIC parameter construction).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    working_directory : str</span>
+<span class="sd">        Path to working directory where outputs will be saved.</span>
+<span class="sd">    dem_level1_path : str</span>
+<span class="sd">        Path to input DEM file for level 1 analysis.</span>
+<span class="sd">    stream_acc_threshold : float, optional</span>
+<span class="sd">        Stream extraction threshold. If ``None``, it is estimated from inputs.</span>
+<span class="sd">    filldem_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments forwarded to ``fill_dem.filldem``.</span>
+<span class="sd">    d8_flowdirection_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for D8 flow direction.</span>
+<span class="sd">    d8_flowaccumulation_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for D8 flow accumulation.</span>
+<span class="sd">    calculate_streamnetwork_threshold_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for threshold estimation.</span>
+<span class="sd">    d8_streamnetwork_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for stream extraction.</span>
+<span class="sd">    snap_outlet_to_stream_kwargs : dict, optional</span>
+<span class="sd">        Extra keyword arguments for outlet snapping.</span>
+<span class="sd">    crs_str : str, optional</span>
+<span class="sd">        CRS used when creating outlet vectors.</span>
+<span class="sd">    esri_pointer : bool, optional</span>
+<span class="sd">        Whether D8 direction encoding follows ESRI convention.</span>
+<span class="sd">    outlets_with_reference_coords : tuple, optional</span>
+<span class="sd">        Reference outlet coordinates as ``(x_coords, y_coords)``.</span>
+<span class="sd">        Each element should be an iterable of equal length.</span>
+<span class="sd">    fill_dem_bool : bool, optional</span>
+<span class="sd">        If ``True``, run DEM filling first; otherwise use ``dem_level1_path``</span>
+<span class="sd">        directly as analysis DEM.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if analysis completes successfully.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Main outputs include ``flow_direction.tif``, ``flow_acc.tif``,</span>
+<span class="sd">    ``stream_raster.tif``, and snapped outlet shapefiles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to performing hydroanalysis at level 1... ...&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># env set</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up WhiteboxTools environment... ...&quot;</span><span class="p">)</span>
+    <span class="n">wbe</span> <span class="o">=</span> <span class="n">set_workenv</span><span class="o">.</span><span class="n">setWorkenv</span><span class="p">(</span><span class="n">working_directory</span><span class="p">)</span>
+
+    <span class="c1"># fill dem</span>
+    <span class="k">if</span> <span class="n">fill_dem_bool</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Filling DEM... ...&quot;</span><span class="p">)</span>
+        <span class="n">dst_filled_dem</span> <span class="o">=</span> <span class="n">fill_dem</span><span class="o">.</span><span class="n">filldem</span><span class="p">(</span>
+            <span class="n">wbe</span><span class="p">,</span>
+            <span class="n">dem_path</span><span class="o">=</span><span class="n">dem_level1_path</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;filled_dem.tif&quot;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">filldem_kwargs</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dst_filled_dem</span> <span class="o">=</span> <span class="n">wbe</span><span class="o">.</span><span class="n">read_raster</span><span class="p">(</span><span class="n">dem_level1_path</span><span class="p">)</span>
+    
+    <span class="c1"># flow direction</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating flow direction... ...&quot;</span><span class="p">)</span>
+    <span class="n">d8_flowdirection_kwargs</span><span class="p">[</span><span class="s2">&quot;esri_pointer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">esri_pointer</span>
+    <span class="n">dst_flow_direction</span> <span class="o">=</span> <span class="n">flow_direction</span><span class="o">.</span><span class="n">d8_flowdirection</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span> <span class="n">dst_filled_dem</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;flow_direction.tif&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">d8_flowdirection_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># flow accumulation</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating flow accumulation... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_flow_acc</span> <span class="o">=</span> <span class="n">flow_accumulation</span><span class="o">.</span><span class="n">d8_flowaccumulation</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">dst_flow_direction</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;flow_acc.tif&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">d8_flowaccumulation_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># stream network</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating stream accumulation threshold... ...&quot;</span><span class="p">)</span>
+    <span class="n">stream_acc_threshold</span> <span class="o">=</span> <span class="n">stream_acc_threshold</span> <span class="k">if</span> <span class="n">stream_acc_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stream_network</span><span class="o">.</span><span class="n">calculate_streamnetwork_threshold</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;flow_acc.tif&quot;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;filled_dem.tif&quot;</span><span class="p">),</span>
+        <span class="n">esri_pointer</span><span class="o">=</span><span class="n">esri_pointer</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">calculate_streamnetwork_threshold_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stream accumulation threshold: </span><span class="si">{</span><span class="n">stream_acc_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting stream network... ...&quot;</span><span class="p">)</span>
+    <span class="n">dst_stream_raster</span><span class="p">,</span> <span class="n">dst_stream_vector</span><span class="p">,</span> <span class="n">dst_repaired_stream_vector</span><span class="p">,</span> <span class="n">dst_vector_stream_network_analysis_result</span> <span class="o">=</span> <span class="n">stream_network</span><span class="o">.</span><span class="n">d8_streamnetwork</span><span class="p">(</span>
+        <span class="n">wbe</span><span class="p">,</span>
+        <span class="n">dst_flow_acc</span><span class="p">,</span>
+        <span class="n">dst_flow_direction</span><span class="p">,</span>
+        <span class="n">dst_filled_dem</span><span class="p">,</span>
+        <span class="n">stream_acc_threshold</span><span class="o">=</span><span class="n">stream_acc_threshold</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">d8_streamnetwork_kwargs</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># outlets with reference</span>
+    <span class="k">if</span> <span class="n">outlets_with_reference_coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detecting outlets with reference: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">,</span><span class="w"> </span><span class="n">outlets_with_reference_coords</span><span class="p">))</span><span class="si">}</span><span class="s2">... ...&quot;</span><span class="p">)</span>
+        <span class="n">dst_outlet_gdf_with_reference</span><span class="p">,</span> <span class="n">dst_snaped_outlet_vector_with_reference</span> <span class="o">=</span> <span class="n">outlet_detection</span><span class="o">.</span><span class="n">detect_outlets_with_reference</span><span class="p">(</span>
+            <span class="n">wbe</span><span class="p">,</span>
+            <span class="n">x_coords</span><span class="o">=</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">y_coords</span><span class="o">=</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">stream_raster</span><span class="o">=</span><span class="n">dst_stream_raster</span><span class="p">,</span>
+            <span class="n">crs_str</span><span class="o">=</span><span class="n">crs_str</span><span class="p">,</span>
+            <span class="n">output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;outlets_with_reference.shp&quot;</span><span class="p">),</span>
+            <span class="n">snaped_output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="s2">&quot;snaped_outlets_with_reference.shp&quot;</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># detect_outlets_with_reference for each outlet</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">outlet_detection</span><span class="o">.</span><span class="n">detect_outlets_with_reference</span><span class="p">(</span>
+                    <span class="n">wbe</span><span class="p">,</span>
+                    <span class="n">x_coords</span><span class="o">=</span><span class="p">[</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]],</span>
+                    <span class="n">y_coords</span><span class="o">=</span><span class="p">[</span><span class="n">outlets_with_reference_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]],</span>
+                    <span class="n">stream_raster</span><span class="o">=</span><span class="n">dst_stream_raster</span><span class="p">,</span>
+                    <span class="n">crs_str</span><span class="o">=</span><span class="n">crs_str</span><span class="p">,</span>
+                    <span class="n">output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">),</span>
+                    <span class="n">snaped_output_file_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;snaped_outlet_with_reference_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">),</span>
+                    <span class="o">**</span><span class="n">snap_outlet_to_stream_kwargs</span>
+                <span class="p">)</span>
+                
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

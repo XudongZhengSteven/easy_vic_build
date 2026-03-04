@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.sampling &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.sampling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.calibrate_func.sampling</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Sampling utilities for calibration and parameter exploration.</span>
+
+<span class="sd">This module provides commonly used random and quasi-random sampling routines:</span>
+
+<span class="sd">- uniform and Gaussian sampling,</span>
+<span class="sd">- Latin Hypercube Sampling (LHS),</span>
+<span class="sd">- Sobol and Halton low-discrepancy sequences,</span>
+<span class="sd">- discrete sampling with optional constraints.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">qmc</span>
+
+<span class="kn">from</span> <span class="nn">..params_func.params_set</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="sampling_uniform">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_uniform">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_uniform</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples from a uniform distribution within the specified bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    bounds : tuple of float</span>
+<span class="sd">        The lower and upper bounds for the uniform distribution.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : list of float</span>
+<span class="sd">        The generated random samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_uniform_int">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_uniform_int">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_uniform_int</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random integer samples from a uniform distribution within the specified bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of integer samples to generate.</span>
+<span class="sd">    bounds : tuple of int</span>
+<span class="sd">        The lower and upper bounds for the uniform distribution.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : list of int</span>
+<span class="sd">        The generated random integer samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_gaussian">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_gaussian</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples from a Gaussian (normal) distribution with specified mean and standard deviation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        The mean of the Gaussian distribution.</span>
+<span class="sd">    std : float</span>
+<span class="sd">        The standard deviation of the Gaussian distribution.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : list of float</span>
+<span class="sd">        The generated random samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_gaussian_clip">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_gaussian_clip">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_gaussian_clip</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples from a Gaussian distribution with specified mean and standard deviation,</span>
+<span class="sd">    and clip the samples to the specified range [low, up].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        The mean of the Gaussian distribution.</span>
+<span class="sd">    std : float</span>
+<span class="sd">        The standard deviation of the Gaussian distribution.</span>
+<span class="sd">    low : float, optional</span>
+<span class="sd">        The lower bound for clipping the samples.</span>
+<span class="sd">    up : float, optional</span>
+<span class="sd">        The upper bound for clipping the samples.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : numpy.ndarray</span>
+<span class="sd">        The generated random samples, clipped to the specified range.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">std</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">up</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">up</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_LHS_1">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_1">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_LHS_1</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_dimensions</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples using Latin Hypercube Sampling (LHS) method, variant 1,</span>
+<span class="sd">    within the specified bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    n_dimensions : int</span>
+<span class="sd">        The number of dimensions for each sample.</span>
+<span class="sd">    bounds : list of tuple</span>
+<span class="sd">        A list of tuples specifying the lower and upper bounds for each dimension.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : numpy.ndarray</span>
+<span class="sd">        The generated Latin Hypercube samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># i.e., bounds = [(0, 10), (-5, 5), (100, 200)]</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_dimensions</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dimensions</span><span class="p">):</span>
+        <span class="c1"># generate data between 0~1</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_samples</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">intervals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">intervals</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+        <span class="c1"># remapping to bounds</span>
+        <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_val</span> <span class="o">-</span> <span class="n">min_val</span><span class="p">)</span> <span class="o">+</span> <span class="n">min_val</span>
+
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_LHS_2">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_LHS_2">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_LHS_2</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples using Latin Hypercube Sampling (LHS) method, variant 2,</span>
+<span class="sd">    within the specified bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    bounds : list of tuple</span>
+<span class="sd">        A list of tuples specifying the lower and upper bounds for each dimension.</span>
+<span class="sd">    seed : int, optional</span>
+<span class="sd">        Seed used by ``scipy.stats.qmc.LatinHypercube``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The generated Latin Hypercube samples, scaled to the specified bounds.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If any bound does not satisfy ``min &lt; max``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># i.e., bounds = [(0, 1), (5, 10), (-5, 5)]</span>
+    <span class="n">n_dimensions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+    
+    <span class="c1"># check bounds</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Each bound must satisfy min &lt; max.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># sample</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">n_dimensions</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="c1"># remapping</span>
+    <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">scaled_samples</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">)</span>
+
+    <span class="c1"># clip boundary</span>
+    <span class="n">scaled_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">scaled_samples</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">scaled_samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_Sobol">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_Sobol">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_Sobol</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples using the Sobol sequence method within the specified bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    bounds : list of tuple</span>
+<span class="sd">        A list of tuples specifying the lower and upper bounds for each dimension.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The generated Sobol samples, scaled to the specified bounds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_dimensions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="n">sobol_sampler</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">Sobol</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">n_dimensions</span><span class="p">,</span> <span class="n">scramble</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">sobol_sampler</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="c1"># get bounds</span>
+    <span class="n">lower_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">])</span>
+    <span class="n">upper_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">])</span>
+
+    <span class="c1"># remapping</span>
+    <span class="n">scaled_samples</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scaled_samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_Halton">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_Halton">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_Halton</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples using the Halton sequence method within the specified bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    bounds : list of tuple</span>
+<span class="sd">        A list of tuples specifying the lower and upper bounds for each dimension.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The generated Halton samples, scaled to the specified bounds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_dimensions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="n">halton_sampler</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">Halton</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">n_dimensions</span><span class="p">,</span> <span class="n">scramble</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">halton_sampler</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="c1"># get bounds</span>
+    <span class="n">lower_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">])</span>
+    <span class="n">upper_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">])</span>
+
+    <span class="c1"># remapping</span>
+    <span class="n">scaled_samples</span> <span class="o">=</span> <span class="n">qmc</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scaled_samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_discrete">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_discrete">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_discrete</span><span class="p">(</span><span class="n">discrete_values</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples from a set of discrete values, optionally with weights.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    discrete_values : array-like</span>
+<span class="sd">        A list or array of discrete values to sample from.</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+<span class="sd">    weights : array-like, optional</span>
+<span class="sd">        The weights associated with the discrete values. If None, the values are assumed to be equally likely.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : numpy.ndarray</span>
+<span class="sd">        The generated discrete samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">discrete_values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">discrete_values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="sampling_discrete_constrained">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.sampling_discrete_constrained">[docs]</a>
+<span class="k">def</span> <span class="nf">sampling_discrete_constrained</span><span class="p">(</span><span class="n">discrete_values</span><span class="p">,</span> <span class="n">target_sum</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate random samples from discrete values, with the constraint that the sum of the samples equals target_sum.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    discrete_values : array-like</span>
+<span class="sd">        A list or array of discrete values to sample from.</span>
+<span class="sd">    target_sum : int</span>
+<span class="sd">        The target sum for the generated samples.</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        The number of samples to generate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    samples : numpy.ndarray</span>
+<span class="sd">        The generated discrete samples with the constraint on their sum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># i.e., discrete_values = np.array([0, 1, 2]), target_sum = 2, n_samples = 10</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span>
+            <span class="n">target_sum</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete_values</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">discrete_values</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mixed_sampling">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.sampling.html#easy_vic_build.tools.calibrate_func.sampling.mixed_sampling">[docs]</a>
+<span class="k">def</span> <span class="nf">mixed_sampling</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reserved interface for mixed sampling strategies.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        Requested number of samples.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        This function currently has no implementation.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function is intentionally left as a placeholder for future extension.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

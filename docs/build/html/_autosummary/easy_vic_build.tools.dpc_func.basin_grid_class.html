@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.basin_grid_class &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.dpc_func.basin_grid_func" href="easy_vic_build.tools.dpc_func.basin_grid_func.html" />
+    <link rel="prev" title="easy_vic_build.tools.dpc_func.aggregate" href="easy_vic_build.tools.dpc_func.aggregate.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.aggregate.html">easy_vic_build.tools.dpc_func.aggregate</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.dpc_func.basin_grid_class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_func.html">easy_vic_build.tools.dpc_func.basin_grid_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html">easy_vic_build.tools.dpc_func.dpc_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_subclass.html">easy_vic_build.tools.dpc_func.dpc_subclass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.extractData_func.html">easy_vic_build.tools.dpc_func.extractData_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.select_basin_shp.html">easy_vic_build.tools.dpc_func.select_basin_shp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.basin_grid_class</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.dpc_func.basin_grid_class">
+<span id="easy-vic-build-tools-dpc-func-basin-grid-class"></span><h1>easy_vic_build.tools.dpc_func.basin_grid_class<a class="headerlink" href="#module-easy_vic_build.tools.dpc_func.basin_grid_class" title="Link to this heading"></a></h1>
+<p>Data structures and helpers for basin and grid GeoDataFrames.</p>
+<p>This module defines lightweight <code class="docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code> subclasses used by
+the data-processing workflow:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Basins</span></code> for basin polygons,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Grids</span></code> for grid polygons and center points,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Grids_for_shp</span></code> for programmatically building grid layers from boundaries.</p></li>
+</ul>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.createBoundaryShp" title="easy_vic_build.tools.dpc_func.basin_grid_class.createBoundaryShp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createBoundaryShp</span></code></a>(grid_shp)</p></td>
+<td><p>Create center and edge boundary polygons for a grid dataset.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Basins" title="easy_vic_build.tools.dpc_func.basin_grid_class.Basins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Basins</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Basin polygon container.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Grids</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Grid polygon and point container.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Grids_for_shp</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Grid container that can be initialized directly from grid-generation rules.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Basins">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_class.</span></span><span class="sig-name descname"><span class="pre">Basins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Basins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Basins" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">GeoDataFrame</span></code></p>
+<p>Basin polygon container.</p>
+<p>This class inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code> and keeps type
+propagation behavior for operations that return new frames.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Basins.from_shapefile">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_shapefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shapefile_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Basins.from_shapefile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Basins.from_shapefile" title="Link to this definition"></a></dt>
+<dd><p>Build a <a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Basins" title="easy_vic_build.tools.dpc_func.basin_grid_class.Basins"><code class="xref py py-class docutils literal notranslate"><span class="pre">Basins</span></code></a> object from a shapefile path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shapefile_path</strong> (<em>str</em><em> or </em><em>path-like</em>) – Path to a vector file readable by <code class="xref py py-func docutils literal notranslate"><span class="pre">geopandas.read_file()</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Basins(...)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Basin GeoDataFrame instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Basins" title="easy_vic_build.tools.dpc_func.basin_grid_class.Basins">Basins</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Basins.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Basins.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_class.</span></span><span class="sig-name descname"><span class="pre">Grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Grids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">GeoDataFrame</span></code></p>
+<p>Grid polygon and point container.</p>
+<p>This class inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code> and is used to
+store both cell polygons (<code class="docutils literal notranslate"><span class="pre">geometry</span></code>) and cell centers
+(<code class="docutils literal notranslate"><span class="pre">point_geometry</span></code>).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids.from_shapefile">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_shapefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shapefile_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Grids.from_shapefile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids.from_shapefile" title="Link to this definition"></a></dt>
+<dd><p>Build a <a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grids</span></code></a> object from a shapefile path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shapefile_path</strong> (<em>str</em><em> or </em><em>path-like</em>) – Path to a vector file readable by <code class="xref py py-func docutils literal notranslate"><span class="pre">geopandas.read_file()</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Grids(...)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Grid GeoDataFrame instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids">Grids</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids.createBoundaryShp">
+<span class="sig-name descname"><span class="pre">createBoundaryShp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Grids.createBoundaryShp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids.createBoundaryShp" title="Link to this definition"></a></dt>
+<dd><p>Create center and edge boundary polygons for the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(boundary_point_center_shp,</span> <span class="pre">boundary_point_center_x_y,</span>
+<span class="pre">boundary_grids_edge_shp,</span> <span class="pre">boundary_grids_edge_x_y)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_class.</span></span><span class="sig-name descname"><span class="pre">Grids_for_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Grids_for_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grids</span></code></a></p>
+<p>Grid container that can be initialized directly from grid-generation rules.</p>
+<p>Initialize a grid GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>object</em><em>, </em><em>optional</em>) – Existing tabular/spatial data accepted by GeoDataFrame.</p></li>
+<li><p><strong>*args</strong> (<em>tuple</em>) – Positional arguments forwarded to <code class="docutils literal notranslate"><span class="pre">GeoDataFrame</span></code>.</p></li>
+<li><p><strong>geometry</strong> (<em>str</em><em> or </em><em>array-like</em><em>, </em><em>optional</em>) – Geometry column specification when <code class="docutils literal notranslate"><span class="pre">data</span></code> is provided.</p></li>
+<li><p><strong>crs</strong> (<em>str</em><em> or </em><em>CRS</em><em>, </em><em>optional</em>) – Coordinate reference system. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;EPSG:4326&quot;</span></code> when
+<code class="docutils literal notranslate"><span class="pre">create_grid_kwargs</span></code> is used.</p></li>
+<li><p><strong>create_grid_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Arguments passed to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_grid_shp()</span></code></a>. When provided, generated
+grids are used as initialization data.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments forwarded to <code class="docutils literal notranslate"><span class="pre">GeoDataFrame</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_grid_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Grids_for_shp.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize a grid GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>object</em><em>, </em><em>optional</em>) – Existing tabular/spatial data accepted by GeoDataFrame.</p></li>
+<li><p><strong>*args</strong> (<em>tuple</em>) – Positional arguments forwarded to <code class="docutils literal notranslate"><span class="pre">GeoDataFrame</span></code>.</p></li>
+<li><p><strong>geometry</strong> (<em>str</em><em> or </em><em>array-like</em><em>, </em><em>optional</em>) – Geometry column specification when <code class="docutils literal notranslate"><span class="pre">data</span></code> is provided.</p></li>
+<li><p><strong>crs</strong> (<em>str</em><em> or </em><em>CRS</em><em>, </em><em>optional</em>) – Coordinate reference system. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;EPSG:4326&quot;</span></code> when
+<code class="docutils literal notranslate"><span class="pre">create_grid_kwargs</span></code> is used.</p></li>
+<li><p><strong>create_grid_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Arguments passed to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_grid_shp()</span></code></a>. When provided, generated
+grids are used as initialization data.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments forwarded to <code class="docutils literal notranslate"><span class="pre">GeoDataFrame</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp">
+<span class="sig-name descname"><span class="pre">create_grid_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gshp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_lons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_lats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_lons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_lats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_grids_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#Grids_for_shp.create_grid_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp" title="Link to this definition"></a></dt>
+<dd><p>Build a grid GeoDataFrame from a target geometry/boundary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gshp</strong> (<em>geopandas.GeoDataFrame</em><em>, </em><em>optional</em>) – Target geometry container. The first row geometry is used as the
+default boundary when <code class="docutils literal notranslate"><span class="pre">boundary</span></code> is not provided.</p></li>
+<li><p><strong>cen_lons</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Grid-center longitudes used for direct grid construction.</p></li>
+<li><p><strong>cen_lats</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Grid-center latitudes used for direct grid construction.</p></li>
+<li><p><strong>stand_lons</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Standard longitude coordinates used to clip/build grids by boundary.</p></li>
+<li><p><strong>stand_lats</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Standard latitude coordinates used to clip/build grids by boundary.</p></li>
+<li><p><strong>res</strong> (<em>float</em><em>, </em><em>optional</em>) – Grid resolution. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, only one boundary grid cell is built.</p></li>
+<li><p><strong>adjust_boundary</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to align boundaries to resolution-compatible edges.</p></li>
+<li><p><strong>crs</strong> (<em>str</em><em> or </em><em>CRS</em><em>, </em><em>optional</em>) – Output coordinate reference system. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;EPSG:4326&quot;</span></code>.</p></li>
+<li><p><strong>expand_grids_num</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of grid cells to expand outward beyond boundary.</p></li>
+<li><p><strong>boundary</strong> (<em>sequence</em><em> of </em><em>float</em><em>, </em><em>optional</em>) – Explicit boundary as <code class="docutils literal notranslate"><span class="pre">[xmin,</span> <span class="pre">ymin,</span> <span class="pre">xmax,</span> <span class="pre">ymax]</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated grid GeoDataFrame, or <code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">gshp</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.createBoundaryShp">
+<span class="sig-name descname"><span class="pre">createBoundaryShp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.createBoundaryShp" title="Link to this definition"></a></dt>
+<dd><p>Create center and edge boundary polygons for the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(boundary_point_center_shp,</span> <span class="pre">boundary_point_center_x_y,</span>
+<span class="pre">boundary_grids_edge_shp,</span> <span class="pre">boundary_grids_edge_x_y)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.from_shapefile">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_shapefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shapefile_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.from_shapefile" title="Link to this definition"></a></dt>
+<dd><p>Build a <a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grids</span></code></a> object from a shapefile path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shapefile_path</strong> (<em>str</em><em> or </em><em>path-like</em>) – Path to a vector file readable by <code class="xref py py-func docutils literal notranslate"><span class="pre">geopandas.read_file()</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Grids(...)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Grid GeoDataFrame instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.basin_grid_class.Grids" title="easy_vic_build.tools.dpc_func.basin_grid_class.Grids">Grids</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.basin_grid_class.createBoundaryShp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.basin_grid_class.</span></span><span class="sig-name descname"><span class="pre">createBoundaryShp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_shp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/basin_grid_class.html#createBoundaryShp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.basin_grid_class.createBoundaryShp" title="Link to this definition"></a></dt>
+<dd><p>Create center and edge boundary polygons for a grid dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>grid_shp</strong> (<em>GeoDataFrame</em>) – Grid GeoDataFrame containing <code class="docutils literal notranslate"><span class="pre">geometry</span></code> and <code class="docutils literal notranslate"><span class="pre">point_geometry</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(boundary_point_center_shp,</span> <span class="pre">boundary_point_center_x_y,</span>
+<span class="pre">boundary_grids_edge_shp,</span> <span class="pre">boundary_grids_edge_x_y)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.dpc_func.aggregate.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.dpc_func.aggregate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.dpc_func.basin_grid_func.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.dpc_func.basin_grid_func" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

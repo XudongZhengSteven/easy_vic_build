@@ -1,0 +1,565 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.geo_func.resample &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.geo_func.resample</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.geo_func.resample</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Resampling methods for grid-based geospatial variables.</span>
+
+<span class="sd">This module provides several interpolation/aggregation strategies that map</span>
+<span class="sd">source-grid values to a destination location, including mean, IDW, bilinear,</span>
+<span class="sd">majority vote, generic-function aggregation, and conservative remapping.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">..decoractors</span> <span class="kn">import</span> <span class="n">resample_time_series_wrapper</span><span class="p">,</span> <span class="n">resample_missing_wrapper</span>
+
+<div class="viewcode-block" id="resampleMethod_SimpleAverage">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.resample.html#easy_vic_build.tools.geo_func.resample.resampleMethod_SimpleAverage">[docs]</a>
+<span class="nd">@resample_time_series_wrapper</span>
+<span class="nd">@resample_missing_wrapper</span>
+<span class="k">def</span> <span class="nf">resampleMethod_SimpleAverage</span><span class="p">(</span>
+    <span class="n">searched_grids_data</span><span class="p">,</span>
+    <span class="n">searched_grids_lat</span><span class="p">,</span>
+    <span class="n">searched_grids_lon</span><span class="p">,</span>
+    <span class="n">dst_lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dst_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample values using simple arithmetic mean.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_grids_data : array-like</span>
+<span class="sd">        The data values of the searched grids.</span>
+<span class="sd">    searched_grids_lat : array-like</span>
+<span class="sd">        The latitudes corresponding to the searched grids.</span>
+<span class="sd">    searched_grids_lon : array-like</span>
+<span class="sd">        The longitudes corresponding to the searched grids.</span>
+<span class="sd">    dst_lat : float, optional</span>
+<span class="sd">        The latitude of the destination grid (not used in computation).</span>
+<span class="sd">    dst_lon : float, optional</span>
+<span class="sd">        The longitude of the destination grid (not used in computation).</span>
+<span class="sd">    missing_value : float or None, optional</span>
+<span class="sd">        The value representing missing data. If provided, missing data will be removed before averaging.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Mean value of ``searched_grids_data``. If no valid data is available,</span>
+<span class="sd">        returns ``missing_value`` or ``np.nan``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">searched_grids_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+    
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">searched_grids_data</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="resampleMethod_IDW">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.resample.html#easy_vic_build.tools.geo_func.resample.resampleMethod_IDW">[docs]</a>
+<span class="nd">@resample_time_series_wrapper</span>
+<span class="nd">@resample_missing_wrapper</span>
+<span class="k">def</span> <span class="nf">resampleMethod_IDW</span><span class="p">(</span>
+    <span class="n">searched_grids_data</span><span class="p">,</span>
+    <span class="n">searched_grids_lat</span><span class="p">,</span>
+    <span class="n">searched_grids_lon</span><span class="p">,</span>
+    <span class="n">dst_lat</span><span class="p">,</span>
+    <span class="n">dst_lon</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample values using inverse-distance weighting (IDW).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_grids_data : array-like</span>
+<span class="sd">        The data values of the searched grids.</span>
+<span class="sd">    searched_grids_lat : array-like</span>
+<span class="sd">        The latitudes corresponding to the searched grids.</span>
+<span class="sd">    searched_grids_lon : array-like</span>
+<span class="sd">        The longitudes corresponding to the searched grids.</span>
+<span class="sd">    dst_lat : float</span>
+<span class="sd">        The latitude of the destination grid.</span>
+<span class="sd">    dst_lon : float</span>
+<span class="sd">        The longitude of the destination grid.</span>
+<span class="sd">    p : int or float, optional</span>
+<span class="sd">        The power exponent for weighting, controlling the influence of distance. Default is 2.</span>
+<span class="sd">    missing_value : float or None, optional</span>
+<span class="sd">        The value representing missing data. If provided, missing data will be removed before interpolation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        IDW-interpolated value at ``(dst_lat, dst_lon)``. If no valid data is</span>
+<span class="sd">        available, returns ``missing_value`` or ``np.nan``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">searched_grids_data</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">searched_grids_lat</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">searched_grids_lon</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+    
+    <span class="c1"># get distance</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">-</span> <span class="n">dst_lon</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">lat</span> <span class="o">-</span> <span class="n">dst_lat</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dy</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># same location as target point</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">d</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">/=</span> <span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">weights</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="resampleMethod_bilinear">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.resample.html#easy_vic_build.tools.geo_func.resample.resampleMethod_bilinear">[docs]</a>
+<span class="nd">@resample_time_series_wrapper</span>
+<span class="nd">@resample_missing_wrapper</span>
+<span class="k">def</span> <span class="nf">resampleMethod_bilinear</span><span class="p">(</span>
+    <span class="n">searched_grids_data</span><span class="p">,</span>
+    <span class="n">searched_grids_lat</span><span class="p">,</span>
+    <span class="n">searched_grids_lon</span><span class="p">,</span>
+    <span class="n">dst_lat</span><span class="p">,</span>
+    <span class="n">dst_lon</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample values using bilinear interpolation with fallbacks.</span>
+
+<span class="sd">    Bilinear interpolation estimates the value at ``(dst_lat, dst_lon)`` using</span>
+<span class="sd">    four surrounding points. If geometric assumptions are not met, the function</span>
+<span class="sd">    falls back to distance-based interpolation.</span>
+
+<span class="sd">    Schematic representation:</span>
+
+<span class="sd">        (lat2, lon1) ----- (lat2, lon2)   -&gt; Corresponding latitudes and longitudes</span>
+<span class="sd">              |    (x, y)   |</span>
+<span class="sd">              |             |</span>
+<span class="sd">        (lat1, lon1) ----- (lat1, lon2)</span>
+
+<span class="sd">        - The interpolation first computes intermediate values along the longitude direction.</span>
+<span class="sd">        - Then, it interpolates along the latitude direction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_grids_data : array-like</span>
+<span class="sd">        The data values of the searched grids.</span>
+<span class="sd">    searched_grids_lat : array-like</span>
+<span class="sd">        The latitudes corresponding to the searched grids.</span>
+<span class="sd">    searched_grids_lon : array-like</span>
+<span class="sd">        The longitudes corresponding to the searched grids.</span>
+<span class="sd">    dst_lat : float</span>
+<span class="sd">        The latitude of the destination grid.</span>
+<span class="sd">    dst_lon : float</span>
+<span class="sd">        The longitude of the destination grid.</span>
+<span class="sd">    missing_value : float or None, optional</span>
+<span class="sd">        The value representing missing data. If provided, missing data will be removed before interpolation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Interpolated destination value.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Fallback behavior:</span>
+
+<span class="sd">    - 4+ points: bilinear interpolation (or IDW when points are not rectangular),</span>
+<span class="sd">    - 2-3 points: distance-weighted interpolation,</span>
+<span class="sd">    - 1 point: direct value return,</span>
+<span class="sd">    - 0 point: ``missing_value`` or ``np.nan``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">searched_grids_data</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">searched_grids_lat</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">searched_grids_lon</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="c1"># all missing</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">elif</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">lat</span> <span class="o">-</span> <span class="n">dst_lat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">dst_lon</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">distances</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">)]</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">distances</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">data</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))]</span>
+
+        <span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">q11</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_</span><span class="p">,</span>    <span class="n">lon2</span><span class="p">,</span> <span class="n">q12</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">lat2</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span>    <span class="n">q21</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">_</span><span class="p">,</span>    <span class="n">_</span><span class="p">,</span>    <span class="n">q22</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        
+        <span class="n">is_rectangle</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">lat2</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">lon1</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">lon2</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_rectangle</span><span class="p">:</span>
+            <span class="c1"># return to IDW</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">lat</span> <span class="o">-</span> <span class="n">dst_lat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">dst_lon</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">distances</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">)])</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">distances</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+        
+        <span class="n">f_lon1</span> <span class="o">=</span> <span class="p">(</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">dst_lon</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">*</span> <span class="n">q11</span> <span class="o">+</span> <span class="p">(</span><span class="n">dst_lon</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">*</span> <span class="n">q12</span>
+        <span class="n">f_lon2</span> <span class="o">=</span> <span class="p">(</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">dst_lon</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">*</span> <span class="n">q21</span> <span class="o">+</span> <span class="p">(</span><span class="n">dst_lon</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">*</span> <span class="n">q22</span>
+        <span class="n">f_lat</span>  <span class="o">=</span> <span class="p">(</span><span class="n">lat2</span> <span class="o">-</span> <span class="n">dst_lat</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lat2</span> <span class="o">-</span> <span class="n">lat1</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_lon1</span> <span class="o">+</span> <span class="p">(</span><span class="n">dst_lat</span> <span class="o">-</span> <span class="n">lat1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lat2</span> <span class="o">-</span> <span class="n">lat1</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_lon2</span>
+
+        <span class="k">return</span> <span class="n">f_lat</span></div>
+
+
+
+<div class="viewcode-block" id="resampleMethod_Majority">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.resample.html#easy_vic_build.tools.geo_func.resample.resampleMethod_Majority">[docs]</a>
+<span class="nd">@resample_time_series_wrapper</span>
+<span class="nd">@resample_missing_wrapper</span>
+<span class="k">def</span> <span class="nf">resampleMethod_Majority</span><span class="p">(</span>
+    <span class="n">searched_grids_data</span><span class="p">,</span>
+    <span class="n">searched_grids_lat</span><span class="p">,</span>
+    <span class="n">searched_grids_lon</span><span class="p">,</span>
+    <span class="n">dst_lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dst_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample categorical values using majority vote.</span>
+
+<span class="sd">    This method finds the most frequently occurring value (mode) in the searched grid data.</span>
+<span class="sd">    It is useful for categorical data resampling, such as land cover classification.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_grids_data : array-like</span>
+<span class="sd">        The data values of the searched grids.</span>
+<span class="sd">    searched_grids_lat : array-like</span>
+<span class="sd">        The latitudes corresponding to the searched grids.</span>
+<span class="sd">    searched_grids_lon : array-like</span>
+<span class="sd">        The longitudes corresponding to the searched grids.</span>
+<span class="sd">    dst_lat : float, optional</span>
+<span class="sd">        The latitude of the destination grid (not used in computation).</span>
+<span class="sd">    dst_lon : float, optional</span>
+<span class="sd">        The longitude of the destination grid (not used in computation).</span>
+<span class="sd">    missing_value : float or None, optional</span>
+<span class="sd">        The value representing missing data. If provided, missing data will be removed before computing</span>
+<span class="sd">        the majority value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Most frequent value in ``searched_grids_data``. If no valid data is</span>
+<span class="sd">        available, returns ``missing_value`` or ``np.nan``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">searched_grids_data</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">searched_grids_lat</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">searched_grids_lon</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="c1"># all missing</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">dst_data</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">dst_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="k">return</span> <span class="n">dst_data</span></div>
+
+
+
+<div class="viewcode-block" id="resampleMethod_GeneralFunction">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.resample.html#easy_vic_build.tools.geo_func.resample.resampleMethod_GeneralFunction">[docs]</a>
+<span class="nd">@resample_time_series_wrapper</span>
+<span class="nd">@resample_missing_wrapper</span>
+<span class="k">def</span> <span class="nf">resampleMethod_GeneralFunction</span><span class="p">(</span>
+    <span class="n">searched_grids_data</span><span class="p">,</span>
+    <span class="n">searched_grids_lat</span><span class="p">,</span>
+    <span class="n">searched_grids_lon</span><span class="p">,</span>
+    <span class="n">dst_lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dst_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">general_function</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample values using a user-provided aggregation function.</span>
+
+<span class="sd">    This method applies ``general_function`` to source values after wrapper-level</span>
+<span class="sd">    preprocessing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_grids_data : array-like</span>
+<span class="sd">        The data values of the searched grids.</span>
+<span class="sd">    searched_grids_lat : array-like</span>
+<span class="sd">        The latitudes corresponding to the searched grids.</span>
+<span class="sd">    searched_grids_lon : array-like</span>
+<span class="sd">        The longitudes corresponding to the searched grids.</span>
+<span class="sd">    dst_lat : float, optional</span>
+<span class="sd">        The latitude of the destination grid (not used in computation).</span>
+<span class="sd">    dst_lon : float, optional</span>
+<span class="sd">        The longitude of the destination grid (not used in computation).</span>
+<span class="sd">    general_function : callable, optional</span>
+<span class="sd">        A function that aggregates the input data, such as `np.mean`, `np.max`, or `np.min`.</span>
+<span class="sd">        Default is `np.mean`.</span>
+<span class="sd">    missing_value : float or None, optional</span>
+<span class="sd">        The value representing missing data. If provided, missing data will be removed before applying</span>
+<span class="sd">        the general function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Aggregated value returned by ``general_function``. If evaluation fails or</span>
+<span class="sd">        no valid data is available, returns ``missing_value`` or ``np.nan``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">searched_grids_data</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">searched_grids_lat</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">searched_grids_lon</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># all missing</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dst_data</span> <span class="o">=</span> <span class="n">general_function</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">dst_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="k">return</span> <span class="n">dst_data</span></div>
+
+
+
+<div class="viewcode-block" id="resampleMethod_conservative">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.geo_func.resample.html#easy_vic_build.tools.geo_func.resample.resampleMethod_conservative">[docs]</a>
+<span class="nd">@resample_time_series_wrapper</span>
+<span class="nd">@resample_missing_wrapper</span>
+<span class="k">def</span> <span class="nf">resampleMethod_conservative</span><span class="p">(</span>
+    <span class="n">searched_grids_data</span><span class="p">,</span>
+    <span class="n">searched_grids_lat</span><span class="p">,</span>
+    <span class="n">searched_grids_lon</span><span class="p">,</span>
+    <span class="n">searched_grids_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dst_lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dst_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    
+    <span class="n">dst_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample values using overlap-area conservative remapping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_grids_data : array-like</span>
+<span class="sd">        Values from source grids.</span>
+<span class="sd">    searched_grids_lat : array-like</span>
+<span class="sd">        Source-grid center latitudes.</span>
+<span class="sd">    searched_grids_lon : array-like</span>
+<span class="sd">        Source-grid center longitudes.</span>
+<span class="sd">    searched_grids_res : float, optional</span>
+<span class="sd">        Source-grid resolution.</span>
+<span class="sd">    dst_lat : float, optional</span>
+<span class="sd">        Destination-grid center latitude.</span>
+<span class="sd">    dst_lon : float, optional</span>
+<span class="sd">        Destination-grid center longitude.</span>
+<span class="sd">    dst_res : float, optional</span>
+<span class="sd">        Destination-grid resolution.</span>
+<span class="sd">    missing_value : float, optional</span>
+<span class="sd">        Missing-value code used when no valid overlap exists.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Conservatively remapped destination value. If resolution inputs are</span>
+<span class="sd">        missing, the function falls back to ``np.nanmean(data)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">searched_grids_data</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">searched_grids_lat</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">searched_grids_lon</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="c1"># all missing</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="k">if</span> <span class="n">searched_grids_res</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dst_res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># return to mean</span>
+    
+    <span class="c1"># source bounds</span>
+    <span class="n">half_src</span> <span class="o">=</span> <span class="n">searched_grids_res</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">lat1_src</span> <span class="o">=</span> <span class="n">searched_grids_lat</span> <span class="o">-</span> <span class="n">half_src</span>
+    <span class="n">lat2_src</span> <span class="o">=</span> <span class="n">searched_grids_lat</span> <span class="o">+</span> <span class="n">half_src</span>
+    <span class="n">lon1_src</span> <span class="o">=</span> <span class="n">searched_grids_lon</span> <span class="o">-</span> <span class="n">half_src</span>
+    <span class="n">lon2_src</span> <span class="o">=</span> <span class="n">searched_grids_lon</span> <span class="o">+</span> <span class="n">half_src</span>
+
+    <span class="c1"># destination bounds</span>
+    <span class="n">half_dst</span> <span class="o">=</span> <span class="n">dst_res</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">lat1_dst</span> <span class="o">=</span> <span class="n">dst_lat</span> <span class="o">-</span> <span class="n">half_dst</span>
+    <span class="n">lat2_dst</span> <span class="o">=</span> <span class="n">dst_lat</span> <span class="o">+</span> <span class="n">half_dst</span>
+    <span class="n">lon1_dst</span> <span class="o">=</span> <span class="n">dst_lon</span> <span class="o">-</span> <span class="n">half_dst</span>
+    <span class="n">lon2_dst</span> <span class="o">=</span> <span class="n">dst_lon</span> <span class="o">+</span> <span class="n">half_dst</span>
+
+    <span class="c1"># overlap lengths</span>
+    <span class="n">lat_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">lat2_src</span><span class="p">,</span> <span class="n">lat2_dst</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">lat1_src</span><span class="p">,</span> <span class="n">lat1_dst</span><span class="p">))</span>
+    <span class="n">lon_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">lon2_src</span><span class="p">,</span> <span class="n">lon2_dst</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">lon1_src</span><span class="p">,</span> <span class="n">lon1_dst</span><span class="p">))</span>
+
+    <span class="n">overlap_area</span> <span class="o">=</span> <span class="n">lat_overlap</span> <span class="o">*</span> <span class="n">lon_overlap</span>
+    <span class="n">total_overlap_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">overlap_area</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">total_overlap_area</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="c1"># handle missing values</span>
+    <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="n">missing_value</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">valid_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">overlap_area</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">missing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">missing_value</span>
+
+    <span class="c1"># destination area (rectangle)</span>
+    <span class="n">dst_area</span> <span class="o">=</span> <span class="p">(</span><span class="n">lat2_dst</span> <span class="o">-</span> <span class="n">lat1_dst</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">lon2_dst</span> <span class="o">-</span> <span class="n">lon1_dst</span><span class="p">)</span>
+
+    <span class="c1"># total &quot;mass&quot;</span>
+    <span class="n">total_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">overlap_area</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">])</span>
+    
+    <span class="n">dst_data</span> <span class="o">=</span> <span class="n">total_mass</span> <span class="o">/</span> <span class="n">dst_area</span>
+    
+    <span class="k">return</span> <span class="n">dst_data</span></div>
+
+        
+    
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

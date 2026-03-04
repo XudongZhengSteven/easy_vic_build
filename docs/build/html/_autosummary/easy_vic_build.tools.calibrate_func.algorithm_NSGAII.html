@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.algorithm_NSGAII &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.calibrate_func.evaluate_metrics" href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html" />
+    <link rel="prev" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES" href="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html">easy_vic_build.tools.calibrate_func.evaluate_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.sampling.html">easy_vic_build.tools.calibrate_func.sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.calibrate_func.algorithm_NSGAII">
+<span id="easy-vic-build-tools-calibrate-func-algorithm-nsgaii"></span><h1>easy_vic_build.tools.calibrate_func.algorithm_NSGAII<a class="headerlink" href="#module-easy_vic_build.tools.calibrate_func.algorithm_NSGAII" title="Link to this heading"></a></h1>
+<p>NSGA-II base implementation for calibration workflows.</p>
+<p>This module defines <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">NSGAII_Base</span></code></a>, a reusable DEAP-based NSGA-II runner
+with checkpoint persistence, generation history tracking, and optional Pareto
+front plotting.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSGAII_Base</span></code></a>([algParams, save_path])</p></td>
+<td><p>A class that implements the NSGA-II (Non-dominated Sorting Genetic Algorithm II) for multi-objective optimization.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.algorithm_NSGAII.</span></span><span class="sig-name descname"><span class="pre">NSGAII_Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'cxProb':</span> <span class="pre">0.7,</span> <span class="pre">'maxGen':</span> <span class="pre">250,</span> <span class="pre">'mutateProb':</span> <span class="pre">0.2,</span> <span class="pre">'popSize':</span> <span class="pre">40}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pkl'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class that implements the NSGA-II (Non-dominated Sorting Genetic Algorithm II) for multi-objective optimization.
+This class provides methods for setting up the genetic algorithm, evaluating individuals,
+applying genetic operators (crossover, mutation), selecting the next generation, and saving/loading the algorithm state.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.popSize">
+<span class="sig-name descname"><span class="pre">popSize</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.popSize" title="Link to this definition"></a></dt>
+<dd><p>The population size for each generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.maxGen">
+<span class="sig-name descname"><span class="pre">maxGen</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.maxGen" title="Link to this definition"></a></dt>
+<dd><p>The maximum number of generations to run the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.save_path">
+<span class="sig-name descname"><span class="pre">save_path</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.save_path" title="Link to this definition"></a></dt>
+<dd><p>The path to save and load the algorithm state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.history">
+<span class="sig-name descname"><span class="pre">history</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.history" title="Link to this definition"></a></dt>
+<dd><p>A history of the population and non-dominated fronts at each generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.current_generation">
+<span class="sig-name descname"><span class="pre">current_generation</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.current_generation" title="Link to this definition"></a></dt>
+<dd><p>The current generation number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.initial_population">
+<span class="sig-name descname"><span class="pre">initial_population</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.initial_population" title="Link to this definition"></a></dt>
+<dd><p>The initial population before any genetic operators are applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.population">
+<span class="sig-name descname"><span class="pre">population</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.population" title="Link to this definition"></a></dt>
+<dd><p>The current population of individuals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__init__(algParams,</span> <span class="pre">save_path):</span></span></dt>
+<dd><p>Initializes the NSGA-II algorithm with the given parameters and attempts to load the state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_obs():</span></span></dt>
+<dd><p>Placeholder function to get the observed values (to be designed for specific use cases).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_sim():</span></span></dt>
+<dd><p>Placeholder function to get the simulated values (to be designed for specific use cases).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">set_algorithm_params(popSize,</span> <span class="pre">maxGen,</span> <span class="pre">cxProb,</span> <span class="pre">mutateProb):</span></span></dt>
+<dd><p>Sets the parameters for the genetic algorithm (population size, max generations, crossover probability, and mutation probability).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">createFitness():</span></span></dt>
+<dd><p>Creates the fitness function for individuals.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">createInd():</span></span></dt>
+<dd><p>Creates an individual representation (a list).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">samplingInd():</span></span></dt>
+<dd><p>Samples a new individual by generating random values for its elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">registerInd():</span></span></dt>
+<dd><p>Registers the individual sampling function with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">registerPop():</span></span></dt>
+<dd><p>Registers the population initialization function with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">evaluate(ind):</span></span></dt>
+<dd><p>A placeholder function for evaluating an individual’s fitness (to be customized for specific use cases).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">registerEvaluate():</span></span></dt>
+<dd><p>Registers the evaluation function with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">evaluatePop(population):</span></span></dt>
+<dd><p>Evaluates the fitness of the entire population.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">operatorMate(parent1,</span> <span class="pre">parent2):</span></span></dt>
+<dd><p>Defines the crossover operation for mating two individuals (using a two-point crossover).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">operatorMutate(ind):</span></span></dt>
+<dd><p>Defines the mutation operation for an individual (using a bit-flip mutation).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">operatorSelect(population):</span></span></dt>
+<dd><p>Defines the selection operation (using tournament selection).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">registerOperators():</span></span></dt>
+<dd><p>Registers the genetic operators (mate, mutate, and select) with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">apply_genetic_operators(offspring):</span></span></dt>
+<dd><p>Applies the genetic operators (crossover and mutation) to the offspring.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">select_next_generation(combined):</span></span></dt>
+<dd><p>Selects the next generation by sorting individuals based on Pareto dominance and applying crowding distance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">print_results(population):</span></span></dt>
+<dd><p>Prints the results of the best individual from the final population.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">load_state():</span></span></dt>
+<dd><p>Loads the algorithm state from the specified save path (if a saved state exists).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">save_state():</span></span></dt>
+<dd><p>Saves the current algorithm state (current generation, population, and history) to the specified save path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run():</span></span></dt>
+<dd><p>Runs the NSGA-II algorithm for the specified number of generations, applying genetic operators and selecting the next generation.</p>
+</dd></dl>
+
+<p>Initializes the NSGA-II algorithm with the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algParams</strong> (<em>dict</em>) – Dictionary containing the algorithm parameters:
+- popSize: The population size for each generation.
+- maxGen: The maximum number of generations to run the algorithm.
+- cxProb: The crossover probability.
+- mutateProb: The mutation probability.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to save and load the algorithm state (default is “checkpoint.pkl”).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'cxProb':</span> <span class="pre">0.7,</span> <span class="pre">'maxGen':</span> <span class="pre">250,</span> <span class="pre">'mutateProb':</span> <span class="pre">0.2,</span> <span class="pre">'popSize':</span> <span class="pre">40}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pkl'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the NSGA-II algorithm with the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algParams</strong> (<em>dict</em>) – Dictionary containing the algorithm parameters:
+- popSize: The population size for each generation.
+- maxGen: The maximum number of generations to run the algorithm.
+- cxProb: The crossover probability.
+- mutateProb: The mutation probability.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to save and load the algorithm state (default is “checkpoint.pkl”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.set_algorithm_params">
+<span class="sig-name descname"><span class="pre">set_algorithm_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">popSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxGen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cxProb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutateProb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.set_algorithm_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.set_algorithm_params" title="Link to this definition"></a></dt>
+<dd><p>Sets the parameters for the genetic algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>popSize</strong> (<em>int</em><em>, </em><em>optional</em>) – The population size for each generation (default is 40).</p></li>
+<li><p><strong>maxGen</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of generations to run the algorithm (default is 250).</p></li>
+<li><p><strong>cxProb</strong> (<em>float</em><em>, </em><em>optional</em>) – The crossover probability (default is 0.7).</p></li>
+<li><p><strong>mutateProb</strong> (<em>float</em><em>, </em><em>optional</em>) – The mutation probability (default is 0.2).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.get_obs">
+<span class="sig-name descname"><span class="pre">get_obs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.get_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.get_obs" title="Link to this definition"></a></dt>
+<dd><p>Placeholder function to get observed values (to be designed for specific use cases).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.get_sim">
+<span class="sig-name descname"><span class="pre">get_sim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.get_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.get_sim" title="Link to this definition"></a></dt>
+<dd><p>Placeholder function to get simulated values (to be designed for specific use cases).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.createFitness">
+<span class="sig-name descname"><span class="pre">createFitness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.createFitness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.createFitness" title="Link to this definition"></a></dt>
+<dd><p>Creates the fitness function for individuals.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.createInd">
+<span class="sig-name descname"><span class="pre">createInd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.createInd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.createInd" title="Link to this definition"></a></dt>
+<dd><p>Creates an individual representation (a list).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.samplingInd">
+<span class="sig-name descname"><span class="pre">samplingInd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.samplingInd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.samplingInd" title="Link to this definition"></a></dt>
+<dd><p>Samples a new individual by generating random values for its elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new individual sampled with random elements.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Individual</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.evaluate" title="Link to this definition"></a></dt>
+<dd><p>A placeholder function for evaluating an individual’s fitness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind</strong> (<em>Individual</em>) – The individual to evaluate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the fitness values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorMate">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operatorMate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.operatorMate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorMate" title="Link to this definition"></a></dt>
+<dd><p>Defines the crossover operation for mating two individuals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent1</strong> (<em>Individual</em>) – The first parent individual.</p></li>
+<li><p><strong>parent2</strong> (<em>Individual</em>) – The second parent individual.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the offspring resulting from the crossover.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorMutate">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operatorMutate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.operatorMutate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorMutate" title="Link to this definition"></a></dt>
+<dd><p>Defines the mutation operation for an individual.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind</strong> (<em>Individual</em>) – The individual to mutate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the mutated individual.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorSelect">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operatorSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.operatorSelect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorSelect" title="Link to this definition"></a></dt>
+<dd><p>Defines the selection operation for choosing individuals from the population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>population</strong> (<em>list</em><em> of </em><em>Individual</em>) – The population from which to select individuals.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of selected individuals.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerInd">
+<span class="sig-name descname"><span class="pre">registerInd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.registerInd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerInd" title="Link to this definition"></a></dt>
+<dd><p>Registers the individual sampling function with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerPop">
+<span class="sig-name descname"><span class="pre">registerPop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.registerPop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerPop" title="Link to this definition"></a></dt>
+<dd><p>Registers the population initialization function with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerEvaluate">
+<span class="sig-name descname"><span class="pre">registerEvaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.registerEvaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerEvaluate" title="Link to this definition"></a></dt>
+<dd><p>Registers the evaluation function with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerOperators">
+<span class="sig-name descname"><span class="pre">registerOperators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.registerOperators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerOperators" title="Link to this definition"></a></dt>
+<dd><p>Registers the genetic operators (mate, mutate, and select) with the toolbox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.evaluatePop">
+<span class="sig-name descname"><span class="pre">evaluatePop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.evaluatePop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.evaluatePop" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the fitness of the entire population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>population</strong> (<em>list</em><em> of </em><em>Individual</em>) – The population to evaluate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.apply_genetic_operators">
+<span class="sig-name descname"><span class="pre">apply_genetic_operators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offspring</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.apply_genetic_operators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.apply_genetic_operators" title="Link to this definition"></a></dt>
+<dd><p>Applies the genetic operators (crossover and mutation) to the offspring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>offspring</strong> (<em>list</em><em> of </em><em>Individual</em>) – The offspring to apply the genetic operators to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.select_next_generation">
+<span class="sig-name descname"><span class="pre">select_next_generation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">combined</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.select_next_generation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.select_next_generation" title="Link to this definition"></a></dt>
+<dd><p>Selects the next generation from the combined population and offspring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>combined</strong> (<em>list</em><em> of </em><em>Individual</em>) – The combined population of parents and offspring.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The selected next generation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.load_state">
+<span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.load_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.load_state" title="Link to this definition"></a></dt>
+<dd><p>Loads the algorithm state from the specified save path if a saved state exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.save_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.save_state" title="Link to this definition"></a></dt>
+<dd><p>Saves the current algorithm state (current generation, population, and history) to the specified save path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.print_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.print_results" title="Link to this definition"></a></dt>
+<dd><p>Prints the results of the best individual from the final population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>population</strong> (<em>list</em><em> of </em><em>Individual</em>) – The final population.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise">
+<span class="sig-name descname"><span class="pre">plot_front_pairwise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">front</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto_progress'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.plot_front_pairwise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise" title="Link to this definition"></a></dt>
+<dd><p>Plot pairwise objective scatter for full population and first front.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>population</strong> (<em>list</em>) – Population to visualize (typically parent + offspring).</p></li>
+<li><p><strong>front</strong> (<em>list</em>) – First non-dominated front.</p></li>
+<li><p><strong>gen</strong> (<em>int</em>) – Generation index used in figure title.</p></li>
+<li><p><strong>names_plot</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Objective axis labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, labels are generated as
+<code class="docutils literal notranslate"><span class="pre">obj1</span></code>, <code class="docutils literal notranslate"><span class="pre">obj2</span></code>, …</p></li>
+<li><p><strong>plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory used to store figure output.</p></li>
+<li><p><strong>transform_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – Optional transformation applied to objective arrays before plotting.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto_progress'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_NSGAII.html#NSGAII_Base.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.run" title="Link to this definition"></a></dt>
+<dd><p>Runs the NSGA-II algorithm for the specified number of generations.</p>
+<p>This method applies genetic operators, evaluates individuals,
+selects the next generation, and stores the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to save a pairwise Pareto plot each generation.</p></li>
+<li><p><strong>plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for progress plots.</p></li>
+<li><p><strong>names_plot</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Objective labels passed to <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_front_pairwise()</span></code></a>.</p></li>
+<li><p><strong>transform_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – Optional transform function passed to <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_front_pairwise()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The final population after all generations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.calibrate_func.evaluate_metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

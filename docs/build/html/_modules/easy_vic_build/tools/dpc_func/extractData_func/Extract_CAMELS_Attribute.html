@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="readBasinAttribute_CAMELS">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute.readBasinAttribute_CAMELS">[docs]</a>
+<span class="k">def</span> <span class="nf">readBasinAttribute_CAMELS</span><span class="p">(</span>
+    <span class="n">home</span><span class="o">=</span><span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">hydrometeorology</span><span class="se">\\</span><span class="s2">CAMELS&quot;</span><span class="p">,</span>
+    <span class="n">dir_camels_attribute</span><span class="o">=</span><span class="s2">&quot;camels_attributes_v2.0&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``readBasinAttribute_CAMELS`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    home : object, optional</span>
+<span class="sd">        Input value for ``home``.</span>
+<span class="sd">    dir_camels_attribute : object, optional</span>
+<span class="sd">        Input value for ``dir_camels_attribute``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">camels_clim</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">dir_camels_attribute</span><span class="p">,</span> <span class="s2">&quot;camels_clim.txt&quot;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camels_geol</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">dir_camels_attribute</span><span class="p">,</span> <span class="s2">&quot;camels_geol.txt&quot;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camels_hydro</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">dir_camels_attribute</span><span class="p">,</span> <span class="s2">&quot;camels_hydro.txt&quot;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camels_soil</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">dir_camels_attribute</span><span class="p">,</span> <span class="s2">&quot;camels_soil.txt&quot;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camels_topo</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">dir_camels_attribute</span><span class="p">,</span> <span class="s2">&quot;camels_topo.txt&quot;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">camels_vege</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">dir_camels_attribute</span><span class="p">,</span> <span class="s2">&quot;camels_vege.txt&quot;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">BasinAttribute</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;camels_clim&quot;</span><span class="p">:</span> <span class="n">camels_clim</span><span class="p">,</span>
+        <span class="s2">&quot;camels_geol&quot;</span><span class="p">:</span> <span class="n">camels_geol</span><span class="p">,</span>
+        <span class="s2">&quot;camels_hydro&quot;</span><span class="p">:</span> <span class="n">camels_hydro</span><span class="p">,</span>
+        <span class="s2">&quot;camels_soil&quot;</span><span class="p">:</span> <span class="n">camels_soil</span><span class="p">,</span>
+        <span class="s2">&quot;camels_topo&quot;</span><span class="p">:</span> <span class="n">camels_topo</span><span class="p">,</span>
+        <span class="s2">&quot;camels_vege&quot;</span><span class="p">:</span> <span class="n">camels_vege</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">BasinAttribute</span></div>
+
+
+
+<div class="viewcode-block" id="ExtractData">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_CAMELS_Attribute.ExtractData">[docs]</a>
+<span class="k">def</span> <span class="nf">ExtractData</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">k_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;k_list: camels_clim, camels_geol, camels_hydro, camels_soil, camels_topo, camels_vege or None&quot;&quot;&quot;</span>
+    <span class="c1"># read BasinAttribute</span>
+    <span class="n">BasinAttributes</span> <span class="o">=</span> <span class="n">readBasinAttribute_CAMELS</span><span class="p">()</span>
+
+    <span class="c1"># chose key to read</span>
+    <span class="n">k_list</span> <span class="o">=</span> <span class="n">k_list</span> <span class="k">if</span> <span class="n">k_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">BasinAttributes</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">k_list</span><span class="p">:</span>
+        <span class="c1"># BasinAttribute</span>
+        <span class="n">id_basinAttribute</span> <span class="o">=</span> <span class="s2">&quot;gauge_id&quot;</span>
+
+        <span class="c1"># get BasinAttribute for k</span>
+        <span class="n">BasinAttribute</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">BasinAttributes</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">all_columns</span> <span class="o">=</span> <span class="n">BasinAttribute</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="c1"># set columns (&quot;camels_clim: ...&quot;)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+        <span class="n">all_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">all_columns</span><span class="p">]</span>
+        <span class="n">BasinAttribute</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">all_columns</span>
+        <span class="n">id_basinAttribute</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">id_basinAttribute</span>
+
+        <span class="c1"># basin_shp id</span>
+        <span class="n">id_basin_shp</span> <span class="o">=</span> <span class="s2">&quot;hru_id&quot;</span>
+
+        <span class="c1"># merge</span>
+        <span class="n">basin_shp</span> <span class="o">=</span> <span class="n">basin_shp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">BasinAttribute</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="n">id_basin_shp</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="n">id_basinAttribute</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">basin_shp</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

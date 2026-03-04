@@ -1,0 +1,374 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.hydroanalysis_func.mosaic_dem" href="easy_vic_build.tools.hydroanalysis_func.mosaic_dem.html" />
+    <link rel="prev" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.set_workenv" href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.set_workenv.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.backup.html">easy_vic_build.tools.hydroanalysis_func.backup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.create_dem.html">easy_vic_build.tools.hydroanalysis_func.create_dem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.create_flow_distance.html">easy_vic_build.tools.hydroanalysis_func.create_flow_distance</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.mosaic_dem.html">easy_vic_build.tools.hydroanalysis_func.mosaic_dem</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.html">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network">
+<span id="easy-vic-build-tools-hydroanalysis-func-hydroanalysis-wbw-stream-network"></span><h1>easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network<a class="headerlink" href="#module-easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network" title="Link to this heading"></a></h1>
+<p>Stream-network extraction and threshold utilities.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.calculate_streamnetwork_threshold" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.calculate_streamnetwork_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_streamnetwork_threshold</span></code></a>(flow_acc_path)</p></td>
+<td><p>Estimate a stream-extraction threshold from flow accumulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.clip_stream_for_basin" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.clip_stream_for_basin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_stream_for_basin</span></code></a>(wbe, stream_vector, ...)</p></td>
+<td><p>Clip stream vectors by a basin polygon and save the clipped output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.d8_streamnetwork" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.d8_streamnetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">d8_streamnetwork</span></code></a>(wbe, flow_acc, ...[, ...])</p></td>
+<td><p>Extract and analyze a D8-based stream network.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_drainage_area" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_drainage_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_drainage_area</span></code></a>(dem_path, flow_acc_path)</p></td>
+<td><p>Calculate threshold from a minimum drainage-area constraint.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_dynamic_elbow" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_dynamic_elbow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_dynamic_elbow</span></code></a>(flow_acc[, ...])</p></td>
+<td><p>Calculate threshold using curvature-based elbow detection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_max_ratio" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_max_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_max_ratio</span></code></a>(flow_acc, max_ratio)</p></td>
+<td><p>Calculate threshold as a fraction of maximum flow accumulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_multiscale" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_multiscale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_multiscale</span></code></a>(flow_acc, scale_levels)</p></td>
+<td><p>Calculate threshold using a multi-scale adaptive approach.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_percentile" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_percentile</span></code></a>(flow_acc, percentile)</p></td>
+<td><p>Calculate threshold from a percentile of flow accumulation.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.d8_streamnetwork">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">d8_streamnetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wbe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filled_dem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_acc_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_stream_raster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream_raster.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_stream_raster_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream_raster_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_stream_raster_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream_raster_link.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_stream_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_stream_vector_repaired</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream_vector_repaired.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_stream_lines_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stream_lines_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_confluences_points_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'confluences_points_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_outlet_points_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'outlet_points_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_channel_head_points_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'channel_head_points_vector.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_extract_streams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_vector_stream_network_analysis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snap_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esri_pointer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#d8_streamnetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.d8_streamnetwork" title="Link to this definition"></a></dt>
+<dd><p>Extract and analyze a D8-based stream network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wbe</strong> (<cite>WbEnvironment</cite>) – WhiteboxTools workflow environment instance.</p></li>
+<li><p><strong>flow_acc</strong> (<cite>WbRaster</cite>) – Flow-accumulation raster or raster object.</p></li>
+<li><p><strong>flow_direction</strong> (<cite>WbRaster</cite>) – D8 flow-direction raster or raster object.</p></li>
+<li><p><strong>filled_dem</strong> (<cite>WbRaster</cite>) – Hydrologically conditioned DEM raster or raster object.</p></li>
+<li><p><strong>stream_acc_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Flow-accumulation threshold for stream initiation.</p></li>
+<li><p><strong>output_file_stream_raster</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for stream raster.</p></li>
+<li><p><strong>output_file_stream_raster_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for vectorized stream raster.</p></li>
+<li><p><strong>output_file_stream_raster_link</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for stream-link raster.</p></li>
+<li><p><strong>output_file_stream_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for stream vector before topology repair.</p></li>
+<li><p><strong>output_file_stream_vector_repaired</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for repaired stream vector.</p></li>
+<li><p><strong>output_file_stream_lines_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for stream-line vector.</p></li>
+<li><p><strong>output_file_confluences_points_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for confluence points vector.</p></li>
+<li><p><strong>output_file_outlet_points_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for outlet points vector.</p></li>
+<li><p><strong>output_file_channel_head_points_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for channel-head points vector.</p></li>
+<li><p><strong>kwargs_extract_streams</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">wbe.extract_streams</span></code>.</p></li>
+<li><p><strong>kwargs_vector_stream_network_analysis</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments passed to
+<code class="docutils literal notranslate"><span class="pre">wbe.vector_stream_network_analysis</span></code>.</p></li>
+<li><p><strong>snap_dist</strong> (<em>float</em><em>, </em><em>optional</em>) – Snap distance used in topology repair and vector network analysis.</p></li>
+<li><p><strong>esri_pointer</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether <code class="docutils literal notranslate"><span class="pre">flow_direction</span></code> uses ESRI D8 pointer encoding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(stream_raster,</span> <span class="pre">stream_vector,</span> <span class="pre">repaired_stream_vector,</span>
+<span class="pre">vector_stream_network_analysis_result)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><code class="docutils literal notranslate"><span class="pre">filled_dem</span></code> should be hydrologically conditioned before use.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.calculate_streamnetwork_threshold">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">calculate_streamnetwork_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_acc_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dem_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hybrid'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#calculate_streamnetwork_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.calculate_streamnetwork_threshold" title="Link to this definition"></a></dt>
+<dd><p>Estimate a stream-extraction threshold from flow accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_acc_path</strong> (<em>str</em>) – Path to the flow-accumulation raster file.</p></li>
+<li><p><strong>dem_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to DEM raster. Required when <code class="docutils literal notranslate"><span class="pre">method='drainage_area'</span></code>.</p></li>
+<li><p><strong>method</strong> (<em>{'hybrid'</em><em>, </em><em>'max_ratio'</em><em>, </em><em>'percentile'</em><em>, </em><em>'drainage_area'</em><em>, </em><em>'dynamic_elbow'</em><em>, </em><em>'multiscale'}</em><em>, </em><em>optional</em>) – Threshold estimation method.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Optional method parameters: <code class="docutils literal notranslate"><span class="pre">max_ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">percentile</span></code>,
+<code class="docutils literal notranslate"><span class="pre">drainage_area_km2</span></code>, <code class="docutils literal notranslate"><span class="pre">elbow_sensitivity</span></code>, and <code class="docutils literal notranslate"><span class="pre">scale_levels</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stream-extraction threshold in flow-accumulation units.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">method</span></code> is not supported.</p></li>
+<li><p><strong>RuntimeError</strong> – If no valid flow-accumulation values are found, or DEM is missing
+    for <code class="docutils literal notranslate"><span class="pre">method='drainage_area'</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_max_ratio">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">threshold_max_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#threshold_max_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_max_ratio" title="Link to this definition"></a></dt>
+<dd><p>Calculate threshold as a fraction of maximum flow accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_acc</strong> (<cite>numpy.ndarray</cite>) – Flow-accumulation values.</p></li>
+<li><p><strong>max_ratio</strong> (<em>float</em>) – Ratio applied to the maximum value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Threshold value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_percentile">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">threshold_percentile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#threshold_percentile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_percentile" title="Link to this definition"></a></dt>
+<dd><p>Calculate threshold from a percentile of flow accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_acc</strong> (<cite>numpy.ndarray</cite>) – Flow-accumulation values.</p></li>
+<li><p><strong>percentile</strong> (<em>float</em>) – Percentile value in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">100]</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Threshold value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_drainage_area">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">threshold_drainage_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dem_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_acc_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drainage_area_km2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#threshold_drainage_area"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_drainage_area" title="Link to this definition"></a></dt>
+<dd><p>Calculate threshold from a minimum drainage-area constraint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dem_path</strong> (<em>str</em>) – Path to DEM raster file.</p></li>
+<li><p><strong>flow_acc_path</strong> (<em>str</em>) – Path to flow-accumulation raster file.</p></li>
+<li><p><strong>drainage_area_km2</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum drainage area in square kilometers.</p></li>
+<li><p><strong>max_ratio</strong> (<em>float</em><em>, </em><em>optional</em>) – Upper-limit ratio relative to maximum flow accumulation.</p></li>
+<li><p><strong>min_cells</strong> (<em>int</em><em>, </em><em>optional</em>) – Lower bound of threshold in cell count.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Threshold value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_dynamic_elbow">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">threshold_dynamic_elbow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elbow_sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#threshold_dynamic_elbow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_dynamic_elbow" title="Link to this definition"></a></dt>
+<dd><p>Calculate threshold using curvature-based elbow detection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_acc</strong> (<cite>numpy.ndarray</cite>) – Flow-accumulation values.</p></li>
+<li><p><strong>elbow_sensitivity</strong> (<em>float</em><em>, </em><em>optional</em>) – Sensitivity factor applied to the detected elbow value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Threshold value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_multiscale">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">threshold_multiscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_levels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#threshold_multiscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.threshold_multiscale" title="Link to this definition"></a></dt>
+<dd><p>Calculate threshold using a multi-scale adaptive approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_acc</strong> (<cite>numpy.ndarray</cite>) – Flow-accumulation values.</p></li>
+<li><p><strong>scale_levels</strong> (<em>list</em><em> of </em><em>float</em>) – Proportions used to build sub-scale masks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean threshold across scales.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.clip_stream_for_basin">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.</span></span><span class="sig-name descname"><span class="pre">clip_stream_for_basin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wbe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_clipped_stream_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'clipped_stream_vector.shp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/hydroanalysis_func/hydroanalysis_wbw/stream_network.html#clip_stream_for_basin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.stream_network.clip_stream_for_basin" title="Link to this definition"></a></dt>
+<dd><p>Clip stream vectors by a basin polygon and save the clipped output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wbe</strong> (<em>WbEnvironment</em>) – WhiteboxTools workflow environment.</p></li>
+<li><p><strong>stream_vector</strong> (<em>str</em><em> or </em><em>WbVector</em>) – Stream layer path or an already loaded stream vector.</p></li>
+<li><p><strong>basin_vector</strong> (<em>str</em><em> or </em><em>WbVector</em>) – Basin polygon path or an already loaded basin vector.</p></li>
+<li><p><strong>output_file_clipped_stream_vector</strong> (<em>str</em><em>, </em><em>optional</em>) – Output path for clipped stream vectors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Clipped stream vector object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WbVector</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.set_workenv.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.hydroanalysis_func.hydroanalysis_wbw.set_workenv" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.hydroanalysis_func.mosaic_dem.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.hydroanalysis_func.mosaic_dem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

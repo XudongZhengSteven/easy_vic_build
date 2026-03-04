@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.params_func.GlobalParamParser &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.params_func.Scaling_operator" href="easy_vic_build.tools.params_func.Scaling_operator.html" />
+    <link rel="prev" title="easy_vic_build.tools.params_func" href="easy_vic_build.tools.params_func.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.params_func.GlobalParamParser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.Scaling_operator.html">easy_vic_build.tools.params_func.Scaling_operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.TransferFunction.html">easy_vic_build.tools.params_func.TransferFunction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.build_Param_interface.html">easy_vic_build.tools.params_func.build_Param_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.createParametersDataset.html">easy_vic_build.tools.params_func.createParametersDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.params_set.html">easy_vic_build.tools.params_func.params_set</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare.html">easy_vic_build.tools.params_func.veg_type_attributes_umd_prepare</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.params_func.GlobalParamParser</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.params_func.GlobalParamParser.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.params_func.GlobalParamParser">
+<span id="easy-vic-build-tools-params-func-globalparamparser"></span><h1>easy_vic_build.tools.params_func.GlobalParamParser<a class="headerlink" href="#module-easy_vic_build.tools.params_func.GlobalParamParser" title="Link to this heading"></a></h1>
+<p>Parser utilities for VIC global parameter files.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser" title="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GlobalParamParser</span></code></a>()</p></td>
+<td><p>Parser for VIC global-parameter text files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection" title="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GlobalParamSection</span></code></a>([allow_duplicates])</p></td>
+<td><p>Container for parameters within one global-parameter section.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.GlobalParamParser.</span></span><span class="sig-name descname"><span class="pre">GlobalParamSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_duplicates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamSection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container for parameters within one global-parameter section.</p>
+<p>Initialize a section container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_duplicates</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether repeated parameter names should be stored as lists.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_duplicates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamSection.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize a section container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_duplicates</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether repeated parameter names should be stored as lists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamSection.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection.add" title="Link to this definition"></a></dt>
+<dd><p>Add one parameter entry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Parameter name.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – Parameter value.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If duplicates are enabled, values are appended as a list; otherwise the
+latest value overwrites previous value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection.set_section">
+<span class="sig-name descname"><span class="pre">set_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamSection.set_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamSection.set_section" title="Link to this definition"></a></dt>
+<dd><p>Replace all parameters in the section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>section_dict</strong> (<em>dict</em>) – Mapping from parameter name to a single value or list of values.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Existing parameters are cleared before assignment.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.params_func.GlobalParamParser.</span></span><span class="sig-name descname"><span class="pre">GlobalParamParser</span></span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parser for VIC global-parameter text files.</p>
+<p>Initialize an empty parser state.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize an empty parser state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.add_section">
+<span class="sig-name descname"><span class="pre">add_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.add_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.add_section" title="Link to this definition"></a></dt>
+<dd><p>Add a section if it does not already exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Section name.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Duplicate keys are enabled for sections matching
+<code class="docutils literal notranslate"><span class="pre">FORCE_TYPE</span></code>, <code class="docutils literal notranslate"><span class="pre">DOMAIN_TYPE</span></code>, and <code class="docutils literal notranslate"><span class="pre">OUTVAR*</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.set" title="Link to this definition"></a></dt>
+<dd><p>Set one parameter value in a section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong> (<em>str</em>) – Section name.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Parameter name.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – Parameter value.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Section is created automatically if missing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.set_section_values">
+<span class="sig-name descname"><span class="pre">set_section_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.set_section_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.set_section_values" title="Link to this definition"></a></dt>
+<dd><p>Replace all parameters in a section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section_name</strong> (<em>str</em>) – Section name.</p></li>
+<li><p><strong>section_dict</strong> (<em>dict</em>) – Mapping from parameter name to value or list of values.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Existing parameters in this section are replaced.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.get" title="Link to this definition"></a></dt>
+<dd><p>Get one parameter value from a section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section_name</strong> (<em>str</em>) – Section name.</p></li>
+<li><p><strong>param_name</strong> (<em>str</em>) – Parameter name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parameter value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If section or parameter is missing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_or_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.load" title="Link to this definition"></a></dt>
+<dd><p>Load and parse global-parameter text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_or_path</strong> (<em>str</em><em> or </em><em>file-like object</em>) – File path or readable file-like object.</p></li>
+<li><p><strong>header_lines</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of header lines to store before section parsing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is neither path-like nor file-like.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.write" title="Link to this definition"></a></dt>
+<dd><p>Write parser content to a file-like object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>file-like object</em>) – Writable file-like object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.remove_section">
+<span class="sig-name descname"><span class="pre">remove_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/params_func/GlobalParamParser.html#GlobalParamParser.remove_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.params_func.GlobalParamParser.GlobalParamParser.remove_section" title="Link to this definition"></a></dt>
+<dd><p>Remove a section from parser state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>section_name</strong> (<em>str</em>) – Section name.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If section name is not present in internal section order list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.params_func.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.params_func" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.params_func.Scaling_operator.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.params_func.Scaling_operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

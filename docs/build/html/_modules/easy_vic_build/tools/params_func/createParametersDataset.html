@@ -1,0 +1,1084 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.params_func.createParametersDataset &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.params_func.createParametersDataset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.params_func.createParametersDataset</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Create NetCDF templates for VIC parameters and routing flow direction.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="c1"># TODO Fill_Value_</span>
+
+
+<div class="viewcode-block" id="createParametersDataset">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.createParametersDataset.html#easy_vic_build.tools.params_func.createParametersDataset.createParametersDataset">[docs]</a>
+<span class="k">def</span> <span class="nf">createParametersDataset</span><span class="p">(</span><span class="n">dst_path</span><span class="p">,</span> <span class="n">lat_list</span><span class="p">,</span> <span class="n">lon_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a VIC parameter NetCDF dataset template.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dst_path : str</span>
+<span class="sd">        Output NetCDF file path.</span>
+<span class="sd">    lat_list : list of float</span>
+<span class="sd">        Latitude coordinates.</span>
+<span class="sd">    lon_list : list of float</span>
+<span class="sd">        Longitude coordinates.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    netCDF4.Dataset</span>
+<span class="sd">        Open NetCDF dataset object containing predefined dimensions and</span>
+<span class="sd">        variables for VIC parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create dataset</span>
+    <span class="n">params_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">dst_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ===================== define dimensions =====================</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat_list</span><span class="p">))</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lon_list</span><span class="p">))</span>
+    <span class="n">nlayer</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;nlayer&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">root_zone</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;root_zone&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">veg_class</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;veg_class&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+    <span class="c1"># ===================== define variables ======================</span>
+    <span class="c1"># * variables: dimension variables</span>
+    <span class="n">lat_v</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;f8&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,))</span>  <span class="c1"># 1D array</span>
+    <span class="n">lon_v</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="s2">&quot;f8&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,))</span>  <span class="c1"># 1D array</span>
+    <span class="n">nlayer_v</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;nlayer&quot;</span><span class="p">,</span> <span class="s2">&quot;i4&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;nlayer&quot;</span><span class="p">,))</span>
+    <span class="n">root_zone_v</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;root_zone&quot;</span><span class="p">,</span> <span class="s2">&quot;i4&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;root_zone&quot;</span><span class="p">,))</span>
+    <span class="n">veg_class_v</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;veg_class&quot;</span><span class="p">,</span> <span class="s2">&quot;i4&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;veg_class&quot;</span><span class="p">,))</span>
+    <span class="n">month_v</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;i4&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">,))</span>
+
+    <span class="c1"># * variables: Soil parameters</span>
+    <span class="n">run_cell</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;run_cell&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">grid_cell</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;grid_cell&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">lats</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;lats&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># 2D array</span>
+    <span class="n">lons</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;lons&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># 2D array</span>
+
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;d1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># layer3</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;d2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># layer3</span>
+    <span class="n">d3</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;d3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># layer3</span>
+    <span class="n">d4</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;d4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># cexpt</span>
+
+    <span class="n">b_infilt</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;infilt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># *(Ele std PTF + scaling(Arithmetic)), b</span>
+    <span class="n">Ds</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Ds&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># based on d1/2/3/4</span>
+    <span class="n">Dsmax</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Dsmax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># based on d1/2/3/4</span>
+    <span class="n">Ws</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Ws&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># based on d1/2/3/4</span>
+
+    <span class="n">cexpt</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># general set to 2</span>
+    <span class="n">expt</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;expt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># *(sand/clay percentage PTF, Cosby 1984 + scaling(Majority)，b in Campbell equation)</span>
+    <span class="n">Ksat</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Ksat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># *(sand/clay percentage PTF, Cosby 1984 + scaling(Harmonic))</span>
+    <span class="n">phi_s</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;phi_s&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">psis</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;psis&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">b_retcurve</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;b_retcurve&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">fc</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;fc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">init_moist</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;init_moist&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">elev</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;elev&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;slope&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># *(percentile1/2/3 * Ztot(constant, soil datasets) + scaling(Arithmetic)), d1/2/3</span>
+    <span class="n">avg_T</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;avg_T&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">dp</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;dp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">bubble</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;bubble&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">quartz</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;quartz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">bulk_density</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;bulk_density&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># *(soil data + scaling), Arithmetic, BD</span>
+    <span class="n">soil_density</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;soil_density&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">off_gmt</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;off_gmt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">Wcr_FRACT</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Wcr_FRACT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">wp</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;wp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">Wpwp_FRACT</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Wpwp_FRACT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">rough</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;rough&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">snow_rough</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;snow_rough&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">annual_prec</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;annual_prec&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">resid_moist</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;resid_moist&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;nlayer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># frozen soil algorithm</span>
+    <span class="n">fs_active</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;fs_active&quot;</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="c1"># frost_slope = dst_dataset.createVariable(&quot;frost_slope&quot;, &quot;f8&quot;, (&quot;lat&quot;, &quot;lon&quot;,))  # SPATIAL_FROST == FALSE</span>
+    <span class="c1"># max_snow_distrib_slope = dst_dataset.createVariable(&quot;max_snow_distrib_slope&quot;, &quot;f8&quot;, (&quot;lat&quot;, &quot;lon&quot;,))  # SPATIAL_SNOW == FALSE</span>
+    <span class="c1"># July_Tavg = dst_dataset.createVariable(&quot;July_Tavg&quot;, &quot;f8&quot;, (&quot;lat&quot;, &quot;lon&quot;,))  # COMPUTE_TREELINE == FALSE</span>
+
+    <span class="c1"># variables: Soil parameters: optional for ORGANIC_FRACT = TRUE</span>
+    <span class="c1"># organic = dst_dataset.createVariable(&quot;organic&quot;, &quot;f8&quot;, (&quot;nlayer&quot;, &quot;lat&quot;, &quot;lon&quot;,))</span>
+    <span class="c1"># bulk_dens_org = dst_dataset.createVariable(&quot;bulk_dens_org&quot;, &quot;f8&quot;, (&quot;nlayer&quot;, &quot;lat&quot;, &quot;lon&quot;,))</span>
+    <span class="c1"># soil_dens_org = dst_dataset.createVariable(&quot;soil_dens_org&quot;, &quot;f8&quot;, (&quot;nlayer&quot;, &quot;lat&quot;, &quot;lon&quot;,))</span>
+
+    <span class="c1"># * variables: Veg parameters</span>
+    <span class="n">Nveg</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Nveg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">Cv</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Cv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">root_depth</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;root_depth&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;root_zone&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">root_fract</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;root_fract&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;root_zone&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># variables: Veg parameters: optional for BLOWING_SNOW = TRUE</span>
+    <span class="c1"># sigma_slope</span>
+    <span class="c1"># lag_one</span>
+    <span class="c1"># fetch</span>
+
+    <span class="c1"># variables: Veg parameters: optional for VEGPARAM_LAI = TRUE</span>
+    <span class="n">LAI</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;LAI&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># variables: Veg parameters: optional for VEGPARAM_FCAN = TRUE</span>
+    <span class="n">fcanopy</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;fcanopy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># variables: Veg parameters: optional for VEGPARAM_ALBEDO = TRUE</span>
+    <span class="n">albedo</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;albedo&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># variables: Veg Library parameters</span>
+    <span class="n">overstory</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;overstory&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">rarc</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;rarc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">rmin</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;rmin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">veg_rough</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;veg_rough&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">displacement</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;displacement&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">wind_h</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;wind_h&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">RGL</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;RGL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">rad_atten</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;rad_atten&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">wind_atten</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;wind_atten&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">trunk_ratio</span> <span class="o">=</span> <span class="n">params_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;trunk_ratio&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;veg_class&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># variables: Veg Library parameters: optional for VEGLIB_PHOTO = TRUE</span>
+    <span class="c1"># Ctype</span>
+    <span class="c1"># MaxCarboxRate</span>
+    <span class="c1"># MaxETransport/CO2Specificity</span>
+    <span class="c1"># LightUseEff</span>
+    <span class="c1"># NscaleFlag</span>
+    <span class="c1"># Wnpp_inhib</span>
+    <span class="c1"># NPPfactor_sat</span>
+
+    <span class="c1"># * variables: Elevation/Snow Bands parameters: Optional, account for considering grid cell is not flat</span>
+    <span class="c1"># cellnum = params_dataset.createVariable(&quot;cellnum&quot;, &quot;f8&quot;, (&quot;lat&quot;, &quot;lon&quot;,))</span>
+    <span class="c1"># AreaFract = params_dataset.createVariable(&quot;AreaFract&quot;, &quot;f8&quot;, (&quot;snow_band&quot;, &quot;lat&quot;, &quot;lon&quot;,))</span>
+    <span class="c1"># elevation = params_dataset.createVariable(&quot;elevation&quot;, &quot;f8&quot;, (&quot;snow_band&quot;, &quot;lat&quot;, &quot;lon&quot;,))</span>
+    <span class="c1"># Pfactor = params_dataset.createVariable(&quot;Pfactor&quot;, &quot;f8&quot;, (&quot;snow_band&quot;, &quot;lat&quot;, &quot;lon&quot;,))</span>
+
+    <span class="c1"># ===================== define variables attribute ======================</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;latitude of grid cell center&quot;</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
+
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span>
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;longitude of grid cell center&quot;</span>
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span>
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+
+    <span class="n">lats</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;lats 2D&quot;</span>
+    <span class="n">lats</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Latitude of grid cell 2D&quot;</span>
+    <span class="n">lats</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees&quot;</span>
+
+    <span class="n">lons</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;lons 2D&quot;</span>
+    <span class="n">lons</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;longitude of grid cell 2D&quot;</span>
+    <span class="n">lons</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees&quot;</span>
+
+    <span class="n">nlayer_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;soil layer&quot;</span>
+    <span class="n">root_zone_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;root zone&quot;</span>
+
+    <span class="n">veg_class_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;land cover class ID code&quot;</span>
+    <span class="n">veg_class_v</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;land cover class ID code&quot;</span>
+
+    <span class="n">month_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;month of climatological year, 1-12&quot;</span>
+
+    <span class="n">run_cell</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;run cell&quot;</span>
+    <span class="n">run_cell</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;1 = Run Grid Cell, 0 = Do Not Run&quot;</span>
+
+    <span class="n">grid_cell</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;grid cell&quot;</span>
+    <span class="n">grid_cell</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Grid cell number&quot;</span>
+
+    <span class="n">d1</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;d1&quot;</span>
+    <span class="n">d1</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;d1 is coefficients of linear reservoirs, it is related to vertical water transmission in saturated soil due to the gravity as described by Darcy&#39;s law&quot;</span>
+    <span class="n">d1</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;day^-1&quot;</span>
+
+    <span class="n">d2</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;d2&quot;</span>
+    <span class="n">d2</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;d2 is coefficients of nonlinear reservoirs, it is related to vertical water transmission in saturated soil due to the gravity as described by Darcy&#39;s law&quot;</span>
+    <span class="n">d2</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;day^-d4&quot;</span>
+
+    <span class="n">d3</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;d3&quot;</span>
+    <span class="n">d3</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;The formulation of d3, the soil moisture at which the baseflow transitions from linear to nonlinear, is based on the assumption that soil moisture exceeding field capacity is more freely drained, as suggested by the SAC-SMA transfer function&quot;</span>
+    <span class="n">d3</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;mm&quot;</span>
+
+    <span class="n">d4</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;d4&quot;</span>
+    <span class="n">d4</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;d4, same as c, typically is 2&quot;</span>
+    <span class="n">d4</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+
+    <span class="n">b_infilt</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;infilt&quot;</span>
+    <span class="n">b_infilt</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Variable infiltration curve parameter (binfilt)&quot;</span>
+    <span class="n">b_infilt</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+
+    <span class="n">Ds</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ds&quot;</span>
+    <span class="n">Ds</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Fraction of Dsmax where non-linear baseflow begins&quot;</span>
+    <span class="n">Ds</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">Dsmax</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Dsmax&quot;</span>
+    <span class="n">Dsmax</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Maximum velocity of baseflow&quot;</span>
+    <span class="n">Dsmax</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;mm/day&quot;</span>
+
+    <span class="n">Ws</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ws&quot;</span>
+    <span class="n">Ws</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Fraction of maximum soil moisture where non-linear baseflow occurs&quot;</span>
+    <span class="p">)</span>
+    <span class="n">Ws</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">cexpt</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span>
+    <span class="n">cexpt</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Exponent used in baseflow curve, normally set to 2&quot;</span>
+    <span class="n">cexpt</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+
+    <span class="n">expt</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;expt&quot;</span>
+    <span class="n">expt</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Exponent n (=3+2/lambda) in Campbells eqn for hydraulic conductivity, HBH 5.6 (where lambda = soil pore size distribution parameter).  Values should be &gt; 3.0.&quot;</span>
+    <span class="n">expt</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+
+    <span class="n">Ksat</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Ksat&quot;</span>
+    <span class="n">Ksat</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Saturated hydrologic conductivity&quot;</span>
+    <span class="n">Ksat</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;mm/day&quot;</span>
+
+    <span class="n">phi_s</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;phi_s&quot;</span>
+    <span class="n">phi_s</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Soil moisture diffusion parameter&quot;</span>
+    <span class="n">phi_s</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;mm/mm&quot;</span>
+
+    <span class="n">psis</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;psis&quot;</span>
+    <span class="n">psis</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;saturation matric potential&quot;</span>
+    <span class="n">psis</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;kPa/cm-H2O&quot;</span>
+
+    <span class="n">b_retcurve</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;b_retcurve&quot;</span>
+    <span class="n">b_retcurve</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;slope of cambell retention curve in log space (b)&quot;</span>
+    <span class="n">b_retcurve</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+
+    <span class="n">fc</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;fc&quot;</span>
+    <span class="n">fc</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;field capacity&quot;</span>
+    <span class="n">fc</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m3/m3&quot;</span>
+
+    <span class="n">init_moist</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;init_moist&quot;</span>
+    <span class="n">init_moist</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Initial layer moisture content&quot;</span>
+    <span class="n">init_moist</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;mm&quot;</span>
+
+    <span class="n">elev</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;elev&quot;</span>
+    <span class="n">elev</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Average elevation of grid cell&quot;</span>
+    <span class="n">elev</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+    
+    <span class="n">slope</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;slope&quot;</span>
+    <span class="n">slope</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Slope of grid cell&quot;</span>
+    <span class="n">slope</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;% (converted to m/m by *0.01)&quot;</span>
+
+    <span class="n">depth</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;depth&quot;</span>
+    <span class="n">depth</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Thickness of each soil layer&quot;</span>
+    <span class="n">depth</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">avg_T</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;avg_T&quot;</span>
+    <span class="n">avg_T</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Average soil temperature, used as the bottom boundary for soil heat flux solutions&quot;</span>
+    <span class="n">avg_T</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;C&quot;</span>
+
+    <span class="n">dp</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;dp&quot;</span>
+    <span class="n">dp</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Soil thermal damping depth (depth at which soil temperature remains constant through the year, ~4 m)&quot;</span>
+    <span class="n">dp</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">bubble</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;bubble&quot;</span>
+    <span class="n">bubble</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Bubbling pressure of soil. Values should be &gt; 0.0&quot;</span>
+    <span class="n">bubble</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;cm&quot;</span>
+
+    <span class="n">quartz</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;quartz&quot;</span>
+    <span class="n">quartz</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Quartz content of soil&quot;</span>
+    <span class="n">quartz</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">bulk_density</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;bulk_density&quot;</span>
+    <span class="n">bulk_density</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Bulk density of soil layer&quot;</span>
+    <span class="n">bulk_density</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;kg/m3&quot;</span>
+
+    <span class="n">soil_density</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;soil_density&quot;</span>
+    <span class="n">soil_density</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Soil particle density, normally 2685 kg/m3&quot;</span>
+    <span class="n">soil_density</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;kg/m3&quot;</span>
+
+    <span class="n">off_gmt</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;off_gmt&quot;</span>
+    <span class="n">off_gmt</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Time zone offset from GMT. This parameter determines how VIC interprets sub-daily time steps relative to the model start date and time&quot;</span>
+    <span class="n">off_gmt</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;hours&quot;</span>
+
+    <span class="n">Wcr_FRACT</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Wcr_FRACT&quot;</span>
+    <span class="n">Wcr_FRACT</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Fractional soil moisture content at the critical point (~70</span><span class="si">% o</span><span class="s2">f field capacity) (fraction of maximum moisture)&quot;</span>
+    <span class="n">Wcr_FRACT</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">wp</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;wp&quot;</span>
+    <span class="n">wp</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;computed field capacity, wilting point&quot;</span>
+    <span class="n">wp</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">Wpwp_FRACT</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Wpwp_FRACT&quot;</span>
+    <span class="n">Wpwp_FRACT</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Fractional soil moisture content at the wilting point (fraction of maximum moisture)&quot;</span>
+    <span class="n">Wpwp_FRACT</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">rough</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;rough&quot;</span>
+    <span class="n">rough</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Surface roughness of bare soil&quot;</span>
+    <span class="n">rough</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">snow_rough</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;snow_rough&quot;</span>
+    <span class="n">snow_rough</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Surface roughness of snowpack&quot;</span>
+    <span class="n">snow_rough</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">annual_prec</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;annual_prec&quot;</span>
+    <span class="n">annual_prec</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Average annual precipitation&quot;</span>
+    <span class="n">annual_prec</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;mm&quot;</span>
+
+    <span class="n">resid_moist</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;resid_moist&quot;</span>
+    <span class="n">resid_moist</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Soil moisture layer residual moisture&quot;</span>
+    <span class="n">resid_moist</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">fs_active</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;fs_active&quot;</span>
+    <span class="n">fs_active</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;If set to 1, then frozen soil algorithm is activated for the grid cell. A 0 indicates that frozen soils are not computed even if soil temperatures fall below 0C&quot;</span>
+    <span class="n">fs_active</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;binary&quot;</span>
+
+    <span class="n">Nveg</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Nveg&quot;</span>
+    <span class="n">Nveg</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Number of vegetation tiles in the grid cell&quot;</span>
+    <span class="n">Nveg</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span>
+
+    <span class="n">Cv</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Cv&quot;</span>
+    <span class="n">Cv</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Fraction of grid cell covered by vegetation tile&quot;</span>
+    <span class="n">Cv</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">root_depth</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;root_depth&quot;</span>
+    <span class="n">root_depth</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Root zone thickness (sum of depths is total depth of root penetration)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">root_depth</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">root_fract</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;root_fract&quot;</span>
+    <span class="n">root_fract</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Fraction of root in the current root zone&quot;</span>
+    <span class="n">root_fract</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">LAI</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;LAI&quot;</span>
+    <span class="n">LAI</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Leaf Area Index, one per month, Climatological Mean&quot;</span>
+    <span class="n">LAI</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m2/m2&quot;</span>
+
+    <span class="n">fcanopy</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;fcanopy&quot;</span>
+    <span class="n">fcanopy</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Canopy fraction Climatological Mean&quot;</span>
+    <span class="n">fcanopy</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">albedo</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;albedo&quot;</span>
+    <span class="n">albedo</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Shortwave albedo for vegetation type, MODIS BSA here&quot;</span>
+    <span class="n">albedo</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">overstory</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;overstory&quot;</span>
+    <span class="n">overstory</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Flag to indicate whether or not the current vegetation type has an overstory (1 for overstory present [e.g. trees], 0 for overstory not present [e.g. grass])&quot;</span>
+    <span class="n">overstory</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;binary&quot;</span>
+
+    <span class="n">rarc</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;rarc&quot;</span>
+    <span class="n">rarc</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Architectural resistance of vegetation type (~2 s/m)&quot;</span>
+    <span class="n">rarc</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;s/m&quot;</span>
+
+    <span class="n">rmin</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;rmin&quot;</span>
+    <span class="n">rmin</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Minimum stomatal resistance of vegetation type (~100 s/m)&quot;</span>
+    <span class="n">rmin</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;s/m&quot;</span>
+
+    <span class="n">veg_rough</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;veg_rough&quot;</span>
+    <span class="n">veg_rough</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Vegetation roughness length (typically 0.123 * vegetation height)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">veg_rough</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">displacement</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;displacement&quot;</span>
+    <span class="n">displacement</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Vegetation displacement height (typically 0.67 * vegetation height)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">displacement</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">wind_h</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;wind_h&quot;</span>
+    <span class="n">wind_h</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Height at which wind speed is measured&quot;</span>
+    <span class="n">wind_h</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+
+    <span class="n">RGL</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;RGL&quot;</span>
+    <span class="n">RGL</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Minimum incoming shortwave radiation at which there will be transpiration. For trees this is about 30 W/m^2, for crops about 100 W/m^2&quot;</span>
+    <span class="n">RGL</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;W/m2&quot;</span>
+
+    <span class="n">rad_atten</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;rad_atten&quot;</span>
+    <span class="n">rad_atten</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Radiation attenuation factor. Normally set to 0.5, though may need to be adjusted for high latitudes&quot;</span>
+    <span class="n">rad_atten</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">wind_atten</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;wind_atten&quot;</span>
+    <span class="n">wind_atten</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Wind speed attenuation through the overstory. The default value has been 0.5&quot;</span>
+    <span class="p">)</span>
+    <span class="n">wind_atten</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="n">trunk_ratio</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;trunk_ratio&quot;</span>
+    <span class="n">trunk_ratio</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Ratio of total tree height that is trunk (no branches). The default value has been 0.2&quot;</span>
+    <span class="n">trunk_ratio</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;fraction&quot;</span>
+
+    <span class="c1"># Global attributes</span>
+    <span class="n">params_dataset</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;VIC5 image params dataset&quot;</span>
+    <span class="n">params_dataset</span><span class="o">.</span><span class="n">note</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;params dataset generated by XudongZheng, zhengxd@sehemodel.club&quot;</span>
+    <span class="p">)</span>
+    <span class="n">params_dataset</span><span class="o">.</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.6&quot;</span>
+
+    <span class="k">return</span> <span class="n">params_dataset</span></div>
+
+
+
+<div class="viewcode-block" id="createFlowDirectionFile">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.params_func.createParametersDataset.html#easy_vic_build.tools.params_func.createParametersDataset.createFlowDirectionFile">[docs]</a>
+<span class="k">def</span> <span class="nf">createFlowDirectionFile</span><span class="p">(</span><span class="n">dst_path</span><span class="p">,</span> <span class="n">lat_list</span><span class="p">,</span> <span class="n">lon_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a routing flow-direction NetCDF dataset template.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dst_path : str</span>
+<span class="sd">        Output NetCDF file path.</span>
+<span class="sd">    lat_list : list of float</span>
+<span class="sd">        Latitude coordinates.</span>
+<span class="sd">    lon_list : list of float</span>
+<span class="sd">        Longitude coordinates.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flow_direction_dataset : netCDF4.Dataset</span>
+<span class="sd">        Open NetCDF dataset object with routing-related variables.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The dataset includes coordinate variables and routing fields:</span>
+<span class="sd">    ``Basin_ID``, ``Flow_Direction``, ``Flow_Distance``, ``Source_Area``,</span>
+<span class="sd">    ``velocity``, and ``diffusion``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create dataset</span>
+    <span class="n">flow_direction_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">dst_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;NETCDF4&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ===================== define dimensions =====================</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat_list</span><span class="p">))</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lon_list</span><span class="p">))</span>
+
+    <span class="c1"># ===================== define variables ======================</span>
+    <span class="c1"># * variables: dimension variables</span>
+    <span class="n">lat_v</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;f8&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,))</span>  <span class="c1"># 1D array</span>
+    <span class="n">lon_v</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="s2">&quot;f8&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,))</span>  <span class="c1"># 1D array</span>
+
+    <span class="c1"># * variables:</span>
+    <span class="n">Basin_ID</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Basin_ID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">Flow_Direction</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Flow_Direction&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">Flow_Distance</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Flow_Distance&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mf">9999.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">Source_Area</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;Source_Area&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mf">9999.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">velocity</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;velocity&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mf">9999.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">diffusion</span> <span class="o">=</span> <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+        <span class="s2">&quot;diffusion&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">fill_value</span><span class="o">=-</span><span class="mf">9999.0</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ===================== define variables attribute ======================</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;latitude of grid cell center&quot;</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span>
+    <span class="n">lat_v</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
+
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span>
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;longitude of grid cell center&quot;</span>
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span>
+    <span class="n">lon_v</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+
+    <span class="n">Basin_ID</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Basin_ID&quot;</span>
+    <span class="n">Basin_ID</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;grids in basin is labeled as 1, otherwise 0&quot;</span>
+
+    <span class="n">Flow_Direction</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Flow_Direction&quot;</span>
+    <span class="n">Flow_Direction</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Flow_Direction, generated from filled DEM&quot;</span>
+    <span class="n">Flow_Direction</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;ARCGIS_Directions&quot;</span>
+
+    <span class="n">Flow_Distance</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Flow_Distance&quot;</span>
+    <span class="n">Flow_Distance</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Flow_Distance, generated from Flow_Direction, x_length, and y_length&quot;</span>
+    <span class="p">)</span>
+    <span class="n">Flow_Distance</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;meter&quot;</span>
+
+    <span class="n">Source_Area</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;Source_Area&quot;</span>
+    <span class="n">Source_Area</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Source_Area, generated from Flow_Direction&quot;</span>
+    <span class="n">Source_Area</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;Grid cells&quot;</span>
+
+    <span class="n">velocity</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;velocity (m/s)&quot;</span>
+    <span class="n">velocity</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;velocity, generated from g params and transfer function&quot;</span>
+    <span class="n">velocity</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m/s&quot;</span>
+    
+    <span class="n">diffusion</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;diffusion (m2/s)&quot;</span>
+    <span class="n">diffusion</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;diffusion, generated from g params and transfer function&quot;</span>
+    <span class="n">diffusion</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;m2/s&quot;</span>
+    
+    <span class="c1"># Global attributes</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;VIC5 image params dataset, for RVIC&quot;</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">note</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;params dataset generated by XudongZheng, zhengxd@sehemodel.club&quot;</span>
+    <span class="p">)</span>
+    <span class="n">flow_direction_dataset</span><span class="o">.</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s2">&quot;CF-1.6&quot;</span>
+
+    <span class="k">return</span> <span class="n">flow_direction_dataset</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

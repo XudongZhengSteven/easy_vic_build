@@ -1,0 +1,474 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.algorithm_CMA_ES &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII" href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html" />
+    <link rel="prev" title="easy_vic_build.tools.calibrate_func" href="easy_vic_build.tools.calibrate_func.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html#modules">Modules</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.evaluate_metrics.html">easy_vic_build.tools.calibrate_func.evaluate_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.sampling.html">easy_vic_build.tools.calibrate_func.sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.calibrate_func.algorithm_CMA_ES">
+<span id="easy-vic-build-tools-calibrate-func-algorithm-cma-es"></span><h1>easy_vic_build.tools.calibrate_func.algorithm_CMA_ES<a class="headerlink" href="#module-easy_vic_build.tools.calibrate_func.algorithm_CMA_ES" title="Link to this heading"></a></h1>
+<p>CMA-ES base algorithm used by calibration workflows.</p>
+<p>This module provides <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">CMA_ES_Base</span></code></a>, a lightweight wrapper around
+<code class="docutils literal notranslate"><span class="pre">deap.cma.Strategy</span></code> with:</p>
+<ul class="simple">
+<li><p>checkpoint save/load support;</p></li>
+<li><p>generation history recording;</p></li>
+<li><p>optional convergence plotting.</p></li>
+</ul>
+<p>Users typically subclass <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">CMA_ES_Base</span></code></a> and override <code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code>.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CMA_ES_Base</span></code></a>([algParams, save_path])</p></td>
+<td><p>Base class for single-objective CMA-ES optimization.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.</span></span><span class="sig-name descname"><span class="pre">CMA_ES_Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'dim':</span> <span class="pre">None,</span> <span class="pre">'maxGen':</span> <span class="pre">250,</span> <span class="pre">'popSize':</span> <span class="pre">20,</span> <span class="pre">'sigma':</span> <span class="pre">0.5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pkl'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for single-objective CMA-ES optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algParams</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Algorithm configuration dictionary. Expected keys are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dim</span></code>: problem dimension.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">popSize</span></code>: population size (<code class="docutils literal notranslate"><span class="pre">lambda</span></code> in CMA-ES).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">maxGen</span></code>: number of generations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sigma</span></code>: initial global step size.</p></li>
+</ul>
+</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Checkpoint path used by <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.load_state" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a> and <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.save_state" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.save_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.dim" title="Link to this definition"></a></dt>
+<dd><p>Problem dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.popSize">
+<span class="sig-name descname"><span class="pre">popSize</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.popSize" title="Link to this definition"></a></dt>
+<dd><p>Population size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.maxGen">
+<span class="sig-name descname"><span class="pre">maxGen</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.maxGen" title="Link to this definition"></a></dt>
+<dd><p>Maximum number of generations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.sigma" title="Link to this definition"></a></dt>
+<dd><p>Initial CMA-ES sigma.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.history">
+<span class="sig-name descname"><span class="pre">history</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.history" title="Link to this definition"></a></dt>
+<dd><p>Per-generation records containing population snapshots and best
+individual snapshots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.current_generation">
+<span class="sig-name descname"><span class="pre">current_generation</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.current_generation" title="Link to this definition"></a></dt>
+<dd><p>Current generation index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.population">
+<span class="sig-name descname"><span class="pre">population</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.population" title="Link to this definition"></a></dt>
+<dd><p>Current population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.initial_population">
+<span class="sig-name descname"><span class="pre">initial_population</span></span><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.initial_population" title="Link to this definition"></a></dt>
+<dd><p>Population right after initialization or checkpoint loading.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize the algorithm state and register DEAP operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algParams</strong> (<em>dict</em><em>, </em><em>optional</em>) – Algorithm configuration. See class docstring for accepted keys.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Checkpoint file path.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'dim':</span> <span class="pre">None,</span> <span class="pre">'maxGen':</span> <span class="pre">250,</span> <span class="pre">'popSize':</span> <span class="pre">20,</span> <span class="pre">'sigma':</span> <span class="pre">0.5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pkl'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the algorithm state and register DEAP operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algParams</strong> (<em>dict</em><em>, </em><em>optional</em>) – Algorithm configuration. See class docstring for accepted keys.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Checkpoint file path.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.init_cma_strategy">
+<span class="sig-name descname"><span class="pre">init_cma_strategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.init_cma_strategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.init_cma_strategy" title="Link to this definition"></a></dt>
+<dd><p>Create and return a DEAP CMA strategy object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> (<em>int</em>) – Problem dimension.</p></li>
+<li><p><strong>popSize</strong> (<em>int</em>) – Population size (<code class="docutils literal notranslate"><span class="pre">lambda_</span></code>).</p></li>
+<li><p><strong>sigma</strong> (<em>float</em>) – Initial global step size.</p></li>
+<li><p><strong>**kwargs</strong> – Extra keyword arguments forwarded to <code class="xref py py-class docutils literal notranslate"><span class="pre">deap.cma.Strategy</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configured CMA-ES strategy instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>deap.cma.Strategy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.get_obs">
+<span class="sig-name descname"><span class="pre">get_obs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.get_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.get_obs" title="Link to this definition"></a></dt>
+<dd><p>Placeholder for loading observed values used by subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.get_sim">
+<span class="sig-name descname"><span class="pre">get_sim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.get_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.get_sim" title="Link to this definition"></a></dt>
+<dd><p>Placeholder for loading simulated values used by subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.createFitness">
+<span class="sig-name descname"><span class="pre">createFitness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.createFitness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.createFitness" title="Link to this definition"></a></dt>
+<dd><p>Create DEAP fitness type for single-objective minimization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.createInd">
+<span class="sig-name descname"><span class="pre">createInd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.createInd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.createInd" title="Link to this definition"></a></dt>
+<dd><p>Create DEAP individual type bound to <code class="docutils literal notranslate"><span class="pre">creator.Fitness</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate one individual.</p>
+<p class="rubric">Notes</p>
+<p>This is a default demo objective and should be overridden by subclasses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind</strong> (<em>sequence</em>) – Candidate solution.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fitness tuple compatible with DEAP.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerEvaluate">
+<span class="sig-name descname"><span class="pre">registerEvaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.registerEvaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerEvaluate" title="Link to this definition"></a></dt>
+<dd><p>Register the fitness evaluation function in <code class="docutils literal notranslate"><span class="pre">self.toolbox</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerGenerate">
+<span class="sig-name descname"><span class="pre">registerGenerate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.registerGenerate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerGenerate" title="Link to this definition"></a></dt>
+<dd><p>Register offspring generation based on current CMA strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerUpdate">
+<span class="sig-name descname"><span class="pre">registerUpdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.registerUpdate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.registerUpdate" title="Link to this definition"></a></dt>
+<dd><p>Register CMA strategy update operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.evaluatePop">
+<span class="sig-name descname"><span class="pre">evaluatePop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.evaluatePop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.evaluatePop" title="Link to this definition"></a></dt>
+<dd><p>Evaluate all individuals in a population in-place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>population</strong> (<em>list</em>) – Population to evaluate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.updatePop">
+<span class="sig-name descname"><span class="pre">updatePop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offspring</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.updatePop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.updatePop" title="Link to this definition"></a></dt>
+<dd><p>Update and return population for the next iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>offspring</strong> (<em>list</em>) – Newly generated and evaluated offspring.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Population for next generation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Default behavior is <code class="docutils literal notranslate"><span class="pre">(mu,</span> <span class="pre">lambda)</span></code> style replacement with offspring
+only. Subclasses may override this method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.load_state">
+<span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.load_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.load_state" title="Link to this definition"></a></dt>
+<dd><p>Load checkpoint from <code class="xref py py-attr docutils literal notranslate"><span class="pre">save_path</span></code> if available.</p>
+<p>When checkpoint does not exist, initialize a fresh CMA strategy and
+leave population creation to <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.__init__" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.save_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.save_state" title="Link to this definition"></a></dt>
+<dd><p>Serialize current algorithm state to <code class="xref py py-attr docutils literal notranslate"><span class="pre">save_path</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.print_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.print_results" title="Link to this definition"></a></dt>
+<dd><p>Log best individual and fitness for a population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>population</strong> (<em>list</em>) – Population to summarize.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.plot_progress">
+<span class="sig-name descname"><span class="pre">plot_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cmaes_progress'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.plot_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.plot_progress" title="Link to this definition"></a></dt>
+<dd><p>Plot per-generation fitness scatter and best-fitness curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for figure files.</p></li>
+<li><p><strong>ylim</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em>) – If float, used as lower bound of y-axis. If 2-tuple/list, used as
+explicit <code class="docutils literal notranslate"><span class="pre">(ymin,</span> <span class="pre">ymax)</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cmaes_progress'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/calibrate_func/algorithm_CMA_ES.html#CMA_ES_Base.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.run" title="Link to this definition"></a></dt>
+<dd><p>Run CMA-ES optimization loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to generate convergence plot at each generation.</p></li>
+<li><p><strong>plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Plot output directory.</p></li>
+<li><p><strong>plot_ylim</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em>) – Y-axis setting passed to <a class="reference internal" href="#easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.plot_progress" title="easy_vic_build.tools.calibrate_func.algorithm_CMA_ES.CMA_ES_Base.plot_progress"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_progress()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Final population.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.calibrate_func.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.calibrate_func" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.calibrate_func.algorithm_NSGAII" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

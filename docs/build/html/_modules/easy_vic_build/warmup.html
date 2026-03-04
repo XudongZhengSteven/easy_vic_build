@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.warmup &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.warmup</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.warmup</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Run a VIC warm-up period and write a model state file.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">.tools.params_func.GlobalParamParser</span> <span class="kn">import</span> <span class="n">GlobalParamParser</span>
+
+
+<div class="viewcode-block" id="warmup_VIC">
+<a class="viewcode-back" href="../../_autosummary/easy_vic_build.warmup.html#easy_vic_build.warmup.warmup_VIC">[docs]</a>
+<span class="k">def</span> <span class="nf">warmup_VIC</span><span class="p">(</span><span class="n">evb_dir</span><span class="p">,</span> <span class="n">warmup_period</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run VIC for a warm-up period and store the end state.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    evb_dir : Evb_dir</span>
+<span class="sd">        Case directory manager. Requires ``evb_dir.vic_exe_path`` and an existing</span>
+<span class="sd">        global parameter file at ``evb_dir.globalParam_path``.</span>
+<span class="sd">    warmup_period : list of str</span>
+<span class="sd">        Two dates ``[start, end]`` formatted as ``YYYYMMDD``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># this is only useful is you just warm up the model and not to run it</span>
+    <span class="c1"># in generl, you can run the mode across the total date_period, and ignore the warm-up period when you calibrate and evaluate</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading global parameter file and preparing for warmup... ...&quot;</span><span class="p">)</span>
+    <span class="c1">## ====================== set Global param ======================</span>
+    <span class="c1"># * note: make sure you have already a globalparam file, modify on built globalparam file</span>
+    <span class="c1"># read global param</span>
+    <span class="n">globalParam</span> <span class="o">=</span> <span class="n">GlobalParamParser</span><span class="p">()</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">globalParam_path</span><span class="p">)</span>
+
+    <span class="c1"># update date period</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting simulation period: </span><span class="si">{</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;STARTYEAR&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">4</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;STARTMONTH&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;STARTDAY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;ENDYEAR&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">4</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;ENDMONTH&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;ENDDAY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]))</span>
+
+    <span class="c1"># set [State Files], the last day of the warmup_period will be saved as states</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Setting state file save parameters for the last day of the warmup period: </span><span class="si">{</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">... ...&quot;</span>
+    <span class="p">)</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="s2">&quot;State Files&quot;</span><span class="p">,</span> <span class="s2">&quot;STATENAME&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">VICStates_dir</span><span class="p">,</span> <span class="s2">&quot;states.&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;State Files&quot;</span><span class="p">,</span> <span class="s2">&quot;STATEYEAR&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">4</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;State Files&quot;</span><span class="p">,</span> <span class="s2">&quot;STATEMONTH&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;State Files&quot;</span><span class="p">,</span> <span class="s2">&quot;STATEDAY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">warmup_period</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;State Files&quot;</span><span class="p">,</span> <span class="s2">&quot;STATESEC&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="mi">86400</span><span class="p">))</span>
+    <span class="n">globalParam</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;State Files&quot;</span><span class="p">,</span> <span class="s2">&quot;STATE_FORMAT&quot;</span><span class="p">,</span> <span class="s2">&quot;NETCDF4&quot;</span><span class="p">)</span>
+
+    <span class="c1"># write</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">globalParam_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">globalParam</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="c1">## ====================== run vic and save state ======================</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running VIC model for the warmup period... ...&quot;</span><span class="p">)</span>
+    <span class="n">command_run_vic</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">vic_exe_path</span><span class="p">,</span> <span class="s2">&quot;-g&quot;</span><span class="p">,</span> <span class="n">evb_dir</span><span class="o">.</span><span class="n">globalParam_path</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command_run_vic</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;VIC model run successfully&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to run VIC model: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;warmup successfully, state files have been saved to </span><span class="si">{</span><span class="n">evb_dir</span><span class="o">.</span><span class="n">VICStates_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

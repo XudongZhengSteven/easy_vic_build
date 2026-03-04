@@ -1,0 +1,1392 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.dpc_subclass &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.tools.dpc_func.extractData_func" href="easy_vic_build.tools.dpc_func.extractData_func.html" />
+    <link rel="prev" title="easy_vic_build.tools.dpc_func.dpc_base" href="easy_vic_build.tools.dpc_func.dpc_base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.aggregate.html">easy_vic_build.tools.dpc_func.aggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_class.html">easy_vic_build.tools.dpc_func.basin_grid_class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.basin_grid_func.html">easy_vic_build.tools.dpc_func.basin_grid_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html">easy_vic_build.tools.dpc_func.dpc_base</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">easy_vic_build.tools.dpc_func.dpc_subclass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.extractData_func.html">easy_vic_build.tools.dpc_func.extractData_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="easy_vic_build.tools.dpc_func.select_basin_shp.html">easy_vic_build.tools.dpc_func.select_basin_shp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.utilities.html">easy_vic_build.tools.utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.dpc_subclass</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.dpc_func.dpc_subclass.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.dpc_func.dpc_subclass">
+<span id="easy-vic-build-tools-dpc-func-dpc-subclass"></span><h1>easy_vic_build.tools.dpc_func.dpc_subclass<a class="headerlink" href="#module-easy_vic_build.tools.dpc_func.dpc_subclass" title="Link to this heading"></a></h1>
+<p>Concrete data-processing pipelines built on <code class="xref py py-mod docutils literal notranslate"><span class="pre">dpc_base</span></code>.</p>
+<p>This module defines level-specific subclasses of
+<code class="docutils literal notranslate"><span class="pre">easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base</span></code>. Each subclass
+registers decorated loading steps that pull source datasets and cache them
+into the common processing state.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataProcess_VIC_level0</span></code></a>([load_path, ...])</p></td>
+<td><p>Load VIC level-0 static inputs on the grid domain.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataProcess_VIC_level1</span></code></a>([load_path, ...])</p></td>
+<td><p>Load VIC level-1 eco-hydrological attributes on grids.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataProcess_VIC_level2</span></code></a>([load_path, ...])</p></td>
+<td><p>Load VIC level-2 meteorological forcing data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataProcess_VIC_level3</span></code></a>([load_path, ...])</p></td>
+<td><p>Load VIC level-3 basin-level observations and attributes.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.dpc_subclass.</span></span><span class="sig-name descname"><span class="pre">dataProcess_VIC_level0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><code class="xref py py-class docutils literal notranslate"><span class="pre">dataProcess_base</span></code></a></p>
+<p>Load VIC level-0 static inputs on the grid domain.</p>
+<p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_dem">
+<span class="sig-name descname"><span class="pre">load_dem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level0.load_dem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_dem" title="Link to this definition"></a></dt>
+<dd><p>Load SRTM DEM values for the current grid shapefile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;dem&quot;</span></code> whose value is the updated
+grid GeoDataFrame containing DEM-related columns.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_soil">
+<span class="sig-name descname"><span class="pre">load_soil</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level0.load_soil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_soil" title="Link to this definition"></a></dt>
+<dd><p>Load CONUS soil attributes for each grid cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;soil&quot;</span></code> whose value is the updated
+grid GeoDataFrame containing soil columns.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.aggregate_grid_to_basins">
+<span class="sig-name descname"><span class="pre">aggregate_grid_to_basins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.aggregate_grid_to_basins" title="Link to this definition"></a></dt>
+<dd><p>Aggregate grid-level variables to basin-level summaries.</p>
+<p class="rubric">Notes</p>
+<p>This method is intentionally left for subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.clear_data_from_cache">
+<span class="sig-name descname"><span class="pre">clear_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.clear_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Clear cached entries by key list or clear all entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_names</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Keys to remove. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all cache entries are removed.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> while clearing keys.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.discard_step_name">
+<span class="sig-name descname"><span class="pre">discard_step_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.discard_step_name" title="Link to this definition"></a></dt>
+<dd><p>Mark one step as not executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step_name</strong> (<em>str</em>) – Step name to remove from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.get_data_from_cache">
+<span class="sig-name descname"><span class="pre">get_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.get_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Get cached data and its level by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em><em>, </em><em>optional</em>) – Value used when the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">data_level)</span></code> if key exists; otherwise <code class="docutils literal notranslate"><span class="pre">(default,</span> <span class="pre">None)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.list_cache">
+<span class="sig-name descname"><span class="pre">list_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.list_cache" title="Link to this definition"></a></dt>
+<dd><p>List available keys in cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current cache key names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_basin_shp">
+<span class="sig-name descname"><span class="pre">load_basin_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_basin_shp" title="Link to this definition"></a></dt>
+<dd><p>Load basin shapefile-like object from <code class="docutils literal notranslate"><span class="pre">loaddata_kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing key <code class="docutils literal notranslate"><span class="pre">&quot;basin_shp&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_grid_shp">
+<span class="sig-name descname"><span class="pre">load_grid_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_grid_shp" title="Link to this definition"></a></dt>
+<dd><p>Load grid shapefile-like object and grid resolution from inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing keys <code class="docutils literal notranslate"><span class="pre">&quot;grid_shp&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;grid_res&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_state">
+<span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><span class="pre">dataProcess_base</span></a></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.load_state" title="Link to this definition"></a></dt>
+<dd><p>Load processor state from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em>) – State file path.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset to a clean state when loading fails.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Reserved for compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current processor instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base">dataProcess_base</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Raised when loading fails and <code class="docutils literal notranslate"><span class="pre">reset_on_load_failure</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.loaddata_pipeline">
+<span class="sig-name descname"><span class="pre">loaddata_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaddata_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.loaddata_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Execute all registered steps in dependency order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path for persisting state after each successful step.</p></li>
+<li><p><strong>loaddata_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Runtime input dictionary consumed by individual step methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.merge_basin_data">
+<span class="sig-name descname"><span class="pre">merge_basin_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.merge_basin_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached basin-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Basin GeoDataFrame containing original geometry plus all joinable
+basin-level products in cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.merge_grid_data">
+<span class="sig-name descname"><span class="pre">merge_grid_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.merge_grid_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached grid-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Grid GeoDataFrame containing original grid fields and appended
+grid-level variables from cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_point_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot cached basin and grid geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – Existing figure object. A new one is created when omitted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Existing axes object. A new one is created when omitted.</p></li>
+<li><p><strong>grid_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp.boundary.plot</span></code>.</p></li>
+<li><p><strong>grid_shp_point_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp[&quot;point_geometry&quot;].plot</span></code>.</p></li>
+<li><p><strong>basin_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">basin_shp.plot</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(fig,</span> <span class="pre">ax)</span></code> with rendered basin/grid layout.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.register_processing_step">
+<span class="sig-name descname"><span class="pre">register_processing_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependencies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.register_processing_step" title="Link to this definition"></a></dt>
+<dd><p>Register one processing step in the execution graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_name</strong> (<em>str</em>) – Unique step identifier.</p></li>
+<li><p><strong>save_names</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Cache key(s) expected to be produced by <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>) – Step callable with zero arguments. It must return a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed
+by <code class="docutils literal notranslate"><span class="pre">save_names</span></code>.</p></li>
+<li><p><strong>dependencies</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Steps that must be executed before this step.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.save_data_to_cache">
+<span class="sig-name descname"><span class="pre">save_data_to_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.save_data_to_cache" title="Link to this definition"></a></dt>
+<dd><p>Save data into cache and optionally reopen its step state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key for the data object.</p></li>
+<li><p><strong>data</strong> (<em>Any</em>) – Data object to cache.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> after updating cache.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level0.save_state" title="Link to this definition"></a></dt>
+<dd><p>Serialize processor state to a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Output state path. If omitted, <code class="docutils literal notranslate"><span class="pre">self.load_path</span></code> is used when set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.dpc_subclass.</span></span><span class="sig-name descname"><span class="pre">dataProcess_VIC_level1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><code class="xref py py-class docutils literal notranslate"><span class="pre">dataProcess_base</span></code></a></p>
+<p>Load VIC level-1 eco-hydrological attributes on grids.</p>
+<p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_st">
+<span class="sig-name descname"><span class="pre">load_st</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1.load_st"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_st" title="Link to this definition"></a></dt>
+<dd><p>Load ERA5 soil temperature for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;st&quot;</span></code> mapping to the updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_annual_P">
+<span class="sig-name descname"><span class="pre">load_annual_P</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1.load_annual_P"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_annual_P" title="Link to this definition"></a></dt>
+<dd><p>Load NLDAS annual precipitation for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;annual_P&quot;</span></code> mapping to updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_lulc">
+<span class="sig-name descname"><span class="pre">load_lulc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1.load_lulc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_lulc" title="Link to this definition"></a></dt>
+<dd><p>Load UMD land-cover fractions and classes for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;lulc&quot;</span></code> mapping to updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_bsa">
+<span class="sig-name descname"><span class="pre">load_bsa</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1.load_bsa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_bsa" title="Link to this definition"></a></dt>
+<dd><p>Load MODIS black-sky albedo (BSA) climatology for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;bsa&quot;</span></code> mapping to updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_ndvi">
+<span class="sig-name descname"><span class="pre">load_ndvi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1.load_ndvi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_ndvi" title="Link to this definition"></a></dt>
+<dd><p>Load MODIS NDVI climatology for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;ndvi&quot;</span></code> mapping to updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_lai">
+<span class="sig-name descname"><span class="pre">load_lai</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level1.load_lai"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_lai" title="Link to this definition"></a></dt>
+<dd><p>Load MODIS LAI climatology for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;lai&quot;</span></code> mapping to updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.aggregate_grid_to_basins">
+<span class="sig-name descname"><span class="pre">aggregate_grid_to_basins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.aggregate_grid_to_basins" title="Link to this definition"></a></dt>
+<dd><p>Aggregate grid-level variables to basin-level summaries.</p>
+<p class="rubric">Notes</p>
+<p>This method is intentionally left for subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.clear_data_from_cache">
+<span class="sig-name descname"><span class="pre">clear_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.clear_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Clear cached entries by key list or clear all entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_names</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Keys to remove. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all cache entries are removed.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> while clearing keys.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.discard_step_name">
+<span class="sig-name descname"><span class="pre">discard_step_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.discard_step_name" title="Link to this definition"></a></dt>
+<dd><p>Mark one step as not executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step_name</strong> (<em>str</em>) – Step name to remove from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.get_data_from_cache">
+<span class="sig-name descname"><span class="pre">get_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.get_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Get cached data and its level by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em><em>, </em><em>optional</em>) – Value used when the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">data_level)</span></code> if key exists; otherwise <code class="docutils literal notranslate"><span class="pre">(default,</span> <span class="pre">None)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.list_cache">
+<span class="sig-name descname"><span class="pre">list_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.list_cache" title="Link to this definition"></a></dt>
+<dd><p>List available keys in cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current cache key names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_basin_shp">
+<span class="sig-name descname"><span class="pre">load_basin_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_basin_shp" title="Link to this definition"></a></dt>
+<dd><p>Load basin shapefile-like object from <code class="docutils literal notranslate"><span class="pre">loaddata_kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing key <code class="docutils literal notranslate"><span class="pre">&quot;basin_shp&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_grid_shp">
+<span class="sig-name descname"><span class="pre">load_grid_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_grid_shp" title="Link to this definition"></a></dt>
+<dd><p>Load grid shapefile-like object and grid resolution from inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing keys <code class="docutils literal notranslate"><span class="pre">&quot;grid_shp&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;grid_res&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_state">
+<span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><span class="pre">dataProcess_base</span></a></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.load_state" title="Link to this definition"></a></dt>
+<dd><p>Load processor state from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em>) – State file path.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset to a clean state when loading fails.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Reserved for compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current processor instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base">dataProcess_base</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Raised when loading fails and <code class="docutils literal notranslate"><span class="pre">reset_on_load_failure</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.loaddata_pipeline">
+<span class="sig-name descname"><span class="pre">loaddata_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaddata_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.loaddata_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Execute all registered steps in dependency order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path for persisting state after each successful step.</p></li>
+<li><p><strong>loaddata_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Runtime input dictionary consumed by individual step methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.merge_basin_data">
+<span class="sig-name descname"><span class="pre">merge_basin_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.merge_basin_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached basin-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Basin GeoDataFrame containing original geometry plus all joinable
+basin-level products in cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.merge_grid_data">
+<span class="sig-name descname"><span class="pre">merge_grid_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.merge_grid_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached grid-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Grid GeoDataFrame containing original grid fields and appended
+grid-level variables from cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_point_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot cached basin and grid geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – Existing figure object. A new one is created when omitted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Existing axes object. A new one is created when omitted.</p></li>
+<li><p><strong>grid_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp.boundary.plot</span></code>.</p></li>
+<li><p><strong>grid_shp_point_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp[&quot;point_geometry&quot;].plot</span></code>.</p></li>
+<li><p><strong>basin_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">basin_shp.plot</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(fig,</span> <span class="pre">ax)</span></code> with rendered basin/grid layout.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.register_processing_step">
+<span class="sig-name descname"><span class="pre">register_processing_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependencies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.register_processing_step" title="Link to this definition"></a></dt>
+<dd><p>Register one processing step in the execution graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_name</strong> (<em>str</em>) – Unique step identifier.</p></li>
+<li><p><strong>save_names</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Cache key(s) expected to be produced by <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>) – Step callable with zero arguments. It must return a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed
+by <code class="docutils literal notranslate"><span class="pre">save_names</span></code>.</p></li>
+<li><p><strong>dependencies</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Steps that must be executed before this step.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.save_data_to_cache">
+<span class="sig-name descname"><span class="pre">save_data_to_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.save_data_to_cache" title="Link to this definition"></a></dt>
+<dd><p>Save data into cache and optionally reopen its step state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key for the data object.</p></li>
+<li><p><strong>data</strong> (<em>Any</em>) – Data object to cache.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> after updating cache.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level1.save_state" title="Link to this definition"></a></dt>
+<dd><p>Serialize processor state to a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Output state path. If omitted, <code class="docutils literal notranslate"><span class="pre">self.load_path</span></code> is used when set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.dpc_subclass.</span></span><span class="sig-name descname"><span class="pre">dataProcess_VIC_level2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><code class="xref py py-class docutils literal notranslate"><span class="pre">dataProcess_base</span></code></a></p>
+<p>Load VIC level-2 meteorological forcing data.</p>
+<p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_forcing">
+<span class="sig-name descname"><span class="pre">load_forcing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level2.load_forcing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_forcing" title="Link to this definition"></a></dt>
+<dd><p>Load NLDAS forcing time series for each grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;NLDAS_forcing&quot;</span></code> mapping to updated grid data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.aggregate_grid_to_basins">
+<span class="sig-name descname"><span class="pre">aggregate_grid_to_basins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.aggregate_grid_to_basins" title="Link to this definition"></a></dt>
+<dd><p>Aggregate grid-level variables to basin-level summaries.</p>
+<p class="rubric">Notes</p>
+<p>This method is intentionally left for subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.clear_data_from_cache">
+<span class="sig-name descname"><span class="pre">clear_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.clear_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Clear cached entries by key list or clear all entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_names</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Keys to remove. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all cache entries are removed.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> while clearing keys.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.discard_step_name">
+<span class="sig-name descname"><span class="pre">discard_step_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.discard_step_name" title="Link to this definition"></a></dt>
+<dd><p>Mark one step as not executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step_name</strong> (<em>str</em>) – Step name to remove from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.get_data_from_cache">
+<span class="sig-name descname"><span class="pre">get_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.get_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Get cached data and its level by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em><em>, </em><em>optional</em>) – Value used when the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">data_level)</span></code> if key exists; otherwise <code class="docutils literal notranslate"><span class="pre">(default,</span> <span class="pre">None)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.list_cache">
+<span class="sig-name descname"><span class="pre">list_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.list_cache" title="Link to this definition"></a></dt>
+<dd><p>List available keys in cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current cache key names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_basin_shp">
+<span class="sig-name descname"><span class="pre">load_basin_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_basin_shp" title="Link to this definition"></a></dt>
+<dd><p>Load basin shapefile-like object from <code class="docutils literal notranslate"><span class="pre">loaddata_kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing key <code class="docutils literal notranslate"><span class="pre">&quot;basin_shp&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_grid_shp">
+<span class="sig-name descname"><span class="pre">load_grid_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_grid_shp" title="Link to this definition"></a></dt>
+<dd><p>Load grid shapefile-like object and grid resolution from inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing keys <code class="docutils literal notranslate"><span class="pre">&quot;grid_shp&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;grid_res&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_state">
+<span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><span class="pre">dataProcess_base</span></a></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.load_state" title="Link to this definition"></a></dt>
+<dd><p>Load processor state from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em>) – State file path.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset to a clean state when loading fails.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Reserved for compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current processor instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base">dataProcess_base</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Raised when loading fails and <code class="docutils literal notranslate"><span class="pre">reset_on_load_failure</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.loaddata_pipeline">
+<span class="sig-name descname"><span class="pre">loaddata_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaddata_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.loaddata_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Execute all registered steps in dependency order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path for persisting state after each successful step.</p></li>
+<li><p><strong>loaddata_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Runtime input dictionary consumed by individual step methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.merge_basin_data">
+<span class="sig-name descname"><span class="pre">merge_basin_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.merge_basin_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached basin-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Basin GeoDataFrame containing original geometry plus all joinable
+basin-level products in cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.merge_grid_data">
+<span class="sig-name descname"><span class="pre">merge_grid_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.merge_grid_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached grid-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Grid GeoDataFrame containing original grid fields and appended
+grid-level variables from cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_point_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot cached basin and grid geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – Existing figure object. A new one is created when omitted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Existing axes object. A new one is created when omitted.</p></li>
+<li><p><strong>grid_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp.boundary.plot</span></code>.</p></li>
+<li><p><strong>grid_shp_point_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp[&quot;point_geometry&quot;].plot</span></code>.</p></li>
+<li><p><strong>basin_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">basin_shp.plot</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(fig,</span> <span class="pre">ax)</span></code> with rendered basin/grid layout.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.register_processing_step">
+<span class="sig-name descname"><span class="pre">register_processing_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependencies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.register_processing_step" title="Link to this definition"></a></dt>
+<dd><p>Register one processing step in the execution graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_name</strong> (<em>str</em>) – Unique step identifier.</p></li>
+<li><p><strong>save_names</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Cache key(s) expected to be produced by <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>) – Step callable with zero arguments. It must return a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed
+by <code class="docutils literal notranslate"><span class="pre">save_names</span></code>.</p></li>
+<li><p><strong>dependencies</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Steps that must be executed before this step.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.save_data_to_cache">
+<span class="sig-name descname"><span class="pre">save_data_to_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.save_data_to_cache" title="Link to this definition"></a></dt>
+<dd><p>Save data into cache and optionally reopen its step state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key for the data object.</p></li>
+<li><p><strong>data</strong> (<em>Any</em>) – Data object to cache.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> after updating cache.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level2.save_state" title="Link to this definition"></a></dt>
+<dd><p>Serialize processor state to a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Output state path. If omitted, <code class="docutils literal notranslate"><span class="pre">self.load_path</span></code> is used when set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.dpc_func.dpc_subclass.</span></span><span class="sig-name descname"><span class="pre">dataProcess_VIC_level3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><code class="xref py py-class docutils literal notranslate"><span class="pre">dataProcess_base</span></code></a></p>
+<p>Load VIC level-3 basin-level observations and attributes.</p>
+<p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_grid_shp">
+<span class="sig-name descname"><span class="pre">load_grid_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level3.load_grid_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_grid_shp" title="Link to this definition"></a></dt>
+<dd><p>Disable grid loading for level-3 workflows.</p>
+<p>Level-3 processing operates at basin level only, so this method is a
+no-op override of the base implementation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the processing object and optionally restore saved state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a serialized processor state (pickle file). If provided, the
+state will be loaded immediately.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, reset to a clean state when state loading fails.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, loading errors raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Extra keyword arguments forwarded to <a class="reference internal" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_state" title="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.aggregate_grid_to_basins">
+<span class="sig-name descname"><span class="pre">aggregate_grid_to_basins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.aggregate_grid_to_basins" title="Link to this definition"></a></dt>
+<dd><p>Aggregate grid-level variables to basin-level summaries.</p>
+<p class="rubric">Notes</p>
+<p>This method is intentionally left for subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.clear_data_from_cache">
+<span class="sig-name descname"><span class="pre">clear_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.clear_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Clear cached entries by key list or clear all entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_names</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Keys to remove. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all cache entries are removed.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> while clearing keys.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.discard_step_name">
+<span class="sig-name descname"><span class="pre">discard_step_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.discard_step_name" title="Link to this definition"></a></dt>
+<dd><p>Mark one step as not executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step_name</strong> (<em>str</em>) – Step name to remove from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.get_data_from_cache">
+<span class="sig-name descname"><span class="pre">get_data_from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.get_data_from_cache" title="Link to this definition"></a></dt>
+<dd><p>Get cached data and its level by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key to retrieve.</p></li>
+<li><p><strong>default</strong> (<em>Any</em><em>, </em><em>optional</em>) – Value used when the key is not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">data_level)</span></code> if key exists; otherwise <code class="docutils literal notranslate"><span class="pre">(default,</span> <span class="pre">None)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.list_cache">
+<span class="sig-name descname"><span class="pre">list_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.list_cache" title="Link to this definition"></a></dt>
+<dd><p>List available keys in cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current cache key names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_basin_shp">
+<span class="sig-name descname"><span class="pre">load_basin_shp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_basin_shp" title="Link to this definition"></a></dt>
+<dd><p>Load basin shapefile-like object from <code class="docutils literal notranslate"><span class="pre">loaddata_kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing key <code class="docutils literal notranslate"><span class="pre">&quot;basin_shp&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_state">
+<span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_on_load_failure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base"><span class="pre">dataProcess_base</span></a></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_state" title="Link to this definition"></a></dt>
+<dd><p>Load processor state from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_path</strong> (<em>str</em>) – State file path.</p></li>
+<li><p><strong>reset_on_load_failure</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset to a clean state when loading fails.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Reserved for compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current processor instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="easy_vic_build.tools.dpc_func.dpc_base.html#easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base" title="easy_vic_build.tools.dpc_func.dpc_base.dataProcess_base">dataProcess_base</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – Raised when loading fails and <code class="docutils literal notranslate"><span class="pre">reset_on_load_failure</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_streamflow">
+<span class="sig-name descname"><span class="pre">load_streamflow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level3.load_streamflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_streamflow" title="Link to this definition"></a></dt>
+<dd><p>Load CAMELS streamflow for the configured basin and period.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;streamflow&quot;</span></code> mapping to basin-level data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.loaddata_pipeline">
+<span class="sig-name descname"><span class="pre">loaddata_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaddata_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.loaddata_pipeline" title="Link to this definition"></a></dt>
+<dd><p>Execute all registered steps in dependency order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path for persisting state after each successful step.</p></li>
+<li><p><strong>loaddata_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Runtime input dictionary consumed by individual step methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.merge_basin_data">
+<span class="sig-name descname"><span class="pre">merge_basin_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.merge_basin_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached basin-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Basin GeoDataFrame containing original geometry plus all joinable
+basin-level products in cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.merge_grid_data">
+<span class="sig-name descname"><span class="pre">merge_grid_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">geopandas.GeoDataFrame</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.merge_grid_data" title="Link to this definition"></a></dt>
+<dd><p>Merge all cached grid-level outputs into one GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Grid GeoDataFrame containing original grid fields and appended
+grid-level variables from cache.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_shp_point_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin_shp_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot cached basin and grid geometry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – Existing figure object. A new one is created when omitted.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Existing axes object. A new one is created when omitted.</p></li>
+<li><p><strong>grid_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp.boundary.plot</span></code>.</p></li>
+<li><p><strong>grid_shp_point_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">grid_shp[&quot;point_geometry&quot;].plot</span></code>.</p></li>
+<li><p><strong>basin_shp_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments passed to <code class="docutils literal notranslate"><span class="pre">basin_shp.plot</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(fig,</span> <span class="pre">ax)</span></code> with rendered basin/grid layout.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.register_processing_step">
+<span class="sig-name descname"><span class="pre">register_processing_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependencies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.register_processing_step" title="Link to this definition"></a></dt>
+<dd><p>Register one processing step in the execution graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_name</strong> (<em>str</em>) – Unique step identifier.</p></li>
+<li><p><strong>save_names</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Cache key(s) expected to be produced by <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>) – Step callable with zero arguments. It must return a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed
+by <code class="docutils literal notranslate"><span class="pre">save_names</span></code>.</p></li>
+<li><p><strong>dependencies</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Steps that must be executed before this step.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.save_data_to_cache">
+<span class="sig-name descname"><span class="pre">save_data_to_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.save_data_to_cache" title="Link to this definition"></a></dt>
+<dd><p>Save data into cache and optionally reopen its step state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_name</strong> (<em>str</em>) – Cache key for the data object.</p></li>
+<li><p><strong>data</strong> (<em>Any</em>) – Data object to cache.</p></li>
+<li><p><strong>data_level</strong> (<em>str</em>) – Data scope label, usually <code class="docutils literal notranslate"><span class="pre">&quot;basin_level&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;grid_level&quot;</span></code>.</p></li>
+<li><p><strong>step_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Step name to discard from <code class="docutils literal notranslate"><span class="pre">_executed_steps</span></code> after updating cache.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.save_state" title="Link to this definition"></a></dt>
+<dd><p>Serialize processor state to a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Output state path. If omitted, <code class="docutils literal notranslate"><span class="pre">self.load_path</span></code> is used when set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_basin_attribute">
+<span class="sig-name descname"><span class="pre">load_basin_attribute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/dpc_func/dpc_subclass.html#dataProcess_VIC_level3.load_basin_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.dpc_func.dpc_subclass.dataProcess_VIC_level3.load_basin_attribute" title="Link to this definition"></a></dt>
+<dd><p>Load CAMELS static attributes for the configured basin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with key <code class="docutils literal notranslate"><span class="pre">&quot;basin_attribute&quot;</span></code> mapping to basin-level
+attribute data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.dpc_func.dpc_base.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.dpc_func.dpc_base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.tools.dpc_func.extractData_func.html" class="btn btn-neutral float-right" title="easy_vic_build.tools.dpc_func.extractData_func" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

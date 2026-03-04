@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.utilities &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="easy_vic_build.warmup" href="easy_vic_build.warmup.html" />
+    <link rel="prev" title="easy_vic_build.tools.routing_func.river_network" href="easy_vic_build.tools.routing_func.river_network.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-package">Core Package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#tools-subpackages">Tools Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.calibrate_func.html">easy_vic_build.tools.calibrate_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.dpc_func.html">easy_vic_build.tools.dpc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.geo_func.html">easy_vic_build.tools.geo_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.hydroanalysis_func.html">easy_vic_build.tools.hydroanalysis_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.mete_func.html">easy_vic_build.tools.mete_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nc_func.html">easy_vic_build.tools.nc_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.nested_basin_func.html">easy_vic_build.tools.nested_basin_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.params_func.html">easy_vic_build.tools.params_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.plot_func.html">easy_vic_build.tools.plot_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.routing_func.html">easy_vic_build.tools.routing_func</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_vic_build.tools.decoractors.html">easy_vic_build.tools.decoractors</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">easy_vic_build.tools.utilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.check_and_mkdir"><code class="docutils literal notranslate"><span class="pre">check_and_mkdir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.remove_and_mkdir"><code class="docutils literal notranslate"><span class="pre">remove_and_mkdir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.remove_files"><code class="docutils literal notranslate"><span class="pre">remove_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.setHomePath"><code class="docutils literal notranslate"><span class="pre">setHomePath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.exportToCsv"><code class="docutils literal notranslate"><span class="pre">exportToCsv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.checkGaugeBasin"><code class="docutils literal notranslate"><span class="pre">checkGaugeBasin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_NLDAS_annual_prec"><code class="docutils literal notranslate"><span class="pre">read_NLDAS_annual_prec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_globalParam_reference"><code class="docutils literal notranslate"><span class="pre">read_globalParam_reference()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_rvic_param_cfg_file_reference"><code class="docutils literal notranslate"><span class="pre">read_rvic_param_cfg_file_reference()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_rvic_conv_cfg_file_reference"><code class="docutils literal notranslate"><span class="pre">read_rvic_conv_cfg_file_reference()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_veg_type_attributes_umd"><code class="docutils literal notranslate"><span class="pre">read_veg_type_attributes_umd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_NLDAS_Veg_monthly"><code class="docutils literal notranslate"><span class="pre">read_NLDAS_Veg_monthly()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_veg_param_json"><code class="docutils literal notranslate"><span class="pre">read_veg_param_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readHCDNGrids"><code class="docutils literal notranslate"><span class="pre">readHCDNGrids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readHCDNBasins"><code class="docutils literal notranslate"><span class="pre">readHCDNBasins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_one_HCDN_basin_shp"><code class="docutils literal notranslate"><span class="pre">read_one_HCDN_basin_shp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readdpc"><code class="docutils literal notranslate"><span class="pre">readdpc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readDomain"><code class="docutils literal notranslate"><span class="pre">readDomain()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readParam"><code class="docutils literal notranslate"><span class="pre">readParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.clearParam"><code class="docutils literal notranslate"><span class="pre">clearParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readRVICParam"><code class="docutils literal notranslate"><span class="pre">readRVICParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.read_cfg_to_dict"><code class="docutils literal notranslate"><span class="pre">read_cfg_to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readGlobalParam"><code class="docutils literal notranslate"><span class="pre">readGlobalParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readCalibrateCp"><code class="docutils literal notranslate"><span class="pre">readCalibrateCp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#easy_vic_build.tools.utilities.readBasinMap"><code class="docutils literal notranslate"><span class="pre">readBasinMap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.html">easy_vic_build</a></li>
+          <li class="breadcrumb-item"><a href="easy_vic_build.tools.html">easy_vic_build.tools</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/XudongZhengSteven/easy_vic_build/blob/main/docs/source/_autosummary/easy_vic_build.tools.utilities.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-easy_vic_build.tools.utilities">
+<span id="easy-vic-build-tools-utilities"></span><h1>easy_vic_build.tools.utilities<a class="headerlink" href="#module-easy_vic_build.tools.utilities" title="Link to this heading"></a></h1>
+<p>General utility functions for path handling, resource loading, dataset I/O, and so on</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.checkGaugeBasin" title="easy_vic_build.tools.utilities.checkGaugeBasin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">checkGaugeBasin</span></code></a>(basinShp, usgs_streamflow, ...)</p></td>
+<td><p>Compares the basin shapefile data with the USGS streamflow, BasinAttribute, and forcingDaymet gauge attributes to check for mismatches.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.check_and_mkdir" title="easy_vic_build.tools.utilities.check_and_mkdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_and_mkdir</span></code></a>(dir)</p></td>
+<td><p>Create a directory if it does not exist.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.clearParam" title="easy_vic_build.tools.utilities.clearParam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clearParam</span></code></a>(evb_dir)</p></td>
+<td><p>Deletes the parameter NetCDF files from disk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.exportToCsv" title="easy_vic_build.tools.utilities.exportToCsv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exportToCsv</span></code></a>(basin_shp, fpath_dir)</p></td>
+<td><p>Exports data from the provided basin shapefile to CSV files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readBasinMap" title="easy_vic_build.tools.utilities.readBasinMap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readBasinMap</span></code></a>(evb_dir)</p></td>
+<td><p>Reads the basin map shapefile.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readCalibrateCp" title="easy_vic_build.tools.utilities.readCalibrateCp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readCalibrateCp</span></code></a>(evb_dir)</p></td>
+<td><p>Reads the calibration control points from a pickle file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readDomain" title="easy_vic_build.tools.utilities.readDomain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readDomain</span></code></a>(evb_dir[, name])</p></td>
+<td><p>Reads the domain data from a NetCDF file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readGlobalParam" title="easy_vic_build.tools.utilities.readGlobalParam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readGlobalParam</span></code></a>(evb_dir)</p></td>
+<td><p>Reads the global parameters from a configuration file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readHCDNBasins" title="easy_vic_build.tools.utilities.readHCDNBasins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readHCDNBasins</span></code></a>([home])</p></td>
+<td><p>Read HCDN basin polygons and add <code class="docutils literal notranslate"><span class="pre">AREA_km2</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readHCDNGrids" title="easy_vic_build.tools.utilities.readHCDNGrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readHCDNGrids</span></code></a>([home])</p></td>
+<td><p>Reads HCDN grid data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readParam" title="easy_vic_build.tools.utilities.readParam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readParam</span></code></a>(evb_dir[, mode])</p></td>
+<td><p>Reads parameter data from NetCDF files at levels 0 and 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readRVICParam" title="easy_vic_build.tools.utilities.readRVICParam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readRVICParam</span></code></a>(evb_dir)</p></td>
+<td><p>Reads the RVIC parameter files from disk.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_NLDAS_Veg_monthly" title="easy_vic_build.tools.utilities.read_NLDAS_Veg_monthly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_NLDAS_Veg_monthly</span></code></a>()</p></td>
+<td><p>Reads monthly vegetation data from NLDAS.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_NLDAS_annual_prec" title="easy_vic_build.tools.utilities.read_NLDAS_annual_prec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_NLDAS_annual_prec</span></code></a>()</p></td>
+<td><p>Reads the NLDAS annual precipitation data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_cfg_to_dict" title="easy_vic_build.tools.utilities.read_cfg_to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_cfg_to_dict</span></code></a>(cfg_file_path)</p></td>
+<td><p>Reads a configuration file and converts it to a dictionary.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_globalParam_reference" title="easy_vic_build.tools.utilities.read_globalParam_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_globalParam_reference</span></code></a>()</p></td>
+<td><p>Reads the global parameter reference file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_one_HCDN_basin_shp" title="easy_vic_build.tools.utilities.read_one_HCDN_basin_shp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_one_HCDN_basin_shp</span></code></a>(basin_index[, home])</p></td>
+<td><p>Reads a specific basin shapefile from the HCDN dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_rvic_conv_cfg_file_reference" title="easy_vic_build.tools.utilities.read_rvic_conv_cfg_file_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_rvic_conv_cfg_file_reference</span></code></a>()</p></td>
+<td><p>Reads the RVIC convolution configuration reference file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_rvic_param_cfg_file_reference" title="easy_vic_build.tools.utilities.read_rvic_param_cfg_file_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_rvic_param_cfg_file_reference</span></code></a>()</p></td>
+<td><p>Reads the RVIC parameter configuration reference file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_veg_param_json" title="easy_vic_build.tools.utilities.read_veg_param_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_veg_param_json</span></code></a>()</p></td>
+<td><p>Reads updated vegetation attributes from a JSON file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.read_veg_type_attributes_umd" title="easy_vic_build.tools.utilities.read_veg_type_attributes_umd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_veg_type_attributes_umd</span></code></a>()</p></td>
+<td><p>Reads vegetation type attributes from UMD.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.readdpc" title="easy_vic_build.tools.utilities.readdpc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readdpc</span></code></a>(dpc_fpath, dpc_class)</p></td>
+<td><p>Instantiate a DPC object from a serialized path.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.remove_and_mkdir" title="easy_vic_build.tools.utilities.remove_and_mkdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_and_mkdir</span></code></a>(dir)</p></td>
+<td><p>Remove a directory and recreate it as an empty directory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.remove_files" title="easy_vic_build.tools.utilities.remove_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_files</span></code></a>(dir)</p></td>
+<td><p>Remove files in a directory while keeping subdirectories.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#easy_vic_build.tools.utilities.setHomePath" title="easy_vic_build.tools.utilities.setHomePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setHomePath</span></code></a>([root])</p></td>
+<td><p>Sets the home path for the CAMELS dataset.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.check_and_mkdir">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">check_and_mkdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#check_and_mkdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.check_and_mkdir" title="Link to this definition"></a></dt>
+<dd><p>Create a directory if it does not exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dir</strong> (<em>str</em>) – The directory path to check and create.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.remove_and_mkdir">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">remove_and_mkdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#remove_and_mkdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.remove_and_mkdir" title="Link to this definition"></a></dt>
+<dd><p>Remove a directory and recreate it as an empty directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dir</strong> (<em>str</em>) – The directory path to remove and create.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.remove_files">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">remove_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#remove_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.remove_files" title="Link to this definition"></a></dt>
+<dd><p>Remove files in a directory while keeping subdirectories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dir</strong> (<em>str</em>) – The directory from which files will be removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.setHomePath">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">setHomePath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E:'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#setHomePath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.setHomePath" title="Link to this definition"></a></dt>
+<dd><p>Sets the home path for the CAMELS dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>root</strong> (<em>str</em><em>, </em><em>optional</em>) – The root directory for the CAMELS dataset, default is “E:”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>root</strong> (<em>str</em>) – The root directory path.</p></li>
+<li><p><strong>home</strong> (<em>str</em>) – The home directory path.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.exportToCsv">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">exportToCsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fpath_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#exportToCsv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.exportToCsv" title="Link to this definition"></a></dt>
+<dd><p>Exports data from the provided basin shapefile to CSV files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_shp</strong> (<cite>geopandas.GeoDataFrame</cite>) – The basin shapefile containing the required data.</p></li>
+<li><p><strong>fpath_dir</strong> (<em>str</em>) – The directory path to save the exported CSV files.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.checkGaugeBasin">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">checkGaugeBasin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basinShp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">usgs_streamflow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BasinAttribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcingDaymetGaugeAttributes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#checkGaugeBasin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.checkGaugeBasin" title="Link to this definition"></a></dt>
+<dd><p>Compares the basin shapefile data with the USGS streamflow, BasinAttribute,
+and forcingDaymet gauge attributes to check for mismatches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basinShp</strong> (<cite>geopandas.GeoDataFrame</cite>) – The basin shapefile containing basin IDs.</p></li>
+<li><p><strong>usgs_streamflow</strong> (<em>list</em>) – A list of USGS streamflow data.</p></li>
+<li><p><strong>BasinAttribute</strong> (<cite>pandas.DataFrame</cite>) – A dataframe containing basin attributes.</p></li>
+<li><p><strong>forcingDaymetGaugeAttributes</strong> (<em>list</em>) – A list of forcing Daymet gauge attributes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_NLDAS_annual_prec">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_NLDAS_annual_prec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_NLDAS_annual_prec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_NLDAS_annual_prec" title="Link to this definition"></a></dt>
+<dd><p>Reads the NLDAS annual precipitation data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>data_annual_P</strong> (<cite>np.ndarray</cite>) – The annual precipitation data.</p></li>
+<li><p><strong>annual_P_lon</strong> (<cite>np.ndarray</cite>) – The longitude data.</p></li>
+<li><p><strong>annual_P_lat</strong> (<cite>np.ndarray</cite>) – The latitude data.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_globalParam_reference">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_globalParam_reference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_globalParam_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_globalParam_reference" title="Link to this definition"></a></dt>
+<dd><p>Reads the global parameter reference file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>globalParam</strong> – The global parameter object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>GlobalParamParser</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_rvic_param_cfg_file_reference">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_rvic_param_cfg_file_reference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_rvic_param_cfg_file_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_rvic_param_cfg_file_reference" title="Link to this definition"></a></dt>
+<dd><p>Reads the RVIC parameter configuration reference file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg_file</strong> – The configuration file parser object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>ConfigParser</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_rvic_conv_cfg_file_reference">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_rvic_conv_cfg_file_reference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_rvic_conv_cfg_file_reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_rvic_conv_cfg_file_reference" title="Link to this definition"></a></dt>
+<dd><p>Reads the RVIC convolution configuration reference file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg_file</strong> – The configuration file parser object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>ConfigParser</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_veg_type_attributes_umd">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_veg_type_attributes_umd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_veg_type_attributes_umd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_veg_type_attributes_umd" title="Link to this definition"></a></dt>
+<dd><p>Reads vegetation type attributes from UMD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>veg_params_json</strong> – A dictionary of vegetation parameters.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_NLDAS_Veg_monthly">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_NLDAS_Veg_monthly</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_NLDAS_Veg_monthly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_NLDAS_Veg_monthly" title="Link to this definition"></a></dt>
+<dd><p>Reads monthly vegetation data from NLDAS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>NLDAS_Veg_monthly_veg_rough</strong> (<cite>pandas.DataFrame</cite>) – A dataframe containing vegetation roughness data.</p></li>
+<li><p><strong>NLDAS_Veg_monthly_veg_displacement</strong> (<cite>pandas.DataFrame</cite>) – A dataframe containing vegetation displacement data.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_veg_param_json">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_veg_param_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_veg_param_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_veg_param_json" title="Link to this definition"></a></dt>
+<dd><p>Reads updated vegetation attributes from a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>veg_params_json</strong> – A dictionary of updated vegetation parameters.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readHCDNGrids">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readHCDNGrids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E:\\data\\hydrometeorology\\CAMELS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readHCDNGrids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readHCDNGrids" title="Link to this definition"></a></dt>
+<dd><p>Reads HCDN grid data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>home</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory containing the grid data, default is “E:datahydrometeorologyCAMELS”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>grid_shp</strong> – The grid shapefile data with added point geometry.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>geopandas.GeoDataFrame</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readHCDNBasins">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readHCDNBasins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E:\\data\\hydrometeorology\\CAMELS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readHCDNBasins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readHCDNBasins" title="Link to this definition"></a></dt>
+<dd><p>Read HCDN basin polygons and add <code class="docutils literal notranslate"><span class="pre">AREA_km2</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>home</strong> (<em>str</em><em>, </em><em>optional</em>) – The root directory where the CAMELS dataset is stored, by default “E:datahydrometeorologyCAMELS”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HCDN_shp</strong> – Basin shapefile with area converted from <code class="docutils literal notranslate"><span class="pre">m2</span></code> to <code class="docutils literal notranslate"><span class="pre">km2</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geopandas.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_one_HCDN_basin_shp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_one_HCDN_basin_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'E:\\data\\hydrometeorology\\CAMELS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_one_HCDN_basin_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_one_HCDN_basin_shp" title="Link to this definition"></a></dt>
+<dd><p>Reads a specific basin shapefile from the HCDN dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basin_index</strong> (<em>int</em>) – The index of the basin to read from the HCDN shapefile.</p></li>
+<li><p><strong>home</strong> (<em>str</em><em>, </em><em>optional</em>) – The root directory where the CAMELS dataset is stored, by default “E:datahydrometeorologyCAMELS”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>basin_shp_all</strong> (<cite>geopandas.GeoDataFrame</cite>) – The full HCDN shapefile GeoDataFrame.</p></li>
+<li><p><strong>basin_shp</strong> (<cite>geopandas.GeoDataFrame</cite>) – The specific basin’s GeoDataFrame.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readdpc">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readdpc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dpc_fpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpc_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readdpc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readdpc" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a DPC object from a serialized path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dpc_fpath</strong> (<em>str</em>) – Path to DPC serialized data.</p></li>
+<li><p><strong>dpc_class</strong> (<em>type</em>) – DPC class constructor that accepts <code class="docutils literal notranslate"><span class="pre">dpc_fpath</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DPC instance created by <code class="docutils literal notranslate"><span class="pre">dpc_class</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readDomain">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readDomain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readDomain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readDomain" title="Link to this definition"></a></dt>
+<dd><p>Reads the domain data from a NetCDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Optional suffix; if provided, read <code class="docutils literal notranslate"><span class="pre">domain_&lt;name&gt;.nc</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>domain_dataset</strong> – The domain dataset loaded from the NetCDF file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>netCDF4.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readParam">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readParam" title="Link to this definition"></a></dt>
+<dd><p>Reads parameter data from NetCDF files at levels 0 and 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode to open the files, by default “r”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>params_dataset_level0</strong> (<cite>netCDF4.Dataset</cite>) – The parameter dataset at level 0.</p></li>
+<li><p><strong>params_dataset_level1</strong> (<cite>netCDF4.Dataset</cite>) – The parameter dataset at level 1.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.clearParam">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">clearParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#clearParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.clearParam" title="Link to this definition"></a></dt>
+<dd><p>Deletes the parameter NetCDF files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readRVICParam">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readRVICParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readRVICParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readRVICParam" title="Link to this definition"></a></dt>
+<dd><p>Reads the RVIC parameter files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager. Also expects <code class="docutils literal notranslate"><span class="pre">evb_dir.cfg_file_path</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>flow_direction_dataset</strong> (<cite>netCDF4.Dataset</cite>) – The flow direction dataset.</p></li>
+<li><p><strong>pourpoint_file</strong> (<cite>pandas.DataFrame</cite>) – The pourpoint file data.</p></li>
+<li><p><strong>uhbox_file</strong> (<cite>pandas.DataFrame</cite>) – The unit hydrograph box file data.</p></li>
+<li><p><strong>cfg_file</strong> (<cite>ConfigParser</cite>) – The configuration file parser object.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.read_cfg_to_dict">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">read_cfg_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#read_cfg_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.read_cfg_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Reads a configuration file and converts it to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cfg_file_path</strong> (<em>str</em>) – The path to the configuration file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cfg_file_dict</strong> – A dictionary containing the configuration parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readGlobalParam">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readGlobalParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readGlobalParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readGlobalParam" title="Link to this definition"></a></dt>
+<dd><p>Reads the global parameters from a configuration file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>globalParam</strong> – A global parameter object loaded from the specified file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>GlobalParamParser</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readCalibrateCp">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readCalibrateCp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readCalibrateCp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readCalibrateCp" title="Link to this definition"></a></dt>
+<dd><p>Reads the calibration control points from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><strong>state</strong> –</p>
+<dl class="simple">
+<dt>A dictionary containing the state information from the calibration file. The keys of the dictionary are:</dt><dd><ul class="simple">
+<li><p>current_generation</p></li>
+<li><p>initial_population</p></li>
+<li><p>population</p></li>
+<li><p>history</p></li>
+<li><p>front_fitness</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="easy_vic_build.tools.utilities.readBasinMap">
+<span class="sig-prename descclassname"><span class="pre">easy_vic_build.tools.utilities.</span></span><span class="sig-name descname"><span class="pre">readBasinMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evb_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/easy_vic_build/tools/utilities.html#readBasinMap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#easy_vic_build.tools.utilities.readBasinMap" title="Link to this definition"></a></dt>
+<dd><p>Reads the basin map shapefile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>evb_dir</strong> (<a class="reference internal" href="easy_vic_build.Evb_dir_class.html#easy_vic_build.Evb_dir_class.Evb_dir" title="easy_vic_build.Evb_dir_class.Evb_dir"><em>Evb_dir</em></a>) – Case directory manager.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>stream_gdf</strong> – The stream basin shapefile data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>geopandas.GeoDataFrame</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="easy_vic_build.tools.routing_func.river_network.html" class="btn btn-neutral float-left" title="easy_vic_build.tools.routing_func.river_network" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="easy_vic_build.warmup.html" class="btn btn-neutral float-right" title="easy_vic_build.warmup" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

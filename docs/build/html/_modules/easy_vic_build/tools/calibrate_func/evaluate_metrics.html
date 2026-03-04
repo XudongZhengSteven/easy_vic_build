@@ -1,0 +1,925 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.evaluate_metrics &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.evaluate_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.calibrate_func.evaluate_metrics</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Evaluation metrics for continuous, categorical, and signature analysis.</span>
+
+<span class="sd">The module provides:</span>
+
+<span class="sd">- :class:`EvaluationMetric` for classic scalar and spatial skill scores;</span>
+<span class="sd">- :class:`CategoricalEvaluationMetric` for event-based contingency metrics;</span>
+<span class="sd">- :class:`SignatureEvaluationMetric` for flow-duration-curve based signatures.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">pearsonr</span>
+<span class="kn">from</span> <span class="nn">eofs.standard</span> <span class="kn">import</span> <span class="n">Eof</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cosine</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="EvaluationMetric">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric">[docs]</a>
+<span class="k">class</span> <span class="nc">EvaluationMetric</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Continuous-value evaluation metrics.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EvaluationMetric.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the metric class with simulated and observed values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim : array-like</span>
+<span class="sd">            Simulated values.</span>
+<span class="sd">        obs : array-like</span>
+<span class="sd">            Observed values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.MSE">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.MSE">[docs]</a>
+    <span class="k">def</span> <span class="nf">MSE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Mean Squared Error (MSE) between the simulated and observed values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated MSE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mse</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mse</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.RMSE">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.RMSE">[docs]</a>
+    <span class="k">def</span> <span class="nf">RMSE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Root Mean Squared Error (RMSE) between the simulated and observed values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated RMSE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rmse</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="k">return</span> <span class="n">rmse</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.RRMSE">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.RRMSE">[docs]</a>
+    <span class="k">def</span> <span class="nf">RRMSE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Relative Root Mean Squared Error (RRMSE) between the simulated and observed values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated RRMSE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rrmse</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">rrmse</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.R">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.R">[docs]</a>
+    <span class="k">def</span> <span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Pearson correlation coefficient (R) and its significance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        confidence : float, optional</span>
+<span class="sd">            The confidence level to determine the significance, by default 0.95.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the correlation coefficient (r), p-value, and significance:</span>
+<span class="sd">            - r : float</span>
+<span class="sd">                The Pearson correlation coefficient.</span>
+<span class="sd">            - p_value : float</span>
+<span class="sd">                The p-value corresponding to the correlation coefficient.</span>
+<span class="sd">            - significance : int</span>
+<span class="sd">                A value indicating the significance of the correlation:</span>
+<span class="sd">                1 for positive correlation, -1 for negative, and 0 for no significant correlation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+        <span class="c1"># or np.corrcoef(self.sim, self.obs)[0, 1]</span>
+        <span class="n">significance</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">confidence</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">significance</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">significance</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">significance</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.R2">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.R2">[docs]</a>
+    <span class="k">def</span> <span class="nf">R2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the R-squared (R2) value of the linear fit between the simulated and observed values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated R2 value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="k">return</span> <span class="n">r2</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.NSE">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.NSE">[docs]</a>
+    <span class="k">def</span> <span class="nf">NSE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Nash-Sutcliffe Efficiency (NSE) coefficient.</span>
+
+<span class="sd">        The NSE measures how well the simulated values match the observed values,</span>
+<span class="sd">        with higher values indicating better performance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated NSE value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nse</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">nse</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.Bias">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.Bias">[docs]</a>
+    <span class="k">def</span> <span class="nf">Bias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the bias between the simulated and observed values.</span>
+
+<span class="sd">        The bias is the mean difference between the observed and simulated values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated bias.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">bias</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.PBias">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.PBias">[docs]</a>
+    <span class="k">def</span> <span class="nf">PBias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Percent Bias (PBias) between the simulated and observed values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated PBias.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pbias</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="k">return</span> <span class="n">pbias</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.KGE">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.KGE">[docs]</a>
+    <span class="k">def</span> <span class="nf">KGE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the Kling-Gupta Efficiency (KGE) metric between the simulated and observed values.</span>
+
+<span class="sd">        The KGE metric is based on the correlation coefficient (r), the ratio of means (beta),</span>
+<span class="sd">        and the ratio of standard deviations (gamma).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated KGE value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+
+        <span class="n">kge</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        
+        <span class="k">if</span> <span class="n">components</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">kge</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">kge</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.KGE_m">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.KGE_m">[docs]</a>
+    <span class="k">def</span> <span class="nf">KGE_m</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the modified Kling-Gupta Efficiency (KGE-m) metric between the simulated and observed values.</span>
+
+<span class="sd">        The KGE-m metric is similar to KGE but adjusts the gamma term to account for</span>
+<span class="sd">        the relative standard deviations of the observed and simulated values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated KGE-m value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">kge</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        
+        <span class="k">if</span> <span class="n">components</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">kge</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">kge</span></div>
+
+    
+<div class="viewcode-block" id="EvaluationMetric.ESS">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.ESS">[docs]</a>
+    <span class="k">def</span> <span class="nf">ESS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_modes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute EOF-based error similarity score for spatiotemporal fields.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lats : array-like, optional</span>
+<span class="sd">            Latitude values used to build cosine-latitude weights.</span>
+<span class="sd">        n_modes : int, optional</span>
+<span class="sd">            Number of EOF modes used in the score.</span>
+<span class="sd">        remove_mean : bool, optional</span>
+<span class="sd">            Whether to remove the temporal mean before EOF decomposition.</span>
+<span class="sd">        mask : ndarray of bool, optional</span>
+<span class="sd">            Spatial mask of shape ``(nlat, nlon)``. Masked cells are excluded.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Score series with length ``ntime``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;sim and obs must have identical dimensions&quot;</span>
+        
+        <span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">shape</span>
+        
+        <span class="c1"># reshape</span>
+        <span class="n">sim_2d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span> <span class="o">*</span> <span class="n">nlon</span><span class="p">)</span>
+        <span class="n">obs_2d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span> <span class="o">*</span> <span class="n">nlon</span><span class="p">)</span>
+        
+        <span class="c1"># mask</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span><span class="p">),</span> <span class="s2">&quot;mask shape must match spatial dimensions&quot;</span>
+            <span class="n">flat_mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">sim_2d</span> <span class="o">=</span> <span class="n">sim_2d</span><span class="p">[:,</span> <span class="n">flat_mask</span><span class="p">]</span>
+            <span class="n">obs_2d</span> <span class="o">=</span> <span class="n">obs_2d</span><span class="p">[:,</span> <span class="n">flat_mask</span><span class="p">]</span>
+            
+        <span class="c1"># combine sim and obs array</span>
+        <span class="n">combine_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sim_2d</span><span class="p">,</span> <span class="n">obs_2d</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># Compute anomalies by removing the time-mean</span>
+        <span class="k">if</span> <span class="n">remove_mean</span><span class="p">:</span>
+            <span class="n">combine_2d</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">combine_2d</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># latitude weights are applied before the computation of EOFs</span>
+        <span class="k">if</span> <span class="n">lats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coslat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">lats</span><span class="p">))</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+            <span class="n">wgts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coslat</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Also apply mask to weights</span>
+                <span class="n">wgts</span> <span class="o">=</span> <span class="n">wgts</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">flat_mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wgts</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="c1"># solver</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">Eof</span><span class="p">(</span><span class="n">combine_2d</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">wgts</span><span class="p">)</span>
+        
+        <span class="c1"># get values</span>
+        <span class="n">pcs</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">pcs</span><span class="p">(</span><span class="n">npcs</span><span class="o">=</span><span class="n">n_modes</span><span class="p">)</span>
+        <span class="n">eigvals</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">()[:</span><span class="n">n_modes</span><span class="p">]</span>
+        <span class="n">varfrac</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">varianceFraction</span><span class="p">(</span><span class="n">neigs</span><span class="o">=</span><span class="n">n_modes</span><span class="p">)</span>
+        
+        <span class="n">loadings</span> <span class="o">=</span> <span class="n">pcs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigvals</span><span class="p">)</span>  <span class="c1"># shape: (2*ntime, n_modes)</span>
+        
+        <span class="c1"># get ess</span>
+        <span class="n">obs_loadings</span> <span class="o">=</span> <span class="n">loadings</span><span class="p">[:</span><span class="n">ntime</span><span class="p">]</span>        <span class="c1"># shape: (ntime, n_modes)</span>
+        <span class="n">sim_loadings</span> <span class="o">=</span> <span class="n">loadings</span><span class="p">[</span><span class="n">ntime</span><span class="p">:]</span>  <span class="c1"># shape: (ntime, n_modes)</span>
+        
+        <span class="n">diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">obs_loadings</span> <span class="o">-</span> <span class="n">sim_loadings</span><span class="p">)</span>  <span class="c1"># shape: (n_days, n_modes)</span>
+        
+        <span class="n">ess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diffs</span> <span class="o">*</span> <span class="n">varfrac</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape: (ntime,)</span>
+        
+        <span class="k">return</span> <span class="n">ess</span></div>
+
+
+<div class="viewcode-block" id="EvaluationMetric.spatialPCC">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.EvaluationMetric.spatialPCC">[docs]</a>
+    <span class="k">def</span> <span class="nf">spatialPCC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute spatial Pearson correlation for each time step.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mask : ndarray of bool, optional</span>
+<span class="sd">            Spatial mask of shape ``(nlat, nlon)``. ``True`` cells are ignored.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            One correlation value per time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;sim and obs must have identical dimensions&quot;</span>        
+
+        <span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">shape</span>       
+
+        <span class="c1"># reshape</span>
+        <span class="n">sim_2d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span> <span class="o">*</span> <span class="n">nlon</span><span class="p">)</span>
+        <span class="n">obs_2d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span> <span class="o">*</span> <span class="n">nlon</span><span class="p">)</span>        
+
+        <span class="c1"># mask</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span><span class="p">),</span> <span class="s2">&quot;mask shape must match spatial dimensions&quot;</span>
+            <span class="n">flat_mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">sim_2d</span> <span class="o">=</span> <span class="n">sim_2d</span><span class="p">[:,</span> <span class="o">~</span><span class="n">flat_mask</span><span class="p">]</span>
+            <span class="n">obs_2d</span> <span class="o">=</span> <span class="n">obs_2d</span><span class="p">[:,</span> <span class="o">~</span><span class="n">flat_mask</span><span class="p">]</span>
+            
+        <span class="n">pcc_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ntime</span><span class="p">):</span>
+            <span class="n">sim_vec</span> <span class="o">=</span> <span class="n">sim_2d</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">obs_vec</span> <span class="o">=</span> <span class="n">obs_2d</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="n">valid_idx</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sim_vec</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">obs_vec</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">pcc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">sim_vec</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">],</span> <span class="n">obs_vec</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">pcc_array</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pcc_array</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">return</span> <span class="n">pcc_array</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CategoricalEvaluationMetric">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric">[docs]</a>
+<span class="k">class</span> <span class="nc">CategoricalEvaluationMetric</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Event-based verification metrics from a contingency table.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CategoricalEvaluationMetric.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the metric class with simulated and observed values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim : array-like</span>
+<span class="sd">            Simulated values.</span>
+<span class="sd">        obs : array-like</span>
+<span class="sd">            Observed values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_bin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_bin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CN</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="CategoricalEvaluationMetric.binarize">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.binarize">[docs]</a>
+    <span class="k">def</span> <span class="nf">binarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert continuous values to binary events based on threshold</span>
+<span class="sd">        Values &gt; threshold are considered &#39;event occurred&#39; (1), else &#39;no event&#39; (0).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        threshold : float</span>
+<span class="sd">            Threshold for event occurrence.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_bin</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_bin</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_contingency</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_compute_contingency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute Hit, Miss, False Alarm, Correct Negative counts &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_bin</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_bin</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_bin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_bin</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_bin</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_bin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_bin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_bin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+        
+<div class="viewcode-block" id="CategoricalEvaluationMetric.POD">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.POD">[docs]</a>
+    <span class="k">def</span> <span class="nf">POD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; POD (Probability of Detection) &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CategoricalEvaluationMetric.FAR">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.FAR">[docs]</a>
+    <span class="k">def</span> <span class="nf">FAR</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; FAR (False Alarm Ratio) &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CategoricalEvaluationMetric.CSI">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.CSI">[docs]</a>
+    <span class="k">def</span> <span class="nf">CSI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; CSI (Critical Success Index) &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CategoricalEvaluationMetric.HSS">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.HSS">[docs]</a>
+    <span class="k">def</span> <span class="nf">HSS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; HSS (Heidke Skill Score) &quot;&quot;&quot;</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">CN</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">CN</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">CN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span> <span class="k">if</span> <span class="n">den</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="CategoricalEvaluationMetric.ETS">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.CategoricalEvaluationMetric.ETS">[docs]</a>
+    <span class="k">def</span> <span class="nf">ETS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; ETS (Equitable Threat Score) &quot;&quot;&quot;</span>
+        <span class="n">H_random</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">CN</span><span class="p">)</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">-</span> <span class="n">H_random</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_random</span><span class="p">)</span> <span class="o">/</span> <span class="n">den</span> <span class="k">if</span> <span class="n">den</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+</div>
+
+        
+
+<div class="viewcode-block" id="SignatureEvaluationMetric">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric">[docs]</a>
+<span class="k">class</span> <span class="nc">SignatureEvaluationMetric</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hydrologic signature metrics based on discharge series.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SignatureEvaluationMetric.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the metric class with simulated and observed values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim : array-like</span>
+<span class="sd">            Simulated values.</span>
+<span class="sd">        obs : array-like</span>
+<span class="sd">            Observed values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="SignatureEvaluationMetric.BiasRR">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasRR">[docs]</a>
+    <span class="k">def</span> <span class="nf">BiasRR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precip</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute runoff-ratio bias in percent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        precip : array-like</span>
+<span class="sd">            Precipitation series aligned with ``sim`` and ``obs``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Relative runoff-ratio bias in percent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rr_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">precip</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">rr_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">precip</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">rr_sim</span> <span class="o">-</span> <span class="n">rr_obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">rr_obs</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+        
+<div class="viewcode-block" id="SignatureEvaluationMetric.BiasFHV">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFHV">[docs]</a>
+    <span class="k">def</span> <span class="nf">BiasFHV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_high</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        High-flow volume bias (FHV), computed from the upper segment</span>
+<span class="sd">        of the flow duration curve.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sim_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_sorted</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="n">q_high</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">sim_sorted</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">obs_sorted</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">obs_sorted</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+    
+<div class="viewcode-block" id="SignatureEvaluationMetric.BiasFLV">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFLV">[docs]</a>
+    <span class="k">def</span> <span class="nf">BiasFLV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_low</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Low-flow volume bias (FLV), computed in log space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        q_low : float, optional (default=0.7)</span>
+<span class="sd">            Quantile threshold defining low flows on the FDC</span>
+<span class="sd">            (e.g., q_low=0.7 corresponds to the lowest 30% flows).</span>
+<span class="sd">        eps : float, optional</span>
+<span class="sd">            Small constant added to avoid log(0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Relative bias of low flows in log space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># sort flows in descending order (FDC)</span>
+        <span class="n">obs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sim_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_sorted</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">q_low</span>
+
+        <span class="n">log_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">obs_sorted</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="n">log_sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sim_sorted</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+        
+        <span class="n">log_obs_min</span> <span class="o">=</span> <span class="n">log_obs</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">log_sim_min</span> <span class="o">=</span> <span class="n">log_sim</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        
+        <span class="n">obs_area</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_obs</span> <span class="o">-</span> <span class="n">log_obs_min</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">sim_area</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_sim</span> <span class="o">-</span> <span class="n">log_sim_min</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">sim_area</span> <span class="o">-</span> <span class="n">obs_area</span><span class="p">)</span> <span class="o">/</span> <span class="n">obs_area</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+    
+<div class="viewcode-block" id="SignatureEvaluationMetric.BiasFMS">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFMS">[docs]</a>
+    <span class="k">def</span> <span class="nf">BiasFMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Flow duration curve mid-segment slope bias (BiasFMS).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p1, p2 : float</span>
+<span class="sd">            Exceedance probability bounds defining the mid-segment</span>
+<span class="sd">            of the FDC (default: 0.2-0.7).</span>
+<span class="sd">        eps : float</span>
+<span class="sd">            Small constant to avoid log(0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Relative bias of the FDC mid-segment slope.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sim_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_sorted</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_slope</span><span class="p">(</span><span class="n">q_sorted</span><span class="p">):</span>
+            <span class="n">q1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q_sorted</span><span class="p">)</span>
+            <span class="n">q2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q_sorted</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">q1</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">q2</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+
+        <span class="n">s_obs</span> <span class="o">=</span> <span class="n">_slope</span><span class="p">(</span><span class="n">obs_sorted</span><span class="p">)</span>
+        <span class="n">s_sim</span> <span class="o">=</span> <span class="n">_slope</span><span class="p">(</span><span class="n">sim_sorted</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">s_sim</span> <span class="o">-</span> <span class="n">s_obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">s_obs</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+    
+<div class="viewcode-block" id="SignatureEvaluationMetric.BiasFMM">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.BiasFMM">[docs]</a>
+    <span class="k">def</span> <span class="nf">BiasFMM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Flow duration curve median magnitude bias (BiasFMM).</span>
+
+<span class="sd">        Defined as:</span>
+<span class="sd">            (median(FDC_sim) - median(FDC_obs)) / median(FDC_obs)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmm_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">fmm_sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">fmm_sim</span> <span class="o">-</span> <span class="n">fmm_obs</span><span class="p">)</span> <span class="o">/</span> <span class="n">fmm_obs</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_compute_fdc</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute flow duration curve (FDC) for a given series.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        series : array-like</span>
+<span class="sd">            Streamflow series.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        p : ndarray</span>
+<span class="sd">            Exceedance probability (0-1).</span>
+<span class="sd">        q : ndarray</span>
+<span class="sd">            Sorted flow values (descending).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># remove NaN and non-positive values</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">series</span><span class="p">)]</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">series</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">series</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input series contains no valid positive values.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># sort in descending order</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">series</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="c1"># exceedance probability</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span>
+
+<div class="viewcode-block" id="SignatureEvaluationMetric.get_fdc">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.SignatureEvaluationMetric.get_fdc">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_fdc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute FDC curves for observed and simulated series.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fdc : dict</span>
+<span class="sd">            Dictionary containing FDC data:</span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;obs&#39;: {&#39;p&#39;: p_obs, &#39;q&#39;: q_obs},</span>
+<span class="sd">                &#39;sim&#39;: {&#39;p&#39;: p_sim, &#39;q&#39;: q_sim}</span>
+<span class="sd">            }</span>
+<span class="sd">        </span>
+<span class="sd">        example:</span>
+<span class="sd">            plt.plot(r[&quot;obs&quot;][&quot;p&quot;], r[&quot;obs&quot;][&quot;q&quot;], &quot;r-&quot;, label=&quot;Observed&quot;)</span>
+<span class="sd">            plt.plot(r[&quot;sim&quot;][&quot;p&quot;], r[&quot;sim&quot;][&quot;q&quot;], &quot;b-&quot;, label=&quot;sim&quot;)</span>
+<span class="sd">            xs = [0.02, 0.2, 0.7]</span>
+<span class="sd">            for x in xs:</span>
+<span class="sd">                plt.axvline(x, color=&quot;gray&quot;, linestyle=&quot;--&quot;, linewidth=1.0, alpha=0.7)</span>
+<span class="sd">                plt.text(</span>
+<span class="sd">                    x+0.01,</span>
+<span class="sd">                    plt.ylim()[1],</span>
+<span class="sd">                    f&quot;{x:.2f}&quot;,</span>
+<span class="sd">                    rotation=90,</span>
+<span class="sd">                    va=&quot;top&quot;,</span>
+<span class="sd">                    ha=&quot;left&quot;,</span>
+<span class="sd">                    fontsize=9,</span>
+<span class="sd">                    color=&quot;gray&quot;,</span>
+<span class="sd">                    weight=&quot;bold&quot;,</span>
+<span class="sd">                )</span>
+<span class="sd">            plt.yscale(&quot;log&quot;)</span>
+<span class="sd">            plt.legend()</span>
+<span class="sd">            plt.xlim(0, 1)</span>
+<span class="sd">            plt.ylabel(&quot;Discharge (m$^3$/s)&quot;)</span>
+<span class="sd">            plt.xlabel(&quot;Flow exceedance probability [-]&quot;)</span>
+<span class="sd">            plt.show(block=True)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_obs</span><span class="p">,</span> <span class="n">q_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fdc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">p_sim</span><span class="p">,</span> <span class="n">q_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fdc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_bool</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p_obs</span><span class="p">,</span> <span class="n">q_obs</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Observed&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p_sim</span><span class="p">,</span> <span class="n">q_sim</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;sim&quot;</span><span class="p">)</span>
+            <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="n">x</span><span class="o">+</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+                    <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                    <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+                    <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Discharge (m$^3$/s)&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Flow exceedance probability [-]&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;obs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="n">p_obs</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">q_obs</span><span class="p">},</span>
+            <span class="s2">&quot;sim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="n">p_sim</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">q_sim</span><span class="p">},</span>
+        <span class="p">}</span></div>
+</div>
+
+        
+    
+<div class="viewcode-block" id="create_test_data">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data">[docs]</a>
+<span class="k">def</span> <span class="nf">create_test_data</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create synthetic spatiotemporal fields for metric testing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seed : int, optional</span>
+<span class="sd">        Random seed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        ``(reference, perturbed)`` with shape ``(T, H, W)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    
+    <span class="n">T</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span>
+
+    <span class="c1"># Construct a base spatial pattern (e.g., high values concentrated in upper-right)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    
+    <span class="c1"># Gaussian pattern centered at (0.8, 0.2)</span>
+    <span class="n">base_pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.05</span><span class="p">)</span>
+    
+    <span class="c1"># Create time-dependent scaling (simulating seasonal or dynamic variation)</span>
+    <span class="n">time_scaling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span> <span class="o">+</span> <span class="mf">1.5</span>  <span class="c1"># shifted sine wave to ensure all values &gt;= 0</span>
+
+    <span class="c1"># Construct data1: reference dataset with clean spatial-temporal structure</span>
+    <span class="n">data1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">time_scaling</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">base_pattern</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)])</span>  <span class="c1"># shape: (T, H, W)</span>
+
+    <span class="c1"># Construct data2: similar to data1 but with additional noise and a slight spatial bias</span>
+    <span class="n">noise_level</span> <span class="o">=</span> <span class="mf">0.2</span>
+    
+    <span class="c1"># Random spatial noise added to each time step</span>
+    <span class="n">spatial_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_level</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span>
+    
+    <span class="c1"># Small systematic bias in spatial structure (simulating model error)</span>
+    <span class="n">mode_shift</span> <span class="o">=</span> <span class="mf">0.03</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+
+    <span class="c1"># Combine to generate simulated dataset</span>
+    <span class="n">data2</span> <span class="o">=</span> <span class="n">data1</span> <span class="o">+</span> <span class="n">spatial_noise</span> <span class="o">+</span> <span class="n">mode_shift</span>
+    
+    <span class="k">return</span> <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span></div>
+
+
+
+<div class="viewcode-block" id="create_test_data2">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.evaluate_metrics.html#easy_vic_build.tools.calibrate_func.evaluate_metrics.create_test_data2">[docs]</a>
+<span class="k">def</span> <span class="nf">create_test_data2</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create synthetic dataset pair with time-varying noise.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        ``(obs_data, sim_data)`` with shape ``(n_time, n_lat, n_lon)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_time</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">n_lat</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">n_lon</span> <span class="o">=</span> <span class="mi">25</span>
+
+    <span class="n">lat_grid</span><span class="p">,</span> <span class="n">lon_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_lat</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_lon</span><span class="p">))</span>
+    <span class="n">base_pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">lat_grid</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">lon_grid</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">obs_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_time</span><span class="p">,</span> <span class="n">n_lat</span><span class="p">,</span> <span class="n">n_lon</span><span class="p">))</span>
+    <span class="n">sim_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_time</span><span class="p">,</span> <span class="n">n_lat</span><span class="p">,</span> <span class="n">n_lon</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_time</span><span class="p">):</span>
+        <span class="n">noise_level</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">noise_level</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="k">elif</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">25</span><span class="p">:</span>
+            <span class="n">noise_level</span> <span class="o">=</span> <span class="mf">0.3</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">noise_level</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="n">obs_data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_pattern</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">base_pattern</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">sim_data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_pattern</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_level</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">base_pattern</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">obs_data</span><span class="p">,</span> <span class="n">sim_data</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span> <span class="o">=</span> <span class="n">create_test_data2</span><span class="p">()</span>
+    
+    <span class="n">EM</span> <span class="o">=</span> <span class="n">EvaluationMetric</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">)</span>
+    
+    <span class="n">ess</span> <span class="o">=</span> <span class="n">EM</span><span class="o">.</span><span class="n">ESS</span><span class="p">()</span>
+    
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

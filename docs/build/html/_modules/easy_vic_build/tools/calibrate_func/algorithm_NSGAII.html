@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.calibrate_func.algorithm_NSGAII &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.calibrate_func.algorithm_NSGAII</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.calibrate_func.algorithm_NSGAII</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;NSGA-II base implementation for calibration workflows.</span>
+
+<span class="sd">This module defines :class:`NSGAII_Base`, a reusable DEAP-based NSGA-II runner</span>
+<span class="sd">with checkpoint persistence, generation history tracking, and optional Pareto</span>
+<span class="sd">front plotting.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">deap</span> <span class="kn">import</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">creator</span><span class="p">,</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">..decoractors</span> <span class="kn">import</span> <span class="n">clock_decorator</span>
+
+
+<div class="viewcode-block" id="NSGAII_Base">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base">[docs]</a>
+<span class="k">class</span> <span class="nc">NSGAII_Base</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that implements the NSGA-II (Non-dominated Sorting Genetic Algorithm II) for multi-objective optimization.</span>
+<span class="sd">    This class provides methods for setting up the genetic algorithm, evaluating individuals,</span>
+<span class="sd">    applying genetic operators (crossover, mutation), selecting the next generation, and saving/loading the algorithm state.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    popSize : int</span>
+<span class="sd">        The population size for each generation.</span>
+<span class="sd">    maxGen : int</span>
+<span class="sd">        The maximum number of generations to run the algorithm.</span>
+<span class="sd">    save_path : str</span>
+<span class="sd">        The path to save and load the algorithm state.</span>
+<span class="sd">    history : list</span>
+<span class="sd">        A history of the population and non-dominated fronts at each generation.</span>
+<span class="sd">    current_generation : int</span>
+<span class="sd">        The current generation number.</span>
+<span class="sd">    initial_population : list</span>
+<span class="sd">        The initial population before any genetic operators are applied.</span>
+<span class="sd">    population : list</span>
+<span class="sd">        The current population of individuals.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(algParams, save_path):</span>
+<span class="sd">        Initializes the NSGA-II algorithm with the given parameters and attempts to load the state.</span>
+
+<span class="sd">    get_obs():</span>
+<span class="sd">        Placeholder function to get the observed values (to be designed for specific use cases).</span>
+
+<span class="sd">    get_sim():</span>
+<span class="sd">        Placeholder function to get the simulated values (to be designed for specific use cases).</span>
+
+<span class="sd">    set_algorithm_params(popSize, maxGen, cxProb, mutateProb):</span>
+<span class="sd">        Sets the parameters for the genetic algorithm (population size, max generations, crossover probability, and mutation probability).</span>
+
+<span class="sd">    createFitness():</span>
+<span class="sd">        Creates the fitness function for individuals.</span>
+
+<span class="sd">    createInd():</span>
+<span class="sd">        Creates an individual representation (a list).</span>
+
+<span class="sd">    samplingInd():</span>
+<span class="sd">        Samples a new individual by generating random values for its elements.</span>
+
+<span class="sd">    registerInd():</span>
+<span class="sd">        Registers the individual sampling function with the toolbox.</span>
+
+<span class="sd">    registerPop():</span>
+<span class="sd">        Registers the population initialization function with the toolbox.</span>
+
+<span class="sd">    evaluate(ind):</span>
+<span class="sd">        A placeholder function for evaluating an individual&#39;s fitness (to be customized for specific use cases).</span>
+
+<span class="sd">    registerEvaluate():</span>
+<span class="sd">        Registers the evaluation function with the toolbox.</span>
+
+<span class="sd">    evaluatePop(population):</span>
+<span class="sd">        Evaluates the fitness of the entire population.</span>
+
+<span class="sd">    operatorMate(parent1, parent2):</span>
+<span class="sd">        Defines the crossover operation for mating two individuals (using a two-point crossover).</span>
+
+<span class="sd">    operatorMutate(ind):</span>
+<span class="sd">        Defines the mutation operation for an individual (using a bit-flip mutation).</span>
+
+<span class="sd">    operatorSelect(population):</span>
+<span class="sd">        Defines the selection operation (using tournament selection).</span>
+
+<span class="sd">    registerOperators():</span>
+<span class="sd">        Registers the genetic operators (mate, mutate, and select) with the toolbox.</span>
+
+<span class="sd">    apply_genetic_operators(offspring):</span>
+<span class="sd">        Applies the genetic operators (crossover and mutation) to the offspring.</span>
+
+<span class="sd">    select_next_generation(combined):</span>
+<span class="sd">        Selects the next generation by sorting individuals based on Pareto dominance and applying crowding distance.</span>
+
+<span class="sd">    print_results(population):</span>
+<span class="sd">        Prints the results of the best individual from the final population.</span>
+
+<span class="sd">    load_state():</span>
+<span class="sd">        Loads the algorithm state from the specified save path (if a saved state exists).</span>
+
+<span class="sd">    save_state():</span>
+<span class="sd">        Saves the current algorithm state (current generation, population, and history) to the specified save path.</span>
+
+<span class="sd">    run():</span>
+<span class="sd">        Runs the NSGA-II algorithm for the specified number of generations, applying genetic operators and selecting the next generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NSGAII_Base.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">algParams</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;popSize&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;maxGen&quot;</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;cxProb&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">&quot;mutateProb&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;checkpoint.pkl&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the NSGA-II algorithm with the given parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        algParams : dict</span>
+<span class="sd">            Dictionary containing the algorithm parameters:</span>
+<span class="sd">            - popSize: The population size for each generation.</span>
+<span class="sd">            - maxGen: The maximum number of generations to run the algorithm.</span>
+<span class="sd">            - cxProb: The crossover probability.</span>
+<span class="sd">            - mutateProb: The mutation probability.</span>
+
+<span class="sd">        save_path : str, optional</span>
+<span class="sd">            The path to save and load the algorithm state (default is &quot;checkpoint.pkl&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set algorithm params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popSize</span> <span class="o">=</span> <span class="n">algParams</span><span class="p">[</span><span class="s2">&quot;popSize&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxGen</span> <span class="o">=</span> <span class="n">algParams</span><span class="p">[</span><span class="s2">&quot;maxGen&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">Toolbox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_algorithm_params</span><span class="p">(</span><span class="o">**</span><span class="n">algParams</span><span class="p">)</span>
+
+        <span class="c1"># create</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">createFitness</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">createInd</span><span class="p">()</span>
+
+        <span class="c1"># register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerInd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerPop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerEvaluate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerOperators</span><span class="p">()</span>
+
+        <span class="c1"># set initial variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># set save path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+
+        <span class="c1"># try to load state (if exist)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_state</span><span class="p">()</span></div>
+
+        
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  set algorithm parameters</span>
+    <span class="c1"># ----------------------------- </span>
+<div class="viewcode-block" id="NSGAII_Base.set_algorithm_params">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.set_algorithm_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_algorithm_params</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">popSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maxGen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cxProb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mutateProb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the parameters for the genetic algorithm.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        popSize : int, optional</span>
+<span class="sd">            The population size for each generation (default is 40).</span>
+<span class="sd">        maxGen : int, optional</span>
+<span class="sd">            The maximum number of generations to run the algorithm (default is 250).</span>
+<span class="sd">        cxProb : float, optional</span>
+<span class="sd">            The crossover probability (default is 0.7).</span>
+<span class="sd">        mutateProb : float, optional</span>
+<span class="sd">            The mutation probability (default is 0.2).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">popSize</span> <span class="o">=</span> <span class="mi">40</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">popSize</span> <span class="k">else</span> <span class="n">popSize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">maxGen</span> <span class="o">=</span> <span class="mi">250</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">maxGen</span> <span class="k">else</span> <span class="n">maxGen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">cxProb</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">cxProb</span> <span class="k">else</span> <span class="n">cxProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">mutateProb</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">mutateProb</span> <span class="k">else</span> <span class="n">mutateProb</span></div>
+
+        
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  User should define these</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="NSGAII_Base.get_obs">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.get_obs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Placeholder function to get observed values (to be designed for specific use cases).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.get_sim">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.get_sim">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Placeholder function to get simulated values (to be designed for specific use cases).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.createFitness">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.createFitness">[docs]</a>
+    <span class="k">def</span> <span class="nf">createFitness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the fitness function for individuals.&quot;&quot;&quot;</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Fitness&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">Fitness</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.createInd">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.createInd">[docs]</a>
+    <span class="k">def</span> <span class="nf">createInd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an individual representation (a list).&quot;&quot;&quot;</span>
+        <span class="n">creator</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Individual&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">fitness</span><span class="o">=</span><span class="n">creator</span><span class="o">.</span><span class="n">Fitness</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.samplingInd">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.samplingInd">[docs]</a>
+    <span class="k">def</span> <span class="nf">samplingInd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Samples a new individual by generating random values for its elements.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Individual</span>
+<span class="sd">            A new individual sampled with random elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># example: generate 5 elements/params in each Ind</span>
+        <span class="n">ind_elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">creator</span><span class="o">.</span><span class="n">Individual</span><span class="p">(</span><span class="n">ind_elements</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.evaluate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A placeholder function for evaluating an individual&#39;s fitness.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ind : Individual</span>
+<span class="sd">            The individual to evaluate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the fitness values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ind</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">,)</span></div>
+
+    
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  NSGAII operator</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="NSGAII_Base.operatorMate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorMate">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">operatorMate</span><span class="p">(</span><span class="n">parent1</span><span class="p">,</span> <span class="n">parent2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the crossover operation for mating two individuals.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent1 : Individual</span>
+<span class="sd">            The first parent individual.</span>
+<span class="sd">        parent2 : Individual</span>
+<span class="sd">            The second parent individual.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the offspring resulting from the crossover.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># parent is ind</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">tools</span><span class="o">.</span><span class="n">cxTwoPoint</span><span class="p">(</span><span class="n">parent1</span><span class="p">,</span> <span class="n">parent2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.operatorMutate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorMutate">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">operatorMutate</span><span class="p">(</span><span class="n">ind</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the mutation operation for an individual.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ind : Individual</span>
+<span class="sd">            The individual to mutate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the mutated individual.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">tools</span><span class="o">.</span><span class="n">mutFlipBit</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.operatorSelect">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.operatorSelect">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">operatorSelect</span><span class="p">(</span><span class="n">population</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the selection operation for choosing individuals from the population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : list of Individual</span>
+<span class="sd">            The population from which to select individuals.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of selected individuals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">tools</span><span class="o">.</span><span class="n">selTournament</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Registering DEAP components</span>
+    <span class="c1"># -----------------------------        </span>
+<div class="viewcode-block" id="NSGAII_Base.registerInd">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerInd">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerInd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers the individual sampling function with the toolbox.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">samplingInd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.registerPop">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerPop">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerPop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers the population initialization function with the toolbox.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+            <span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">initRepeat</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">individual</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.registerEvaluate">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerEvaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerEvaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers the evaluation function with the toolbox.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;evaluate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.registerOperators">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.registerOperators">[docs]</a>
+    <span class="k">def</span> <span class="nf">registerOperators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers the genetic operators (mate, mutate, and select) with the toolbox.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;mate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorMate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;mutate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorMutate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorSelect</span><span class="p">)</span></div>
+
+        
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Generation in NSGAII</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="NSGAII_Base.evaluatePop">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.evaluatePop">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluatePop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates the fitness of the entire population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : list of Individual</span>
+<span class="sd">            The population to evaluate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fitnesses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="n">population</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">fit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitnesses</span><span class="p">):</span>
+            <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">fit</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.apply_genetic_operators">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.apply_genetic_operators">[docs]</a>
+    <span class="k">def</span> <span class="nf">apply_genetic_operators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offspring</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the genetic operators (crossover and mutation) to the offspring.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        offspring : list of Individual</span>
+<span class="sd">            The offspring to apply the genetic operators to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># it can be implemented by algorithms.varAnd</span>
+        <span class="c1"># crossover</span>
+        <span class="k">for</span> <span class="n">child1</span><span class="p">,</span> <span class="n">child2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">offspring</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">offspring</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">cxProb</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">mate</span><span class="p">(</span><span class="n">child1</span><span class="p">,</span> <span class="n">child2</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">child1</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+                <span class="k">del</span> <span class="n">child2</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># mutate</span>
+        <span class="k">for</span> <span class="n">mutant</span> <span class="ow">in</span> <span class="n">offspring</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">mutateProb</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">mutant</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">mutant</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.select_next_generation">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.select_next_generation">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_next_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combined</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Selects the next generation from the combined population and offspring.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        combined : list of Individual</span>
+<span class="sd">            The combined population of parents and offspring.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The selected next generation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fronts</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">sortNondominated</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined</span><span class="p">),</span> <span class="n">first_front_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">next_generation</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">front</span> <span class="ow">in</span> <span class="n">fronts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_generation</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">front</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popSize</span><span class="p">:</span>
+                <span class="n">next_generation</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">front</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># cal crowding</span>
+                <span class="n">tools</span><span class="o">.</span><span class="n">emo</span><span class="o">.</span><span class="n">assignCrowdingDist</span><span class="p">(</span><span class="n">front</span><span class="p">)</span>
+                <span class="n">front</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ind</span><span class="p">:</span> <span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">crowding_dist</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">next_generation</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">front</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">popSize</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_generation</span><span class="p">)])</span>
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">next_generation</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Save &amp; Load</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="NSGAII_Base.load_state">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.load_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the algorithm state from the specified save path if a saved state exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;current_generation&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;initial_population&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popSize</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[:]</span></div>
+
+
+<div class="viewcode-block" id="NSGAII_Base.save_state">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.save_state">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the current algorithm state (current generation, population, and history) to the specified save path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;current_generation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span><span class="p">,</span>
+            <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">),</span>
+            <span class="s2">&quot;initial_population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_population</span><span class="p">),</span>
+            <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Print and Plot</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="NSGAII_Base.print_results">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.print_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the results of the best individual from the final population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : list of Individual</span>
+<span class="sd">            The final population.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">best_ind</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">selBest</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;best_ind:&quot;</span><span class="p">,</span> <span class="n">best_ind</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fitness:&quot;</span><span class="p">,</span> <span class="n">best_ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="NSGAII_Base.plot_front_pairwise">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.plot_front_pairwise">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_front_pairwise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">front</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="n">names_plot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_dir</span><span class="o">=</span><span class="s2">&quot;pareto_progress&quot;</span><span class="p">,</span> <span class="n">transform_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot pairwise objective scatter for full population and first front.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : list</span>
+<span class="sd">            Population to visualize (typically parent + offspring).</span>
+<span class="sd">        front : list</span>
+<span class="sd">            First non-dominated front.</span>
+<span class="sd">        gen : int</span>
+<span class="sd">            Generation index used in figure title.</span>
+<span class="sd">        names_plot : list of str, optional</span>
+<span class="sd">            Objective axis labels. If ``None``, labels are generated as</span>
+<span class="sd">            ``obj1``, ``obj2``, ...</span>
+<span class="sd">        plot_dir : str, optional</span>
+<span class="sd">            Directory used to store figure output.</span>
+<span class="sd">        transform_func : callable, optional</span>
+<span class="sd">            Optional transformation applied to objective arrays before plotting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check plot_dir</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
+
+        <span class="c1"># default names if not provided</span>
+        <span class="n">n_obj</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">names_plot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">names_plot</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;obj</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_obj</span><span class="p">)]</span>
+
+        <span class="c1"># extract population and front values</span>
+        <span class="n">pop_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">population</span><span class="p">])</span>
+        <span class="n">front_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ind</span><span class="o">.</span><span class="n">fitness</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">front</span><span class="p">])</span>
+        <span class="n">all_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">pop_vals</span><span class="p">,</span> <span class="n">front_vals</span><span class="p">])</span>
+        <span class="n">valid_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">all_vals</span> <span class="o">!=</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">all_vals</span> <span class="o">!=</span> <span class="mf">9999.0</span><span class="p">)</span>
+        <span class="n">all_vals_clean</span> <span class="o">=</span> <span class="n">all_vals</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">transform_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pop_vals</span> <span class="o">=</span> <span class="n">transform_func</span><span class="p">(</span><span class="n">pop_vals</span><span class="p">)</span>
+            <span class="n">front_vals</span> <span class="o">=</span> <span class="n">transform_func</span><span class="p">(</span><span class="n">front_vals</span><span class="p">)</span>
+            
+        <span class="c1"># create subplots</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="n">n_obj</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="n">n_obj</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n_obj</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">n_obj</span><span class="p">),</span>
+                               <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;wspace&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s2">&quot;hspace&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+                                            <span class="s2">&quot;left&quot;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+                                            <span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">}</span>
+                               <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_obj</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_obj</span><span class="p">):</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pop_vals</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">pop_vals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">front_vals</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">front_vals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+                <span class="c1"># set axis labels</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n_obj</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">names_plot</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="s1">&#39;bold&#39;</span><span class="p">})</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">names_plot</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="s1">&#39;bold&#39;</span><span class="p">})</span>
+
+                <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">all_vals_clean</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+                <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">all_vals_clean</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+
+                <span class="n">pad_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
+                <span class="n">pad_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
+
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">x_min</span><span class="o">-</span><span class="n">pad_x</span><span class="p">,</span> <span class="n">x_max</span><span class="o">+</span><span class="n">pad_x</span><span class="p">))</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="n">y_min</span><span class="o">-</span><span class="n">pad_y</span><span class="p">,</span> <span class="n">y_max</span><span class="o">+</span><span class="n">pad_y</span><span class="p">))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Generation </span><span class="si">{</span><span class="n">gen</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.97</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;NSGAII_process.png&#39;</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="c1"># -----------------------------</span>
+    <span class="c1">#  Run</span>
+    <span class="c1"># -----------------------------</span>
+<div class="viewcode-block" id="NSGAII_Base.run">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.calibrate_func.algorithm_NSGAII.html#easy_vic_build.tools.calibrate_func.algorithm_NSGAII.NSGAII_Base.run">[docs]</a>
+    <span class="nd">@clock_decorator</span><span class="p">(</span><span class="n">print_arg_ret</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">plot_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">plot_dir</span><span class="o">=</span><span class="s2">&quot;pareto_progress&quot;</span><span class="p">,</span>
+        <span class="n">names_plot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform_func</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the NSGA-II algorithm for the specified number of generations.</span>
+
+<span class="sd">        This method applies genetic operators, evaluates individuals,</span>
+<span class="sd">        selects the next generation, and stores the results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        plot_progress : bool, optional</span>
+<span class="sd">            Whether to save a pairwise Pareto plot each generation.</span>
+<span class="sd">        plot_dir : str, optional</span>
+<span class="sd">            Output directory for progress plots.</span>
+<span class="sd">        names_plot : list of str, optional</span>
+<span class="sd">            Objective labels passed to :meth:`plot_front_pairwise`.</span>
+<span class="sd">        transform_func : callable, optional</span>
+<span class="sd">            Optional transform function passed to :meth:`plot_front_pairwise`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The final population after all generations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># evaluate population</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluatePop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+
+        <span class="c1"># loop for generations</span>
+        <span class="n">start_gen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span>
+        <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">start_gen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxGen</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;loop for NSGAII generation&quot;</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="c1"># current generation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_generation</span> <span class="o">=</span> <span class="n">gen</span>
+
+            <span class="c1"># generate offspring</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">popSize</span><span class="p">)</span>
+            <span class="n">offspring</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbox</span><span class="o">.</span><span class="n">clone</span><span class="p">,</span> <span class="n">offspring</span><span class="p">))</span>
+
+            <span class="c1"># apply_genetic_operators and evaluate it</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">apply_genetic_operators</span><span class="p">(</span><span class="n">offspring</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluatePop</span><span class="p">(</span><span class="n">offspring</span><span class="p">)</span>
+
+            <span class="c1"># combine population and offspring</span>
+            <span class="n">combined</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">+</span> <span class="n">offspring</span>
+
+            <span class="c1"># sortNondominated to get fronts (first_front_only=True, only get the first front, else all front, namely fronts)</span>
+            <span class="n">fronts</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">sortNondominated</span><span class="p">(</span>
+                <span class="n">combined</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined</span><span class="p">),</span> <span class="n">first_front_only</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># calculate crowding distance only for first front for history</span>
+            <span class="n">first_front</span> <span class="o">=</span> <span class="n">fronts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">emo</span><span class="o">.</span><span class="n">assignCrowdingDist</span><span class="p">(</span><span class="n">first_front</span><span class="p">)</span>
+
+            <span class="c1"># save history (population and front)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">),</span>
+                <span class="s2">&quot;combined_population&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">combined</span><span class="p">),</span>
+                <span class="s2">&quot;fronts&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">fronts</span><span class="p">),</span>
+                <span class="s2">&quot;first_front&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">first_front</span><span class="p">),</span>
+            <span class="p">})</span>
+            
+            <span class="c1"># save state at the end of each gen</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_state</span><span class="p">()</span>
+            
+            <span class="c1"># plot</span>
+            <span class="k">if</span> <span class="n">plot_progress</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot_front_pairwise</span><span class="p">(</span>
+                    <span class="n">combined</span><span class="p">,</span> <span class="n">first_front</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span>
+                    <span class="n">names_plot</span><span class="o">=</span><span class="n">names_plot</span><span class="p">,</span>
+                    <span class="n">plot_dir</span><span class="o">=</span><span class="n">plot_dir</span><span class="p">,</span>
+                    <span class="n">transform_func</span><span class="o">=</span><span class="n">transform_func</span>
+                <span class="p">)</span>
+
+            <span class="c1"># update population: select next generation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_next_generation</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

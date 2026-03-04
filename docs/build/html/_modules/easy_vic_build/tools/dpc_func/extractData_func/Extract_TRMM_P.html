@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">date2num</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">...geo_func</span> <span class="kn">import</span> <span class="n">search_grids</span>
+<span class="kn">from</span> <span class="nn">...nc_func.create_nc</span> <span class="kn">import</span> <span class="n">copy_vattributefunc</span>
+
+
+<div class="viewcode-block" id="combineTRMM_P">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P.combineTRMM_P">[docs]</a>
+<span class="k">def</span> <span class="nf">combineTRMM_P</span><span class="p">():</span>
+    <span class="c1"># general</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``combineTRMM_P`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        This method does not return a value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">src_home</span> <span class="o">=</span> <span class="s2">&quot;E:/data/hydrometeorology/TRMM_P/TRMM_3B42/data&quot;</span>
+    <span class="n">dst_home</span> <span class="o">=</span> <span class="s2">&quot;E:/data/hydrometeorology/TRMM_P/TRMM_3B42&quot;</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;.nc4&quot;</span>
+
+    <span class="n">src_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">src_home</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)]</span>
+    <span class="n">src_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_home</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">src_names</span><span class="p">]</span>
+
+    <span class="c1"># set time</span>
+    <span class="n">date_period</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;19980101&quot;</span><span class="p">,</span> <span class="s2">&quot;20191230&quot;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;1D&quot;</span><span class="p">)</span>
+    <span class="n">date_period_str</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">date_period</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">date_period_datetime</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">date_period_str</span><span class="p">]</span>
+
+    <span class="c1"># create dataset</span>
+    <span class="n">dst_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dst_home</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;3B42_Daily_combined</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">dst_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">dst_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+    <span class="c1"># create time dimension</span>
+    <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">src_names</span><span class="p">))</span>
+    <span class="n">dst_times</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;f8&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,))</span>
+    <span class="n">dst_times</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;days since 1998-01-01&quot;</span>
+    <span class="n">dst_times</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s2">&quot;gregorian&quot;</span>
+    <span class="n">dst_times</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">date2num</span><span class="p">(</span>
+        <span class="n">date_period_datetime</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">dst_times</span><span class="o">.</span><span class="n">units</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="n">dst_times</span><span class="o">.</span><span class="n">calendar</span>
+    <span class="p">)</span>
+
+    <span class="c1"># read one file to copy</span>
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">src_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_dataset</span><span class="p">:</span>
+        <span class="c1"># src dim variables</span>
+        <span class="n">src_lon</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">][:]</span>
+        <span class="n">src_lat</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">][:]</span>
+
+        <span class="c1"># create lon/lat dimension</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">src_lon</span><span class="p">))</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">src_lat</span><span class="p">))</span>
+
+        <span class="c1"># create variables</span>
+        <span class="n">dst_lon</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="s2">&quot;f4&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lon&quot;</span><span class="p">,))</span>
+        <span class="n">dst_lat</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="s2">&quot;f4&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lat&quot;</span><span class="p">,))</span>
+        <span class="n">dst_precipitation</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;precipitation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f4&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;precipitation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="s2">&quot;_FillValue&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_precipitation_cnt</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;precipitation_cnt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_IRprecipitation</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;IRprecipitation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f4&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;IRprecipitation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="s2">&quot;_FillValue&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_IRprecipitation_cnt</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;IRprecipitation_cnt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_HQprecipitation</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;HQprecipitation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f4&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;HQprecipitation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="s2">&quot;_FillValue&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_HQprecipitation_cnt</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;HQprecipitation_cnt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_randomError</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;randomError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f4&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;randomError&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span><span class="s2">&quot;_FillValue&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">dst_randomError_cnt</span> <span class="o">=</span> <span class="n">dst_dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
+            <span class="s2">&quot;randomError_cnt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lon&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># set/copy lon/lat variables</span>
+        <span class="n">dst_lon</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">][:]</span>
+        <span class="n">dst_lat</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">][:]</span>
+
+        <span class="c1"># copy variable attr</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">],</span> <span class="n">dst_lon</span><span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">],</span> <span class="n">dst_lat</span><span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;precipitation&quot;</span><span class="p">],</span> <span class="n">dst_precipitation</span><span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span>
+            <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;precipitation_cnt&quot;</span><span class="p">],</span> <span class="n">dst_precipitation_cnt</span>
+        <span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span>
+            <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;IRprecipitation&quot;</span><span class="p">],</span> <span class="n">dst_IRprecipitation</span>
+        <span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span>
+            <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;IRprecipitation_cnt&quot;</span><span class="p">],</span> <span class="n">dst_IRprecipitation_cnt</span>
+        <span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span>
+            <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;HQprecipitation&quot;</span><span class="p">],</span> <span class="n">dst_HQprecipitation</span>
+        <span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span>
+            <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;HQprecipitation_cnt&quot;</span><span class="p">],</span> <span class="n">dst_HQprecipitation_cnt</span>
+        <span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span><span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;randomError&quot;</span><span class="p">],</span> <span class="n">dst_randomError</span><span class="p">)</span>
+        <span class="n">copy_vattributefunc</span><span class="p">(</span>
+            <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;randomError_cnt&quot;</span><span class="p">],</span> <span class="n">dst_randomError_cnt</span>
+        <span class="p">)</span>
+
+        <span class="c1"># add time in variable attr</span>
+        <span class="n">add_time_attr</span> <span class="o">=</span> <span class="s2">&quot;time &quot;</span> <span class="o">+</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;precipitation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getncattr</span><span class="p">(</span>
+            <span class="s2">&quot;coordinates&quot;</span>
+        <span class="p">)</span>
+        <span class="n">dst_precipitation</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_precipitation_cnt</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_IRprecipitation</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_IRprecipitation_cnt</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_HQprecipitation</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_HQprecipitation_cnt</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_randomError</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+        <span class="n">dst_randomError_cnt</span><span class="o">.</span><span class="n">setncattr</span><span class="p">(</span><span class="s2">&quot;coordinates&quot;</span><span class="p">,</span> <span class="n">add_time_attr</span><span class="p">)</span>
+
+        <span class="c1"># copy dataset attribute</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">FileHeader</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">FileHeader</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">InputPointer</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">InputPointer</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">title</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">ProductionTime</span> <span class="o">=</span> <span class="s2">&quot;2023-09-28&quot;</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">history</span>
+        <span class="n">dst_dataset</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;combine daily TRMM P into one file, by XudongZheng, 28/09/2023T</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># loop for file to read data</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+        <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">date_period_str</span><span class="p">)),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;loop for file to combine&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
+    <span class="p">):</span>
+        <span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">src_home</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;3B42_Daily.</span><span class="si">{</span><span class="n">date_period_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">.7.nc4</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">src_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_dataset</span><span class="p">:</span>
+            <span class="n">dst_precipitation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;precipitation&quot;</span><span class="p">][:]</span>
+            <span class="n">dst_precipitation_cnt</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;precipitation_cnt&quot;</span><span class="p">][</span>
+                <span class="p">:</span>
+            <span class="p">]</span>
+            <span class="n">dst_IRprecipitation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;IRprecipitation&quot;</span><span class="p">][:]</span>
+            <span class="n">dst_IRprecipitation_cnt</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span>
+                <span class="s2">&quot;IRprecipitation_cnt&quot;</span>
+            <span class="p">][:]</span>
+            <span class="n">dst_HQprecipitation</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;HQprecipitation&quot;</span><span class="p">][:]</span>
+            <span class="n">dst_HQprecipitation_cnt</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span>
+                <span class="s2">&quot;HQprecipitation_cnt&quot;</span>
+            <span class="p">][:]</span>
+            <span class="n">dst_randomError</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;randomError&quot;</span><span class="p">][:]</span>
+            <span class="n">dst_randomError_cnt</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">src_dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;randomError_cnt&quot;</span><span class="p">][:]</span>
+
+    <span class="n">dst_dataset</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="ExtractData">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_TRMM_P.ExtractData">[docs]</a>
+<span class="k">def</span> <span class="nf">ExtractData</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;19980101&quot;</span><span class="p">,</span> <span class="s2">&quot;20111231&quot;</span><span class="p">],</span> <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;precipitation&quot;</span><span class="p">):</span>
+    <span class="c1"># general</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``ExtractData`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : object</span>
+<span class="sd">        Input value for ``grid_shp``.</span>
+<span class="sd">    period : object, optional</span>
+<span class="sd">        Input value for ``period``.</span>
+<span class="sd">    var_name : object, optional</span>
+<span class="sd">        Input value for ``var_name``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">src_path</span> <span class="o">=</span> <span class="s2">&quot;E:/data/hydrometeorology/TRMM_P/TRMM_3B42/3B42_Daily_combined.nc4&quot;</span>
+
+    <span class="c1"># date</span>
+    <span class="n">date_period</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="n">period</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+
+    <span class="c1"># get dst_lat, dst_lon from grid_shp</span>
+    <span class="n">dst_lon</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">dst_lat</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="c1"># search grids</span>
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">src_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">src_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">][:])</span>
+        <span class="n">src_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">][:])</span>
+        <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids</span><span class="o">.</span><span class="n">search_grids_equal</span><span class="p">(</span>
+            <span class="n">dst_lat</span><span class="p">,</span> <span class="n">dst_lon</span><span class="p">,</span> <span class="n">src_lat</span><span class="p">,</span> <span class="n">src_lon</span>
+        <span class="p">)</span>
+
+        <span class="c1"># loop for grid to extract TRMM P</span>
+        <span class="n">grid_df_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">)),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;loop for grid to extract TRMM P&quot;</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">grid_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">var_name</span><span class="p">])</span>
+            <span class="n">searched_grid_index</span> <span class="o">=</span> <span class="n">searched_grids_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">searched_grid_lat_index</span><span class="p">,</span> <span class="n">searched_grid_lon_index</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="c1"># set date and search date_period_index</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:])</span>
+            <span class="n">base_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1998</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># since 1998-01-01</span>
+            <span class="n">date_datetime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">base_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">date</span><span class="p">])</span>
+            <span class="n">date_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">date_datetime</span><span class="p">])</span>
+            <span class="n">date_period_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">date_datetime</span> <span class="o">&gt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="n">date_datetime</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># loop for searched grids to cal grid data</span>
+            <span class="n">var_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span>
+                <span class="n">date_period_index</span><span class="p">,</span> <span class="n">searched_grid_lon_index</span><span class="p">,</span> <span class="n">searched_grid_lat_index</span>
+            <span class="p">]</span>
+            <span class="n">var_data</span> <span class="o">=</span> <span class="n">var_data</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+            <span class="c1"># add to df</span>
+            <span class="n">grid_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_str</span><span class="p">[</span><span class="n">date_period_index</span><span class="p">]</span>
+            <span class="n">grid_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_data</span>
+
+            <span class="c1"># save in grid_df_list</span>
+            <span class="n">grid_df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid_df</span><span class="p">)</span>
+
+        <span class="c1"># save in grid_shp</span>
+        <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_df_list</span>
+
+    <span class="k">return</span> <span class="n">grid_shp</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">combineTRMM_P</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

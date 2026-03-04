@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.basin_grid_func &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.basin_grid_func</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.basin_grid_func</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Grid utility functions for basin-grid conversion and array mapping.</span>
+
+<span class="sd">This module provides helper functions to:</span>
+
+<span class="sd">- build basin-based grids at one or multiple resolutions,</span>
+<span class="sd">- map GeoDataFrame rows to array indices and back,</span>
+<span class="sd">- create and fill gridded arrays from vector attributes,</span>
+<span class="sd">- derive mask arrays and coordinate-index mappings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">shapely.affinity</span> <span class="kn">import</span> <span class="n">translate</span>
+
+<span class="kn">from</span> <span class="nn">..geo_func.search_grids</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..params_func.params_set</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.basin_grid_class</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="createGridForBasin">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createGridForBasin">[docs]</a>
+<span class="k">def</span> <span class="nf">createGridForBasin</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="o">**</span><span class="n">create_grid_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create grid points for the given basin shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin polygon dataset used to generate the grid.</span>
+<span class="sd">    grid_res : float</span>
+<span class="sd">        Grid resolution. If ``None``, only one boundary grid is created.</span>
+<span class="sd">    **create_grid_kwargs : dict</span>
+<span class="sd">        Extra keyword arguments passed to ``Grids_for_shp`` construction.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(grid_shp_lon, grid_shp_lat, grid_shp)`` where longitude and</span>
+<span class="sd">        latitude are center-point coordinate lists and ``grid_shp`` is the</span>
+<span class="sd">        generated ``Grids_for_shp`` object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">create_grid_kwargs_</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;gshp&quot;</span><span class="p">:</span> <span class="n">basin_shp</span><span class="p">,</span>
+        <span class="s2">&quot;res&quot;</span><span class="p">:</span> <span class="n">grid_res</span><span class="p">,</span>
+        <span class="s2">&quot;adjust_boundary&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+    
+    <span class="n">create_grid_kwargs_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">create_grid_kwargs</span><span class="p">)</span>
+    
+    <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">Grids_for_shp</span><span class="p">(</span><span class="n">create_grid_kwargs</span><span class="o">=</span><span class="n">create_grid_kwargs_</span><span class="p">)</span>
+    <span class="n">grid_shp_lon</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">grid_shp_lat</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">grid_shp_lon</span><span class="p">,</span> <span class="n">grid_shp_lat</span><span class="p">,</span> <span class="n">grid_shp</span></div>
+
+
+
+<div class="viewcode-block" id="shift_grids">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.shift_grids">[docs]</a>
+<span class="k">def</span> <span class="nf">shift_grids</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate all grid geometries by fixed offsets.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid dataset containing ``geometry`` and ``point_geometry`` columns.</span>
+<span class="sd">    dx : float</span>
+<span class="sd">        Horizontal shift in coordinate units.</span>
+<span class="sd">    dy : float</span>
+<span class="sd">        Vertical shift in coordinate units.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        Shifted grid dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">translate</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">xoff</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">yoff</span><span class="o">=</span><span class="n">dy</span><span class="p">))</span>
+    <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">translate</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">xoff</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span> <span class="n">yoff</span><span class="o">=</span><span class="n">dy</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">grid_shp</span></div>
+
+    
+    
+<div class="viewcode-block" id="createStand_grids_lat_lon_from_gridshp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createStand_grids_lat_lon_from_gridshp">[docs]</a>
+<span class="k">def</span> <span class="nf">createStand_grids_lat_lon_from_gridshp</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="n">grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate sorted latitude and longitude arrays from grid shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid dataset containing ``point_geometry``.</span>
+<span class="sd">    grid_res : float, optional</span>
+<span class="sd">        The resolution of the grid. If None, the grid will be a complete rectangular grid.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        If True, latitude will be sorted from large to small, top to bottom.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    stand_grids_lat : numpy.ndarray</span>
+<span class="sd">        Sorted latitude values of the grid.</span>
+<span class="sd">    stand_grids_lon : numpy.ndarray</span>
+<span class="sd">        Sorted longitude values of the grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># grid_res is None: grid_shp is a Complete rectangular grids set, else is may be a uncomplete grids set</span>
+    <span class="c1"># create sorted stand grids</span>
+    <span class="k">if</span> <span class="n">grid_res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stand_grids_lon</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">()))</span>
+        <span class="n">stand_grids_lat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">()))</span>
+
+        <span class="n">stand_grids_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">stand_grids_lon</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># small -&gt; large, left is zero</span>
+        <span class="n">stand_grids_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse_lat</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># if True, large -&gt; small, top is zero, it is useful for plot directly</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">min_lon</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="n">max_lon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="n">num_lon</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">max_lon</span> <span class="o">-</span> <span class="n">min_lon</span><span class="p">)</span> <span class="o">/</span> <span class="n">grid_res</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">stand_grids_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">min_lon</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">max_lon</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">num_lon</span><span class="p">)</span>
+
+        <span class="n">min_lat</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="n">max_lat</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="n">num_lat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">max_lat</span> <span class="o">-</span> <span class="n">min_lat</span><span class="p">)</span> <span class="o">/</span> <span class="n">grid_res</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">stand_grids_lat</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">max_lat</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">min_lat</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">num_lat</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reverse_lat</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">min_lat</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">max_lat</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">num_lat</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">stand_grids_lon</span></div>
+
+
+
+<div class="viewcode-block" id="createEmptyArray_from_gridshp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_from_gridshp">[docs]</a>
+<span class="k">def</span> <span class="nf">createEmptyArray_from_gridshp</span><span class="p">(</span>
+    <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">stand_grids_lon</span><span class="p">,</span> <span class="n">third_dim_len</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty grid array with the given latitude and longitude grid points.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stand_grids_lat : numpy.ndarray</span>
+<span class="sd">        Latitude values of the grid.</span>
+<span class="sd">    stand_grids_lon : numpy.ndarray</span>
+<span class="sd">        Longitude values of the grid.</span>
+<span class="sd">    third_dim_len : int, optional</span>
+<span class="sd">        Length of the third dimension. If ``None``, a 2D array is returned.</span>
+<span class="sd">    dtype : data-type, optional</span>
+<span class="sd">        The desired data type for the array. Default is float.</span>
+<span class="sd">    missing_value : scalar, optional</span>
+<span class="sd">        The value to use for missing data. Default is NaN.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grid_array : numpy.ndarray</span>
+<span class="sd">        The empty grid array with the specified shape and missing values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># empty array, shape is [lat(large -&gt; small), lon(small -&gt; large)]</span>
+    <span class="k">if</span> <span class="n">third_dim_len</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grid_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stand_grids_lat</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">stand_grids_lon</span><span class="p">)),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">grid_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stand_grids_lat</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">stand_grids_lon</span><span class="p">),</span> <span class="n">third_dim_len</span><span class="p">),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid_array</span></div>
+
+
+
+<div class="viewcode-block" id="gridshp_index_to_grid_array_index">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.gridshp_index_to_grid_array_index">[docs]</a>
+<span class="k">def</span> <span class="nf">gridshp_index_to_grid_array_index</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">stand_grids_lon</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert grid shape indices to the corresponding grid array indices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid dataset containing ``point_geometry``.</span>
+<span class="sd">    stand_grids_lat : numpy.ndarray</span>
+<span class="sd">        The latitude values of the stand grids.</span>
+<span class="sd">    stand_grids_lon : numpy.ndarray</span>
+<span class="sd">        The longitude values of the stand grids.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rows_index : list</span>
+<span class="sd">        The row indices of the grid array.</span>
+<span class="sd">    cols_index : list</span>
+<span class="sd">        The column indices of the grid array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_shp_point_lon</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">grid_shp_point_lat</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+
+    <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids_equal</span><span class="p">(</span>
+        <span class="n">dst_lat</span><span class="o">=</span><span class="n">grid_shp_point_lat</span><span class="p">,</span>
+        <span class="n">dst_lon</span><span class="o">=</span><span class="n">grid_shp_point_lon</span><span class="p">,</span>
+        <span class="n">src_lat</span><span class="o">=</span><span class="n">stand_grids_lat</span><span class="p">,</span>
+        <span class="n">src_lon</span><span class="o">=</span><span class="n">stand_grids_lon</span><span class="p">,</span>
+        <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span> <span class="o">=</span> <span class="n">searched_grids_index_to_rows_cols_index</span><span class="p">(</span>
+        <span class="n">searched_grids_index</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span></div>
+
+
+
+<div class="viewcode-block" id="assignValue_for_grid_array">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.assignValue_for_grid_array">[docs]</a>
+<span class="k">def</span> <span class="nf">assignValue_for_grid_array</span><span class="p">(</span><span class="n">empty_grid_array</span><span class="p">,</span> <span class="n">values_list</span><span class="p">,</span> <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assign values to the empty grid array at the specified indices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    empty_grid_array : numpy.ndarray</span>
+<span class="sd">        The empty grid array to which values will be assigned.</span>
+<span class="sd">    values_list : list</span>
+<span class="sd">        The list of values to assign.</span>
+<span class="sd">    rows_index : list</span>
+<span class="sd">        The row indices where values will be assigned.</span>
+<span class="sd">    cols_index : list</span>
+<span class="sd">        The column indices where values will be assigned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grid_array : numpy.ndarray</span>
+<span class="sd">        The grid array with assigned values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># values_list can be grid_shp.loc[:, value_column]</span>
+    <span class="n">grid_array</span> <span class="o">=</span> <span class="n">empty_grid_array</span>
+    <span class="n">grid_array</span><span class="p">[</span><span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">values_list</span>
+
+    <span class="k">return</span> <span class="n">grid_array</span></div>
+
+
+
+<div class="viewcode-block" id="retriveArray_to_gridshp_values_list">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.retriveArray_to_gridshp_values_list">[docs]</a>
+<span class="k">def</span> <span class="nf">retriveArray_to_gridshp_values_list</span><span class="p">(</span>
+    <span class="n">grid_array</span><span class="p">,</span>
+    <span class="n">rows_index</span><span class="p">,</span>
+    <span class="n">cols_index</span>
+<span class="p">):</span>
+    <span class="c1"># retrive values from grid_array to grid_shp (order is same as grid_shp.index)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve values from a gridded array using row/column index lists.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_array : numpy.ndarray</span>
+<span class="sd">        Source array containing gridded values.</span>
+<span class="sd">    rows_index : array-like of int</span>
+<span class="sd">        Row indices corresponding to target records.</span>
+<span class="sd">    cols_index : array-like of int</span>
+<span class="sd">        Column indices corresponding to target records.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Values sampled from ``grid_array`` at ``(rows_index, cols_index)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values_list</span> <span class="o">=</span> <span class="n">grid_array</span><span class="p">[</span><span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">values_list</span></div>
+
+
+<div class="viewcode-block" id="createEmptyArray_and_assignValue_from_gridshp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createEmptyArray_and_assignValue_from_gridshp">[docs]</a>
+<span class="k">def</span> <span class="nf">createEmptyArray_and_assignValue_from_gridshp</span><span class="p">(</span>
+    <span class="n">stand_grids_lat</span><span class="p">,</span>
+    <span class="n">stand_grids_lon</span><span class="p">,</span>
+    <span class="n">values_list</span><span class="p">,</span>
+    <span class="n">rows_index</span><span class="p">,</span>
+    <span class="n">cols_index</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty grid array and assign values from grid shape data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stand_grids_lat : numpy.ndarray</span>
+<span class="sd">        Latitude values of the stand grids.</span>
+<span class="sd">    stand_grids_lon : numpy.ndarray</span>
+<span class="sd">        Longitude values of the stand grids.</span>
+<span class="sd">    values_list : list</span>
+<span class="sd">        List of values to assign.</span>
+<span class="sd">    rows_index : list</span>
+<span class="sd">        Row indices for assigning values.</span>
+<span class="sd">    cols_index : list</span>
+<span class="sd">        Column indices for assigning values.</span>
+<span class="sd">    dtype : data-type, optional</span>
+<span class="sd">        The desired data type for the array. Default is float.</span>
+<span class="sd">    missing_value : scalar, optional</span>
+<span class="sd">        The value to use for missing data. Default is NaN.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grid_array : numpy.ndarray</span>
+<span class="sd">        The grid array with assigned values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># empty array, shape is [lat(large -&gt; small), lon(small -&gt; large)]</span>
+    <span class="n">grid_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+        <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stand_grids_lat</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">stand_grids_lon</span><span class="p">)),</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="n">missing_value</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># assign values</span>
+    <span class="n">grid_array</span><span class="p">[</span><span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">values_list</span>
+    <span class="k">return</span> <span class="n">grid_array</span></div>
+
+
+
+<div class="viewcode-block" id="createArray_from_gridshp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createArray_from_gridshp">[docs]</a>
+<span class="k">def</span> <span class="nf">createArray_from_gridshp</span><span class="p">(</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">value_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">values_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a grid array from the grid shape, with values assigned from a specific column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid dataset containing ``point_geometry`` and optional value columns.</span>
+<span class="sd">    value_column : str, optional</span>
+<span class="sd">        Column name in ``grid_shp`` used as the source values.</span>
+<span class="sd">    values_list : array-like, optional</span>
+<span class="sd">        Explicit values to assign. Used when ``value_column`` is ``None``.</span>
+<span class="sd">    grid_res : float, optional</span>
+<span class="sd">        The resolution of the grid. Default is None.</span>
+<span class="sd">    dtype : data-type, optional</span>
+<span class="sd">        The desired data type for the array. Default is float.</span>
+<span class="sd">    missing_value : scalar, optional</span>
+<span class="sd">        The value to use for missing data. Default is NaN.</span>
+<span class="sd">    plot : bool, optional</span>
+<span class="sd">        If True, the grid array will be plotted. Default is False.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        If True, latitude will be sorted from large to small. Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(grid_array, stand_grids_lon, stand_grids_lat, rows_index, cols_index)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create stand grids lat, lon</span>
+    <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">stand_grids_lon</span> <span class="o">=</span> <span class="n">createStand_grids_lat_lon_from_gridshp</span><span class="p">(</span>
+        <span class="n">grid_shp</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="n">reverse_lat</span>
+    <span class="p">)</span>
+
+    <span class="c1"># create empty array</span>
+    <span class="n">grid_array</span> <span class="o">=</span> <span class="n">createEmptyArray_from_gridshp</span><span class="p">(</span>
+        <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">stand_grids_lon</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=</span><span class="n">missing_value</span>
+    <span class="p">)</span>
+
+    <span class="c1"># grid_shp.index to grid_array index</span>
+    <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span> <span class="o">=</span> <span class="n">gridshp_index_to_grid_array_index</span><span class="p">(</span>
+        <span class="n">grid_shp</span><span class="p">,</span> <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">stand_grids_lon</span>
+    <span class="p">)</span>
+
+    <span class="c1"># assign values</span>
+    <span class="k">if</span> <span class="n">value_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">values_list</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">value_column</span><span class="p">]</span>
+        
+    <span class="n">grid_array</span> <span class="o">=</span> <span class="n">assignValue_for_grid_array</span><span class="p">(</span>
+        <span class="n">grid_array</span><span class="p">,</span> <span class="n">values_list</span><span class="p">,</span> <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grid_array</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid_array</span><span class="p">,</span> <span class="n">stand_grids_lon</span><span class="p">,</span> <span class="n">stand_grids_lat</span><span class="p">,</span> <span class="n">rows_index</span><span class="p">,</span> <span class="n">cols_index</span></div>
+
+
+
+<div class="viewcode-block" id="createmaskArray_for_gridshp_intersect_basinshp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_basinshp">[docs]</a>
+<span class="k">def</span> <span class="nf">createmaskArray_for_gridshp_intersect_basinshp</span><span class="p">(</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">basin_shp</span><span class="p">,</span>
+    <span class="n">grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a boolean mask for grid cells outside a basin polygon.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid dataset with a ``geometry`` column.</span>
+<span class="sd">    basin_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin dataset; the first geometry is used for intersection.</span>
+<span class="sd">    grid_res : float, optional</span>
+<span class="sd">        Grid resolution used when reconstructing a complete array.</span>
+<span class="sd">    missing_value : scalar, optional</span>
+<span class="sd">        Fill value for unassigned cells.</span>
+<span class="sd">    plot : bool, optional</span>
+<span class="sd">        If ``True``, plot the generated mask.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        If ``True``, output array latitude is ordered from north to south.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(grid_shp, grid_array_mask)`` where ``grid_array_mask`` is a 2D mask</span>
+<span class="sd">        array aligned with standardized latitude/longitude grids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">basin_shp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">grid_array_mask</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">createArray_from_gridshp</span><span class="p">(</span>
+        <span class="n">grid_shp</span><span class="p">,</span>
+        <span class="s2">&quot;mask&quot;</span><span class="p">,</span>
+        <span class="n">grid_res</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="n">missing_value</span><span class="p">,</span>
+        <span class="n">plot</span><span class="p">,</span>
+        <span class="n">reverse_lat</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">grid_shp</span><span class="p">,</span> <span class="n">grid_array_mask</span></div>
+
+
+
+<div class="viewcode-block" id="createmaskArray_for_gridshp_intersect_gridshpRef">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.createmaskArray_for_gridshp_intersect_gridshpRef">[docs]</a>
+<span class="k">def</span> <span class="nf">createmaskArray_for_gridshp_intersect_gridshpRef</span><span class="p">(</span>
+    <span class="n">grid_shp</span><span class="p">,</span>
+    <span class="n">grid_shpRef</span><span class="p">,</span>
+    <span class="n">grid_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">missing_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a boolean mask for grid cells outside a reference grid extent.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Grid dataset to be masked.</span>
+<span class="sd">    grid_shpRef : geopandas.GeoDataFrame</span>
+<span class="sd">        Reference grid dataset; its unary union defines the valid footprint.</span>
+<span class="sd">    grid_res : float, optional</span>
+<span class="sd">        Grid resolution used when reconstructing a complete array.</span>
+<span class="sd">    missing_value : scalar, optional</span>
+<span class="sd">        Fill value for unassigned cells.</span>
+<span class="sd">    plot : bool, optional</span>
+<span class="sd">        If ``True``, plot the generated mask.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        If ``True``, output array latitude is ordered from north to south.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(grid_shp, grid_array_mask)`` where ``grid_array_mask`` is a 2D mask</span>
+<span class="sd">        array aligned with standardized latitude/longitude grids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">grid_shpRef</span><span class="o">.</span><span class="n">unary_union</span><span class="p">)</span>
+    <span class="n">grid_array_mask</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">createArray_from_gridshp</span><span class="p">(</span>
+        <span class="n">grid_shp</span><span class="p">,</span>
+        <span class="s2">&quot;mask&quot;</span><span class="p">,</span>
+        <span class="n">grid_res</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">,</span>
+        <span class="n">missing_value</span><span class="p">,</span>
+        <span class="n">plot</span><span class="p">,</span>
+        <span class="n">reverse_lat</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">grid_shp</span><span class="p">,</span> <span class="n">grid_array_mask</span></div>
+
+
+    
+<div class="viewcode-block" id="grids_array_coord_map">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.grids_array_coord_map">[docs]</a>
+<span class="k">def</span> <span class="nf">grids_array_coord_map</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="n">reverse_lat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate coordinate-to-index mappings for grid arrays.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : GeoDataFrame</span>
+<span class="sd">        A geospatial dataframe containing a &#39;point_geometry&#39; column with x (longitude) and y (latitude) coordinates.</span>
+<span class="sd">    reverse_lat : bool, optional</span>
+<span class="sd">        If True, sorts latitude values in descending order (useful for direct plotting), by default True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(lon_list, lat_list, lon_map_index, lat_map_index)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># lon/lat grid map into index to construct array</span>
+    <span class="n">lon_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)))</span>
+    <span class="n">lat_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">)),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse_lat</span>
+    <span class="p">)</span>  <span class="c1"># if True, large -&gt; small, top is zero, it is useful for plot directly</span>
+
+    <span class="n">lon_map_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">lon_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lon_list</span><span class="p">)))))</span>
+    <span class="n">lat_map_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">lat_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lat_list</span><span class="p">)))))</span>
+
+    <span class="k">return</span> <span class="n">lon_list</span><span class="p">,</span> <span class="n">lat_list</span><span class="p">,</span> <span class="n">lon_map_index</span><span class="p">,</span> <span class="n">lat_map_index</span></div>
+
+
+
+<div class="viewcode-block" id="intersectGridsWithBasins">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.intersectGridsWithBasins">[docs]</a>
+<span class="k">def</span> <span class="nf">intersectGridsWithBasins</span><span class="p">(</span><span class="n">grids</span><span class="p">:</span> <span class="n">Grids</span><span class="p">,</span> <span class="n">basins</span><span class="p">:</span> <span class="n">Basins</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identify and collect grid cells intersecting each basin.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grids : Grids</span>
+<span class="sd">        A geospatial grid dataset.</span>
+<span class="sd">    basins : Basins</span>
+<span class="sd">        A geospatial dataset containing basin geometries.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(basins, intersects_grids)`` where ``basins`` gains an</span>
+<span class="sd">        ``intersects_grids`` column and ``intersects_grids`` is the deduplicated</span>
+<span class="sd">        union of all intersecting grid cells.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">intersects_grids_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">intersects_grids</span> <span class="o">=</span> <span class="n">Grids</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">basins</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">basin</span> <span class="o">=</span> <span class="n">basins</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
+        <span class="n">intersects_grids_</span> <span class="o">=</span> <span class="n">grids</span><span class="p">[</span><span class="n">grids</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">basin</span><span class="p">)]</span>
+        <span class="n">intersects_grids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">intersects_grids</span><span class="p">,</span> <span class="n">intersects_grids_</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">intersects_grids_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intersects_grids_</span><span class="p">)</span>
+
+    <span class="n">intersects_grids</span><span class="p">[</span><span class="s2">&quot;grids_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersects_grids</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">intersects_grids</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersects_grids</span><span class="p">)))</span>
+
+    <span class="n">droped_index</span> <span class="o">=</span> <span class="n">intersects_grids</span><span class="p">[</span><span class="s2">&quot;grids_index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">intersects_grids</span> <span class="o">=</span> <span class="n">intersects_grids</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">droped_index</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="n">basins</span><span class="p">[</span><span class="s2">&quot;intersects_grids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersects_grids_list</span>
+
+    <span class="k">return</span> <span class="n">basins</span><span class="p">,</span> <span class="n">intersects_grids</span></div>
+
+
+
+<div class="viewcode-block" id="build_grid_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_func.html#easy_vic_build.tools.dpc_func.basin_grid_func.build_grid_shp">[docs]</a>
+<span class="k">def</span> <span class="nf">build_grid_shp</span><span class="p">(</span>
+    <span class="n">basin_shp</span><span class="p">,</span>
+    <span class="n">grid_res_level0</span><span class="p">,</span>
+    <span class="n">grid_res_level1</span><span class="p">,</span>
+    <span class="n">grid_res_level2</span><span class="p">,</span>
+    <span class="n">expand_grids_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># build grid_shp (Grids) for level1 (modeling scale), expand_grids_num=1 to avoid 0 (edge) flow direction in hydroanalysis</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build multi-resolution grid layers for one basin geometry.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basin_shp : geopandas.GeoDataFrame</span>
+<span class="sd">        Basin polygon dataset.</span>
+<span class="sd">    grid_res_level0 : float</span>
+<span class="sd">        Resolution for level-0 grids.</span>
+<span class="sd">    grid_res_level1 : float</span>
+<span class="sd">        Resolution for level-1 grids (main modeling scale).</span>
+<span class="sd">    grid_res_level2 : float</span>
+<span class="sd">        Resolution for level-2 grids.</span>
+<span class="sd">    expand_grids_num : int, optional</span>
+<span class="sd">        Number of level-1 grid cells to expand beyond basin boundary.</span>
+<span class="sd">    plot : bool, optional</span>
+<span class="sd">        If ``True``, plot all generated grid levels.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(grid_shp_level0, grid_shp_level1, grid_shp_level2, grid_shp_level3)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_shp_lon_level1</span><span class="p">,</span> <span class="n">grid_shp_lat_level1</span><span class="p">,</span> <span class="n">grid_shp_level1</span> <span class="o">=</span> <span class="n">createGridForBasin</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">grid_res_level1</span><span class="p">,</span> <span class="n">expand_grids_num</span><span class="o">=</span><span class="n">expand_grids_num</span><span class="p">)</span>
+    
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">boundary_grids_edge_x_y_level1</span> <span class="o">=</span> <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">createBoundaryShp</span><span class="p">()</span>
+    
+    <span class="c1"># build grid_shp for level0 and level2 based on the boundary of level1</span>
+    <span class="n">grid_shp_lon_level0</span><span class="p">,</span> <span class="n">grid_shp_lat_level0</span><span class="p">,</span> <span class="n">grid_shp_level0</span> <span class="o">=</span> <span class="n">createGridForBasin</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">grid_res_level0</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">boundary_grids_edge_x_y_level1</span><span class="p">)</span>
+    <span class="n">grid_shp_lon_level2</span><span class="p">,</span> <span class="n">grid_shp_lat_level2</span><span class="p">,</span> <span class="n">grid_shp_level2</span> <span class="o">=</span> <span class="n">createGridForBasin</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="n">grid_res_level2</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">boundary_grids_edge_x_y_level1</span><span class="p">)</span>
+    
+    <span class="c1"># build grid_shp for level3 based on the shp file</span>
+    <span class="n">grid_shp_lon_level3</span><span class="p">,</span> <span class="n">grid_shp_lat_level3</span><span class="p">,</span> <span class="n">grid_shp_level3</span> <span class="o">=</span> <span class="n">createGridForBasin</span><span class="p">(</span><span class="n">basin_shp</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">boundary_grids_edge_x_y_level1</span><span class="p">)</span>
+    
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">grid_shp_level0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        
+        <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">grid_shp_level1</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;darkblue&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">grid_shp_level2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">grid_shp_level2</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;darkblue&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="n">basin_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">grid_shp_level0</span><span class="p">,</span> <span class="n">grid_shp_level1</span><span class="p">,</span> <span class="n">grid_shp_level2</span><span class="p">,</span> <span class="n">grid_shp_level3</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

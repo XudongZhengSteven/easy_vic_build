@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+<span class="sd">&quot;&quot;&quot;Module ``easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL``.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">rasterio.plot</span> <span class="kn">import</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">...geo_func</span> <span class="kn">import</span> <span class="n">resample</span><span class="p">,</span> <span class="n">search_grids</span>
+<span class="kn">from</span> <span class="nn">...geo_func.create_gdf</span> <span class="kn">import</span> <span class="n">CreateGDF</span>
+<span class="kn">from</span> <span class="nn">...params_func.TransferFunction</span> <span class="kn">import</span> <span class="n">SoilLayerResampler</span>
+
+<span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">potential issues: NOTE that geographic coordinates are NOT a projection -- scales vary with latitude and are substantially different in the x and y directions, and the 30-arcsec</span>
+<span class="sd">grid cells are neither square nor equal in area.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">CONUS_layers_depths</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="mf">0.05</span><span class="p">,</span>
+    <span class="mf">0.05</span><span class="p">,</span>
+    <span class="mf">0.10</span><span class="p">,</span>
+    <span class="mf">0.10</span><span class="p">,</span>
+    <span class="mf">0.10</span><span class="p">,</span>
+    <span class="mf">0.20</span><span class="p">,</span>
+    <span class="mf">0.20</span><span class="p">,</span>
+    <span class="mf">0.20</span><span class="p">,</span>
+    <span class="mf">0.50</span><span class="p">,</span>
+    <span class="mf">0.50</span><span class="p">,</span>
+    <span class="mf">0.50</span><span class="p">,</span>
+<span class="p">]</span>  <span class="c1"># 11 layers m</span>
+
+<span class="n">CONUS_soillayerresampler</span> <span class="o">=</span> <span class="n">SoilLayerResampler</span><span class="p">(</span><span class="n">CONUS_layers_depths</span><span class="p">)</span>
+
+<div class="viewcode-block" id="set_g_params_CONUS_layer">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL.set_g_params_CONUS_layer">[docs]</a>
+<span class="k">def</span> <span class="nf">set_g_params_CONUS_layer</span><span class="p">(</span><span class="n">g_params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``set_g_params_CONUS_layer`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    g_params : object</span>
+<span class="sd">        Input value for ``g_params``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g_params</span><span class="p">[</span><span class="s2">&quot;soil_layers_breakpoints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+        <span class="s2">&quot;boundary&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;optimal&quot;</span><span class="p">:</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="s2">&quot;free&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">g_params</span></div>
+
+
+
+<div class="viewcode-block" id="ExtractData">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL.ExtractData">[docs]</a>
+<span class="k">def</span> <span class="nf">ExtractData</span><span class="p">(</span>
+    <span class="n">grid_shp</span><span class="p">,</span> <span class="n">grid_shp_res</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span> <span class="n">plot_layer</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">save_original</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">check_search</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="c1"># plot_layer: start from 1</span>
+    <span class="c1"># read</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``ExtractData`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : object</span>
+<span class="sd">        Input value for ``grid_shp``.</span>
+<span class="sd">    grid_shp_res : object, optional</span>
+<span class="sd">        Input value for ``grid_shp_res``.</span>
+<span class="sd">    plot_layer : object, optional</span>
+<span class="sd">        Input value for ``plot_layer``.</span>
+<span class="sd">    save_original : object, optional</span>
+<span class="sd">        Input value for ``save_original``.</span>
+<span class="sd">    check_search : object, optional</span>
+<span class="sd">        Input value for ``check_search``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">home</span> <span class="o">=</span> <span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">LULC</span><span class="se">\\</span><span class="s2">CONUS-SOIL&quot;</span>
+
+    <span class="n">sand_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;SandSiltClayFraction</span><span class="se">\\</span><span class="s2">sand.bsq</span><span class="se">\\</span><span class="s2">sand.bsq&quot;</span><span class="p">)</span>
+    <span class="n">silt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;SandSiltClayFraction</span><span class="se">\\</span><span class="s2">silt.bsq</span><span class="se">\\</span><span class="s2">silt.bsq&quot;</span><span class="p">)</span>
+    <span class="n">clay_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;SandSiltClayFraction</span><span class="se">\\</span><span class="s2">clay.bsq</span><span class="se">\\</span><span class="s2">clay.bsq&quot;</span><span class="p">)</span>
+    <span class="n">bulk_density_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;BulkDensity</span><span class="se">\\</span><span class="s2">bd.bsq</span><span class="se">\\</span><span class="s2">bd.bsq&quot;</span><span class="p">)</span>
+
+    <span class="c1"># decode</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="mi">2984</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mi">6936</span>
+
+    <span class="n">dtype_particle</span> <span class="o">=</span> <span class="s2">&quot;uint8&quot;</span>
+    <span class="n">dtype_bulk_density</span> <span class="o">=</span> <span class="s2">&quot;&gt;u2&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sand_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># %</span>
+        <span class="n">sand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_particle</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">layers</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">silt_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># %</span>
+        <span class="n">silt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_particle</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">layers</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">clay_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># %</span>
+        <span class="n">clay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_particle</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">layers</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bulk_density_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># g/cm3 * 100, it should be / 100</span>
+        <span class="n">bulk_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_bulk_density</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># set grids_lat, lon</span>
+    <span class="n">grids_lat</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">grids_lon</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">point_geometry</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="c1"># grids_lat = [grid_shp.loc[i, :].point_geometry.y for i in grid_shp.index]</span>
+    <span class="c1"># grids_lon = [grid_shp.loc[i, :].point_geometry.x for i in grid_shp.index]</span>
+
+    <span class="c1"># soil data lon, lat</span>
+    <span class="n">soil_data_Xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">124</span> <span class="o">-</span> <span class="mi">45</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">soil_data_Xmax</span> <span class="o">=</span> <span class="o">-</span><span class="mi">66</span> <span class="o">-</span> <span class="mi">57</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">soil_data_Ymin</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">+</span> <span class="mi">32</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">soil_data_Ymax</span> <span class="o">=</span> <span class="mi">49</span> <span class="o">+</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">60</span>
+
+    <span class="n">soil_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">soil_data_Xmin</span><span class="p">,</span> <span class="n">soil_data_Xmax</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+    <span class="n">soil_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+        <span class="n">soil_data_Ymax</span><span class="p">,</span> <span class="n">soil_data_Ymin</span><span class="p">,</span> <span class="n">height</span>
+    <span class="p">)</span>  <span class="c1"># large-&gt;small, top(90, large lat) is zero</span>
+
+    <span class="c1"># res</span>
+    <span class="n">soil_lat_res</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">soil_lat</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">soil_lat</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">soil_lat</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">soil_lon_res</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">soil_lon</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">soil_lon</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">soil_lon</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># clip: extract before to improve speed</span>
+    <span class="n">xindex_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">soil_lon</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">xindex_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">soil_lon</span> <span class="o">&gt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">yindex_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">soil_lat</span> <span class="o">&gt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span>
+        <span class="o">-</span><span class="mi">1</span>
+    <span class="p">]</span>  <span class="c1"># large -&gt; small</span>
+    <span class="n">yindex_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">soil_lat</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">soil_lon_clip</span> <span class="o">=</span> <span class="n">soil_lon</span><span class="p">[</span><span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">soil_lat_clip</span> <span class="o">=</span> <span class="n">soil_lat</span><span class="p">[</span><span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">sand_clip</span> <span class="o">=</span> <span class="n">sand</span><span class="p">[:,</span> <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">silt_clip</span> <span class="o">=</span> <span class="n">silt</span><span class="p">[:,</span> <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">clay_clip</span> <span class="o">=</span> <span class="n">clay</span><span class="p">[:,</span> <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">bulk_density_clip</span> <span class="o">=</span> <span class="n">bulk_density</span><span class="p">[</span>
+        <span class="p">:,</span> <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">]</span>
+
+    <span class="c1"># search grids</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;========== search grids for CONUS Soil ==========&quot;</span><span class="p">)</span>
+    <span class="n">searched_grids_index</span> <span class="o">=</span> <span class="n">search_grids</span><span class="o">.</span><span class="n">search_grids_nearest</span><span class="p">(</span>
+        <span class="n">dst_lat</span><span class="o">=</span><span class="n">grids_lat</span><span class="p">,</span>
+        <span class="n">dst_lon</span><span class="o">=</span><span class="n">grids_lon</span><span class="p">,</span>
+        <span class="n">src_lat</span><span class="o">=</span><span class="n">soil_lat_clip</span><span class="p">,</span>
+        <span class="n">src_lon</span><span class="o">=</span><span class="n">soil_lon_clip</span><span class="p">,</span>
+        <span class="n">search_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># searched_grids_index = search_grids.search_grids_radius_rectangle(dst_lat=grids_lat, dst_lon=grids_lon,</span>
+    <span class="c1">#                                                                   src_lat=soil_lat_clip, src_lon=soil_lon_clip,</span>
+    <span class="c1">#                                                                   lat_radius=grid_shp_res/2, lon_radius=grid_shp_res/2)</span>
+
+    <span class="c1"># loop for layers</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">layers</span><span class="p">):</span>
+        <span class="c1"># read soil data for each grid</span>
+        <span class="c1"># sand_mean_Value = []</span>
+        <span class="c1"># silt_mean_Value = []</span>
+        <span class="c1"># bulk_density_mean_Value = []</span>
+
+        <span class="n">sand_nearest_Value</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">silt_nearest_Value</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">clay_nearest_Value</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bulk_density_nearest_Value</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">save_original</span><span class="p">:</span>
+            <span class="n">sand_original_Value</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">silt_original_Value</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">clay_original_Value</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">bulk_density_original_Value</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">original_lat</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">original_lon</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="n">grid_shp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;loop for each grid to extract soil</span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s2"> data&quot;</span><span class="p">,</span>
+            <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="c1"># lon/lat</span>
+            <span class="n">searched_grid_index</span> <span class="o">=</span> <span class="n">searched_grids_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">searched_grid_lat</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">]</span>
+            <span class="n">searched_grid_lon</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">]</span>
+
+            <span class="c1"># data</span>
+            <span class="n">sand_searched_grid_data</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">sand_clip</span><span class="p">[</span><span class="n">l</span><span class="p">,</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">]</span>  <span class="c1"># index: (lat, lon), namely (row, col)</span>
+            <span class="n">silt_searched_grid_data</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">silt_clip</span><span class="p">[</span><span class="n">l</span><span class="p">,</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">]</span>  <span class="c1"># index: (lat, lon), namely (row, col)</span>
+            <span class="n">clay_searched_grid_data</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">clay_clip</span><span class="p">[</span><span class="n">l</span><span class="p">,</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">]</span>  <span class="c1"># index: (lat, lon), namely (row, col)</span>
+            <span class="n">bulk_density_searched_grid_data</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">bulk_density_clip</span><span class="p">[</span>
+                    <span class="n">l</span><span class="p">,</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_grid_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="p">]</span>  <span class="c1"># index: (lat, lon), namely (row, col)</span>
+
+            <span class="c1"># resample</span>
+            <span class="c1"># sand_mean_value = resample.resampleMethod_SimpleAverage(sand_searched_grid_data, searched_grid_lat, searched_grid_lon)</span>
+            <span class="c1"># silt_mean_value = resample.resampleMethod_SimpleAverage(silt_searched_grid_data, searched_grid_lat, searched_grid_lon)</span>
+            <span class="c1"># bulk_density_mean_value = resample.resampleMethod_SimpleAverage(bulk_density_searched_grid_data, searched_grid_lat, searched_grid_lon)</span>
+
+            <span class="c1"># sand_mean_Value.append(sand_mean_value)</span>
+            <span class="c1"># silt_mean_Value.append(silt_mean_value)</span>
+            <span class="c1"># bulk_density_mean_Value.append(bulk_density_mean_value)</span>
+
+            <span class="c1"># check</span>
+            <span class="k">if</span> <span class="n">check_search</span> <span class="ow">and</span> <span class="n">l</span> <span class="o">+</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">cgdf</span> <span class="o">=</span> <span class="n">CreateGDF</span><span class="p">()</span>
+                <span class="n">grid_shp_grid</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
+                <span class="n">searched_grids_gdf</span> <span class="o">=</span> <span class="n">cgdf</span><span class="o">.</span><span class="n">createGDF_rectangle_central_coord</span><span class="p">(</span>
+                    <span class="n">searched_grid_lon</span><span class="p">,</span> <span class="n">searched_grid_lat</span><span class="p">,</span> <span class="n">soil_lon_res</span>
+                <span class="p">)</span>
+
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+                <span class="n">grid_shp_grid</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">searched_grids_gdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span>
+                <span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;check search&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">sum</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">sand_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">silt_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">clay_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="o">==</span> <span class="mi">0</span>
+            <span class="p">):</span>
+                <span class="n">sand_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="mi">3</span>
+                <span class="n">silt_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="mi">3</span>
+                <span class="n">clay_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="mi">3</span>
+
+            <span class="n">sand_nearest_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sand_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">silt_nearest_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">silt_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">clay_nearest_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clay_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">bulk_density_nearest_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bulk_density_searched_grid_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">save_original</span><span class="p">:</span>
+                <span class="n">sand_original_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sand_searched_grid_data</span><span class="p">)</span>
+                <span class="n">silt_original_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">silt_searched_grid_data</span><span class="p">)</span>
+                <span class="n">clay_original_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clay_searched_grid_data</span><span class="p">)</span>
+                <span class="n">bulk_density_original_Value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bulk_density_searched_grid_data</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">original_lat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">searched_grid_lat</span><span class="p">)</span>
+                    <span class="n">original_lon</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">searched_grid_lon</span><span class="p">)</span>
+
+        <span class="c1"># save in grid_shp</span>
+        <span class="c1"># grid_shp[f&quot;soil_l{l+1}_sand_mean_Value&quot;] = sand_mean_Value</span>
+        <span class="c1"># grid_shp[f&quot;soil_l{l+1}_silt_mean_Value&quot;] = silt_mean_Value</span>
+        <span class="c1"># grid_shp[f&quot;soil_l{l+1}_bulk_density_mean_Value&quot;] = bulk_density_mean_Value</span>
+        <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_sand_nearest_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sand_nearest_Value</span><span class="p">)</span>
+        <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_silt_nearest_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">silt_nearest_Value</span><span class="p">)</span>
+        <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_clay_nearest_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">clay_nearest_Value</span><span class="p">)</span>
+        <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_bulk_density_nearest_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="n">bulk_density_nearest_Value</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">save_original</span><span class="p">:</span>
+            <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_sand_original_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sand_original_Value</span>
+            <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_silt_original_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">silt_original_Value</span>
+            <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_clay_original_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clay_original_Value</span>
+            <span class="n">grid_shp</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_bulk_density_original_Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">bulk_density_original_Value</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;soil_original_lat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_lat</span>
+                <span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;soil_original_lon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_lon</span>
+
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">plot_layer</span><span class="p">:</span>
+        <span class="c1"># original, total</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">sand</span><span class="p">[</span><span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;total_data_sand_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">soil_lon</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">soil_lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">silt</span><span class="p">[</span><span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;total_data_silt_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">soil_lon</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">soil_lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">clay</span><span class="p">[</span><span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;total_data_clay_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">soil_lon</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">soil_lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">bulk_density</span><span class="p">[</span><span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;total_data_bulk_density_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">soil_lon</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">soil_lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">soil_lat</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># original, clip</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">sand</span><span class="p">[</span>
+                <span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;clip_data_sand_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">silt</span><span class="p">[</span>
+                <span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;clip_data_silt_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">clay</span><span class="p">[</span>
+                <span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;clip_data_clay_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">show</span><span class="p">(</span>
+            <span class="n">bulk_density</span><span class="p">[</span>
+                <span class="n">plot_layer</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">yindex_start</span> <span class="p">:</span> <span class="n">yindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">xindex_start</span> <span class="p">:</span> <span class="n">xindex_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;clip_data_bulk_density_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">soil_lon_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">soil_lat_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># readed mean</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">_sand_nearest_Value&quot;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;readed nearest sand l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">_silt_nearest_Value&quot;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;readed nearest silt l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">_clay_nearest_Value&quot;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;readed nearest clay l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">grid_shp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;soil_l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">_bulk_density_nearest_Value&quot;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;readed nearest bulk_density l</span><span class="si">{</span><span class="n">plot_layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lon</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">-</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">grids_lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">grid_shp_res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid_shp</span></div>
+
+
+
+<div class="viewcode-block" id="get_grids_coord_from_COUNS_SOIL">
+<a class="viewcode-back" href="../../../../../_autosummary/easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL.html#easy_vic_build.tools.dpc_func.extractData_func.Extract_CONUS_SOIL.get_grids_coord_from_COUNS_SOIL">[docs]</a>
+<span class="k">def</span> <span class="nf">get_grids_coord_from_COUNS_SOIL</span><span class="p">():</span>  <span class="c1"># 1km</span>
+    <span class="c1"># soil data lon, lat</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run ``get_grids_coord_from_COUNS_SOIL`` data processing routine.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Output generated by this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="mi">2984</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mi">6936</span>
+
+    <span class="n">soil_data_Xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">124</span> <span class="o">-</span> <span class="mi">45</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">soil_data_Xmax</span> <span class="o">=</span> <span class="o">-</span><span class="mi">66</span> <span class="o">-</span> <span class="mi">57</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">soil_data_Ymin</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">+</span> <span class="mi">32</span> <span class="o">/</span> <span class="mi">60</span>
+    <span class="n">soil_data_Ymax</span> <span class="o">=</span> <span class="mi">49</span> <span class="o">+</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">60</span>
+
+    <span class="n">soil_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">soil_data_Xmin</span><span class="p">,</span> <span class="n">soil_data_Xmax</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+    <span class="n">soil_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+        <span class="n">soil_data_Ymax</span><span class="p">,</span> <span class="n">soil_data_Ymin</span><span class="p">,</span> <span class="n">height</span>
+    <span class="p">)</span>  <span class="c1"># large-&gt;small, top(90, large lat) is zero</span>
+
+    <span class="n">soil_res</span> <span class="o">=</span> <span class="n">soil_lon</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">soil_lon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">soil_lon</span><span class="p">,</span> <span class="n">soil_lat</span><span class="p">,</span> <span class="n">soil_res</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">home</span> <span class="o">=</span> <span class="s2">&quot;E:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">LULC</span><span class="se">\\</span><span class="s2">CONUS-SOIL&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>easy_vic_build.tools.dpc_func.basin_grid_class &mdash; easy_vic_build 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=43f6a66f" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citation.html">Citation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">easy_vic_build</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">easy_vic_build.tools.dpc_func.basin_grid_class</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for easy_vic_build.tools.dpc_func.basin_grid_class</h1><div class="highlight"><pre>
+<span></span><span class="c1"># code: utf-8</span>
+<span class="c1"># author: Xudong Zheng</span>
+<span class="c1"># email: z786909151@163.com</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Data structures and helpers for basin and grid GeoDataFrames.</span>
+
+<span class="sd">This module defines lightweight ``geopandas.GeoDataFrame`` subclasses used by</span>
+<span class="sd">the data-processing workflow:</span>
+
+<span class="sd">- ``Basins`` for basin polygons,</span>
+<span class="sd">- ``Grids`` for grid polygons and center points,</span>
+<span class="sd">- ``Grids_for_shp`` for programmatically building grid layers from boundaries.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">getcontext</span>
+<span class="kn">import</span> <span class="nn">shapely</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">..geo_func.create_gdf</span> <span class="kn">import</span> <span class="n">CreateGDF</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<div class="viewcode-block" id="Basins">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Basins">[docs]</a>
+<span class="k">class</span> <span class="nc">Basins</span><span class="p">(</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Basin polygon container.</span>
+
+<span class="sd">    This class inherits from :class:`geopandas.GeoDataFrame` and keeps type</span>
+<span class="sd">    propagation behavior for operations that return new frames.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return constructor for pandas/geopandas operations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            ``Basins`` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Basins</span>
+    
+<div class="viewcode-block" id="Basins.from_shapefile">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Basins.from_shapefile">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_shapefile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">shapefile_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a :class:`Basins` object from a shapefile path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shapefile_path : str or path-like</span>
+<span class="sd">            Path to a vector file readable by :func:`geopandas.read_file`.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments forwarded to ``Basins(...)``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Basins</span>
+<span class="sd">            Basin GeoDataFrame instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">shapefile_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Grids">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids">[docs]</a>
+<span class="k">class</span> <span class="nc">Grids</span><span class="p">(</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Grid polygon and point container.</span>
+
+<span class="sd">    This class inherits from :class:`geopandas.GeoDataFrame` and is used to</span>
+<span class="sd">    store both cell polygons (``geometry``) and cell centers</span>
+<span class="sd">    (``point_geometry``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return constructor for pandas/geopandas operations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            ``Grids`` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Grids</span>
+    
+<div class="viewcode-block" id="Grids.from_shapefile">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids.from_shapefile">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_shapefile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">shapefile_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a :class:`Grids` object from a shapefile path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shapefile_path : str or path-like</span>
+<span class="sd">            Path to a vector file readable by :func:`geopandas.read_file`.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments forwarded to ``Grids(...)``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Grids</span>
+<span class="sd">            Grid GeoDataFrame instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">shapefile_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Grids.createBoundaryShp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids.createBoundaryShp">[docs]</a>
+    <span class="k">def</span> <span class="nf">createBoundaryShp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create center and edge boundary polygons for the grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            ``(boundary_point_center_shp, boundary_point_center_x_y,</span>
+<span class="sd">            boundary_grids_edge_shp, boundary_grids_edge_x_y)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">(</span>
+            <span class="n">boundary_point_center_shp</span><span class="p">,</span>
+            <span class="n">boundary_point_center_x_y</span><span class="p">,</span>
+            <span class="n">boundary_grids_edge_shp</span><span class="p">,</span>
+            <span class="n">boundary_grids_edge_x_y</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">createBoundaryShp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">boundary_point_center_shp</span><span class="p">,</span>
+            <span class="n">boundary_point_center_x_y</span><span class="p">,</span>
+            <span class="n">boundary_grids_edge_shp</span><span class="p">,</span>
+            <span class="n">boundary_grids_edge_x_y</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Grids_for_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp">[docs]</a>
+<span class="k">class</span> <span class="nc">Grids_for_shp</span><span class="p">(</span><span class="n">Grids</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Grid container that can be initialized directly from grid-generation rules.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Grids_for_shp.__init__">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_grid_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a grid GeoDataFrame.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : object, optional</span>
+<span class="sd">            Existing tabular/spatial data accepted by GeoDataFrame.</span>
+<span class="sd">        *args : tuple</span>
+<span class="sd">            Positional arguments forwarded to ``GeoDataFrame``.</span>
+<span class="sd">        geometry : str or array-like, optional</span>
+<span class="sd">            Geometry column specification when ``data`` is provided.</span>
+<span class="sd">        crs : str or CRS, optional</span>
+<span class="sd">            Coordinate reference system. Defaults to ``&quot;EPSG:4326&quot;`` when</span>
+<span class="sd">            ``create_grid_kwargs`` is used.</span>
+<span class="sd">        create_grid_kwargs : dict, optional</span>
+<span class="sd">            Arguments passed to :meth:`create_grid_shp`. When provided, generated</span>
+<span class="sd">            grids are used as initialization data.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments forwarded to ``GeoDataFrame``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">create_grid_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">grid_shp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_grid_shp</span><span class="p">(</span><span class="o">**</span><span class="n">create_grid_kwargs</span><span class="p">)</span>
+            <span class="n">crs</span> <span class="o">=</span> <span class="n">crs</span> <span class="k">if</span> <span class="n">crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;EPSG:4326&quot;</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return constructor for pandas/geopandas operations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            ``Grids_for_shp`` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Grids_for_shp</span>
+    
+<div class="viewcode-block" id="Grids_for_shp.create_grid_shp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.Grids_for_shp.create_grid_shp">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_grid_shp</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gshp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cen_lons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cen_lats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stand_lons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stand_lats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_boundary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">crs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">expand_grids_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">boundary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a grid GeoDataFrame from a target geometry/boundary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gshp : geopandas.GeoDataFrame, optional</span>
+<span class="sd">            Target geometry container. The first row geometry is used as the</span>
+<span class="sd">            default boundary when ``boundary`` is not provided.</span>
+<span class="sd">        cen_lons : array-like, optional</span>
+<span class="sd">            Grid-center longitudes used for direct grid construction.</span>
+<span class="sd">        cen_lats : array-like, optional</span>
+<span class="sd">            Grid-center latitudes used for direct grid construction.</span>
+<span class="sd">        stand_lons : array-like, optional</span>
+<span class="sd">            Standard longitude coordinates used to clip/build grids by boundary.</span>
+<span class="sd">        stand_lats : array-like, optional</span>
+<span class="sd">            Standard latitude coordinates used to clip/build grids by boundary.</span>
+<span class="sd">        res : float, optional</span>
+<span class="sd">            Grid resolution. If ``None``, only one boundary grid cell is built.</span>
+<span class="sd">        adjust_boundary : bool, optional</span>
+<span class="sd">            Whether to align boundaries to resolution-compatible edges.</span>
+<span class="sd">        crs : str or CRS, optional</span>
+<span class="sd">            Output coordinate reference system. Defaults to ``&quot;EPSG:4326&quot;``.</span>
+<span class="sd">        expand_grids_num : int, optional</span>
+<span class="sd">            Number of grid cells to expand outward beyond boundary.</span>
+<span class="sd">        boundary : sequence of float, optional</span>
+<span class="sd">            Explicit boundary as ``[xmin, ymin, xmax, ymax]``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame or None</span>
+<span class="sd">            Generated grid GeoDataFrame, or ``None`` when ``gshp`` is ``None``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">gshp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        
+        <span class="c1"># get bound</span>
+        <span class="k">if</span> <span class="n">boundary</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shp_bounds</span> <span class="o">=</span> <span class="n">gshp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shp_bounds</span> <span class="o">=</span> <span class="n">boundary</span>
+
+        <span class="n">boundary_x_min</span> <span class="o">=</span> <span class="n">shp_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">boundary_x_max</span> <span class="o">=</span> <span class="n">shp_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">boundary_y_min</span> <span class="o">=</span> <span class="n">shp_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">boundary_y_max</span> <span class="o">=</span> <span class="n">shp_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="c1"># lambda function</span>
+        <span class="n">grid_polygon</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span>
+            <span class="p">[(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span> <span class="p">(</span><span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">),</span> <span class="p">(</span><span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">),</span> <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">grid_point</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="c1"># create grid_shp</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">half_res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">res_places</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">half_res_places</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            
+            <span class="c1"># construct grids based on given cen_lons: do not consider gshp boundary</span>
+            <span class="k">if</span> <span class="n">cen_lons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># *note: len(cen_lons) == len(cen_lats)</span>
+                <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grid_polygon</span><span class="p">(</span>
+                        <span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cen_lats</span><span class="p">))</span>
+                <span class="p">]</span>
+                <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grid_point</span><span class="p">(</span><span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cen_lats</span><span class="p">))</span>
+                <span class="p">]</span>
+
+            <span class="c1"># construct grids based on standard grids: clip based on gshp boundary</span>
+            <span class="k">elif</span> <span class="n">stand_lons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">cen_lons</span> <span class="o">=</span> <span class="n">stand_lons</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stand_lons</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">boundary_x_min</span> <span class="o">-</span> <span class="n">res</span> <span class="o">*</span> <span class="n">expand_grids_num</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stand_lons</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="n">boundary_x_max</span> <span class="o">+</span> <span class="n">res</span> <span class="o">*</span> <span class="n">expand_grids_num</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">cen_lats</span> <span class="o">=</span> <span class="n">stand_lats</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stand_lats</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">boundary_y_min</span> <span class="o">-</span> <span class="n">res</span> <span class="o">*</span> <span class="n">expand_grids_num</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stand_lats</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="n">boundary_y_max</span> <span class="o">+</span> <span class="n">res</span> <span class="o">*</span> <span class="n">expand_grids_num</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">cen_lons</span><span class="p">,</span> <span class="n">cen_lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">cen_lons</span><span class="p">,</span> <span class="n">cen_lats</span><span class="p">)</span>
+                <span class="n">cen_lons</span> <span class="o">=</span> <span class="n">cen_lons</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">cen_lats</span> <span class="o">=</span> <span class="n">cen_lats</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+                <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grid_polygon</span><span class="p">(</span>
+                        <span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cen_lats</span><span class="p">))</span>
+                <span class="p">]</span>
+                <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grid_point</span><span class="p">(</span><span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cen_lats</span><span class="p">))</span>
+                <span class="p">]</span>
+
+            <span class="c1"># construct grids based on boundary</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">adjust_down</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">q</span> <span class="o">%</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="n">tol</span><span class="p">):</span>
+                        <span class="n">aligned</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># already aligned</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">aligned</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># move down</span>
+                        
+                    <span class="k">return</span> <span class="n">aligned</span>
+
+                <span class="k">def</span> <span class="nf">adjust_up</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">q</span> <span class="o">%</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="n">tol</span><span class="p">):</span>
+                        <span class="n">aligned</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># already aligned</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">aligned</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># move up</span>
+                        
+                    <span class="k">return</span> <span class="n">aligned</span>
+                
+                <span class="k">def</span> <span class="nf">adjust_offset</span><span class="p">(</span><span class="n">boundary_min</span><span class="p">,</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+                    <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">boundary_min</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span>
+                    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">q</span> <span class="o">%</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="n">tol</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="n">boundary_min</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">offset</span> <span class="o">=</span> <span class="p">((</span><span class="n">boundary_min</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">)</span> <span class="o">%</span> <span class="n">res</span><span class="p">)</span>
+                        <span class="n">adjusted</span> <span class="o">=</span> <span class="n">boundary_min</span> <span class="o">-</span> <span class="n">offset</span>
+                        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">adjusted</span><span class="p">,</span> <span class="n">half_res_places</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">adjust_boundary</span><span class="p">:</span>
+                    <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-10</span>
+                    <span class="n">boundary_x_min_o</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">boundary_x_min</span><span class="p">)</span>
+                    <span class="n">boundary_y_min_o</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">boundary_y_min</span><span class="p">)</span>
+                    
+                    <span class="c1"># boundary_x_min = round(adjust_down(boundary_x_min / half_res, tol) * half_res, half_res_places)</span>
+                    <span class="c1"># boundary_x_max = round(adjust_up(boundary_x_max / half_res, tol) * half_res, half_res_places)</span>
+                    <span class="c1"># boundary_y_min = round(adjust_down(boundary_y_min / half_res, tol) * half_res, half_res_places)</span>
+                    <span class="c1"># boundary_y_max = round(adjust_up(boundary_y_max / half_res, tol) * half_res, half_res_places)</span>
+                    <span class="n">boundary_x_min</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">adjust_down</span><span class="p">((</span><span class="n">boundary_x_min</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">)</span> <span class="o">/</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">*</span> <span class="n">half_res</span> <span class="o">-</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">half_res_places</span><span class="p">)</span>
+                    <span class="n">boundary_x_max</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">adjust_up</span><span class="p">((</span><span class="n">boundary_x_max</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">)</span> <span class="o">/</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">*</span> <span class="n">half_res</span> <span class="o">-</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">half_res_places</span><span class="p">)</span>
+                    <span class="n">boundary_y_min</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">adjust_down</span><span class="p">((</span><span class="n">boundary_y_min</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">)</span> <span class="o">/</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">*</span> <span class="n">half_res</span> <span class="o">-</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">half_res_places</span><span class="p">)</span>
+                    <span class="n">boundary_y_max</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">adjust_up</span><span class="p">((</span><span class="n">boundary_y_max</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">)</span> <span class="o">/</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">*</span> <span class="n">half_res</span> <span class="o">-</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">half_res_places</span><span class="p">)</span>
+                    
+                    <span class="c1"># offset: make center (start from) to res</span>
+                    <span class="c1"># boundary_x_min = adjust_offset(boundary_x_min, half_res, res, tol)</span>
+                    <span class="c1"># boundary_y_min = adjust_offset(boundary_y_min, half_res, res, tol)</span>
+                    <span class="n">boundary_x_min</span> <span class="o">=</span> <span class="n">adjust_offset</span><span class="p">((</span><span class="n">boundary_x_min</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">),</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">-</span> <span class="n">half_res</span>
+                    <span class="n">boundary_y_min</span> <span class="o">=</span> <span class="n">adjust_offset</span><span class="p">((</span><span class="n">boundary_y_min</span> <span class="o">+</span> <span class="n">half_res</span><span class="p">),</span> <span class="n">half_res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">-</span> <span class="n">half_res</span>
+                    
+                    <span class="c1"># adjust</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">boundary_x_min</span> <span class="o">+</span> <span class="n">res</span> <span class="o">-</span> <span class="n">boundary_x_min_o</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span><span class="p">:</span>
+                        <span class="n">boundary_x_min</span> <span class="o">+=</span> <span class="n">res</span>
+                    
+                    <span class="k">if</span> <span class="p">(</span><span class="n">boundary_y_min</span> <span class="o">+</span> <span class="n">res</span> <span class="o">-</span> <span class="n">boundary_y_min_o</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span><span class="p">:</span>
+                        <span class="n">boundary_y_min</span> <span class="o">+=</span> <span class="n">res</span>
+                
+                <span class="n">n_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">boundary_x_max</span> <span class="o">-</span> <span class="n">boundary_x_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span>
+                <span class="n">n_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">boundary_y_max</span> <span class="o">-</span> <span class="n">boundary_y_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span>
+                
+                <span class="n">n_x_fixed</span> <span class="o">=</span> <span class="n">adjust_up</span><span class="p">(</span><span class="n">n_x</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">expand_grids_num</span>
+                <span class="n">n_y_fixed</span> <span class="o">=</span> <span class="n">adjust_up</span><span class="p">(</span><span class="n">n_y</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">expand_grids_num</span>
+                
+                <span class="n">cen_lons</span> <span class="o">=</span> <span class="n">boundary_x_min</span> <span class="o">+</span> <span class="n">half_res</span> <span class="o">-</span> <span class="n">expand_grids_num</span> <span class="o">*</span> <span class="n">res</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_x_fixed</span><span class="p">)</span> <span class="o">*</span> <span class="n">res</span>
+                <span class="n">cen_lats</span> <span class="o">=</span> <span class="n">boundary_y_min</span> <span class="o">+</span> <span class="n">half_res</span> <span class="o">-</span> <span class="n">expand_grids_num</span> <span class="o">*</span> <span class="n">res</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_y_fixed</span><span class="p">)</span> <span class="o">*</span> <span class="n">res</span>
+                
+                <span class="n">cen_lons</span><span class="p">,</span> <span class="n">cen_lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">cen_lons</span><span class="p">,</span> <span class="n">cen_lats</span><span class="p">)</span>
+                <span class="n">cen_lons</span> <span class="o">=</span> <span class="n">cen_lons</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">cen_lats</span> <span class="o">=</span> <span class="n">cen_lats</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+                <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grid_polygon</span><span class="p">(</span>
+                        <span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cen_lats</span><span class="p">))</span>
+                <span class="p">]</span>
+                <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grid_point</span><span class="p">(</span><span class="n">cen_lons</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cen_lats</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cen_lats</span><span class="p">))</span>
+                <span class="p">]</span>
+
+        <span class="c1"># res=None, one grid for this shp (boundary grid)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_polygon</span><span class="p">(</span>
+                <span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">,</span> <span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_max</span>
+            <span class="p">)</span>
+            <span class="n">grid_shp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_point</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">boundary_x_min</span> <span class="o">+</span> <span class="n">boundary_x_max</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">boundary_y_min</span> <span class="o">+</span> <span class="n">boundary_y_max</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">)</span>
+        <span class="n">crs</span> <span class="o">=</span> <span class="n">crs</span> <span class="k">if</span> <span class="n">crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;EPSG:4326&quot;</span>
+        <span class="n">grid_shp</span> <span class="o">=</span> <span class="n">grid_shp</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">grid_shp</span></div>
+</div>
+
+
+<div class="viewcode-block" id="createBoundaryShp">
+<a class="viewcode-back" href="../../../../_autosummary/easy_vic_build.tools.dpc_func.basin_grid_class.html#easy_vic_build.tools.dpc_func.basin_grid_class.createBoundaryShp">[docs]</a>
+<span class="k">def</span> <span class="nf">createBoundaryShp</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create center and edge boundary polygons for a grid dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_shp : GeoDataFrame</span>
+<span class="sd">        Grid GeoDataFrame containing ``geometry`` and ``point_geometry``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        ``(boundary_point_center_shp, boundary_point_center_x_y,</span>
+<span class="sd">        boundary_grids_edge_shp, boundary_grids_edge_x_y)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># boundary: point center</span>
+    <span class="n">cgdf_point</span> <span class="o">=</span> <span class="n">CreateGDF</span><span class="p">()</span>
+    <span class="n">boundary_x_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">boundary_x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">boundary_y_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">boundary_y_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;point_geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    
+    <span class="n">boundary_point_center_shp</span> <span class="o">=</span> <span class="n">cgdf_point</span><span class="o">.</span><span class="n">createGDF_polygons</span><span class="p">(</span>
+        <span class="n">lon</span><span class="o">=</span><span class="p">[[</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">,</span> <span class="n">boundary_x_min</span><span class="p">]],</span>
+        <span class="n">lat</span><span class="o">=</span><span class="p">[[</span><span class="n">boundary_y_max</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">,</span> <span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_min</span><span class="p">]],</span>
+        <span class="n">crs</span><span class="o">=</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">boundary_point_center_x_y</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">boundary_x_min</span><span class="p">,</span>
+        <span class="n">boundary_y_min</span><span class="p">,</span>
+        <span class="n">boundary_x_max</span><span class="p">,</span>
+        <span class="n">boundary_y_max</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># boundary: grids edge</span>
+    <span class="n">boundary_x_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">boundary_x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">boundary_y_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">boundary_y_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grid_shp</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">boundary_grids_edge_shp</span> <span class="o">=</span> <span class="n">cgdf_point</span><span class="o">.</span><span class="n">createGDF_polygons</span><span class="p">(</span>
+        <span class="n">lon</span><span class="o">=</span><span class="p">[[</span><span class="n">boundary_x_min</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">,</span> <span class="n">boundary_x_max</span><span class="p">,</span> <span class="n">boundary_x_min</span><span class="p">]],</span>
+        <span class="n">lat</span><span class="o">=</span><span class="p">[[</span><span class="n">boundary_y_max</span><span class="p">,</span> <span class="n">boundary_y_max</span><span class="p">,</span> <span class="n">boundary_y_min</span><span class="p">,</span> <span class="n">boundary_y_min</span><span class="p">]],</span>
+        <span class="n">crs</span><span class="o">=</span><span class="n">grid_shp</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">boundary_grids_edge_x_y</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">boundary_x_min</span><span class="p">,</span>
+        <span class="n">boundary_y_min</span><span class="p">,</span>
+        <span class="n">boundary_x_max</span><span class="p">,</span>
+        <span class="n">boundary_y_max</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">boundary_point_center_shp</span><span class="p">,</span>
+        <span class="n">boundary_point_center_x_y</span><span class="p">,</span>
+        <span class="n">boundary_grids_edge_shp</span><span class="p">,</span>
+        <span class="n">boundary_grids_edge_x_y</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, XudongZheng. Licensed under the MIT License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
