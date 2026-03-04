@@ -1,312 +1,221 @@
 Usage
 =====
 
-After installation, you can use the package in the following sequence:
+This page summarizes the HRB workflow using runnable scripts in
+``examples/HRB_modeling``. The section order follows the current EVB usage
+sequence, while code snippets map directly to the HRB example implementation.
 
-This deployment process adheres to the guidelines outlined in the official VIC documentation (https://vic.readthedocs.io/) and focuses primarily on the image driver version of VIC-5
+Before running, update local data paths in:
 
-1. **Build Modeling Directory**
-===========================================
+- ``examples/HRB_modeling/general_info.py``
+- ``examples/HRB_modeling/HRB_extractData_func/*.py``
 
-Use the `Evb_dir` class to build the modeling directory.
+General Configuration (``general_info.py``)
+-------------------------------------------
+
+The file ``examples/HRB_modeling/general_info.py`` is the shared configuration
+entry for the HRB workflow. It is intended to be prepared first and then
+imported by all build/calibration scripts to provide required modeling context.
+
+In practice, this file centralizes:
+
+- case directories (``evb_dir_hydroanalysis``, ``evb_dir_modeling``)
+- basin/station metadata (station names, coordinates, nested upstream map)
+- spatial settings (model scale and level-0/1/2 grid resolutions)
+- temporal settings (simulation/warm-up/calibration/verification periods)
+- common flags (for example ``reverse_lat``)
+
+After editing ``general_info.py`` for your environment, the remaining HRB
+scripts can run without repeatedly redefining the same configuration.
+
+Workflow Overview
+-----------------
+
+1. Build case directories with ``Evb_dir``.
+2. Prepare basin and grid shapefiles.
+3. Build data-processing classes (DPC) for each data level.
+4. Build domain.
+5. Build parameter datasets.
+6. Build hydroanalysis outputs (level 1 / river network).
+7. Build meteorological forcing.
+8. Build global parameter file.
+9. Build RVIC parameters (optional).
+10. Calibrate, evaluate, and plot diagnostics/maps.
+
+1. Build Modeling Directory
+---------------------------
 
 .. code-block:: python
 
-   from easy_vic_build.Evb_dir_class import Evb_dir
-   case_name = "example_case"
-   evb_dir = Evb_dir(cases_home="../")
-   evb_dir.builddir(case_name)
+   from HRB_build_evb_dir import build_modeling_dir
 
-This will create a new modeling directory under `../example_case` and automatically manage file paths.
+   evb_dir_hydroanalysis = build_modeling_dir(subname="hydroanalysis")
+   evb_dir_modeling = build_modeling_dir(subname="shiquan_6km")
 
-2. **Build Basins and Grids**
-===========================================
+In HRB examples, these directories are also created automatically when importing
+``general_info``.
 
-Build the required basin extents for the model from a shapefile or a custom shapefile using the `Basins` module.
+2. Build Basin and Grids
+------------------------
 
-.. code-block:: python
-
-   from easy_vic_build.tools.dpc_func.basin_grid_class import Basins
-
-   basin_shp = Basins.from_shapefile(basin_shp_path)
-
-Based on the basin extents and custom grid resolutions, use the `Grids` module or `dpc_func` module to build the spatial partitions needed for the model.
+HRB uses level-0 hydroanalysis outputs to derive basin polygons, then creates
+multi-level grids.
 
 .. code-block:: python
 
+   from general_info import (
+       evb_dir_hydroanalysis, station_name,
+       grid_res_level0, grid_res_level1, grid_res_level2
+   )
+   from HRB_hydroanalysis import hydroanalysis_level0_HRB
+   from HRB_build_dpc import build_basin_shp_JRB
    from easy_vic_build.tools.dpc_func.basin_grid_func import build_grid_shp
 
+   hydroanalysis_level0_HRB(evb_dir_hydroanalysis)
+
+   basin_shps = build_basin_shp_JRB(evb_dir_hydroanalysis)
    grid_shp_level0, grid_shp_level1, grid_shp_level2, grid_shp_level3 = build_grid_shp(
-       basin_shp,
+       basin_shps[station_name],
        grid_res_level0,
        grid_res_level1,
        grid_res_level2,
        expand_grids_num=1,
-       plot=True
+       plot=True,
    )
 
-3. **Build DPC (Data Processing Class)**
-===========================================
+3. Build DPC Objects
+--------------------
 
-Inherit from `dataProcess_base` to create subclasses for levels 0-3, overriding the `processing_step` method to handle different data sources.
+HRB defines customized DPC subclasses in ``HRB_build_dpc.py``:
 
-- `dpc_level0` handles and stores data such as DEM and soil.
-- `dpc_level1` handles and stores soil temperature, annual precipitation, LULC, BSA, NDVI, LAI.
-- `dpc_level2` handles and stores forcing data, including average air temperature, total precipitation (rain and snow), atmospheric pressure, incoming shortwave radiation, incoming longwave radiation, vapor pressure, and wind speed.
+- ``dataProcess_VIC_level0_HRB``
+- ``dataProcess_VIC_level1_HRB``
+- ``dataProcess_VIC_level2_CMFD_HRB``
+- ``dataProcess_VIC_level3_HRB``
 
-Refer to `examples/JRB_modeling/JRB_build_dpc.py` for implementation details.  
-This process should be combined with functions from the `JRB_extractData_func` module.
-
-4. **Build Domain**
-===========================================
-
-Use the `buildDomain` function to construct the domain file.  
-The `reverse_lat` parameter indicates whether to reverse latitudes (usually `True` for Northern Hemisphere: large to small).
+Use the wrapper function below to build and cache DPC data.
 
 .. code-block:: python
 
-   from easy_vic_build.bulid_Domain import buildDomain
-   buildDomain(evb_dir_modeling, dpc_VIC_level1, reverse_lat)
+   from general_info import evb_dir_hydroanalysis, evb_dir_modeling, date_period
+   from HRB_build_dpc import build_dpc_VIC_HRB
 
-5. **Build Parameters**
-===========================================
+   build_dpc_VIC_HRB(evb_dir_hydroanalysis, evb_dir_modeling, date_period)
 
-Inherit from `buildParam_level0_interface` to define customized subclasses based on data sources.  
-Read `dpc` instances and pass them to `buildParam_level0` to build effective parameters at level 0 scale.
-
-.. code-block:: python
-
-   from easy_vic_build.build_Param import buildParam_level0, buildParam_level1, scaling_level0_to_level1
-
-   buildParam_level0_interface_instance = buildParam_level0(
-       evb_dir_modeling,
-       default_params_JRB["g_params"],
-       SoilGrids_soillayerresampler,
-       dpc_VIC_level0,
-       TF_VIC_class=TF_VIC,
-       buildParam_level0_interface_class=buildParam_level0_interface_JRB,
-       reverse_lat=reverse_lat,
-       stand_grids_lat_level0=None,
-       stand_grids_lon_level0=None,
-       rows_index_level0=None,
-       cols_index_level0=None,
-   )
-
-Similarly, pass `dpc_level1` to `buildParam_level1` to build parameters at level 1 scale.  
-Note that some parameters are left blank here and need to be scaled up from level 0.
+4. Build Domain
+---------------
 
 .. code-block:: python
 
-   buildParam_level1_interface_instance = buildParam_level1(
-       evb_dir_modeling,
-       dpc_VIC_level1,
-       TF_VIC_class=TF_VIC,
-       buildParam_level1_interface_class=buildParam_level1_interface_JRB,
-       reverse_lat=reverse_lat,
-       domain_dataset=domain_dataset,
-       stand_grids_lat_level1=None,
-       stand_grids_lon_level1=None,
-       rows_index_level1=None,
-       cols_index_level1=None,
-   )
+   from general_info import evb_dir_modeling, reverse_lat
+   from HRB_build_domain import build_domain_HRB
 
-The scaling process converts parameters from level 0 scale to level 1.
+   build_domain_HRB(evb_dir_modeling, reverse_lat)
+
+5. Build Parameters
+-------------------
 
 .. code-block:: python
 
-   params_dataset_level1, searched_grids_bool_index = scaling_level0_to_level1(
-       params_dataset_level0, params_dataset_level1,
-       searched_grids_bool_index=None,
-       nlayer_list=[1, 2, 3],
+   from general_info import evb_dir_hydroanalysis, evb_dir_modeling, reverse_lat
+   from HRB_build_Param import (
+       build_params_HRB,
+       build_params_nested_HRB_basin_hierarchy,
+       build_params_HRB_spatially_uniform,
    )
 
-6. **Perform Hydroanalysis**
-===========================================
+   # Option A: default HRB parameter build
+   build_params_HRB(evb_dir_modeling, reverse_lat)
 
-You may need to perform hydrological analysis at the level 0 scale to provide high-resolution basin maps.  
-By passing the level 0 scale DEM data, use the `buildHydroanalysis_level0` function to generate hydrological analysis data.  
-This will create data such as flow direction, flow accumulation, basin boundaries, outlet points, and streamlines under the `Hydroanalysis` directory.
+   # Option B: nested-basin hierarchy parameterization
+   build_params_nested_HRB_basin_hierarchy(
+       evb_dir_hydroanalysis, evb_dir_modeling, reverse_lat
+   )
+
+   # Option C: spatially uniform baseflow scheme
+   build_params_HRB_spatially_uniform(
+       evb_dir_modeling, reverse_lat, baseflow_scheme="Nijssen"
+   )
+
+6. Build Hydroanalysis
+----------------------
+
+After parameters/domain are available, run level-1 hydroanalysis and (optional)
+river-network graph construction.
 
 .. code-block:: python
 
-   from easy_vic_build.build_hydroanalysis import buildHydroanalysis_level0, buildHydroanalysis_level1
+   from general_info import evb_dir_modeling, reverse_lat
+   from HRB_hydroanalysis import hydroanalysis_level1_HRB, buildRivernetwork_level1_HRB
 
-   buildHydroanalysis_level0(
-       evb_dir_hydroanalysis_level0,
-       dem_level0_path,
-       flow_direction_pkg="wbw",
-       stream_acc_threshold=None,
-       calculate_streamnetwork_threshold_kwargs={
-           "method": "drainage_area",
-           "drainage_area_km2": 0.01,
-       },
-       d8_streamnetwork_kwargs={
-           "snap_dist": 0.001,
-       },
-       snap_outlet_to_stream_kwargs={
-           "snap_dist": 30.0,
-       },
-       crs_str="EPSG:4326",
-       esri_pointer=True,
-       outlets_with_reference_coords=[hydroStation_coord_combined.lon.to_list(), hydroStation_coord_combined.lat.to_list()]
-   )
+   hydroanalysis_level1_HRB(evb_dir_modeling, reverse_lat)
+   buildRivernetwork_level1_HRB(evb_dir_modeling, threshold=2)
 
-By passing parameter files containing DEM information at level 1 scale along with the domain file,  
-use the `buildHydroanalysis_level1` function to generate hydrological analysis data at level 1 scale.  
-This will also produce flow direction, flow accumulation, basin boundaries, outlet points, and streamlines under the `Hydroanalysis` directory.  
-
-Note that this step is essential for the routing model, as RVIC parameter preparation requires hydrological analysis data at level 1 scale.
+7. Build Meteorological Forcing
+-------------------------------
 
 .. code-block:: python
 
-   from easy_vic_build.build_hydroanalysis import buildHydroanalysis_level0, buildHydroanalysis_level1
+   from general_info import evb_dir_modeling
+   from HRB_build_MeteForcing import HRB_build_MeteForcing
 
-   evb_dir_modeling = build_modeling_dir(subname=f"{station_name}_{model_scale}")
+   HRB_build_MeteForcing(evb_dir_modeling)
 
-   params_dataset_level0, params_dataset_level1 = readParam(evb_dir_modeling)
-
-   domain_dataset = readDomain(evb_dir_modeling)
-
-   buildHydroanalysis_level1(
-       evb_dir_modeling,
-       params_dataset_level1,
-       domain_dataset,
-       reverse_lat,
-       stream_acc_threshold=10,
-       flow_direction_pkg="wbw",
-       crs_str="EPSG:4326",
-       d8_streamnetwork_kwargs={
-           "snap_dist": 0.001,
-       },
-       snap_outlet_to_stream_kwargs={
-           "snap_dist": 30.0,
-       },
-       outlets_with_reference_coords=[hydroStation_coord_combined.lon.to_list(), hydroStation_coord_combined.lat.to_list()]
-   )
-
-7. **Build Meteorological Forcing**
-===========================================
-
-Read the processed forcing data contained in `dpc_level2`, and merge all data into a single DataFrame using `merge_grid_data`.  
-Then pass the merged data to `buildMeteForcing` to prepare meteorological forcing data.  
-This will generate annual NetCDF files under the `MeteForcing` directory.
+8. Build Global Parameter File
+------------------------------
 
 .. code-block:: python
 
-   dpc_VIC_level2_CDMet = dataProcess_VIC_level2_CDMet_JRB(
-       evb_dir_modeling._dpc_VIC_level2_path.replace(".pkl", "_CDMet.pkl")
-   )
-   
-   dpc_VIC_level2_CDMet.merge_grid_data()
+   from general_info import evb_dir_modeling
+   from HRB_build_GlobalParam import HRB_build_GlobalParam
 
-   buildMeteForcing_interface_instance = build_MeteForcing.buildMeteForcing(
-       evb_dir_modeling,
-       dpc_VIC_level2_CDMet,
-       date_period,
-       date_period,
-       buildMeteForcing_interface,
-       reverse_lat=True,
-       stand_grids_lat_level2=None,
-       stand_grids_lon_level2=None,
-       rows_index_level2=None,
-       cols_index_level2=None,
-       file_format="NETCDF4",
-   )
+   HRB_build_GlobalParam(evb_dir_modeling)
 
-8. **Build Global Parameters**
-===========================================
-
-Create the global parameter file by passing a parameter dictionary to `buildGlobalParam`.  
-This will generate the global parameter file `global_param.txt` in the `GlobalParam` directory.
+9. Build RVIC Parameters (Optional)
+-----------------------------------
 
 .. code-block:: python
 
-   from easy_vic_build.build_GlobalParam import buildGlobalParam
+   from general_info import evb_dir_modeling
+   from HRB_build_RVIC_Param import HRB_build_RVIC_Param
 
-   GlobalParam_dict = {'Simulation': {'MODEL_STEPS_PER_DAY': '1',
-                                      'SNOW_STEPS_PER_DAY': '24',
-                                      'RUNOFF_STEPS_PER_DAY': '24',
-                                      'STARTYEAR': str(date_period[0][:4]),
-                                      'STARTMONTH': str(int(date_period[0][4:6])),
-                                      'STARTDAY': str(int(date_period[0][6:8])),
-                                      'ENDYEAR': str(date_period[1][:4]),
-                                      'ENDMONTH': str(int(date_period[1][4:6])),
-                                      'ENDDAY': str(int(date_period[1][6:8])),
-                                      'OUT_TIME_UNITS': 'DAYS'},
-                        'Output': {'AGGFREQ': 'NDAYS   1'},
-                        'OUTVAR1': {'OUTVAR': ['OUT_RUNOFF', 'OUT_BASEFLOW', 'OUT_DISCHARGE']}
-                        }
+   HRB_build_RVIC_Param(evb_dir_modeling)
 
-   buildGlobalParam(evb_dir_modeling, GlobalParam_dict)
+If RVIC is used, update ``ROUT_PARAM`` in ``global_param.txt`` accordingly.
 
-9. **Build RVIC Parameters**
-===========================================
-
-Building the complete RVIC parameters requires calling the `rvic` package.  
-Use the `buildRVICParam` function to generate RVIC parameters, and then specify the `ROUT_PARAM` path  
-in the global parameter file using the `GlobalParamParser` class.
+10. Calibration and Evaluation
+------------------------------
 
 .. code-block:: python
 
-   from easy_vic_build.build_RVIC_Param import buildRVICParam
-   from rvic.parameters import parameters as rvic_parameters
-   from easy_vic_build.tools.params_func.GlobalParamParser import GlobalParamParser
-            
-   # build rvic_params
-   buildRVICParam(
-       evb_dir,
-       domain_dataset,
-       ppf_kwargs={
-           'names': snaped_outlet_names,
-           'lons': snaped_outlet_lons,
-           'lats': snaped_outlet_lats,
-       },
-       
-       uh_params={
-           'createUH_func': createGUH,
-           'uh_dt': rvic_uhbox_dt,
-           'tp': guh_params['tp']['optimal'][0],
-           'mu': guh_params['mu']['optimal'][0],
-           'm': guh_params['m']['optimal'][0],
-           'plot_bool': True,
-           'max_day': None,
-           'max_day_range': (0, 10),
-           'max_day_converged_threshold': 0.001
-       },
-       
-       cfg_params={
-           'VELOCITY': rvic_params['VELOCITY']['optimal'][0],
-           'DIFFUSION': rvic_params['DIFFUSION']['optimal'][0],
-           'OUTPUT_INTERVAL': rvic_OUTPUT_INTERVAL,
-           'SUBSET_DAYS': rvic_SUBSET_DAYS,
-           'CELL_FLOWDAYS': None,
-           'BASIN_FLOWDAYS': rvic_BASIN_FLOWDAYS,
-       }
-   )
+   from general_info import evb_dir_modeling
+   from HRB_calibrate import calibrate_HRB
 
-   globalParam = GlobalParamParser()
-   globalParam.load(evb_dir.globalParam_path)
-   rout_param_path = os.path.join(
-       evb_dir.rout_param_dir, os.listdir(evb_dir.rout_param_dir)[0]
-   )
-   globalParam.set('Routing', 'ROUT_PARAM', rout_param_path)
+   calibrate_HRB(evb_dir_modeling)
 
-10. **Calibrate the Model**
-===========================================
+For diagnostics/figures, see ``HRB_plot_results.py`` and
+``HRB_plot_Basinmap.py``.
 
-You can inherit from the `calibration_base` class to create a subclass  
-and override the corresponding class methods to implement different objective functions,  
-optimization algorithms, etc.  
-This is implemented based on the `DEAP` package.  
-You can refer to the example script at `examples/JRB_modeling/JRB_calibrate.py`.
+Script Entry Points
+-------------------
 
+You can also run the workflow scripts directly (from repository root):
 
-11. **Plot**
-===========================================
+.. code-block:: bash
 
-You can use functions from the `easy_vic_build.tools.plot_func` module  
-to conveniently plot model results, basin maps, and other visualizations.
+   python examples/HRB_modeling/HRB_hydroanalysis.py
+   python examples/HRB_modeling/HRB_build_dpc.py
+   python examples/HRB_modeling/HRB_build_domain.py
+   python examples/HRB_modeling/HRB_build_Param.py
+   python examples/HRB_modeling/HRB_build_MeteForcing.py
+   python examples/HRB_modeling/HRB_build_GlobalParam.py
+   python examples/HRB_modeling/HRB_build_RVIC_Param.py
+   python examples/HRB_modeling/HRB_calibrate.py
+   python examples/HRB_modeling/HRB_plot_results.py
 
-.. note::
+See also
+--------
 
-   You can refer to the code examples in the ``examples`` directory for more detailed usage.
+- :doc:`installation`
+- :doc:`api`
+- :doc:`notes`
