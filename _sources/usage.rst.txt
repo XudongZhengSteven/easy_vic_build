@@ -17,6 +17,9 @@ The file ``examples/HRB_modeling/general_info.py`` is the shared configuration
 entry for the HRB workflow. It is intended to be prepared first and then
 imported by all build/calibration scripts to provide required modeling context.
 
+Source:
+`general_info.py <https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py>`_
+
 In practice, this file centralizes:
 
 - case directories (``evb_dir_hydroanalysis``, ``evb_dir_modeling``)
@@ -64,6 +67,9 @@ Step-to-Source Links
 
 The following links point to the HRB reference scripts used in this page
 (GitHub ``main`` branch):
+
+Shared configuration:
+`general_info.py <https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/general_info.py>`_
 
 1. Build modeling directories:
    `HRB_build_evb_dir.py <https://github.com/XudongZhengSteven/easy_vic_build/blob/main/examples/HRB_modeling/HRB_build_evb_dir.py>`_
