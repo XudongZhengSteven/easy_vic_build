@@ -1,6 +1,8 @@
-# code: utf-8
+﻿# code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+
+"""Plot utilities for VIC evaluation and multi-model comparison."""
 
 import matplotlib.colors as mcolors
 import matplotlib.gridspec as gridspec
@@ -18,22 +20,19 @@ from .plot_utilities import *
 
 ## ------------------------ plot performance ------------------------
 def plot_VIC_performance(cali_result, verify_result):
-    """
-    Plot the performance of VIC model calibration and verification.
+    """Plot calibration and verification performance of VIC streamflow.
 
     Parameters
     ----------
     cali_result : pandas.DataFrame
-        Calibration results with observed and simulated streamflow.
+        Calibration dataframe containing observed and simulated discharge.
     verify_result : pandas.DataFrame
-        Verification results with observed and simulated streamflow.
+        Verification dataframe containing observed and simulated discharge.
 
     Returns
     -------
-    fig : matplotlib.figure.Figure
-        The figure object containing all subplots.
-    axes : list of matplotlib.axes.Axes
-        The list of axes for each subplot.
+    tuple
+        ``(fig, axes)`` where ``axes`` contains four subplot axes.
     """
     # fig set
     fig = plt.figure(figsize=(12, 7))
@@ -318,73 +317,86 @@ def taylor_diagram(
     ax=None,
     add_text=True,
 ):
-    """
-    Create a Taylor diagram to compare multiple models against observations.
+    """Create a Taylor diagram for model-to-observation comparison.
 
     Parameters
     ----------
     obs : ndarray
-        A 1D array of observed data values.
+        Observed data array.
     models : list of ndarray
-        A list of 1D arrays, each representing model data to compare against the observations.
+        Simulated model arrays.
     model_names : list of str
-        A list of model names, corresponding to each model in `models`.
+        Display names for each model.
     names_ha : list of str
-        Horizontal alignment for each model name's position in the plot.
+        Horizontal text alignment for model labels.
     names_va : list of str
-        Vertical alignment for each model name's position in the plot.
-    model_colors : list of str, optional
-        A list of colors for each model's data points on the diagram. Default is None, which uses a color map.
+        Vertical text alignment for model labels.
+    model_colors : list, optional
+        Colors for model points.
+    model_markers : list, optional
+        Marker styles for model points.
     title : str, optional
-        The title of the diagram. Default is "Standard Taylor Diagram".
+        Plot title.
     fig : matplotlib.figure.Figure, optional
-        An existing figure to plot on. If None, a new figure is created.
+        Existing figure.
     ax : matplotlib.axes.Axes, optional
-        An existing axes object to plot on. If None, a new polar subplot is created.
+        Existing polar axes.
+    add_text : bool, optional
+        Whether to annotate model names near points.
 
     Returns
     -------
-    fig : matplotlib.figure.Figure
-        The figure containing the Taylor diagram.
-    ax : matplotlib.axes.Axes
-        The axes containing the Taylor diagram.
+    tuple
+        ``(fig, ax)`` of the Taylor diagram.
 
-    Notes
-    -----
-    This function computes the standard deviation and correlation coefficient for each model
-    relative to the observed data and plots the results on a polar plot. The diagram includes:
-    - Observation point at the center (standard deviation = 1, correlation = 1).
-    - Models plotted at angles based on the correlation coefficient and at radii based on the standard deviation.
-    - Contour lines representing the RMSD (Root Mean Square Deviation).
-    - Arcs for standard deviation levels and radial lines for correlation levels.
+    Examples
+    --------
+    ::
 
-    examples:
-    
-    simulated_datasets = [simulated_dataset_12km, simulated_dataset_8km, simulated_dataset_6km]
-    params_dataset_level0_sets = [params_dataset_level0_12km, params_dataset_level0_8km, params_dataset_level0_6km]
-    params_dataset_level1_sets = [params_dataset_level1_12km, params_dataset_level1_8km, params_dataset_level1_6km]
-    model_names = ["12km ", "8km ", "6km "]
-    model_colors = ["red", "blue", "green"]
-    cali_names_ha = ["left", "right", "left"]  # {'center', 'right', 'left'}
-    cali_names_va = ["bottom", "top", "bottom"]  # {'center', 'top', 'bottom', 'baseline', 'center_baseline'}
-    verify_names_ha = ["left", "right", "left"]
-    verify_names_va = ["bottom", "top", "bottom"]
-    
-    obs_cali = cali_result_12km["obs_cali discharge(m3/s)"].values
-    obs_verify = verify_result_12km["obs_verify discharge(m3/s)"].values
-    obs_total = np.concatenate([obs_cali, obs_verify])
-    models_cali = [cali_result["sim_cali discharge(m3/s)"].values for cali_result in cali_results]
-    models_verify = [verify_result["sim_verify discharge(m3/s)"].values for verify_result in verify_results]
-    models_total = [np.concatenate([models_cali[i], models_verify[i]]) for i in range(len(models_cali))]
-    
-    fig_taylor = plt.figure(figsize=(12, 6))
-    fig_taylor.subplots_adjust(left=0.08, right=0.92, bottom=0.01, top=0.9, wspace=0.3)
-    ax1 = fig_taylor.add_subplot(121, projection='polar')
-    ax2 = fig_taylor.add_subplot(122, projection='polar')
-    
-    fig_taylor, ax1 = taylor_diagram(obs_cali, models_cali, model_names, cali_names_ha, cali_names_va, model_colors=model_colors, title="(a) Calibration", fig=fig_taylor, ax=ax1)
-    fig_taylor, ax2 = taylor_diagram(obs_verify, models_verify, model_names, verify_names_ha, verify_names_va, model_colors=model_colors, title="(b) Verification", fig=fig_taylor, ax=ax2)
-    
+        simulated_datasets = [simulated_dataset_12km, simulated_dataset_8km, simulated_dataset_6km]
+        params_dataset_level0_sets = [params_dataset_level0_12km, params_dataset_level0_8km, params_dataset_level0_6km]
+        params_dataset_level1_sets = [params_dataset_level1_12km, params_dataset_level1_8km, params_dataset_level1_6km]
+        model_names = ["12km ", "8km ", "6km "]
+        model_colors = ["red", "blue", "green"]
+        cali_names_ha = ["left", "right", "left"]  # {"center", "right", "left"}
+        cali_names_va = ["bottom", "top", "bottom"]  # {"center", "top", "bottom", "baseline", "center_baseline"}
+        verify_names_ha = ["left", "right", "left"]
+        verify_names_va = ["bottom", "top", "bottom"]
+
+        obs_cali = cali_result_12km["obs_cali discharge(m3/s)"].values
+        obs_verify = verify_result_12km["obs_verify discharge(m3/s)"].values
+        obs_total = np.concatenate([obs_cali, obs_verify])
+        models_cali = [cali_result["sim_cali discharge(m3/s)"].values for cali_result in cali_results]
+        models_verify = [verify_result["sim_verify discharge(m3/s)"].values for verify_result in verify_results]
+        models_total = [np.concatenate([models_cali[i], models_verify[i]]) for i in range(len(models_cali))]
+
+        fig_taylor = plt.figure(figsize=(12, 6))
+        fig_taylor.subplots_adjust(left=0.08, right=0.92, bottom=0.01, top=0.9, wspace=0.3)
+        ax1 = fig_taylor.add_subplot(121, projection="polar")
+        ax2 = fig_taylor.add_subplot(122, projection="polar")
+
+        fig_taylor, ax1 = taylor_diagram(
+            obs_cali,
+            models_cali,
+            model_names,
+            cali_names_ha,
+            cali_names_va,
+            model_colors=model_colors,
+            title="(a) Calibration",
+            fig=fig_taylor,
+            ax=ax1,
+        )
+        fig_taylor, ax2 = taylor_diagram(
+            obs_verify,
+            models_verify,
+            model_names,
+            verify_names_ha,
+            verify_names_va,
+            model_colors=model_colors,
+            title="(b) Verification",
+            fig=fig_taylor,
+            ax=ax2,
+        )
     """
     # Normalize data: Set the standard deviation of observed data to 1
     obs_std = np.std(obs)
@@ -437,7 +449,7 @@ def taylor_diagram(
     pad_theta = 0.01
     pad_r = 0.01
     for i, (corr, std) in enumerate(zip(model_corrs, model_stds)):
-        theta = np.pi / 2 - np.arccos(corr)  # Convert correlation to radians (0 to π/2)
+        theta = np.pi / 2 - np.arccos(corr)  # Convert correlation to radians (0 to 蟺/2)
         ax.scatter(
             theta,
             std,
@@ -566,27 +578,23 @@ def taylor_diagram(
 def plot_multimodel_comparison_scatter(
     obs_total, models_total, model_names, model_colors=None
 ):
-    """
-    Plot a comparison scatter plot for multiple models against observed data,
-    categorized into total, low flow, and high flow conditions.
+    """Plot multi-model scatter comparison for total/low/high flow.
 
     Parameters
     ----------
     obs_total : numpy.ndarray
-        A 1D array of observed streamflow values.
+        Observed streamflow series.
     models_total : list of numpy.ndarray
-        A list of 1D arrays, where each array contains simulated streamflow values for a model.
+        Simulated streamflow series for multiple models.
     model_names : list of str
-        A list of names corresponding to the models in `models_total`.
-    model_colors : list of str, optional
-        A list of colors for each model's data points. If not provided, default colors are used.
+        Names corresponding to ``models_total``.
+    model_colors : list, optional
+        Plot colors for each model.
 
     Returns
     -------
-    fig : matplotlib.figure.Figure
-        The figure object containing the plot.
-    axes : numpy.ndarray
-        An array of axes corresponding to the subplots.
+    tuple
+        ``(fig, axes)`` with three scatter subplots.
     """
     # threshold
     lowflow_threshold = np.percentile(obs_total, 30)
@@ -792,34 +800,33 @@ def plot_multimodel_comparison_distributed_OUTPUT(
     rising_period,
     recession_period,
 ):
-    """
-    Plot a comparison of model simulations and observations for multiple models with distributed surface flow and baseflow.
+    """Plot event hydrograph and distributed runoff/baseflow comparison.
 
     Parameters
     ----------
     cali_results : list of pandas.DataFrame
-        Calibration results containing observed and simulated discharge for calibration period.
+        Calibration result tables.
     verify_results : list of pandas.DataFrame
-        Verification results containing observed and simulated discharge for verification period.
+        Verification result tables.
     simulated_datasets : list of netCDF4.Dataset
-        Simulated datasets containing runoff and baseflow values.
+        VIC simulation datasets used for distributed outputs.
     MeteForcing_df : pandas.DataFrame
-        Meteorological forcing data, including precipitation.
+        Meteorological forcing dataframe containing precipitation.
     model_names : list of str
-        List of model names for labeling the simulations.
+        Model names.
     model_colors : list of str
-        List of colors corresponding to each model for plotting.
+        Colors for each model.
     event_period : tuple of str
-        Start and end dates for the event period.
+        Event start/end date.
     rising_period : tuple of str
-        Start and end dates for the rising period of the hydrograph.
+        Rising-limb start/end date.
     recession_period : tuple of str
-        Start and end dates for the recession period of the hydrograph.
+        Recession-limb start/end date.
 
     Returns
     -------
     matplotlib.figure.Figure
-        The figure object containing the plotted comparison.
+        Figure containing hydrograph and distributed maps.
     """
     # get data
     obs_cali = cali_results[0]["obs_cali discharge(m3/s)"].values
@@ -1147,31 +1154,18 @@ def plot_multimodel_comparison_distributed_OUTPUT(
 
 
 def plot_params(params_dataset):
-    """
-    Plot four different parameter datasets in a 2x2 grid with colorbars.
+    """Plot key VIC parameters in a 2x2 panel.
 
     Parameters
     ----------
     params_dataset : Dataset
-        A xarray Dataset containing the parameters to be plotted. The dataset should have variables:
-        - "infilt"
-        - "Ws"
-        - "Ds"
-        - "Dsmax"
-        Additionally, the dataset should have "lon" and "lat" for proper axis labeling.
+        NetCDF-like dataset containing ``infilt``, ``Ws``, ``Ds``, and
+        ``Dsmax`` plus ``lat``/``lon`` coordinates.
 
     Returns
     -------
-    fig : matplotlib.figure.Figure
-        The generated figure containing the plots.
-    axes : ndarray
-        An array of axes objects, corresponding to each subplot.
-
-    Notes
-    -----
-    - The color maps used for the plots are 'RdBu'.
-    - The x and y ticks are adjusted for better readability and are based on the dataset's latitude and longitude.
-    - Each subplot is annotated with a label ("(a)", "(b)", "(c)", "(d)").
+    tuple
+        ``(fig, axes)`` for the parameter maps.
     """
     fig, axes = plt.subplots(
         2,
@@ -1275,4 +1269,5 @@ def plot_params(params_dataset):
     )
 
     return fig, axes
+
 

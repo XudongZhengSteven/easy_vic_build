@@ -2,38 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-warmup - A Python module for warmuping the VIC model and getting the state files.
-
-This module provides functionality for warming up the VIC (Variable Infiltration Capacity) model
-by setting up the simulation period, modifying the global parameter file, and running the model for the warmup period.
-The function `warmup_VIC` adjusts the start and end dates for the simulation, saves the model state,
-and executes the VIC model with the updated parameters.
-
-Functions:
-----------
-    - `warmup_VIC`: Adjusts the global parameters for the warmup period, runs the VIC model,
-      and saves the model state after the warmup.
-
-Usage:
-------
-    1. Call the `warmup_VIC` function to warm up the VIC model with the specified period.
-    2. The model state at the end of the warmup period will be saved.
-
-Example:
---------
-    evb_dir = Evb_dir("./rvic_example")
-    evb_dir.builddir("case_study")
-
-    warmup_period = ["19980101", "19981231"]
-    warmup_VIC(evb_dir, warmup_period)
-
-Dependencies:
--------------
-    - `os`: For file and directory operations and running shell commands.
-    - `.tools.params_func.GlobalParamParser`: For reading and writing the global parameter configuration file.
-
-"""
+"""Run a VIC warm-up period and write a model state file."""
 
 import os
 
@@ -43,23 +12,18 @@ from .tools.params_func.GlobalParamParser import GlobalParamParser
 
 def warmup_VIC(evb_dir, warmup_period):
     """
-    Perform a warmup of the VIC model by modifying the global parameter file
-    and running the model for the specified warmup period.
+    Run VIC for a warm-up period and store the end state.
 
-    The warmup period is defined by the `warmup_period` parameter, which should be a list
-    containing the start and end dates as strings in the format "YYYYMMDD".
-
-    Parameters:
-    -----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
-    
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Case directory manager. Requires ``evb_dir.vic_exe_path`` and an existing
+        global parameter file at ``evb_dir.globalParam_path``.
     warmup_period : list of str
-        A list containing the start and end dates of the warmup period,
-        in the format ["YYYYMMDD", "YYYYMMDD"].
+        Two dates ``[start, end]`` formatted as ``YYYYMMDD``.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     # this is only useful is you just warm up the model and not to run it

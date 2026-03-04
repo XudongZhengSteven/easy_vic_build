@@ -1,31 +1,31 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-""" 
-fill_dem - A Python module for filling depressions in a DEM using least-cost breaching algorithm.
+"""DEM conditioning helpers for hydroanalysis workflows.
 
-This module contains the `filldem` function, which fills depressions in a DEM using the least-cost breaching algorithm.
-The function is designed to work with geospatial raster data for hydrological modeling and analysis.
-
-Functions:
-----------
-    - `filldem`: Fills depressions in a DEM using the least-cost breaching algorithm.
-
-Usage:
-------
-    1. Call the `filldem` function with the input DEM raster file path.
-    2. Optionally specify additional parameters such as `max_dist`, `flat_increment`, and `min_dist`.
-
-Dependencies:
--------------
-    - `whitebox_workflows`: A library that facilitates geospatial processing tasks, such as DEM filling and flow direction.
-
+This module provides utilities to estimate terrain-scale increments, add
+deterministic perturbations to break flat ties, and generate hydrologically
+conditioned DEM rasters using WhiteboxTools operations.
 """
 import numpy as np
 from scipy import ndimage
 import rasterio
 
 def estimate_typical_dz(dem, nodata=None):
+    """Estimate representative local elevation difference for a DEM.
+
+    Parameters
+    ----------
+    dem : numpy.ndarray
+        Input DEM array.
+    nodata : float, optional
+        Nodata value to be ignored during estimation.
+
+    Returns
+    -------
+    float
+        Median absolute difference between each cell and its 8 neighbors.
+    """
     if nodata is not None:
         mask = (dem == nodata)
         dem = dem.copy()
@@ -45,6 +45,21 @@ def estimate_typical_dz(dem, nodata=None):
     return float(np.median(vals))
 
 def add_deterministic_perturbation(dem, epsilon_ratio=0.01):
+    """Add tiny monotonic perturbation to break flat-elevation ties.
+
+    Parameters
+    ----------
+    dem : numpy.ndarray
+        Input DEM array.
+    epsilon_ratio : float, optional
+        Ratio used to scale perturbation based on minimum non-zero elevation
+        difference in the DEM.
+
+    Returns
+    -------
+    numpy.ndarray
+        Perturbed DEM array with deterministic tie-breaking offsets.
+    """
     diffs = np.abs(dem[1:, :] - dem[:-1, :])
     diffs = np.append(diffs, np.abs(dem[:, 1:] - dem[:, :-1]))
     min_dz = np.min(diffs[diffs > 0])
@@ -65,7 +80,7 @@ def filldem(
     fill_depressions_bool=True,
     **kwargs
 ):
-    """Fill depressions in a DEM using least-cost breaching algorithm.
+    """Condition a DEM using least-cost breaching and optional post-processing.
     
     Parameters
     ----------
@@ -77,6 +92,16 @@ def filldem(
         
     output_file : str, optional
         Output file path for filled DEM (default="filled_dem.tif")
+
+    add_perturbation : bool, optional
+        If ``True``, add a small deterministic perturbation before breaching to
+        reduce flat-area tie effects.
+
+    burn_streams_path : str, optional
+        Optional path to stream vectors used by ``fill_burn`` after filling.
+
+    fill_depressions_bool : bool, optional
+        If ``True``, run ``wbe.fill_depressions`` after breaching.
         
     **kwargs : dict, optional
         Additional parameters for breach_depressions_least_cost:
@@ -100,8 +125,9 @@ def filldem(
 
     Returns
     -------
-    filled_dem: `WbRaster`
-        Depression-filled DEM raster object
+    `WbRaster`
+        Conditioned DEM raster object. If ``burn_streams_path`` is provided,
+        returns the burned DEM.
 
     Examples
     --------
@@ -116,12 +142,8 @@ def filldem(
 
     Notes
     -----
-    1. This function uses WhiteboxTools' breach_depressions_least_cost algorithm
-       which is generally preferred over simple filling for hydrological applications.
-    2. The filled DEM should typically be followed by flat area resolution 
-       (resolve_flats) before flow direction calculation.
-    3. For large datasets, consider setting `num_procs` in WbEnvironment for
-       parallel processing.
+    ``flat_increment`` is auto-estimated from local elevation differences and
+    can be overridden through ``**kwargs``.
     """
     # add_deterministic_perturbation
     

@@ -3,54 +3,15 @@
 # email: z786909151@163.com
 
 """
-Module: sampling
+Sampling utilities for calibration and parameter exploration.
 
-This module provides a collection of sampling methods for generating random samples
-from different distributions and techniques. It includes various sampling methods
-such as uniform sampling, Gaussian sampling, Latin Hypercube Sampling (LHS), Sobol,
-Halton, and discrete sampling. These methods allow for the generation of samples
-based on different strategies, such as uniform distribution, Gaussian distribution,
-and constrained discrete values.
+This module provides commonly used random and quasi-random sampling routines:
 
-Functions:
-----------
-    - sampling_uniform: Generates random samples from a uniform distribution.
-    - sampling_uniform_int: Generates random integer samples from a uniform distribution.
-    - sampling_gaussian: Generates random samples from a Gaussian (normal) distribution.
-    - sampling_gaussian_clip: Generates random samples from a Gaussian distribution and clips them to a specified range.
-    - sampling_LHS_1: Generates samples using the Latin Hypercube Sampling (LHS) method, method 1.
-    - sampling_LHS_2: Generates samples using the Latin Hypercube Sampling (LHS) method, method 2.
-    - sampling_Sobol: Generates samples using the Sobol sequence method.
-    - sampling_Halton: Generates samples using the Halton sequence method.
-    - sampling_discrete: Generates random samples from a set of discrete values.
-    - sampling_discrete_constrained: Generates random samples from discrete values with a constraint on the sum.
-    - mixed_sampling: Placeholder function for a mixed sampling strategy (not implemented).
-    - sampling_CONUS_depth_num: Generates samples for depth numbers based on specified layer ranges, with constraints.
+- uniform and Gaussian sampling,
+- Latin Hypercube Sampling (LHS),
+- Sobol and Halton low-discrepancy sequences,
+- discrete sampling with optional constraints.
 
-Usage:
-------
-    1. Choose the desired sampling method based on the type of distribution or technique required.
-    2. Call the corresponding function with the necessary parameters to generate the samples:
-        - `sampling_uniform(n_samples, bounds)` for uniform sampling.
-        - `sampling_LHS_1(n_samples, n_dimensions, bounds)` for Latin Hypercube Sampling (LHS) method 1.
-        - `sampling_Sobol(n_samples, n_dimensions, bounds)` for Sobol sampling.
-        - `sampling_discrete(discrete_values, n_samples)` for discrete value sampling.
-    3. The generated samples can be used for further analysis or as input for simulations.
-
-Example:
---------
-    uniform_samples = sampling_uniform(100, (0, 10))
-    gaussian_samples = sampling_gaussian(100, 0, 1)
-
-Dependencies:
--------------
-    - numpy: For generating random numbers and array manipulation.
-    - scipy: For specialized sampling techniques such as Sobol and Halton sequences.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
 """
 
 import random
@@ -198,15 +159,20 @@ def sampling_LHS_2(n_samples, bounds, seed=None):
     ----------
     n_samples : int
         The number of samples to generate.
-    n_dimensions : int
-        The number of dimensions for each sample.
     bounds : list of tuple
         A list of tuples specifying the lower and upper bounds for each dimension.
+    seed : int, optional
+        Seed used by ``scipy.stats.qmc.LatinHypercube``.
 
     Returns
     -------
-    population : numpy.ndarray
+    numpy.ndarray
         The generated Latin Hypercube samples, scaled to the specified bounds.
+
+    Raises
+    ------
+    ValueError
+        If any bound does not satisfy ``min < max``.
     """
     # i.e., bounds = [(0, 1), (5, 10), (-5, 5)]
     n_dimensions = len(bounds)
@@ -239,14 +205,12 @@ def sampling_Sobol(n_samples, bounds):
     ----------
     n_samples : int
         The number of samples to generate.
-    n_dimensions : int
-        The number of dimensions for each sample.
     bounds : list of tuple
         A list of tuples specifying the lower and upper bounds for each dimension.
 
     Returns
     -------
-    scaled_samples : numpy.ndarray
+    numpy.ndarray
         The generated Sobol samples, scaled to the specified bounds.
     """
     n_dimensions = len(bounds)
@@ -271,14 +235,12 @@ def sampling_Halton(n_samples, bounds):
     ----------
     n_samples : int
         The number of samples to generate.
-    n_dimensions : int
-        The number of dimensions for each sample.
     bounds : list of tuple
         A list of tuples specifying the lower and upper bounds for each dimension.
 
     Returns
     -------
-    scaled_samples : numpy.ndarray
+    numpy.ndarray
         The generated Halton samples, scaled to the specified bounds.
     """
     n_dimensions = len(bounds)
@@ -352,16 +314,21 @@ def sampling_discrete_constrained(discrete_values, target_sum, n_samples):
 
 def mixed_sampling(n_samples):
     """
-    Placeholder for a mixed sampling method (currently unimplemented).
+    Reserved interface for mixed sampling strategies.
 
     Parameters
     ----------
     n_samples : int
-        The number of samples to generate.
+        Requested number of samples.
 
     Returns
     -------
     None
+        This function currently has no implementation.
+
+    Notes
+    -----
+    This function is intentionally left as a placeholder for future extension.
     """
     pass
 

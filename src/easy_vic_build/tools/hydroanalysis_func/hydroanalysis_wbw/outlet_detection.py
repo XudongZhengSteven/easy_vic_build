@@ -3,38 +3,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-outlet_detection - A Python module for detecting and processing watershed outlet points.
-
-This module provides functions for identifying main outlets from flow accumulation data
-and snapping outlet points to stream networks for accurate watershed delineation.
-
-Functions:
-----------
-    - `detect_main_outlet`: Identifies the main watershed outlet from flow accumulation data.
-    - `snap_outlet_to_stream`: Snaps outlet points to the nearest stream pixel.
-    - `detect_outlets_with_reference`: Creates and processes outlet points from reference coordinates.
-
-Usage:
-------
-    1. Use `detect_main_outlet` to find the primary outlet from flow accumulation data.
-    2. Refine outlet positions with `snap_outlet_to_stream` for accurate watershed delineation.
-    3. Process custom outlet locations with `detect_outlets_with_reference`.
-
-Example:
---------
-    >>> from hydroanalysis_wbw import detect_main_outlet
-    >>> coords, indices = detect_main_outlet("flow_accumulation.tif")
-    >>> snapped_outlet = snap_outlet_to_stream(wbe, "outlet.shp", stream_raster)
-
-Dependencies:
--------------
-    - `numpy`: For numerical array operations and calculations.
-    - `rasterio`: For reading and processing raster data.
-    - `whitebox_workflows`: For geospatial processing operations.
-    - `...geo_func.create_gdf`: For creating geographic data frame objects.
-    
-"""
+"""Outlet detection and snapping helpers for watershed delineation."""
 
 import numpy as np
 import rasterio
@@ -46,9 +15,7 @@ def detect_main_outlet(
     crs_str="EPSG:4326",
 ):
     """
-    Detect the main outlet point from flow accumulation data.
-
-    The main outlet is identified as the pixel with maximum flow accumulation value.
+    Detect the primary outlet from a flow-accumulation raster.
 
     Parameters
     ----------
@@ -64,20 +31,8 @@ def detect_main_outlet(
     Returns
     -------
     tuple
-        A tuple containing:
-        - (x_coord, y_coord) : tuple of floats
-            Geographic coordinates of the main outlet
-            
-        - (max_col, max_row) : tuple of ints
-            Column and row indices of the main outlet in the raster
-
-    Notes
-    -----
-    The function performs these steps:
-    1. Reads the flow accumulation raster
-    2. Finds the pixel with maximum accumulation value
-    3. Converts pixel coordinates to geographic coordinates
-    4. Creates and saves a point feature for the outlet
+        ``((x_coord, y_coord), (max_col, max_row))`` where the first tuple is
+        outlet coordinates and the second is raster index.
     """
     with rasterio.open(flow_acc_path) as src:
         flow_acc_array = src.read(1)
@@ -112,7 +67,7 @@ def snap_outlet_to_stream(
     **kwargs
 ):
     """
-    Snap outlet points to the nearest stream pixel.
+    Snap outlet points to the nearest stream cell.
 
     Parameters
     ----------
@@ -126,22 +81,18 @@ def snap_outlet_to_stream(
         Extracted stream raster (binary).
                 
     output_file : str, optional
-        Output path for the snapped outlet shapefile (default "snaped_outlet.shp").
+        Output path for the snapped outlet shapefile (default
+        ``"snaped_outlet.shp"``).
         
-    **kwargs : dict
-        Additional keyword arguments passed to `jenson_snap_pour_points` method.
+    **kwargs : dict, optional
+        Additional keyword arguments passed to ``jenson_snap_pour_points``.
             - snap_dist: float
-                Maximum snap distance (in meters) for snaping outlet to stream. 
+                Maximum snap distance for snapping outlets to streams.
 
     Returns
     -------
-    snaped_outlet_vector: `WbVector`
-        Vector file containing the snapped outlet points.
-
-    Notes
-    -----
-    This function ensures outlet points are precisely positioned on stream pixels,
-    which is important for accurate watershed delineation.
+    `WbVector`
+        Snapped outlet vector object.
     """
     # Let's extract the watershed for a specific outlet point
     outlet_vector = wbe.read_vector(outlet_vector_path) # This is a vector point that was included when we downloaded the `mill_brook` dataset.
@@ -165,18 +116,17 @@ def detect_outlets_with_reference(
     **snap_outlet_to_stream_kwargs,
 ):
     """
-    Create and snap outlet points to streams based on reference coordinates.
+    Create outlet points from coordinates and snap them to streams.
 
     Parameters
     ----------
     wbe : `WbEnvironment`
         WhiteboxTools workflow environment instance.
         
-    x_coords : list of float
-        List of x-coordinates for outlet points.
-        
-    y_coords : list of float
-        List of y-coordinates for outlet points.
+    x_coords : sequence of float
+        X coordinates for outlet points.
+    y_coords : sequence of float
+        Y coordinates for outlet points.
         
     stream_raster : `WbRaster`
         Extracted stream raster (binary).
@@ -191,27 +141,14 @@ def detect_outlets_with_reference(
         Output path for snapped outlet points shapefile (default "snaped_outlets_with_reference.shp").
         
     **snap_outlet_to_stream_kwargs : dict
-        Additional keyword arguments passed to snap_outlet_to_stream function.
+        Additional keyword arguments forwarded to ``snap_outlet_to_stream``.
             - snap_dist: float
-                Maximum snap distance (in meters) for snaping outlet to stream. 
+                Maximum snap distance for snapping outlets to streams.
 
     Returns
     -------
     tuple
-        A tuple containing:
-        - outlet_gdf : GeoDataFrame
-            Initial outlet points before snapping.
-            
-        - snaped_outlet_vector : GeoDataFrame
-            Outlet points after snapping to streams.
-
-    Notes
-    -----
-    The function performs these steps:
-    1. Creates point features from the input coordinates
-    2. Saves the initial points to a shapefile
-    3. Snaps each point to the nearest stream pixel
-    4. Saves the snapped points to another shapefile
+        ``(outlet_gdf, snaped_outlet_vector)``.
     """
     # create outlet gdf
     cgdf = CreateGDF()

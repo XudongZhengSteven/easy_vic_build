@@ -2,41 +2,16 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Evb_dir_class - A Python module for managing directory structures in the EVB.
+"""Directory and path manager for ``easy_vic_build`` cases.
 
-This module provides a class for managing directory structures related to different case scenarios in the VIC
-model. The `Evb_dir` class simplifies the creation, organization, and retrieval of directories required for
-storing input, output, and parameter files used in VIC simulations. It ensures that necessary directories are
-properly structured and accessible.
-
-Class:
-------
-    - `Evb_dir`: A class to handle the creation and management of directory structures for different case
-                 scenarios in the VIC model. The `Evb_dir` class defines methods and properties for managing
-                 directories and paths related to the VIC model's operations.
-                 It helps automate the creation of necessary directories for model configuration, calibration, and execution.
-
-Usage:
-------
-    1. Instantiate `Evb_dir` and pass parameters into it.
-    2. Call `Evb_dir.builddir` to build file tree structure.
-    3. Get and use the attributes of the `Evb_dir`.
+The :class:`Evb_dir` class centralizes case-folder creation and stores the
+canonical file paths used by the build pipeline.
 
 Example
 -------
-To use the Evb_dir
-    >>> from Evb_dir_class import Evb_dir
-    >>> project = Evb_dir(case_name="baseline_scenario")
-    >>> project.builddir()  # Creates ./baseline_scenario/...
-    >>> print(project.dpcFile_dir)  # Outputs "/abs/path/baseline_scenario/dpcFile"
-
-
-Dependencies:
--------------
-    - `os`: Provides functions for interacting with the operating system, such as creating directories.
-    - `shutil`: Used for high-level file and directory operations, including copying and moving files.
-
+>>> project = Evb_dir(cases_home="./cases")
+>>> project.builddir("baseline_scenario")
+>>> project.dpcFile_dir
 """
 
 import os
@@ -49,7 +24,7 @@ from typing import Optional
 # Class to manage directories and paths for the easy_vic_build package
 class Evb_dir:
     """
-    A class to handle the creation and management of directory structures for different case scenarios in the VIC model deployment process.
+    Manage directory layout and key file paths for one VIC case.
     """
 
     # Initialize the base directory paths
@@ -58,7 +33,13 @@ class Evb_dir:
 
     def __init__(self, cases_home=None):
         """
-        Initialize the directory paths for a given case name or set the default to current working directory.
+        Initialize the root folder and path placeholders.
+
+        Parameters
+        ----------
+        cases_home : str, optional
+            Root directory that stores all cases. If ``None``, defaults to
+            ``os.path.join(os.getcwd(), "cases")``.
         """
         logger.debug("Initializing Evb_dir class")
 
@@ -106,7 +87,16 @@ class Evb_dir:
 
     def builddir(self, case_name):
         """
-        Create directories and set paths for a specific case name.
+        Create the case directory tree and assign standard file paths.
+
+        Parameters
+        ----------
+        case_name : str
+            Case identifier used as the folder name under ``cases_home``.
+
+        Returns
+        -------
+        None
         """
         logger.info(f"Starting to create directories for case: {case_name}")
 
@@ -243,7 +233,29 @@ class Evb_dir:
         backup_count: int = 5,
     ):
         """
-        Enable file logging for an existing logger.
+        Attach a rotating file handler to an existing logger.
+
+        If a file handler already exists, the logger is returned unchanged.
+
+        Parameters
+        ----------
+        logger : logging.Logger
+            Logger instance to update.
+        log_file : str, optional
+            Target log file path. Defaults to ``<case>/VICLog/evb.log``.
+        log_level : int, optional
+            Logger level override.
+        log_format : str, optional
+            Custom formatter string. Uses ``Default_log_format`` when omitted.
+        max_bytes : int, optional
+            Maximum log size before rotation.
+        backup_count : int, optional
+            Number of rotated log files to keep.
+
+        Returns
+        -------
+        logging.Logger
+            The same logger instance after handler setup.
         """
         if log_level is not None:
             logger.setLevel(log_level)

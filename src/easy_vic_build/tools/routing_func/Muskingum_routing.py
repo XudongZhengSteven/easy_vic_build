@@ -2,6 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""Module ``easy_vic_build.tools.routing_func.Muskingum_routing``."""
+
 import torch
 import torch.nn as nn
 
@@ -19,10 +21,13 @@ class DifferentiableMuskingumGrid(nn.Module):
     def __init__(self, grid_shape, dt=1.0):
         """
         Differentiable Muskingum routing model for grid-based hydrological simulation.
-        
-        Args:
-            grid_shape (tuple): Dimensions of the grid (height, width)
-            dt (float): Time step duration (hours)
+
+        Parameters
+        ----------
+        grid_shape : tuple
+            Grid dimensions as ``(height, width)``.
+        dt : float, optional
+            Time-step duration in hours.
         """
         super().__init__()
         
@@ -55,12 +60,17 @@ class DifferentiableMuskingumGrid(nn.Module):
     def _init_flow_dir(self):
         """
         Initialize static flow direction matrix using D8 encoding.
-        Note: Simplified to rightward flow - replace with actual DEM-derived directions.
-        
-        D8 Encoding:
-            32  64  128
-            16   0    1
-             8   4    2
+
+        Notes
+        -----
+        This implementation uses a simplified rightward flow field and should be
+        replaced by DEM-derived directions in production.
+
+        D8 encoding used in the comments:
+
+        ``32  64  128``
+        ``16   0    1``
+        `` 8   4    2``
         """
         flow_dir = torch.zeros(self.grid_shape, dtype=torch.long)
         flow_dir[:, :-1] = 6  # 6 represents rightward flow in this example
@@ -69,14 +79,19 @@ class DifferentiableMuskingumGrid(nn.Module):
     def forward(self, Qin_grid, n_steps):
         """
         Perform grid-based Muskingum routing.
-        
-        Args:
-            Qin_grid (torch.Tensor): Initial inflow grid (B, C, H, W)
-                B: batch size, C: channels (typically 1)
-            n_steps (int): Number of time steps to simulate
-            
-        Returns:
-            torch.Tensor: Outflow sequence (B, n_steps, H, W)
+
+        Parameters
+        ----------
+        Qin_grid : torch.Tensor
+            Initial inflow tensor with shape ``(B, C, H, W)`` where ``B`` is
+            batch size and ``C`` is channel count.
+        n_steps : int
+            Number of routing time steps.
+
+        Returns
+        -------
+        torch.Tensor
+            Outflow tensor with shape ``(B, n_steps, H, W)``.
         """
         B, C, H, W = Qin_grid.shape
         Qout = torch.zeros(B, n_steps, H, W, device=Qin_grid.device)

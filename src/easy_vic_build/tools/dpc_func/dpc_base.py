@@ -3,54 +3,12 @@
 # email: z786909151@163.com
 
 """
-Module: dpc_base
+Base workflow class for basin/grid data processing.
 
-This module provides a base class for processing and managing data related to basins and grids in hydrological
-and geospatial analyses. The `dataProcess_base` class serves as a template for reading basin and grid data,
-aggregating grid data to basins, and visualizing the results. It is designed to be subclassed or extended to
-accommodate specific data types or processing steps for particular hydrological modeling needs.
-
-Class:
---------
-    - dataProcess_base: A base class that implements a general workflow for processing basin and grid data,
-      including reading, aggregating, and visualizing the data. Specific methods for handling data types or
-      processing steps should be implemented in subclasses.
-
-Class Methods:
----------------
-    - __call__(self, *args: Any, **kwargs: Any): Executes the full data processing pipeline: reading basin
-      and grid data, aggregating grid data to basins, and plotting results.
-    - read_basin_grid(self): Placeholder method to read basin grid data. To be extended with specific logic.
-    - readDataIntoBasins(self): Placeholder method to read data into basins. To be extended with specific logic.
-    - readDataIntoGrids(self): Placeholder method to read data into grids. To be extended with specific logic.
-    - aggregate_grid_to_basins(self): Placeholder method to aggregate grid data to basins. To be extended with
-      specific logic.
-    - readBasinAttribute(self): Placeholder method to read basin attributes. To be extended with specific logic.
-    - plot(self): Placeholder method to plot the results of the data processing. To be extended with specific logic.
-
-Usage:
-------
-    1. Instantiate the `dataProcess_base` class with the required basin and grid data:
-        - `dp = dataProcess_base(basin_shp, grid_shp, grid_res)`
-    2. Call the `__call__` method to trigger the full data processing pipeline:
-        - `dp()`
-    3. Implement specific logic in subclassed methods to customize data reading, aggregation, and plotting.
-
-Example:
---------
-    dp = dataProcess_base(basin_shp, grid_shp, grid_res)
-    dp()
-
-Dependencies:
--------------
-    - geopandas: For handling and processing spatial data (GeoDataFrame).
-    - numpy: For numerical operations and array manipulation.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
+The class in this module maintains a dependency-aware step graph, executes
+registered processing steps, and caches basin/grid-level outputs for reuse.
+Subclasses provide concrete loading or aggregation routines through decorated
+methods.
 """
 
 from abc import ABC, abstractmethod
@@ -65,7 +23,34 @@ from ... import logger
 
 
 class dataProcess_base(ABC):
+    """
+    Base class for basin/grid data loading pipelines.
+
+    The class manages three internal states:
+
+    - ``_processing_steps``: registered step metadata and dependencies.
+    - ``_executed_steps``: names of completed steps.
+    - ``_cache``: in-memory data products keyed by ``save_name``.
+
+    Subclasses typically declare loading methods decorated by
+    :func:`easy_vic_build.tools.decoractors.processing_step`.
+    """
+
     def __init__(self, load_path: Optional[str] = None, reset_on_load_failure=False, **kwargs):
+        """
+        Initialize the processing object and optionally restore saved state.
+
+        Parameters
+        ----------
+        load_path : str, optional
+            Path to a serialized processor state (pickle file). If provided, the
+            state will be loaded immediately.
+        reset_on_load_failure : bool, optional
+            If ``True``, reset to a clean state when state loading fails.
+            If ``False``, loading errors raise ``RuntimeError``.
+        **kwargs : dict
+            Extra keyword arguments forwarded to :meth:`load_state`.
+        """
         self._reset_state()
         
         self.load_path = None
@@ -74,6 +59,13 @@ class dataProcess_base(ABC):
             self.load_state(load_path, reset_on_load_failure, **kwargs)
     
     def _register_decorated_steps(self):
+        """
+        Register all bound methods marked by ``@processing_step``.
+
+        The decorator stores metadata on the method object. This helper scans
+        instance attributes and converts those metadata into entries in
+        ``self._processing_steps``.
+        """
         for attr_name in dir(self):
             attr = getattr(self, attr_name)
             if callable(attr) and hasattr(attr, "_step_name"):
@@ -93,6 +85,23 @@ class dataProcess_base(ABC):
         func: Callable,
         dependencies: Optional[List[str]] = None
     ):
+        """
+        Register one processing step in the execution graph.
+
+        Parameters
+        ----------
+        step_name : str
+            Unique step identifier.
+        save_names : str or list of str
+            Cache key(s) expected to be produced by ``func``.
+        data_level : str
+            Data scope label, usually ``"basin_level"`` or ``"grid_level"``.
+        func : Callable
+            Step callable with zero arguments. It must return a ``dict`` keyed
+            by ``save_names``.
+        dependencies : list of str, optional
+            Steps that must be executed before this step.
+        """
         self._processing_steps[step_name] = {
             "func": func,
             "deps": dependencies or [],
@@ -101,6 +110,16 @@ class dataProcess_base(ABC):
         }
     
     def loaddata_pipeline(self, save_path=None, loaddata_kwargs: Optional[Dict[str, Dict[str, Any]]] = None):
+        """
+        Execute all registered steps in dependency order.
+
+        Parameters
+        ----------
+        save_path : str, optional
+            Path for persisting state after each successful step.
+        loaddata_kwargs : dict, optional
+            Runtime input dictionary consumed by individual step methods.
+        """
         self.loaddata_kwargs = loaddata_kwargs or {}
         for step_name in self._processing_steps:
             self._execute_step(step_name, save_path)
@@ -111,6 +130,25 @@ class dataProcess_base(ABC):
         save_path: Optional[str] = None,
         visited: Optional[Set[str]] = None
     ):
+        """
+        Execute a single step recursively with dependency checks.
+
+        Parameters
+        ----------
+        step_name : str
+            Step to execute.
+        save_path : str, optional
+            Path used by :meth:`save_state` after caching outputs.
+        visited : set of str, optional
+            DFS guard set used for cycle detection.
+
+        Raises
+        ------
+        RuntimeError
+            If circular dependencies are detected.
+        KeyError
+            If step metadata is missing or returned outputs are incomplete.
+        """
         if step_name in self._executed_steps:
             return
         
@@ -158,6 +196,15 @@ class dataProcess_base(ABC):
         self._executed_steps.add(step_name)
     
     def merge_basin_data(self) -> gpd.GeoDataFrame:
+        """
+        Merge all cached basin-level outputs into one GeoDataFrame.
+
+        Returns
+        -------
+        geopandas.GeoDataFrame
+            Basin GeoDataFrame containing original geometry plus all joinable
+            basin-level products in cache.
+        """
         if "merged_basin_shp" in self._cache:
             merged_basin_shp = self._cache["merged_basin_shp"]["data"]
         else:
@@ -192,6 +239,15 @@ class dataProcess_base(ABC):
         return merged_basin_shp
 
     def merge_grid_data(self) -> gpd.GeoDataFrame:
+        """
+        Merge all cached grid-level outputs into one GeoDataFrame.
+
+        Returns
+        -------
+        geopandas.GeoDataFrame
+            Grid GeoDataFrame containing original grid fields and appended
+            grid-level variables from cache.
+        """
         if "merged_grid_shp" in self._cache:
             merged_grid_shp = self._cache["merged_grid_shp"]["data"]
         else:
@@ -228,6 +284,14 @@ class dataProcess_base(ABC):
         return merged_grid_shp
 
     def discard_step_name(self, step_name: str):
+        """
+        Mark one step as not executed.
+
+        Parameters
+        ----------
+        step_name : str
+            Step name to remove from ``_executed_steps``.
+        """
         self._executed_steps.discard(step_name)
         
     def get_data_from_cache(
@@ -235,7 +299,20 @@ class dataProcess_base(ABC):
         save_name: str,
         default: Optional[Any] = None
     ) -> Any:
-        """Get processed data from cache"""
+        """Get cached data and its level by key.
+
+        Parameters
+        ----------
+        save_name : str
+            Cache key to retrieve.
+        default : Any, optional
+            Value used when the key is not found.
+
+        Returns
+        -------
+        tuple
+            ``(data, data_level)`` if key exists; otherwise ``(default, None)``.
+        """
         entry = self._cache.get(save_name, default)
         
         if entry is not None:
@@ -244,6 +321,14 @@ class dataProcess_base(ABC):
             return default, None
     
     def list_cache(self) -> List[str]:
+        """
+        List available keys in cache.
+
+        Returns
+        -------
+        list of str
+            Current cache key names.
+        """
         return list(self._cache.keys())
     
     def save_data_to_cache(
@@ -253,8 +338,18 @@ class dataProcess_base(ABC):
         data_level: str,
         step_name: Optional[str] = None,
     ) -> None:
-        """Set processed data in cache
-        step_name is not None -> discard this step
+        """Save data into cache and optionally reopen its step state.
+
+        Parameters
+        ----------
+        save_name : str
+            Cache key for the data object.
+        data : Any
+            Data object to cache.
+        data_level : str
+            Data scope label, usually ``"basin_level"`` or ``"grid_level"``.
+        step_name : str, optional
+            Step name to discard from ``_executed_steps`` after updating cache.
         """
         self._cache[save_name] = {"data": data, "data_level": data_level}
         self.discard_step_name(step_name)
@@ -264,8 +359,14 @@ class dataProcess_base(ABC):
         save_names: Optional[List[str]] = None,
         step_name: Optional[str] = None
     ):
-        """Clear cached data for specified keys or all if None,
-        if you want to overwrite any data, please use this method to clear old data.
+        """Clear cached entries by key list or clear all entries.
+
+        Parameters
+        ----------
+        save_names : list of str, optional
+            Keys to remove. If ``None``, all cache entries are removed.
+        step_name : str, optional
+            Step name to discard from ``_executed_steps`` while clearing keys.
         """
         if save_names is None:
             self._cache.clear()
@@ -278,7 +379,13 @@ class dataProcess_base(ABC):
         self,
         save_path: Optional[str] = None,
     ) -> None:
-        """Serialize processor state to file."""
+        """Serialize processor state to a pickle file.
+
+        Parameters
+        ----------
+        save_path : str, optional
+            Output state path. If omitted, ``self.load_path`` is used when set.
+        """
         state = {
             '_cache': self._cache,
             '_executed_steps': self._executed_steps,
@@ -297,7 +404,27 @@ class dataProcess_base(ABC):
         reset_on_load_failure: bool = False,
         **kwargs
     ) -> 'dataProcess_base':
-        """Load processor state from file."""
+        """Load processor state from a pickle file.
+
+        Parameters
+        ----------
+        load_path : str
+            State file path.
+        reset_on_load_failure : bool, optional
+            Whether to reset to a clean state when loading fails.
+        **kwargs : dict
+            Reserved for compatibility.
+
+        Returns
+        -------
+        dataProcess_base
+            Current processor instance.
+
+        Raises
+        ------
+        RuntimeError
+            Raised when loading fails and ``reset_on_load_failure`` is ``False``.
+        """
         try:
             with open(load_path, "rb") as f:
                 state = pickle.load(f)
@@ -320,13 +447,20 @@ class dataProcess_base(ABC):
         return self
     
     def _reset_state(self) -> None:
-        """Reset the processor's internal state to empty."""
+        """Reset cache, step graph, and executed-step registry."""
         self._cache: Dict[str, Dict[str, Any]] = {}
         self._processing_steps: Dict[str, Dict[str, Any]] = {}
         self._executed_steps: set = set()
         self._register_decorated_steps()
         
     def aggregate_grid_to_basins(self):
+        """
+        Aggregate grid-level variables to basin-level summaries.
+
+        Notes
+        -----
+        This method is intentionally left for subclasses.
+        """
         pass
         
     def plot(
@@ -337,6 +471,27 @@ class dataProcess_base(ABC):
         grid_shp_point_kwargs=dict(),
         basin_shp_kwargs=dict(),
     ):
+        """
+        Plot cached basin and grid geometry.
+
+        Parameters
+        ----------
+        fig : matplotlib.figure.Figure, optional
+            Existing figure object. A new one is created when omitted.
+        ax : matplotlib.axes.Axes, optional
+            Existing axes object. A new one is created when omitted.
+        grid_shp_kwargs : dict, optional
+            Keyword arguments passed to ``grid_shp.boundary.plot``.
+        grid_shp_point_kwargs : dict, optional
+            Keyword arguments passed to ``grid_shp["point_geometry"].plot``.
+        basin_shp_kwargs : dict, optional
+            Keyword arguments passed to ``basin_shp.plot``.
+
+        Returns
+        -------
+        tuple
+            ``(fig, ax)`` with rendered basin/grid layout.
+        """
         if fig is None:
             fig, ax = plt.subplots()
 
@@ -377,6 +532,14 @@ class dataProcess_base(ABC):
         deps=None,
     )
     def load_basin_shp(self):
+        """
+        Load basin shapefile-like object from ``loaddata_kwargs``.
+
+        Returns
+        -------
+        dict
+            Dictionary containing key ``"basin_shp"``.
+        """
         loaded_basin_shp = deepcopy(self.loaddata_kwargs["basin_shp"])
         
         ret = {"basin_shp": loaded_basin_shp}
@@ -389,6 +552,14 @@ class dataProcess_base(ABC):
         deps=None,
     )
     def load_grid_shp(self):
+        """
+        Load grid shapefile-like object and grid resolution from inputs.
+
+        Returns
+        -------
+        dict
+            Dictionary containing keys ``"grid_shp"`` and ``"grid_res"``.
+        """
         loaded_grid_shp = deepcopy(self.loaddata_kwargs["grid_shp"])
         grid_res = self.loaddata_kwargs["grid_res"]
         

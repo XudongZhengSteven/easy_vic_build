@@ -2,6 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""Module ``easy_vic_build.tools.plot_func.plot_utilities``."""
+
 import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib import pyplot as plt

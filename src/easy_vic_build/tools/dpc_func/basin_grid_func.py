@@ -3,42 +3,14 @@
 # email: z786909151@163.com
 
 """
-Module: basin_grid_func
+Grid utility functions for basin-grid conversion and array mapping.
 
-This module provides functions for processing and managing `Basins` and `Grids` instances in hydrological
-and geospatial analyses. It includes methods for grid creation, spatial data assignment, coordinate mapping,
-and soil property aggregation. These functions are particularly useful for hydrological modeling and environmental
-studies requiring structured grid representations.
+This module provides helper functions to:
 
-Functions:
-----------
-    - createGridForBasin: Generates a grid structure within a specified basin.
-    - createStand_grids_lat_lon_from_gridshp: Extracts standardized latitude and longitude grid arrays
-      from a geospatial dataset.
-    - createEmptyArray_from_gridshp: Creates an empty NumPy array corresponding to a given geospatial grid.
-    - gridshp_index_to_grid_array_index: Maps geospatial grid indices to corresponding array indices.
-    - assignValue_for_grid_array: Assigns values from a geospatial dataset to a predefined grid array.
-    - createEmptyArray_and_assignValue_from_gridshp: Initializes an empty array and fills it with
-      values derived from a geospatial dataset.
-    - createArray_from_gridshp: Constructs a NumPy array based on geospatial grid data.
-    - grids_array_coord_map: Generates mappings between longitude/latitude coordinates and array indices.
-    - cal_ssc_percentile_grid_array: Computes weighted mean values for soil sand, silt, and clay
-      percentages across multiple depth layers.
-    - cal_bd_grid_array: Computes weighted mean bulk density across multiple soil depth layers.
-    - intersectGridsWithBasins: Identifies grid cells that intersect with basin geometries and returns
-      the updated basin and grid datasets.
-
-Dependencies:
--------------
-    - numpy: Provides numerical operations and array manipulations.
-    - pandas: Supports data manipulation and processing of geospatial datasets.
-    - geopandas: Facilitates spatial operations on basin and grid geometries.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
+- build basin-based grids at one or multiple resolutions,
+- map GeoDataFrame rows to array indices and back,
+- create and fill gridded arrays from vector attributes,
+- derive mask arrays and coordinate-index mappings.
 """
 
 import numpy as np
@@ -56,20 +28,19 @@ def createGridForBasin(basin_shp, grid_res, **create_grid_kwargs):
 
     Parameters
     ----------
-    basin_shp : shapely.geometry
-        The shape of the basin.
+    basin_shp : geopandas.GeoDataFrame
+        Basin polygon dataset used to generate the grid.
     grid_res : float
-        The resolution of the grid.
-    **kwargs : additional optional arguments
+        Grid resolution. If ``None``, only one boundary grid is created.
+    **create_grid_kwargs : dict
+        Extra keyword arguments passed to ``Grids_for_shp`` construction.
 
     Returns
     -------
-    grid_shp_lon : list
-        The longitude values of the grid points.
-    grid_shp_lat : list
-        The latitude values of the grid points.
-    grid_shp : Grids_for_shp
-        A grid shape object containing all grid points.
+    tuple
+        ``(grid_shp_lon, grid_shp_lat, grid_shp)`` where longitude and
+        latitude are center-point coordinate lists and ``grid_shp`` is the
+        generated ``Grids_for_shp`` object.
     """
     create_grid_kwargs_ = {
         "gshp": basin_shp,
@@ -87,6 +58,23 @@ def createGridForBasin(basin_shp, grid_res, **create_grid_kwargs):
 
 
 def shift_grids(grid_shp, dx, dy):
+    """
+    Translate all grid geometries by fixed offsets.
+
+    Parameters
+    ----------
+    grid_shp : geopandas.GeoDataFrame
+        Grid dataset containing ``geometry`` and ``point_geometry`` columns.
+    dx : float
+        Horizontal shift in coordinate units.
+    dy : float
+        Vertical shift in coordinate units.
+
+    Returns
+    -------
+    geopandas.GeoDataFrame
+        Shifted grid dataset.
+    """
     grid_shp["geometry"] = grid_shp["geometry"].apply(lambda g: translate(g, xoff=dx, yoff=dy))
     grid_shp["point_geometry"] = grid_shp["point_geometry"].apply(lambda g: translate(g, xoff=dx, yoff=dy))
     return grid_shp
@@ -98,8 +86,8 @@ def createStand_grids_lat_lon_from_gridshp(grid_shp, grid_res=None, reverse_lat=
 
     Parameters
     ----------
-    grid_shp : shapely.geometry
-        The shape of the grid.
+    grid_shp : geopandas.GeoDataFrame
+        Grid dataset containing ``point_geometry``.
     grid_res : float, optional
         The resolution of the grid. If None, the grid will be a complete rectangular grid.
     reverse_lat : bool, optional
@@ -155,6 +143,8 @@ def createEmptyArray_from_gridshp(
         Latitude values of the grid.
     stand_grids_lon : numpy.ndarray
         Longitude values of the grid.
+    third_dim_len : int, optional
+        Length of the third dimension. If ``None``, a 2D array is returned.
     dtype : data-type, optional
         The desired data type for the array. Default is float.
     missing_value : scalar, optional
@@ -188,8 +178,8 @@ def gridshp_index_to_grid_array_index(grid_shp, stand_grids_lat, stand_grids_lon
 
     Parameters
     ----------
-    grid_shp : pd.DataFrame
-        The grid shape dataframe.
+    grid_shp : geopandas.GeoDataFrame
+        Grid dataset containing ``point_geometry``.
     stand_grids_lat : numpy.ndarray
         The latitude values of the stand grids.
     stand_grids_lon : numpy.ndarray
@@ -252,6 +242,23 @@ def retriveArray_to_gridshp_values_list(
     cols_index
 ):
     # retrive values from grid_array to grid_shp (order is same as grid_shp.index)
+    """
+    Retrieve values from a gridded array using row/column index lists.
+
+    Parameters
+    ----------
+    grid_array : numpy.ndarray
+        Source array containing gridded values.
+    rows_index : array-like of int
+        Row indices corresponding to target records.
+    cols_index : array-like of int
+        Column indices corresponding to target records.
+
+    Returns
+    -------
+    numpy.ndarray
+        Values sampled from ``grid_array`` at ``(rows_index, cols_index)``.
+    """
     values_list = grid_array[rows_index, cols_index]
     
     return values_list
@@ -317,10 +324,12 @@ def createArray_from_gridshp(
 
     Parameters
     ----------
-    grid_shp : pd.DataFrame
-        The grid shape dataframe.
-    value_column : str
-        The column in the grid shape dataframe containing the values.
+    grid_shp : geopandas.GeoDataFrame
+        Grid dataset containing ``point_geometry`` and optional value columns.
+    value_column : str, optional
+        Column name in ``grid_shp`` used as the source values.
+    values_list : array-like, optional
+        Explicit values to assign. Used when ``value_column`` is ``None``.
     grid_res : float, optional
         The resolution of the grid. Default is None.
     dtype : data-type, optional
@@ -334,12 +343,8 @@ def createArray_from_gridshp(
 
     Returns
     -------
-    grid_array : numpy.ndarray
-        The grid array with the assigned values.
-    stand_grids_lon : numpy.ndarray
-        The longitude values of the stand grids.
-    stand_grids_lat : numpy.ndarray
-        The latitude values of the stand grids.
+    tuple
+        ``(grid_array, stand_grids_lon, stand_grids_lat, rows_index, cols_index)``.
     """
     # create stand grids lat, lon
     stand_grids_lat, stand_grids_lon = createStand_grids_lat_lon_from_gridshp(
@@ -379,6 +384,30 @@ def createmaskArray_for_gridshp_intersect_basinshp(
     plot=False,
     reverse_lat=True,
 ):
+    """
+    Build a boolean mask for grid cells outside a basin polygon.
+
+    Parameters
+    ----------
+    grid_shp : geopandas.GeoDataFrame
+        Grid dataset with a ``geometry`` column.
+    basin_shp : geopandas.GeoDataFrame
+        Basin dataset; the first geometry is used for intersection.
+    grid_res : float, optional
+        Grid resolution used when reconstructing a complete array.
+    missing_value : scalar, optional
+        Fill value for unassigned cells.
+    plot : bool, optional
+        If ``True``, plot the generated mask.
+    reverse_lat : bool, optional
+        If ``True``, output array latitude is ordered from north to south.
+
+    Returns
+    -------
+    tuple
+        ``(grid_shp, grid_array_mask)`` where ``grid_array_mask`` is a 2D mask
+        array aligned with standardized latitude/longitude grids.
+    """
     grid_shp.loc[:, "mask"] = ~grid_shp.geometry.intersects(basin_shp.geometry.iloc[0])
     grid_array_mask, _, _ = createArray_from_gridshp(
         grid_shp,
@@ -401,6 +430,30 @@ def createmaskArray_for_gridshp_intersect_gridshpRef(
     plot=False,
     reverse_lat=True,
 ):
+    """
+    Build a boolean mask for grid cells outside a reference grid extent.
+
+    Parameters
+    ----------
+    grid_shp : geopandas.GeoDataFrame
+        Grid dataset to be masked.
+    grid_shpRef : geopandas.GeoDataFrame
+        Reference grid dataset; its unary union defines the valid footprint.
+    grid_res : float, optional
+        Grid resolution used when reconstructing a complete array.
+    missing_value : scalar, optional
+        Fill value for unassigned cells.
+    plot : bool, optional
+        If ``True``, plot the generated mask.
+    reverse_lat : bool, optional
+        If ``True``, output array latitude is ordered from north to south.
+
+    Returns
+    -------
+    tuple
+        ``(grid_shp, grid_array_mask)`` where ``grid_array_mask`` is a 2D mask
+        array aligned with standardized latitude/longitude grids.
+    """
     grid_shp.loc[:, "mask"] = ~grid_shp.geometry.intersects(grid_shpRef.unary_union)
     grid_array_mask, _, _ = createArray_from_gridshp(
         grid_shp,
@@ -417,7 +470,7 @@ def createmaskArray_for_gridshp_intersect_gridshpRef(
     
 def grids_array_coord_map(grid_shp, reverse_lat=True):
     """
-    Generates mapping between geographical coordinates (longitude/latitude) and array indices.
+    Generate coordinate-to-index mappings for grid arrays.
 
     Parameters
     ----------
@@ -429,14 +482,7 @@ def grids_array_coord_map(grid_shp, reverse_lat=True):
     Returns
     -------
     tuple
-        - lon_list : list
-            Sorted unique longitude values.
-        - lat_list : list
-            Sorted unique latitude values (descending if `reverse_lat=True`).
-        - lon_map_index : dict
-            Mapping from longitude values to array indices.
-        - lat_map_index : dict
-            Mapping from latitude values to array indices.
+        ``(lon_list, lat_list, lon_map_index, lat_map_index)``.
     """
     # lon/lat grid map into index to construct array
     lon_list = sorted(list(set(grid_shp["point_geometry"].x.values)))
@@ -452,7 +498,7 @@ def grids_array_coord_map(grid_shp, reverse_lat=True):
 
 def intersectGridsWithBasins(grids: Grids, basins: Basins):
     """
-    Identifies grid cells that intersect with basin geometries.
+    Identify and collect grid cells intersecting each basin.
 
     Parameters
     ----------
@@ -464,10 +510,9 @@ def intersectGridsWithBasins(grids: Grids, basins: Basins):
     Returns
     -------
     tuple
-        - basins : Basins
-            The basins dataset with an added column storing intersecting grids.
-        - intersects_grids : Grids
-            The subset of grid cells that intersect with any basin.
+        ``(basins, intersects_grids)`` where ``basins`` gains an
+        ``intersects_grids`` column and ``intersects_grids`` is the deduplicated
+        union of all intersecting grid cells.
     """
     intersects_grids_list = []
     intersects_grids = Grids()
@@ -498,6 +543,29 @@ def build_grid_shp(
     plot=False,
 ):
     # build grid_shp (Grids) for level1 (modeling scale), expand_grids_num=1 to avoid 0 (edge) flow direction in hydroanalysis
+    """
+    Build multi-resolution grid layers for one basin geometry.
+
+    Parameters
+    ----------
+    basin_shp : geopandas.GeoDataFrame
+        Basin polygon dataset.
+    grid_res_level0 : float
+        Resolution for level-0 grids.
+    grid_res_level1 : float
+        Resolution for level-1 grids (main modeling scale).
+    grid_res_level2 : float
+        Resolution for level-2 grids.
+    expand_grids_num : int, optional
+        Number of level-1 grid cells to expand beyond basin boundary.
+    plot : bool, optional
+        If ``True``, plot all generated grid levels.
+
+    Returns
+    -------
+    tuple
+        ``(grid_shp_level0, grid_shp_level1, grid_shp_level2, grid_shp_level3)``.
+    """
     grid_shp_lon_level1, grid_shp_lat_level1, grid_shp_level1 = createGridForBasin(basin_shp, grid_res_level1, expand_grids_num=expand_grids_num)
     
     _, _, _, boundary_grids_edge_x_y_level1 = grid_shp_level1.createBoundaryShp()

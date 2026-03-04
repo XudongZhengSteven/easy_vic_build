@@ -2,32 +2,10 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: select_basin_shp
+"""Basin selection helpers based on streamflow and basin attributes.
 
-This module provides functions to filter and select basins from a GeoDataFrame based on various hydrological and
-environmental criteria, such as streamflow data, area, aridity, and elevation slope. These functions are commonly used in
-hydrological modeling and environmental research to process and refine basin-level datasets.
-
-Functions:
-----------
-    - selectBasinremovingStreamflowMissing: Removes basins with missing streamflow data for a specified date range.
-    - selectBasinBasedOnArea: Selects basins based on a specified area range.
-    - selectBasinStreamflowWithZero: Selects basins with a significant number of zero streamflow values.
-    - selectBasinBasedOnAridity: Selects basins based on an aridity threshold (yet to be implemented).
-    - selectBasinBasedOnElevSlope: Selects basins based on an elevation slope threshold (yet to be implemented).
-
-Dependencies:
--------------
-    - pandas: Used for data manipulation and filtering of basin-related attributes.
-    - geopandas: Handles geospatial data in GeoDataFrame format for basin selection.
-    - logger: Custom logging module for tracking the filtering process.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
+This module provides filtering utilities for basin-level GeoDataFrames, such
+as filtering by streamflow completeness, area range, and zero-flow behavior.
 """
 
 from ... import logger
@@ -37,21 +15,19 @@ from .extractData_func import *
 def selectBasinremovingStreamflowMissing(
     basin_shp, date_period=["19980101", "20101231"]
 ):
-    """
-    Selects basins and removes those with missing streamflow data within the specified date period.
+    """Remove basins with missing streamflow within a given date period.
 
     Parameters
     ----------
-    basin_shp : GeoDataFrame
-        A GeoDataFrame containing basin data with streamflow IDs to be filtered.
-
+    basin_shp : geopandas.GeoDataFrame
+        Basin dataset containing ``hru_id`` values.
     date_period : list of str, optional
-        A list containing the start and end dates for the period to filter streamflow data. Default is ["19980101", "20101231"].
+        Two-element date range ``[start, end]`` in ``YYYYMMDD`` format.
 
     Returns
     -------
-    basin_shp : GeoDataFrame
-        A filtered GeoDataFrame with basins that have valid streamflow data for the specified date period.
+    geopandas.GeoDataFrame
+        Filtered basin dataset with valid streamflow records for ``date_period``.
     """
     logger.info(
         f"Removing basins with missing streamflow data for period {date_period}."
@@ -82,26 +58,23 @@ def selectBasinremovingStreamflowMissing(
 
 
 def selectBasinBasedOnArea(basin_shp, min_area, max_area):
-    """
-    Selects basins based on the specified area range.
+    """Select basins by area range.
 
     Parameters
     ----------
-    basin_shp : GeoDataFrame
-        A GeoDataFrame containing basin data with area information.
-
+    basin_shp : geopandas.GeoDataFrame
+        Basin dataset containing ``AREA_km2``.
     min_area : float
-        The minimum area of the basin in square kilometers.
-
+        Minimum basin area in square kilometers.
     max_area : float
-        The maximum area of the basin in square kilometers.
+        Maximum basin area in square kilometers.
 
     Returns
     -------
-    basin_shp : GeoDataFrame
-        A filtered GeoDataFrame with basins whose area is within the specified range.
+    geopandas.GeoDataFrame
+        Filtered basin dataset with ``AREA_km2`` in ``[min_area, max_area]``.
     """
-    logger.info(f"Selecting basins based on area range: {min_area} - {max_area} km².")
+    logger.info(f"Selecting basins based on area range: {min_area} - {max_area} km^2.")
     basin_shp = basin_shp.loc[
         (basin_shp.loc[:, "AREA_km2"] >= min_area)
         & (basin_shp.loc[:, "AREA_km2"] <= max_area),
@@ -115,27 +88,24 @@ def selectBasinBasedOnArea(basin_shp, min_area, max_area):
 def selectBasinStreamflowWithZero(
     basin_shp, usgs_streamflow, streamflow_id, zeros_min_num=100
 ):
-    """
-    Selects basins with a significant number of zero streamflow values.
+    """Select basins that have many zero streamflow records.
 
     Parameters
     ----------
-    basin_shp : GeoDataFrame
-        A GeoDataFrame containing basin data to be filtered.
-
-    usgs_streamflow : list of DataFrame
-        A list of DataFrames containing the streamflow data for each basin.
-
-    streamflow_id : list of str
-        A list of streamflow IDs corresponding to each basin.
-
+    basin_shp : geopandas.GeoDataFrame
+        Basin dataset containing ``hru_id`` values.
+    usgs_streamflow : list of pandas.DataFrame
+        Streamflow tables corresponding to basin IDs.
+    streamflow_id : list
+        Streamflow IDs corresponding to ``usgs_streamflow``.
     zeros_min_num : int, optional
-        The minimum number of zero streamflow values required for selecting a basin. Default is 100.
+        Minimum zero-flow count threshold. Basins with counts greater than this
+        value are retained.
 
     Returns
     -------
-    basin_shp : GeoDataFrame
-        A filtered GeoDataFrame with basins that have a significant number of zero streamflow values.
+    geopandas.GeoDataFrame
+        Filtered basin dataset with selected zero-flow basins.
     """
     # loop for each basin
     logger.info(
@@ -166,21 +136,19 @@ def selectBasinStreamflowWithZero(
 
 
 def selectBasinBasedOnAridity(basin_shp, aridity):
-    """
-    Selects basins based on aridity.
+    """Select basins by aridity threshold.
 
     Parameters
     ----------
-    basin_shp : GeoDataFrame
-        A GeoDataFrame containing basin data to be filtered.
-
+    basin_shp : geopandas.GeoDataFrame
+        Basin dataset to filter.
     aridity : float
-        The aridity threshold value for basin selection.
+        Aridity threshold value.
 
     Returns
     -------
-    basin_shp : GeoDataFrame
-        A filtered GeoDataFrame with basins that meet the specified aridity condition.
+    None
+        This function is currently not implemented.
     """
     logger.info(f"Selecting basins based on aridity threshold: {aridity}.")
     # Placeholder for aridity-based filtering
@@ -188,21 +156,19 @@ def selectBasinBasedOnAridity(basin_shp, aridity):
 
 
 def selectBasinBasedOnElevSlope(basin_shp, elev_slope):
-    """
-    Selects basins based on elevation slope.
+    """Select basins by elevation-slope threshold.
 
     Parameters
     ----------
-    basin_shp : GeoDataFrame
-        A GeoDataFrame containing basin data to be filtered.
-
+    basin_shp : geopandas.GeoDataFrame
+        Basin dataset to filter.
     elev_slope : float
-        The elevation slope threshold for basin selection.
+        Elevation-slope threshold value.
 
     Returns
     -------
-    basin_shp : GeoDataFrame
-        A filtered GeoDataFrame with basins that meet the specified elevation slope condition.
+    None
+        This function is currently not implemented.
     """
     logger.info(f"Selecting basins based on elevation slope threshold: {elev_slope}.")
     # Placeholder for elevation slope-based filtering

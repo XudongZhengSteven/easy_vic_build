@@ -1,6 +1,8 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+"""Module ``easy_vic_build.tools.mete_func.resampleTimeForcing``."""
+
 import os
 from ... import logger
 from ..utilities import remove_and_mkdir

@@ -2,30 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: veg_type_attributes_umd_prepare
-
-This module defines the functionality to update the vegetation parameter JSON file by integrating
-vegetation roughness and displacement data from the `NLDAS_Veg_monthly.xlsx` file. It reads and processes
-vegetation attributes from the UMD dataset, updates these attributes with monthly data, and then saves
-the updated parameters into a new JSON file.
-
-Functions:
-----------
-    - prepare_veg_param_json: Reads the original vegetation parameter JSON, updates it with
-      data from the NLDAS_Veg_monthly file, and saves the updated data to a new file.
-
-Dependencies:
--------------
-    - json: Used for reading and writing JSON data.
-    - easy_vic_build: Provides access to the `Evb_dir` module.
-    - utilities: Provides helper functions like `read_veg_type_attributes_umd` and `read_NLDAS_Veg_monthly`.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
+"""Prepare UMD vegetation-attribute JSON with monthly roughness/displacement."""
 
 import json
 
@@ -33,23 +10,23 @@ import json
 def prepare_veg_param_json(
     veg_param_json_path, veg_param_json_updated_path, NLDAS_Veg_monthly_path
 ):
-    """
-    Update the vegetation parameters in a JSON file using data from the NLDAS_Veg_monthly Excel file.
+    """Update vegetation parameter JSON with monthly vegetation attributes.
 
     Parameters
     ----------
     veg_param_json_path : str
-        The file path to the original vegetation parameters JSON file.
+        Path to original vegetation-parameter JSON file.
     veg_param_json_updated_path : str
-        The file path where the updated vegetation parameters JSON will be saved.
+        Output path for updated vegetation-parameter JSON file.
     NLDAS_Veg_monthly_path : str
-        The file path to the NLDAS_Veg_monthly Excel file containing vegetation roughness and displacement data.
+        Path to NLDAS monthly vegetation table.
+        The current implementation keeps this argument for compatibility and
+        reads monthly data via ``read_NLDAS_Veg_monthly()``.
 
     Returns
     -------
     None
-        This function updates the original JSON file with vegetation roughness and displacement data
-        from the NLDAS_Veg_monthly file and saves it to the specified updated file path.
+        Updated JSON is written to ``veg_param_json_updated_path``.
     """
     # update the veg_type_attributes_umd.json by the NLDAS_Veg_monthly.xlsx
     from ..utilities import read_NLDAS_Veg_monthly, read_veg_type_attributes_umd

@@ -2,49 +2,18 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-build_Domain - A Python module for building domain file.
+"""Build and modify VIC domain files.
 
-This module provides functions for constructing and modifying the domain file.
-It includes capabilities to:
-- Calculate mask, fractional areas, and grid lengths for the domain.
-- Build a NetCDF domain file for VIC model simulations.
-- Modify the domain by adjusting the mask for a specified pour point.
-
-Functions:
-----------
-    - `cal_mask_frac_area_length`: Computes the mask, fractional area, and grid length based on the dpc files.
-    - `buildDomain`: Builds the VIC domain NetCDF file using the dpc files, creating variables for latitude, longitude, mask, area, and other domain attributes.
-    - `modifyDomain_for_pourpoint`: Modifies the VIC domain file by updating the mask for the pour point location.
-
-Usage:
-------
-    1. To use this module, provide a `Evb_dir` instance and `dpc_VIC` instance. 
-    2. Call `buildDomain` to generate the domain file.
-    3. Call `modifyDomain_for_pourpoint` to modify the domain file with a pour point.
-
-Example:
---------
-    basin_index = 213
-    model_scale = "6km"
-    case_name = f"{basin_index}_{model_scale}"
-
-    evb_dir = Evb_dir("./examples") # cases_home="/home/xdz/code/VIC_xdz/cases"
-    evb_dir.builddir(case_name)
-
-    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
-    buildDomain(evb_dir, dpc_VIC_level1, reverse_lat=True)
-
-Dependencies:
--------------
-    - `matplotlib`: For plotting the DPCs.
-    - `numpy`: For numerical computations and array operations.
-    - `netCDF4`: For reading and writing NetCDF files.
-    - `tqdm`: For displaying progress bars in iterative tasks.
-    - `tools.dpc_func.basin_grid_func`: For mapping grid coordinates to basin arrays.
-    - `tools.geo_func.search_grids`: For searching and processing grid-related data.
-    - `tools.decoractors`: For measuring function execution time.
-
+Public functions
+----------------
+``buildDomain``
+    Create ``domain.nc`` with mask, area, fraction, and grid-length variables.
+``cal_mask_frac_area_length``
+    Compute domain mask/fraction/area/length arrays from grid and basin geometry.
+``modifyDomain_for_pourpoint``
+    Force the domain mask at the nearest grid cell to a pour-point location.
+``addElevIntoDomain``
+    Append elevation from level-1 parameters into the domain file.
 """
 
 from copy import deepcopy
@@ -107,33 +76,26 @@ def buildDomain(
     prefine_mask=None
 ):
     """
-    Build the domain file for the VIC model, including variables like latitude, longitude, mask, area, and others.
+    Build ``domain.nc`` for the current case.
 
-    Parameters:
-    -----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
-        
-    dpc_VIC : `dpc_VIC`
-        An instance of the `dpc_VIC` class to process data of the VIC model.
-        
-    reverse_lat : bool, optional, default=True
-        Flag to indicate whether to reverse latitudes (True for Northern Hemisphere: large -> small).
-        
-    pourpoint_xindex : int, optional
-        X-index of the pour point to modify the mask. If not provided, no modification is made.
-        
-    pourpoint_yindex : int, optional
-        Y-index of the pour point to modify the mask. If not provided, no modification is made.
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Case directory manager. Output is written to ``evb_dir.domainFile_path``.
+    dpc_VIC : object
+        DPC object that provides at least ``grid_shp`` (and optionally ``basin_shp``
+        when ``basin_shp`` is not passed explicitly).
+    reverse_lat : bool, optional
+        Whether latitude axis is arranged north-to-south.
+    basin_shp : geopandas.GeoDataFrame, optional
+        Basin polygon used to compute active-grid fractions. If ``None``, it is
+        taken from ``dpc_VIC`` cache.
+    prefine_mask : numpy.ndarray, optional
+        If provided, this array is written to ``mask`` instead of computed mask.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
-        This function does not return anything. It saves the domain file to the specified directory.
-
-    Notes:
-    ------
-    The function will generate a domain file for the VIC model that includes latitude, longitude, mask, area, and other necessary variables.
     """
     # ====================== build Domain ======================
     logger.info("Starting to build domain file... ...")
@@ -305,48 +267,23 @@ def cal_mask_frac_area_length(
     basin_shp=None,
 ):
     """
-    Calculate the mask, fractional area, and grid dimensions (x/y lengths) for the given VIC grid.
+    Compute mask/fraction/area/length arrays for domain generation.
 
-    Parameters:
-    -----------
-    dpc_VIC : `dpc_VIC`
-        An instance of the `dpc_VIC` class to process data of the VIC model.
-        
-    reverse_lat : bool, optional, default=True
-        Flag to indicate whether to reverse latitudes (True for Northern Hemisphere: large -> small).
-        
-    plot : bool, optional, default=False
-        Flag to determine whether to plot the results.
-        
-    pourpoint_xindex : int, optional
-        X-index of the pour point to modify the mask. If not provided, no modification is made.
-        
-    pourpoint_yindex : int, optional
-        Y-index of the pour point to modify the mask. If not provided, no modification is made.
+    Parameters
+    ----------
+    dpc_VIC : object
+        DPC object that provides cached ``grid_shp`` and optionally ``basin_shp``.
+    reverse_lat : bool, optional
+        Whether latitude axis is arranged north-to-south.
+    plot : bool, optional
+        If ``True``, create a quick diagnostic plot.
+    basin_shp : geopandas.GeoDataFrame, optional
+        Basin polygon for intersection area calculation.
 
-    Returns:
-    --------
-    mask : array
-        The computed mask array for the grid.
-        
-    frac : array
-        The fractional area of the active grid cells.
-        
-    frac_grid_in_basin : array
-        The fraction of the grid area that falls within the basin.
-        
-    area : array
-        The area of each grid cell.
-        
-    x_length : float
-        The x-length of the grid cells.
-        
-    y_length : float
-        The y-length of the grid cells.
-
-    Notes:
-    ------
-    The function optionally generates a plot of the mask and grid dimensions if the `plot` flag is set to True.
+    Returns
+    -------
+    tuple
+        ``(mask, frac_grid_in_basin, frac_full_one, area, x_length, y_length)``.
     """
     logger.info("Starting to cal_mask_frac_area_length... ...")
 
@@ -514,27 +451,20 @@ def cal_mask_frac_area_length(
 
 def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
     """
-    Modify the VIC domain file for the pour point, updating the mask to 1 at the pour point location.
+    Set domain mask to ``1`` at the grid nearest to the pour point.
 
-    Parameters:
-    -----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
-        
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Case directory manager.
     pourpoint_lon : float
-        The longitude of the pour point.
-        
+        Pour-point longitude.
     pourpoint_lat : float
-        The latitude of the pour point.
+        Pour-point latitude.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
-        This function does not return anything. It updates the domain file at the specified location.
-
-    Notes:
-    ------
-    The function updates the VIC domain file's mask, setting the value to 1 at the pour point location, to reflect the flow direction.
     """
     logger.info(
         f"Starting to modify domain for pour point at ({pourpoint_lat}, {pourpoint_lon})... ..."
@@ -568,6 +498,19 @@ def modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat):
 
 
 def addElevIntoDomain(evb_dir, params_dataset_level1):
+    """Append ``elev`` variable into an existing domain file.
+
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Case directory manager.
+    params_dataset_level1 : netCDF4.Dataset
+        Parameter dataset that contains ``elev`` with shape ``(lat, lon)``.
+
+    Returns
+    -------
+    None
+    """
     logger.info(
         f"Starting to add elev (from param_level1) into domain... ..."
     )
@@ -604,10 +547,15 @@ def centers_to_edges(centers):
 def remap_level1_to_level0_mask(lon_level1, lat_level1, mask_level1,
                                 lon_level0, lat_level0):
     """
-    Map level1-grid mask (level1) to level0-grid (level0).
+    Map level-1 mask to level-0 grid by cell-center lookup.
 
-    Each level0 grid cell inherits the mask value of the level1 cell
+    Each level-0 grid cell inherits the mask value of the level-1 cell
     in which its center falls.
+
+    Returns
+    -------
+    numpy.ndarray
+        Remapped mask with ``(len(lat_level0), len(lon_level0))`` shape.
     """
 
     lon_level1 = np.array(lon_level1)

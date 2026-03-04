@@ -1,6 +1,8 @@
-# code: utf-8
+﻿# code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+
+"""Interfaces for building VIC parameter datasets."""
 
 import numpy as np
 from copy import deepcopy
@@ -14,6 +16,7 @@ from ..params_func.TransferFunction import TF_VIC, SoilLayerResampler
 
 
 class buildParam_level0_interface:
+    """Build level-0 soil and terrain parameter fields for VIC."""
     
     def __init__(
         self,
@@ -30,16 +33,34 @@ class buildParam_level0_interface:
         cols_index_level0=None,
         basin_hierarchy=None,
     ):
-        """ 
-        basin_hierarchy: dict, optional, if given, build multi-level parameters for "total_depths" and "soil_layers_breakpoints"
-            The hierarchy of basins for multi-level parameter building.
-            Default is None.
-            basin_hierarchy = {
-                "station_names": ...,
-                "nest_upstream_map": ...,
-                "subbasin_masks": ...,
-            }
-            
+        """Initialize level-0 parameter builder.
+
+        Parameters
+        ----------
+        evb_dir : object
+            Project directory/config object with output paths.
+        logger : object
+            Logger instance.
+        dpc_VIC_level0 : object
+            Data-processing container that provides merged grid data.
+        g_params : dict
+            Parameter dictionary used by transfer functions.
+        soillayerresampler : SoilLayerResampler
+            Resampler for aggregating source soil layers to VIC layers.
+        TF_VIC : TF_VIC
+            VIC transfer-function class.
+        reverse_lat : bool, optional
+            Whether standard latitude order is reversed.
+        stand_grids_lat_level0 : array-like, optional
+            Precomputed standard latitude coordinates.
+        stand_grids_lon_level0 : array-like, optional
+            Precomputed standard longitude coordinates.
+        rows_index_level0 : array-like, optional
+            Precomputed row indices for mapping grid shapefile to array.
+        cols_index_level0 : array-like, optional
+            Precomputed column indices for mapping grid shapefile to array.
+        basin_hierarchy : dict, optional
+            Nested-basin hierarchy used to assign sub-basin-specific parameters.
         """
         self.evb_dir = evb_dir
         self.logger = logger
@@ -269,35 +290,32 @@ class buildParam_level0_interface:
         rows_index,
         cols_index,
     ):
-        """
-        Computes the weighted mean of sand, silt, and clay percentages over multiple soil depth layers.
+        """Compute weighted sand/silt/clay fractions for an aggregated layer range.
 
         Parameters
         ----------
         grid_shp_level0 : GeoDataFrame
-            Geospatial dataframe containing soil property values.
+            Grid shapefile data containing soil texture attributes.
+        orig_depths : sequence of float
+            Original soil-layer thicknesses used as aggregation weights.
         depth_layer_start : int
-            The starting index of the soil depth layers.
+            Start index (inclusive) of source soil layers.
         depth_layer_end : int
-            The ending index of the soil depth layers.
+            End index (inclusive) of source soil layers.
         stand_grids_lat : list
-            Standardized latitude grid array.
+            Standard latitude coordinates.
         stand_grids_lon : list
-            Standardized longitude grid array.
-        rows_index : dict
-            Mapping of latitude values to row indices.
-        cols_index : dict
-            Mapping of longitude values to column indices.
+            Standard longitude coordinates.
+        rows_index : array-like
+            Row indices mapping grid records to array rows.
+        cols_index : array-like
+            Column indices mapping grid records to array columns.
 
         Returns
         -------
         tuple
-            - grid_array_sand : ndarray
-                Weighted mean sand percentage array.
-            - grid_array_silt : ndarray
-                Weighted mean silt percentage array.
-            - grid_array_clay : ndarray
-                Weighted mean clay percentage array.
+            ``(grid_array_sand, grid_array_silt, grid_array_clay)`` as
+            aggregated percentage arrays.
         """
         # vertical aggregation for sand, silt, clay percentile
         grid_array_sand = [
@@ -368,30 +386,31 @@ class buildParam_level0_interface:
         rows_index,
         cols_index,
     ):
-        """
-        Computes the weighted mean bulk density over multiple soil depth layers.
+        """Compute weighted bulk density for an aggregated layer range.
 
         Parameters
         ----------
         grid_shp_level0 : GeoDataFrame
-            Geospatial dataframe containing soil property values.
+            Grid shapefile data containing bulk-density attributes.
+        orig_depths : sequence of float
+            Original soil-layer thicknesses used as aggregation weights.
         depth_layer_start : int
-            The starting index of the soil depth layers.
+            Start index (inclusive) of source soil layers.
         depth_layer_end : int
-            The ending index of the soil depth layers.
+            End index (inclusive) of source soil layers.
         stand_grids_lat : list
-            Standardized latitude grid array.
+            Standard latitude coordinates.
         stand_grids_lon : list
-            Standardized longitude grid array.
-        rows_index : dict
-            Mapping of latitude values to row indices.
-        cols_index : dict
-            Mapping of longitude values to column indices.
+            Standard longitude coordinates.
+        rows_index : array-like
+            Row indices mapping grid records to array rows.
+        cols_index : array-like
+            Column indices mapping grid records to array columns.
 
         Returns
         -------
         ndarray
-            Weighted mean bulk density array (converted to kg/m³).
+            Aggregated bulk density array converted to ``kg/m3``.
         """
         # vertical aggregation for bulk_density
         grid_array_bd = [
@@ -1518,11 +1537,13 @@ class buildParam_level1_interface:
     
     
 class buildParam_level0_interface_ARNO_spatially_uniform(buildParam_level0_interface):
-    """ 
-    only change several sensitive parameters to keep them spatially uniform: total_depths, soil_layers_breakpoints, bi, ds, dsmax, ws
-    remove d1, d2, d3 
-    
-    if use this, please modify in params_set (remove d1/2/3, add Ds/Dsmax/Ws) and GlobalParam (use ARNO baseflow scheme rather NIJSSEN2001)
+    """Level-0 builder variant with spatially uniform ARNO baseflow parameters.
+
+    Notes
+    -----
+    This variant keeps selected sensitive parameters spatially uniform:
+    ``total_depths``, ``soil_layers_breakpoints``, ``b_infilt``, ``Ds``,
+    ``Dsmax``, and ``Ws``. Parameters ``d1``, ``d2``, and ``d3`` are disabled.
     """
     def set_depths_vertical_aggregation(self):
         # total_dpth
@@ -1579,10 +1600,13 @@ class buildParam_level0_interface_ARNO_spatially_uniform(buildParam_level0_inter
         
 
 class buildParam_level0_interface_Nijssen_spatially_uniform(buildParam_level0_interface):
-    """ 
-    only change several sensitive parameters to keep them spatially uniform: total_depths, soil_layers_breakpoints, bi, d1, d2, d3
-    
-    if use this, please modify in params_set (use d1/2/3) and GlobalParam (use NIJSSEN2001)
+    """Level-0 builder variant with spatially uniform Nijssen baseflow parameters.
+
+    Notes
+    -----
+    This variant keeps selected sensitive parameters spatially uniform:
+    ``total_depths``, ``soil_layers_breakpoints``, ``b_infilt``, ``d1``,
+    ``d2``, and ``d3``.
     """
     def set_depths_vertical_aggregation(self):
         # total_dpth
@@ -1625,3 +1649,4 @@ class buildParam_level0_interface_Nijssen_spatially_uniform(buildParam_level0_in
         self.grid_array_d3 = np.full_like(self.grid_array_ele_std, fill_value=self.g_params["d3"]["optimal"]*self.grid_array_depth_layers[self.arno_baseflow_layer_num])
         self.params_dataset_level0.variables["d3"][:, :] = self.grid_array_d3
     
+

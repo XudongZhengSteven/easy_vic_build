@@ -2,31 +2,11 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: resample
+"""Resampling methods for grid-based geospatial variables.
 
-This module provides various resampling methods for spatial grid data. It includes functions
-for interpolating or aggregating values from nearby grid points to estimate values at a given
-destination location. These methods are useful for spatial analysis in hydrology, meteorology,
-and geographic data processing.
-
-Functions:
-----------
-    - removeMissData: Removes missing values from the input grid data.
-    - resampleMethod_SimpleAverage: Computes the simple average of the searched grid data for resampling.
-    - resampleMethod_IDW: Performs Inverse Distance Weighted (IDW) interpolation for resampling.
-    - resampleMethod_bilinear: Performs bilinear interpolation for resampling.
-    - resampleMethod_GeneralFunction: Applies a general aggregation function (e.g., mean, max, min) for resampling.
-    - resampleMethod_Majority: Finds the most frequently occurring value (majority vote) in the searched grid data.
-
-Dependencies:
--------------
-    - numpy: Provides support for numerical operations.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+This module provides several interpolation/aggregation strategies that map
+source-grid values to a destination location, including mean, IDW, bilinear,
+majority vote, generic-function aggregation, and conservative remapping.
 """
 
 import numpy as np
@@ -44,7 +24,7 @@ def resampleMethod_SimpleAverage(
     missing_value=None,
 ):
     """
-    Resamples the input grid data using a simple average method.
+    Resample values using simple arithmetic mean.
 
     Parameters
     ----------
@@ -63,9 +43,9 @@ def resampleMethod_SimpleAverage(
 
     Returns
     -------
-    float or None
-        The resampled data value obtained by simple averaging. If no valid data remains after
-        removing missing values, returns `missing_value` or None.
+    float
+        Mean value of ``searched_grids_data``. If no valid data is available,
+        returns ``missing_value`` or ``np.nan``.
     """
     if len(searched_grids_data) == 0:
         return np.nan if missing_value is None else missing_value
@@ -85,7 +65,7 @@ def resampleMethod_IDW(
     p=2,
 ):
     """
-    Resamples the input grid data using Inverse Distance Weighting (IDW) interpolation.
+    Resample values using inverse-distance weighting (IDW).
 
     Parameters
     ----------
@@ -106,9 +86,9 @@ def resampleMethod_IDW(
 
     Returns
     -------
-    float or None
-        The resampled data value obtained using IDW interpolation. If no valid data remains after
-        removing missing values, returns `missing_value` or None.
+    float
+        IDW-interpolated value at ``(dst_lat, dst_lon)``. If no valid data is
+        available, returns ``missing_value`` or ``np.nan``.
     """
     data = searched_grids_data
     lat = searched_grids_lat
@@ -143,10 +123,11 @@ def resampleMethod_bilinear(
     missing_value=None,
 ):
     """
-    Resamples the input grid data using bilinear interpolation.
+    Resample values using bilinear interpolation with fallbacks.
 
-    Bilinear interpolation estimates the value at a given point (dst_lat, dst_lon) using
-    the weighted average of the four surrounding grid points.
+    Bilinear interpolation estimates the value at ``(dst_lat, dst_lon)`` using
+    four surrounding points. If geometric assumptions are not met, the function
+    falls back to distance-based interpolation.
 
     Schematic representation:
 
@@ -175,16 +156,17 @@ def resampleMethod_bilinear(
 
     Returns
     -------
-    float or None
-        The resampled data value obtained using bilinear interpolation. If no valid data remains after
-        removing missing values, returns `missing_value` or None.
-    
-    Cases:
-    - 4+ points: bilinear interpolation (using first 4 sorted points)
-    - 3 points: IDW
-    - 2 points: linear interpolation
-    - 1 point: return that value
-    - 0 points: return missing_value
+    float
+        Interpolated destination value.
+
+    Notes
+    -----
+    Fallback behavior:
+
+    - 4+ points: bilinear interpolation (or IDW when points are not rectangular),
+    - 2-3 points: distance-weighted interpolation,
+    - 1 point: direct value return,
+    - 0 point: ``missing_value`` or ``np.nan``.
     """
     data = searched_grids_data
     lat = searched_grids_lat
@@ -248,7 +230,7 @@ def resampleMethod_Majority(
     missing_value=None,
 ):
     """
-    Resamples the input grid data using majority voting.
+    Resample categorical values using majority vote.
 
     This method finds the most frequently occurring value (mode) in the searched grid data.
     It is useful for categorical data resampling, such as land cover classification.
@@ -271,9 +253,9 @@ def resampleMethod_Majority(
 
     Returns
     -------
-    float or None
-        The most frequently occurring value in the searched grid data. If no valid data remains
-        after removing missing values, returns `missing_value` or None.
+    float
+        Most frequent value in ``searched_grids_data``. If no valid data is
+        available, returns ``missing_value`` or ``np.nan``.
     """
     data = searched_grids_data
     lat = searched_grids_lat
@@ -306,10 +288,10 @@ def resampleMethod_GeneralFunction(
     general_function=np.mean,
 ):
     """
-    Resamples the input grid data using a general function, such as max(), min(), or a custom function.
+    Resample values using a user-provided aggregation function.
 
-    This function allows the user to apply any aggregation function (e.g., mean, median, max, min)
-    to resample the data. The function can also be a frozen parameter function.
+    This method applies ``general_function`` to source values after wrapper-level
+    preprocessing.
 
     Parameters
     ----------
@@ -332,9 +314,9 @@ def resampleMethod_GeneralFunction(
 
     Returns
     -------
-    float or None
-        The resampled data value obtained using the specified general function. If no valid data remains
-        after removing missing values, returns `missing_value` or None.
+    float
+        Aggregated value returned by ``general_function``. If evaluation fails or
+        no valid data is available, returns ``missing_value`` or ``np.nan``.
     """
     data = searched_grids_data
     lat = searched_grids_lat
@@ -366,6 +348,34 @@ def resampleMethod_conservative(
     dst_res=None,
     missing_value=None,
 ):
+    """
+    Resample values using overlap-area conservative remapping.
+
+    Parameters
+    ----------
+    searched_grids_data : array-like
+        Values from source grids.
+    searched_grids_lat : array-like
+        Source-grid center latitudes.
+    searched_grids_lon : array-like
+        Source-grid center longitudes.
+    searched_grids_res : float, optional
+        Source-grid resolution.
+    dst_lat : float, optional
+        Destination-grid center latitude.
+    dst_lon : float, optional
+        Destination-grid center longitude.
+    dst_res : float, optional
+        Destination-grid resolution.
+    missing_value : float, optional
+        Missing-value code used when no valid overlap exists.
+
+    Returns
+    -------
+    float
+        Conservatively remapped destination value. If resolution inputs are
+        missing, the function falls back to ``np.nanmean(data)``.
+    """
     data = searched_grids_data
     lat = searched_grids_lat
     lon = searched_grids_lon

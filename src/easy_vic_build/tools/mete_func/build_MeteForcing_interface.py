@@ -2,6 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""Build meteorological forcing NetCDF files from gridded time series."""
+
 from ..decoractors import clock_decorator
 from .createMeteForcingDataset import createMeteForcingDataset
 from ..dpc_func.basin_grid_func import createStand_grids_lat_lon_from_gridshp, gridshp_index_to_grid_array_index, createEmptyArray_from_gridshp, createEmptyArray_and_assignValue_from_gridshp
@@ -15,6 +17,7 @@ import os
 import cftime
 
 class buildMeteForcing_interface:
+    """Interface for building yearly VIC meteorological forcing files."""
     
     def __init__(
         self,
@@ -32,6 +35,37 @@ class buildMeteForcing_interface:
         cols_index_level2=None,
         file_format="NETCDF4",
     ):
+        """Initialize the forcing builder.
+
+        Parameters
+        ----------
+        evb_dir : object
+            Directory/config object that provides output paths and filename prefix.
+        logger : object
+            Logger instance used for progress messages.
+        dpc_VIC_level2 : object
+            Data-processing container that stores level-2 basin grid data.
+        date_period_process : sequence of str
+            Start and end date strings for files to be generated.
+        date_period_forcing : sequence of str
+            Start and end date strings of available forcing time series.
+        date_format : str, optional
+            Date parsing format used by ``datetime.strptime``.
+        timestep : str, optional
+            Pandas frequency string used to build the time axis.
+        reverse_lat : bool, optional
+            Whether latitude is stored in reverse order.
+        stand_grids_lat_level2 : array-like, optional
+            Standard latitude coordinate array.
+        stand_grids_lon_level2 : array-like, optional
+            Standard longitude coordinate array.
+        rows_index_level2 : array-like, optional
+            Row indices mapping each basin grid to standard grid.
+        cols_index_level2 : array-like, optional
+            Column indices mapping each basin grid to standard grid.
+        file_format : str, optional
+            NetCDF output format.
+        """
         self.evb_dir = evb_dir
         self.logger = logger
         self.dpc_VIC_level2 = dpc_VIC_level2
@@ -54,7 +88,18 @@ class buildMeteForcing_interface:
     
     @staticmethod
     def generate_cftime_dates(d):
-        """Convert pandas.DatetimeIndex to list of cftime.datetime objects, supports any frequency"""
+        """Convert one pandas datetime value to ``cftime.datetime``.
+
+        Parameters
+        ----------
+        d : pandas.Timestamp
+            Datetime value to be converted.
+
+        Returns
+        -------
+        cftime.datetime
+            Converted datetime in proleptic Gregorian calendar.
+        """
         year = d.year
         month = d.month if hasattr(d, 'month') else 1  # Default to January if no month field
         day = d.day if hasattr(d, 'day') else 1        # Default to 1st day if no day field
@@ -66,6 +111,7 @@ class buildMeteForcing_interface:
     
     @clock_decorator(print_arg_ret=False)
     def buildMeteForcing_loop_years(self):
+        """Build forcing files year by year for the configured period."""
         # set_coord_map
         self.set_coord_map()
         
@@ -98,6 +144,7 @@ class buildMeteForcing_interface:
             self.meteforcing_dataset.close()
             
     def set_vars_names_map(self):
+        """Set mapping from output variable names to source column names."""
         self.vars_names_maps = {
             "tas": "tmp_avg_C",
             "prcp": "pre_mm_per_3h",
@@ -109,6 +156,7 @@ class buildMeteForcing_interface:
         }
         
     def set_date_period(self):
+        """Prepare datetime indices for process period and forcing period."""
         self.logger.info(f"set date_period: from {self.date_period_process[0]} to {self.date_period_process[1]}, timestep is {self.timestep}... ...")
         
         self.start_time = self.date_period_process[0]
@@ -134,6 +182,7 @@ class buildMeteForcing_interface:
         self.forcing_datetime = pd.date_range(self.date_period_forcing_datetime[0], self.date_period_forcing_datetime[1], freq=self.timestep)
         
     def set_coord_map(self):
+        """Prepare standard coordinates and index mapping for level-2 grids."""
         self.logger.debug("setting coord_map... ...")
         
         if self.stand_grids_lat_level2 is None:
@@ -147,6 +196,15 @@ class buildMeteForcing_interface:
             )
 
     def set_var_value(self, grid_shp_column, var_name):
+        """Write one variable from source grid series into the output dataset.
+
+        Parameters
+        ----------
+        grid_shp_column : str
+            Source column name in level-2 grid shapefile data.
+        var_name : str
+            Target variable name in meteorological forcing dataset.
+        """
         # date extraction
         start_prcess_datetime_year = self.process_datetime_year[0]
         end_prcess_datetime_year = self.process_datetime_year[-1]

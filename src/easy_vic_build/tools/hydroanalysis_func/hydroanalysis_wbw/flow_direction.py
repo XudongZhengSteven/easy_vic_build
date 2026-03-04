@@ -1,30 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-""" 
-flow_direction - A Python module for calculating flow direction from a depression-filled DEM.
-
-This module provides functions for calculating flow direction with multiple algorithms.
-
-Functions:
-----------
-    - `d8_flowdirection`: Calculate D8 flow direction from a depression-filled DEM.
-
-Usage:
-------
-    1. Call `d8_flowdirection` function with the WhiteboxTools environment and input DEM file.
-
-Example:
---------
-    >>> from hydroanalysis_wbw import d8_flowdirection
-    >>> flow_dir = d8_flowdirection(wbe, "filled_dem.tif")
-
-Dependencies:
--------------
-    - `whitebox_workflows`: A library that facilitates geospatial processing tasks, such as DEM filling,
-      flow direction, and stream extraction.
-
-"""
+"""Flow-direction utilities for conditioned DEM rasters."""
 
 def d8_flowdirection(
     wbe,
@@ -32,7 +9,7 @@ def d8_flowdirection(
     output_file="flow_direction.tif",
     **kwargs
 ):
-    """Calculate D8 flow direction from a depression-filled DEM.
+    """Calculate D8 flow direction from a hydrologically conditioned DEM.
     
     Parameters
     ----------
@@ -45,17 +22,7 @@ def d8_flowdirection(
         
     output_file : str, optional
         Output file path for flow direction raster (default="flow_direction.tif")
-        
-    pourpoint_x_index : int, optional
-        Column index of pour point where flow direction should be manually set
-        
-    pourpoint_y_index : int, optional
-        Row index of pour point where flow direction should be manually set
-        
-    pourpoint_direction_code : int, optional
-        D8 flow direction code (1-8) to assign at pour point location. 
-        Only used if pourpoint indices are provided.
-        
+
     **kwargs : dict, optional
         Additional parameters for d8_pointer:
         
@@ -67,39 +34,12 @@ def d8_flowdirection(
 
     Returns
     -------
-    flow_direction: `WbRaster`
-        D8 flow direction raster where values represent flow direction:
-        - 1: East
-        - 2: Southeast
-        - 4: South
-        - 8: Southwest
-        - 16: West
-        - 32: Northwest
-        - 64: North
-        - 128: Northeast
-        (ESRI encoding style when esri_pointer=True)
-
-    Examples
-    --------
-    >>> # Basic flow direction calculation
-    >>> flow_dir = d8_flowdirection(wbe, "filled_dem.tif")
-    
-    >>> # With manual pour point adjustment
-    >>> flow_dir = d8_flowdirection(wbe, "filled_dem.tif",
-    ...                           pourpoint_x_index=100,
-    ...                           pourpoint_y_index=200,
-    ...                           pourpoint_direction_code=1)
+    `WbRaster`
+        Flow-direction raster written to ``output_file`` and returned.
 
     Notes
     -----
-    1. Input DEM must be properly hydrologically conditioned (depressions filled
-       and flat areas resolved) before flow direction calculation.
-    2. ESRI encoding (default) uses powers of 2 (1,2,4,8,16,32,64,128) while
-       alternative encodings may use simple 1-8 values.
-    3. Pour point modification is typically used to enforce watershed outlets or
-       correct known flow direction errors.
-    4. Flow direction raster should be checked using `validate_flow_direction`
-       before subsequent analysis.
+    The input DEM should be depression-filled before calling this function.
     """
     # kwargs
     kwargs_ = {"esri_pointer": True}

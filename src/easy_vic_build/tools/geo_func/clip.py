@@ -2,30 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: clip
-
-This module contains functions for clipping geospatial data to a specified region based on
-latitude, longitude, and resolution. The clip function extracts a subregion of the source data
-that corresponds to the target geographical area defined by the input latitude and longitude
-ranges. This is useful for reducing data size and improving computational efficiency when working
-with large geospatial datasets.
-
-Functions:
-----------
-    - clip: Clips the source geospatial data based on the specified latitude and longitude
-      ranges, adjusting for the given resolution.
-
-Dependencies:
--------------
-    - numpy: Provides numerical operations and array manipulations, especially for array slicing
-      and mesh grid creation.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
+"""Clipping utilities for array grids and GeoTIFF rasters."""
 
 import numpy as np
 import os
@@ -37,12 +14,10 @@ import geopandas as gpd
 
 def clip(dst_lat, dst_lon, dst_res, src_lat, src_lon, src_data, reverse_lat=True):
     """
-    Clips the source data to match the desired latitude and longitude range, based on the target resolution.
-    clip for extracting before to improve speed, avoid to creating too large search array, as below
+    Clip source gridded arrays by destination extent and resolution buffer.
 
-    This function extracts a subset of the source data, adjusting for the resolution and the specified
-    latitude/longitude ranges. It helps to avoid creating overly large search arrays, improving speed during
-    geospatial operations.
+    This function is typically used as a pre-step before grid searching to
+    reduce search-space size and improve runtime.
 
     Parameters
     ----------
@@ -62,7 +37,7 @@ def clip(dst_lat, dst_lon, dst_res, src_lat, src_lon, src_data, reverse_lat=True
         The longitude values of the source data grid.
 
     src_data : array-like
-        The source data to be clipped (must match the dimensions of src_lat and src_lon).
+        Source 2D data array indexed by ``[lat, lon]``.
 
     reverse_lat : bool, optional
         If True, assumes the source latitude values are in descending order (large to small).
@@ -70,20 +45,12 @@ def clip(dst_lat, dst_lon, dst_res, src_lat, src_lon, src_data, reverse_lat=True
 
     Returns
     -------
-    src_data_clip : array-like
-        The clipped source data, matching the specified latitude and longitude range.
-
-    src_lon_clip : array-like
-        The clipped longitude values corresponding to the selected source data.
-
-    src_lat_clip : array-like
-        The clipped latitude values corresponding to the selected source data.
+    tuple
+        ``(src_data_clip, src_lon_clip, src_lat_clip)``.
 
     Notes
     -----
-    This function uses `np.where` to find the indices of the source data that fall within the specified latitude
-    and longitude ranges (with an additional buffer based on the target resolution). The clipping operation extracts
-    the relevant subset of the source data.
+    ``dst_res / 2`` is used as an outer buffer when locating source indices.
     """
     xindex_start = np.where(src_lon <= min(dst_lon) - dst_res / 2)[0][-1]
     xindex_end = np.where(src_lon >= max(dst_lon) + dst_res / 2)[0][0]
@@ -125,7 +92,7 @@ def clip_tiff(
     shp_path: str = None
 ):
     """
-    Clip a GeoTIFF file using either a geographic bounding box or a shapefile.
+    Clip a GeoTIFF by bounding box or shapefile boundary.
 
     Parameters
     ----------
@@ -138,21 +105,17 @@ def clip_tiff(
     shp_path : str, optional
         Path to a shapefile used as the clipping boundary.
 
-    Examples
-    ----------
-    # Clip by bounding box
-    clip_tiff(
-        input_tiff="input.tif",
-        output_tiff="clipped_bbox.tif",
-        bbox=(105.2, 33.5, 106.8, 34.9)
-    )
+    Returns
+    -------
+    None
+        Clipped raster is written to ``output_tiff``.
 
-    # Clip by shapefile
-    clip_tiff(
-        input_tiff="input.tif",
-        output_tiff="clipped_shp.tif",
-        shp_path="basin_boundary.shp"
-    )
+    Raises
+    ------
+    FileNotFoundError
+        If ``input_tiff`` or ``shp_path`` does not exist.
+    ValueError
+        If neither ``bbox`` nor ``shp_path`` is provided.
     """
     # ---------------- Check input validity ----------------
     if not os.path.exists(input_tiff):

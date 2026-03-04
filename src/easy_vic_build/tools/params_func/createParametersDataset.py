@@ -2,30 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: createParametersDataset
-
-This module provides functionality for creating and managing NetCDF files specifically related to flow direction
-and parameter datasets. It includes two primary functions:
-1. `createFlowDirectionFile`: Creates a NetCDF file to store flow direction and related parameters for a grid.
-2. `createParametersDataset`: This function is likely to create the overall parameter dataset (although the code
-   for this function is not provided).
-
-Functions:
-----------
-    - createFlowDirectionFile: Creates a NetCDF file with variables for flow direction, basin ID, flow distance,
-      and source area based on given latitude and longitude grids.
-    - createParametersDataset: Likely intended to create a dataset with parameters related to hydrological
-      simulations (function details are not included).
-
-Dependencies:
--------------
-    - netCDF4: Used for reading and writing NetCDF files.
-Author:
--------
-    Xudong Zheng
-    Email: zhengxd@sehemodel.club
-"""
+"""Create NetCDF templates for VIC parameters and routing flow direction."""
 
 from netCDF4 import Dataset
 
@@ -33,21 +10,22 @@ from netCDF4 import Dataset
 
 
 def createParametersDataset(dst_path, lat_list, lon_list):
-    """
-    Create a NetCDF dataset with the specified parameters for soil and vegetation.
+    """Create a VIC parameter NetCDF dataset template.
 
     Parameters
     ----------
     dst_path : str
-        The file path where the NetCDF dataset will be saved.
+        Output NetCDF file path.
     lat_list : list of float
-        The list of latitudes for the grid.
+        Latitude coordinates.
     lon_list : list of float
-        The list of longitudes for the grid.
+        Longitude coordinates.
 
     Returns
     -------
-    None
+    netCDF4.Dataset
+        Open NetCDF dataset object containing predefined dimensions and
+        variables for VIC parameters.
     """
     # create dataset
     params_dataset = Dataset(dst_path, "w", format="NETCDF4")
@@ -853,32 +831,27 @@ def createParametersDataset(dst_path, lat_list, lon_list):
 
 
 def createFlowDirectionFile(dst_path, lat_list, lon_list):
-    """
-    Create a NetCDF file to store flow direction data.
+    """Create a routing flow-direction NetCDF dataset template.
 
     Parameters
     ----------
     dst_path : str
-        The path where the NetCDF file will be saved.
+        Output NetCDF file path.
     lat_list : list of float
-        List of latitude values for the grid.
+        Latitude coordinates.
     lon_list : list of float
-        List of longitude values for the grid.
+        Longitude coordinates.
 
     Returns
     -------
     flow_direction_dataset : netCDF4.Dataset
-        A NetCDF dataset containing the flow direction and related variables.
+        Open NetCDF dataset object with routing-related variables.
 
     Notes
     -----
-    This function creates a NetCDF file with the following variables:
-    - lat: Latitude values (1D array)
-    - lon: Longitude values (1D array)
-    - Basin_ID: Basin ID, grids labeled as 1 for basin and 0 otherwise
-    - Flow_Direction: Flow direction generated from filled DEM
-    - Flow_Distance: Flow distance based on Flow_Direction and grid lengths
-    - Source_Area: Source area generated from Flow_Direction
+    The dataset includes coordinate variables and routing fields:
+    ``Basin_ID``, ``Flow_Direction``, ``Flow_Distance``, ``Source_Area``,
+    ``velocity``, and ``diffusion``.
     """
 
     # create dataset

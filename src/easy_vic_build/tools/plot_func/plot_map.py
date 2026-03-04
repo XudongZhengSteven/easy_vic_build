@@ -2,6 +2,8 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""Module ``easy_vic_build.tools.plot_func.plot_map``."""
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.colors as mcolors

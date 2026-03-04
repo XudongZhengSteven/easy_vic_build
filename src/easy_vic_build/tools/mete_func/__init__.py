@@ -1,22 +1,7 @@
-"""
-Subpackage: mete_func
+"""Meteorological forcing processing modules.
 
-A Subpackage of easy_vic_build.tools
-
-This subpackage contains a collection of modules focused on meteorological data processing.
-The primary functionality includes handling meteorological inputs.
-
-Modules:
---------
-    - mete_func: Provides functions for generating digital elevation models (DEMs) from input topographic data.
-      It handles the creation of elevation grids based on latitude, longitude, and elevation data.
-
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
+This subpackage provides utilities for meteorological data transformation and
+forcing preparation workflows.
 """
 
 # Importing submodules for ease of access

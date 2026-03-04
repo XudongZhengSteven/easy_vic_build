@@ -2,47 +2,14 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-easy_vic_build - A Python package for easily building VIC model.
+"""Top-level package for ``easy_vic_build``.
 
-This package provides an open-source Python framework for scalable deployment and advanced applications
-of the VIC model. It streamlines the process of configuring, preparing, and calibrating the VIC model,
-and supports automation, preprocessing, and postprocessing workflows. The package is designed to
-improve efficiency and reduce the complexity of VIC model deployment.
+This module exposes commonly used builders and utilities and performs optional
+feature detection at import time:
 
-Submodules:
------------
-    - `tools`: A subpackage containing utility modules for supporting VIC model deployment.
-    - `build_dpc`: Module for building data processing class at three levels.
-    - `build_GlobalParam`: Module for building the global parameter file.
-    - `build_hydroanalysis`: Module for performing hydroanalysis tasks.
-    - `build_MeteForcing_nco`: Module for building meteorological forcing files with nco.
-    - `build_MeteForcing`: Module for building meteorological forcing files without nco.
-    - `build_RVIC_Param`: Module for building RVIC parameter files.
-    - `build_Domain`: Module for building domain files.
-    - `build_Param`: Module for building VIC parameter files.
-    - `calibrate`: Module for calibrating VIC model.
-    - `Evb_dir_class`: Module containing Evb_dir class for managing path and directory.
-    - `warmup`: Module for warmuping VIC model.
-
-Usage:
-------
-    0. Perform hydrological analysis for level0
-    1. Build DPC (`build_dpc`)
-    2. Build Domain (`build_Domain`)
-    3. Build Parameters (`build_Param`)
-    4. Perform Hydroanalysis for level1 (`build_hydroanalysis`)
-    5. Build Meteorological Forcing (`build_MeteForcing`) or (`build_MeteForcing_nco`)
-    6. Build RVIC Parameters (`build_RVIC_Param`)
-    7. Build Global Parameters (`build_GlobalParam`)
-    8. Calibrate the Model (`calibrate`)
-    9. Plot Basin Map (`plot_Basin_map`), note that you must first run `hydroanalysis_for_basin`
-    10. Plot VIC Results (`plot_VIC_result`)
-
-Version: 0.1.0
-Author: Xudong Zheng
-License: MIT
-
+- If ``nco`` is available, ``build_MeteForcing_nco`` is imported.
+- Otherwise, fallback ``build_MeteForcing`` is imported.
+- If ``rvic`` is available, ``HAS_RVIC`` is set to ``True``.
 """
 
 # import

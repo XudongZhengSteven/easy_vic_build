@@ -2,69 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-utilities - A Python module providing a set of utility functions.
-
-This module provides a set of utility functions for reading and processing various data
-related to the VIC model and hydrometeorological datasets. It includes functions for reading
-basin and parameter files, processing DPC data, and handling configuration files. These
-functions facilitate the extraction, manipulation, and storage of data for use in VIC model
-simulations and related analysis.
-
-Functions:
-----------
-    - `check_and_mkdir`: Checks if a directory exists, and creates it if not.
-    - `remove_and_mkdir`: Removes a directory and recreates it.
-    - `remove_files`: Removes files from the specified path.
-    - `setHomePath`: Sets the home directory path.
-    - `exportToCsv`: Exports data to a CSV file.
-    - `checkGaugeBasin`: Checks if the gauge basin exists in the dataset.
-    - `readHCDNBasins`: Reads and returns the basin shapefile from the HCDN dataset.
-    - `read_one_HCDN_basin_shp`: Retrieves data for a specific basin from the HCDN dataset.
-    - `readdpc`: Loads and returns the serialized DPC data for the VIC model at three levels.
-    - `readDomain`: Reads the domain configuration from a NETCDF file.
-    - `readParam`: Reads parameter datasets at two levels (level0 and level1) from NETCDF files.
-    - `clearParam`: Deletes parameter datasets at level0 and level1.
-    - `readRVICParam`: Reads and returns configuration data related to flow direction, pourpoints,
-      unit hydrograph, and other parameters from various files.
-    - `read_cfg_to_dict`: Converts the configuration file into a dictionary for easy access.
-    - `readGlobalParam`: Loads global parameters using the GlobalParamParser.
-    - `readCalibrateCp`: Reads and returns the state of the calibration process from a pickle file.
-    - `readBasinMap`: Reads the basin map shapefile containing stream data.
-    - `read_NLDAS_annual_prec`: Reads and processes the annual precipitation data from NLDAS.
-    - `read_globalParam_reference`: Reads the reference global parameter dataset.
-    - `read_rvic_param_cfg_file_reference`: Reads the reference configuration file for RVIC parameters.
-    - `read_rvic_conv_cfg_file_reference`: Reads the reference configuration file for RVIC convergence.
-    - `read_veg_type_attributes_umd`: Reads vegetation type attributes from UMD data.
-    - `read_NLDAS_Veg_monthly`: Reads and processes the monthly vegetation data from NLDAS.
-    - `read_veg_param_json`: Reads vegetation parameters from a JSON file.
-    - `readHCDNGrids`: Reads the grid data from the HCDN dataset.
-
-Example:
---------
-    check_and_mkdir("E:\\data\\new_directory")
-
-    HCDN_shp_all = readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS")
-    basin_index = 213
-    basin_shp_all, basin_shp = read_one_HCDN_basin_shp(basin_index)
-
-    evb_dir = Evb_dir(cases_home="./examples")
-    params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
-
-    clearParam(evb_dir)
-
-    state = readCalibrateCp(evb_dir)
-
-Dependencies:
--------------
-    - `pickle`: For serializing and deserializing DPC and calibration state data.
-    - `geopandas`: For reading and processing shapefiles.
-    - `pandas`: For reading CSV files (e.g., pourpoint and UHbox data).
-    - `netCDF4`: For reading NETCDF files (domain and parameter datasets).
-    - `ConfigParser`: For reading and processing configuration files.
-    - `matplotlib`: For plotting, if required in some data processing functions.
-
-"""
+"""General utility functions for path handling, resource loading, dataset I/O, and so on"""
 
 import io
 import json
@@ -91,7 +29,7 @@ top_package = __package__.split(".")[0]
 
 def check_and_mkdir(dir):
     """
-    Checks if a directory exists, and if not, creates it.
+    Create a directory if it does not exist.
 
     Parameters
     ----------
@@ -104,7 +42,7 @@ def check_and_mkdir(dir):
 
 def remove_and_mkdir(dir):
     """
-    Removes a directory and creates a new one.
+    Remove a directory and recreate it as an empty directory.
 
     Parameters
     ----------
@@ -118,7 +56,7 @@ def remove_and_mkdir(dir):
 
 def remove_files(dir):
     """
-    Removes all files in a directory, but not the subdirectories.
+    Remove files in a directory while keeping subdirectories.
 
     Parameters
     ----------
@@ -420,7 +358,7 @@ def readHCDNGrids(home="E:\\data\\hydrometeorology\\CAMELS"):
 
 def readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS"):
     """
-    Reads the HCDN basins shapefile and adds an area column in km².
+    Read HCDN basin polygons and add ``AREA_km2``.
 
     Parameters
     ----------
@@ -429,8 +367,8 @@ def readHCDNBasins(home="E:\\data\\hydrometeorology\\CAMELS"):
 
     Returns
     -------
-    HCDN_shp: `geopandas.GeoDataFrame`
-        The HCDN shapefile with an added column for basin area in km².
+    HCDN_shp : geopandas.GeoDataFrame
+        Basin shapefile with area converted from ``m2`` to ``km2``.
     """
     # read data: HCDN
     HCDN_shp_path = os.path.join(home, "basin_set_full_res", "HCDN_nhru_final_671.shp")
@@ -474,23 +412,19 @@ def readdpc(
     dpc_class,
 ):
     """
-    Reads the dpc files from disk.
+    Instantiate a DPC object from a serialized path.
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    dpc_fpath : str
+        Path to DPC serialized data.
+    dpc_class : type
+        DPC class constructor that accepts ``dpc_fpath``.
 
     Returns
     -------
-    dpc_VIC_level0: `dpc_VIC_level0`
-        An instance of the `dpc_VIC_level0` class to process data at level 0 of the VIC model.
-    
-    dpc_VIC_level1: `dpc_VIC_level1`
-        An instance of the `dpc_VIC_level1` class to process data at level 0 of the VIC model.
-    
-    dpc_VIC_level2: `dpc_VIC_level2`
-        An instance of the `dpc_VIC_level2` class to process data at level 0 of the VIC model.
+    object
+        DPC instance created by ``dpc_class``.
     """
     # read
     dpc_instance = dpc_class(dpc_fpath)
@@ -504,12 +438,14 @@ def readDomain(evb_dir, name=None):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager.
+    name : str, optional
+        Optional suffix; if provided, read ``domain_<name>.nc``.
 
     Returns
     -------
-    domain_dataset: `netCDF.Dataset`
+    domain_dataset : netCDF4.Dataset
         The domain dataset loaded from the NetCDF file.
     """
     # read
@@ -529,8 +465,8 @@ def readParam(evb_dir, mode="r"):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager.
         
     mode : str, optional
         The mode to open the files, by default "r".
@@ -560,8 +496,8 @@ def clearParam(evb_dir):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager.
     """
     if os.path.isfile(evb_dir.params_dataset_level0_path):
         os.remove(evb_dir.params_dataset_level0_path)
@@ -579,8 +515,8 @@ def readRVICParam(evb_dir):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager. Also expects ``evb_dir.cfg_file_path``.
 
     Returns
     -------
@@ -636,8 +572,8 @@ def readGlobalParam(evb_dir):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager.
 
     Returns
     -------
@@ -656,8 +592,8 @@ def readCalibrateCp(evb_dir):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager.
 
     Returns
     -------
@@ -686,8 +622,8 @@ def readBasinMap(evb_dir):
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
+    evb_dir : Evb_dir
+        Case directory manager.
 
     Returns
     -------

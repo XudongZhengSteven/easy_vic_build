@@ -2,62 +2,34 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: TransferFunction
-
-This module defines various transfer functions used in hydrological modeling. These functions are
-important for transforming and scaling data related to soil properties, water retention, and surface
-roughness. The functions within this module implement common transfer equations such as the calculation
-of soil density, wilting point, and other key hydrological parameters. Each transfer function is
-encapsulated in a static method within the `TF_VIC` class.
-
-Class:
-------
-    - TF_VIC: A class that contains static methods for various transfer functions, such as soil density
-      calculations, wilting point computations, and other hydrological parameter transformations.
-
-Class Methods:
---------------
-    - soil_density: Computes the soil mineral density, scaled by a factor `g`.
-    - Wcr_FRACT: Computes the fraction of water retention at field capacity (Wcr) based on soil properties.
-    - wp: Computes the wilting point based on Campbell's (1974) equation.
-    - Wpwp_FRACT: Computes the fraction of the wilting point moisture content.
-    - rough: Computes the soil surface roughness.
-    - snow_rough: Computes the snow surface roughness.
-    - off_gmt: Computes the offset from GMT based on longitude.
-    - fs_active: Determines the activation status based on a flag.
-
-Dependencies:
--------------
-    - numpy: Used for array manipulation and mathematical operations.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
+"""Transfer functions and soil-layer resampling utilities for VIC parameters."""
 
 
 import numpy as np
 
 class TF_VIC:
-    """Class containing methods for soil hydraulic parameter calculations, Transfer Functions."""
+    """Transfer-function collection for VIC parameter derivation."""
 
     def __init__(self) -> None:
         pass
 
     @staticmethod
     def b_infilt(elev_std, g1, g2):
-        """
-        Calculate base infiltration rate.
+        """Calculate VIC infiltration parameter ``b_infilt``.
 
-        Parameters:
-        elev_std (ndarray): Standard elevation values.
-        g1 (float): Coefficient for the elevation standard.
-        g2 (float): Coefficient for the elevation standard.
+        Parameters
+        ----------
+        elev_std : ndarray
+            Elevation standard-deviation values.
+        g1 : float
+            Calibration coefficient.
+        g2 : float
+            Calibration coefficient.
 
-        Returns:
-        ndarray: Base infiltration rate values.
+        Returns
+        -------
+        ndarray
+            ``b_infilt`` values clipped to valid range.
         """
         # Dumenil, L. and Todini, E.: A rainfall-runoff scheme for use in the Hamburg climate model, Advances in theoretical hydrology, 129-157, 1992.
         # Hurk, B. and Viterbo, P.: The Torne-Kalix PILPS 2(e) experiment as a test bed for modifications to the ECMWF land surface scheme, Global Planet Change, 38, 165-173, 10.1016/S0921-8181(03)00027-4, 2003.
@@ -74,15 +46,19 @@ class TF_VIC:
 
     @staticmethod
     def total_depth(total_depth_original, g):
-        """
-        Compute total depth of a soil layer.
+        """Scale total soil depth.
 
-        Parameters:
-        total_depth_original (ndarray): Original total depth values.
-        g (float): Coefficient for adjusting depth.
+        Parameters
+        ----------
+        total_depth_original : ndarray
+            Original total depth values.
+        g : float
+            Multiplicative scaling factor.
 
-        Returns:
-        ndarray: Adjusted total depth values.
+        Returns
+        -------
+        ndarray
+            Scaled total depth values.
         """
         # total_depth, m
         # g: 1.0 (0.1, 4.0)
@@ -92,15 +68,33 @@ class TF_VIC:
 
     @staticmethod
     def depth(total_depth, soillayerresampler, g):
-        """
-        Calculate the distribution of soil layer depths.
+        """Distribute total depth into VIC layers using breakpoints.
 
-        Parameters:
-        total_depth (ndarray): Original total depth.
-        g: breakpoints for layers, such as [2, 6] (total 8 layers, this set 3 layers: 0-2, 2-6. 6-8)
+        Parameters
+        ----------
+        total_depth : ndarray
+            Total soil depth.
+        soillayerresampler : SoilLayerResampler
+            Layer resampler instance used to create grouping.
+        g : sequence of int
+            Breakpoint indices, for example ``[2, 6]``.
 
-        Returns:
-        list: Depth values for each layer.
+        Returns
+        -------
+        list of ndarray
+            Depth values of each aggregated layer.
+
+        Notes
+        -----
+        ``g`` is treated as breakpoint indices of original layers.
+        For example, with 11 source layers and ``g=[2, 6]``, grouped layers are:
+        ``[0,1]``, ``[2,3,4,5]``, and ``[6,7,8,9,10]``.
+
+        Examples
+        --------
+        >>> resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])
+        >>> TF_VIC.depth(np.array([320.0]), resampler, [2, 6])
+        [array([20.]), array([80.]), array([220.])]
         """
         # total_depth, m
         # depth, m
@@ -1027,72 +1021,70 @@ class TF_VIC:
         return ret
     
 class SoilLayerResampler:
-    """
-    A class to resample soil layers with simplified continuous grouping.
-    
-    Now accepts breakpoints instead of full grouping scheme.
-    
-    attributes:
-        self.orig_depths = np.array(original_depths, dtype=float)
-        self.n_orig = len(self.orig_depths)
-        self.orig_total = np.sum(self.orig_depths)
-        self.orig_cumsum = np.cumsum(self.orig_depths)
-        self.orig_boundaries = np.concatenate(([0], self.orig_cumsum))
-        self.grouping
-            dict: Contains computed parameters including:
-                - depths: thickness of each new layer
-                - boundaries: depth boundaries
-                - percentages: thickness percentages
-                - group_info: detailed grouping information
-    
-    example:
-        # Original 11 layers
-        original_depths = [10,10,10,20,20,30,30,40,50,50,50]
-        resampler = SoilLayerResampler(original_depths)
-        resampler.create_grouping([2, 6])
-        
-        # 1. Create grouping
-        grouping = resampler.grouping
-        print("Original grouping:")
-        print("Depths:", grouping['depths'])
-        print("Depth percentages:", grouping['depth_percentages'])
-        
-        >>>
-        Original grouping:
-        Depths: [ 20.  80. 220.]
-        Depth percentages: [0.0625 0.25   0.6875]
-        
-        # 2. Scale to new total depth
-        scaled_grouping = resampler.scale_grouping(grouping, 500)  # Scale to 500cm total
-        print("\nScaled grouping (500cm total):")
-        print("Scaled depths:", scaled_grouping['depths'])
-        print("Boundaries:", scaled_grouping['boundaries'])
-        
-        >>>        
-        Scaled grouping (500cm total):
-        Scaled depths: [ 31.25 125.   343.75]
-        Boundaries: [  0.    31.25 156.25 500.  ]
-        
-        # 3. Value conversion
-        print("\n=== Value conversion ===")
-        orig_values = np.array([1,2,3,4,5,6,7,8,9,10,11])
-        grouped_values = resampler.convert_to_grouping(orig_values, grouping, method='mean')
-        print("Original:", orig_values)
-        print("Grouped (mean):", grouped_values)
-        
-        >>>
-        === Value conversion ===
-        Original: [ 1  2  3  4  5  6  7  8  9 10 11]
-        Grouped (mean): [1.5 4.5 9. ]
-        
+    """Resample original soil layers into grouped layers by breakpoints.
+
+    Attributes
+    ----------
+    orig_depths : numpy.ndarray
+        Thickness of original layers.
+    n_orig : int
+        Number of original layers.
+    orig_total : float
+        Total original depth.
+    orig_cumsum : numpy.ndarray
+        Cumulative depth of original layers.
+    orig_boundaries : numpy.ndarray
+        Layer boundaries with leading zero.
+    grouping : dict or None
+        Group metadata after :meth:`create_grouping`.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> # Original 11 layers
+    >>> original_depths = [10,10,10,20,20,30,30,40,50,50,50]
+    >>> resampler = SoilLayerResampler(original_depths)
+    >>> resampler.create_grouping([2, 6])
+
+    >>> # 1) Create grouping
+    >>> grouping = resampler.grouping
+    >>> print("Original grouping:")
+    Original grouping:
+    >>> print("Depths:", grouping["depths"])
+    Depths: [ 20.  80. 220.]
+    >>> print("Depth percentages:", grouping["depth_percentages"])
+    Depth percentages: [0.0625 0.25   0.6875]
+
+    >>> # 2) Scale to new total depth
+    >>> scaled_grouping = resampler.scale_grouping(grouping, 500)
+    >>> print("Scaled grouping (500cm total):")
+    Scaled grouping (500cm total):
+    >>> print("Scaled depths:", scaled_grouping["depths"])
+    Scaled depths: [ 31.25 125.   343.75]
+    >>> print("Boundaries:", scaled_grouping["boundaries"])
+    Boundaries: [  0.    31.25 156.25 500.  ]
+
+    >>> # 3) Value conversion
+    >>> print("=== Value conversion ===")
+    === Value conversion ===
+    >>> orig_values = np.array([1,2,3,4,5,6,7,8,9,10,11])
+    >>> grouped_values = resampler.convert_to_grouping(orig_values, grouping, method="mean")
+    >>> print("Original:", orig_values)
+    Original: [ 1  2  3  4  5  6  7  8  9 10 11]
+    >>> print("Grouped (mean):", grouped_values)
+    Grouped (mean): [1.5 4.5 9. ]
     """
     
     def __init__(self, original_depths, breakpoints=None):
-        """
-        Initialize with original layer depths.
-        
-        Args:
-            original_depths (list/np.array): Depth thickness of each original layer
+        """Initialize resampler.
+
+        Parameters
+        ----------
+        original_depths : sequence of float
+            Thickness of each original soil layer.
+        breakpoints : sequence of int, optional
+            Breakpoint indices used to build grouping at initialization.
+            Example: ``[2, 6]`` creates three groups from 11 original layers.
         """
         self.orig_depths = np.array(original_depths, dtype=float)
         self.n_orig = len(self.orig_depths)
@@ -1105,19 +1097,34 @@ class SoilLayerResampler:
             self.grouping = None
         
     def create_grouping(self, breakpoints):
-        """
-        Create grouping by specifying layer breakpoints (0-based).
-        
-        Args:
-            breakpoints (list): End indices of each group (exclusive).
-                e.g. [2,6] for 11 layers creates groups 0-1, 2-5, 6-10
-        
-        Returns:
-            dict: Contains computed parameters including:
-                - depths: thickness of each new layer
-                - boundaries: depth boundaries
-                - percentages: thickness percentages
-                - group_info: detailed grouping information
+        """Create grouped-layer metadata from breakpoints.
+
+        Parameters
+        ----------
+        breakpoints : sequence of int
+            Group end indices (exclusive in group construction).
+
+        Returns
+        -------
+        None
+            Grouping is stored in ``self.grouping``.
+
+        Raises
+        ------
+        ValueError
+            If breakpoints are invalid or do not cover full layer range.
+
+        Notes
+        -----
+        Breakpoints are interpreted as group end indices in the original-layer
+        index space. Internally, ``0`` and ``n_orig`` are added automatically.
+
+        Examples
+        --------
+        >>> resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])
+        >>> resampler.create_grouping([2, 6])
+        >>> resampler.grouping["grouping_scheme"]
+        [[0, 1], [2, 3, 4, 5], [6, 7, 8, 9, 10]]
         """
         # Process breakpoints
         breakpoints = np.unique(np.concatenate(([0], breakpoints, [self.n_orig])))
@@ -1168,15 +1175,27 @@ class SoilLayerResampler:
         }
         
     def scale_grouping(self, grouping, new_total_depth):
-        """
-        Scale the grouped layers to a new total depth while maintaining percentages.
-        
-        Args:
-            grouping: Grouping dictionary from create_grouping()
-            new_total_depth: Desired total depth after scaling
-            
-        Returns:
-            dict: New grouping with scaled depths
+        """Scale grouped layers to a new total depth.
+
+        Parameters
+        ----------
+        grouping : dict
+            Grouping dictionary generated by ``create_grouping``.
+        new_total_depth : float
+            Target total depth after scaling.
+
+        Returns
+        -------
+        dict
+            Grouping dictionary with updated ``depths`` and ``boundaries``.
+
+        Examples
+        --------
+        >>> resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])
+        >>> resampler.create_grouping([2, 6])
+        >>> scaled = resampler.scale_grouping(resampler.grouping, 500.0)
+        >>> scaled["depths"]
+        array([ 31.25, 125.  , 343.75])
         """
         scaled_depths = grouping['depth_percentages'] * new_total_depth
         scaled_boundaries = np.cumsum(np.concatenate(([0], scaled_depths)))
@@ -1189,17 +1208,38 @@ class SoilLayerResampler:
         }
         
     def convert_to_grouping(self, values, grouping, direction='orig_to_new', method='mean'):
-        """
-        Convert values between original and grouped layers.
-        
-        Args:
-            values: Values to convert
-            grouping: Grouping scheme from create_grouping()
-            direction: 'orig_to_new' or 'new_to_orig'
-            method: 'mean' or 'sum' for aggregation
-        
-        Returns:
-            Converted values
+        """Convert values between original layers and grouped layers.
+
+        Parameters
+        ----------
+        values : array-like
+            Input values to convert.
+        grouping : dict
+            Grouping dictionary from ``create_grouping``.
+        direction : {'orig_to_new', 'new_to_orig'}, optional
+            Conversion direction.
+        method : {'mean', 'sum'}, optional
+            Aggregation method used for ``orig_to_new``.
+
+        Returns
+        -------
+        numpy.ndarray
+            Converted values in the target layer space.
+
+        Raises
+        ------
+        ValueError
+            If direction/method is invalid or input length is inconsistent.
+
+        Examples
+        --------
+        >>> resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])
+        >>> resampler.create_grouping([2, 6])
+        >>> vals = np.array([1,2,3,4,5,6,7,8,9,10,11])
+        >>> resampler.convert_to_grouping(vals, resampler.grouping, method="mean")
+        array([1.5, 4.5, 9. ])
+        >>> resampler.convert_to_grouping(np.array([1.5, 4.5, 9. ]), resampler.grouping, direction="new_to_orig")
+        array([1.5, 1.5, 4.5, 4.5, 4.5, 4.5, 9. , 9. , 9. , 9. , 9. ])
         """
         if direction == 'orig_to_new':
             if len(values) != self.n_orig:
@@ -1228,9 +1268,36 @@ class SoilLayerResampler:
             raise ValueError("Direction must be 'orig_to_new' or 'new_to_orig'")
     
     def get_optimal_grouping(self, target_n_layers, method='equal_thickness'):
-        """
-        Automatically generate grouping to achieve target layer count.
-        Returns breakpoints ready for create_grouping().
+        """Generate breakpoint proposal for a target layer count.
+
+        Parameters
+        ----------
+        target_n_layers : int
+            Desired number of grouped layers.
+        method : {'equal_thickness', 'equal_layers'}, optional
+            Strategy for generating breakpoints.
+
+        Returns
+        -------
+        list of int
+            Breakpoints that can be passed to ``create_grouping``.
+
+        Raises
+        ------
+        ValueError
+            If method is unsupported.
+
+        Notes
+        -----
+        Returned breakpoints can be passed directly to
+        :meth:`create_grouping`.
+
+        Examples
+        --------
+        >>> resampler = SoilLayerResampler([10,10,10,20,20,30,30,40,50,50,50])
+        >>> bp = resampler.get_optimal_grouping(3, method="equal_thickness")
+        >>> isinstance(bp, list)
+        True
         """
         if method == 'equal_thickness':
             target_depth = self.orig_total / target_n_layers

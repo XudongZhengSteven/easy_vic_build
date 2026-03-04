@@ -2,55 +2,20 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-build_hydroanalysis - A Python module for performing hydrological analysis at level 1.
+"""Hydroanalysis utilities for level-0 and level-1 VIC workflows.
 
-This module provides functions for performing hydroanalysis tasks, such as creating a Digital Elevation Model (DEM),
-calculating flow direction, flow accumulation, and flow distance. It supports two packages for calculating flow direction:
-"arcpy" and "wbw", and allows the user to define a pour point for localized flow direction calculations.
-Note that this analysis is performed at level 1, aiming at getting the hydrography information at modeling scale.
+Public functions
+----------------
+``buildHydroanalysis_level0``
+    Run level-0 hydroanalysis from an existing DEM file.
+``buildHydroanalysis_level1``
+    Create level-1 DEM, flow direction/accumulation rasters, and flow distance.
+``buildRivernetwork_level1``
+    Build river-network graphs from level-1 hydroanalysis outputs.
 
-Functions:
-----------
-    - `buildHydroanalysis`: Performs the hydroanalysis process, including DEM generation, flow direction and accumulation
-      calculation, and flow distance calculation. The function supports both "arcpy" and "wbw" packages for flow direction calculation.
-
-Usage:
-------
-    1. Provide the necessary datasets (e.g., parameters and domain datasets), along with optional configuration settings such as pour point location and flow direction package.
-    2. Call `buildHydroanalysis` to perform the entire hydroanalysis
-
-Example:
---------
-    basin_index = 213
-    model_scale = "6km"
-    date_period = ["19980101", "19981231"]
-    case_name = f"{basin_index}_{model_scale}"
-
-    evb_dir = Evb_dir(cases_home="./examples")  # cases_home="/home/xdz/code/VIC_xdz/cases"
-    evb_dir.builddir(case_name)
-    remove_and_mkdir(evb_dir.RVICParam_dir)
-    evb_dir.builddir(case_name)
-
-    domain_dataset = readDomain(evb_dir)
-    params_dataset_level0, params_dataset_level1 = readParam(evb_dir)
-
-    buildHydroanalysis(evb_dir, params_dataset_level1, domain_dataset, reverse_lat=True, flow_direction_pkg="wbw", crs_str="EPSG:4326",
-                       create_stream=True,
-                       pourpoint_lon=None, pourpoint_lat=None, pourpoint_direction_code=None)
-
-    domain_dataset.close()
-    params_dataset_level0.close()
-    params_dataset_level1.close()
-
-Dependencies:
--------------
-    - `rasterio`: For reading and writing geospatial raster data.
-    - `shutil`: For file operations like copying and removing directories.
-    - `tools.geo_func`: For geometric calculations and spatial operations.
-    - `tools.hydroanalysis_func`: For performing hydroanalysis.
-    - `tools.utilities`: Custom utility functions.
-
+Notes
+-----
+The current implementation only supports ``flow_direction_pkg="wbw"``.
 """
 
 import os
@@ -73,6 +38,25 @@ def buildHydroanalysis_level0(
     flow_direction_pkg="wbw",
     **kwargs,
 ):
+    """Run level-0 hydroanalysis from a prepared DEM raster.
+
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Case directory manager. Results are written under
+        ``evb_dir.Hydroanalysis_dir``.
+    dem_level0_path : str
+        Path to the level-0 DEM raster.
+    flow_direction_pkg : str, optional
+        Flow-direction backend. Only ``"wbw"`` is supported.
+    **kwargs
+        Extra keyword arguments forwarded to
+        ``hydroanalysis_wbw.hydroanalysis_for_level0``.
+
+    Returns
+    -------
+    None
+    """
     logger.info(f"Starting to performing hydroanalysis for level0 based on {flow_direction_pkg}... ...")
     # ====================== set dir and path ======================
     logger.debug(f"DEM path: {dem_level0_path}")
@@ -112,46 +96,35 @@ def buildHydroanalysis_level1(
     **kwargs,
 ):
     """
-    Perform hydroanalysis tasks to generate DEM, flow direction, flow accumulation, and flow distance.
-    The results are saved in specified directories and can be used for further analysis or modeling.
+    Build level-1 hydroanalysis products for one case.
 
     Parameters
     ----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
-    
-    params_dataset_level1 : `netCDF.Dataset`
-        The parameter dataset for level 1, containing the parameters (e.g., latitude, longitude) for DEM creation.
-
-    domain_dataset : `netCDF.Dataset`, optional
-        Domain dataset domain information such as x and y lengths.
-    
-    reverse_lat : bool
-        Boolean flag to indicate whether to reverse latitudes (Northern Hemisphere: large -> small, set as True).
-
+    evb_dir : Evb_dir
+        Case directory manager. Output files are written to
+        ``evb_dir.Hydroanalysis_dir``.
+    params_dataset_level1 : netCDF4.Dataset
+        Parameter dataset that provides level-1 ``lat`` and ``lon``.
+    domain_dataset : netCDF4.Dataset
+        Domain dataset that provides ``x_length`` and ``y_length``.
+    reverse_lat : bool, optional
+        Whether latitude order should be reversed when exporting DEM.
     stream_acc_threshold : float, optional
-        The threshold value for stream accumulation. Default is 100.0.
-
+        Threshold forwarded to the WBW hydroanalysis implementation.
     flow_direction_pkg : str, optional
-        The package used to calculate flow direction. Options are "arcpy" and "wbw". Default is "wbw".
-
+        Flow-direction backend. Only ``"wbw"`` is supported.
     crs_str : str, optional
-        The coordinate reference system string. Default is "EPSG:4326".
-
-    pourpoint_lon : float, optional
-        Longitude of the pour point location (corresponding to the coord at level1). Default is None.
-
-    pourpoint_lat : float, optional
-        Latitude of the pour point location. Default is None.
-
-    pourpoint_direction_code : int, optional
-        The direction code of the pour point. Default is None.
+        CRS used when writing output rasters.
+    **kwargs
+        Extra keyword arguments forwarded to
+        ``hydroanalysis_wbw.hydroanalysis_for_level1``.
 
     Returns
     -------
     None
-        The function generates several output files (e.g., DEM, flow direction, flow accumulation, flow distance)
-        and saves them in the specified directory.
+        This function writes:
+        ``dem_level1.tif``, ``flow_direction.tif``, ``flow_acc.tif``,
+        and ``flow_distance.tif``.
     """
 
     logger.info(f"Starting to performing hydroanalysis for level1 based on {flow_direction_pkg}... ...")
@@ -180,7 +153,7 @@ def buildHydroanalysis_level1(
     )
     logger.debug(f"DEM created and saved to: {dem_level1_path}")
 
-    # ====================== build flow drection ======================
+    # ====================== build flow direction ======================
     if flow_direction_pkg == "wbw":
         # import
         from .tools.hydroanalysis_func.hydroanalysis_wbw import hydroanalysis
@@ -190,7 +163,7 @@ def buildHydroanalysis_level1(
         remove_and_mkdir(wbw_working_directory)
         working_directory = wbw_working_directory
 
-        # perform hydrological analysis for level0 based on wbw: build flow direction
+        # Perform level-1 hydroanalysis in WBW workspace.
         out = hydroanalysis.hydroanalysis_for_level1(
             working_directory,
             dem_level1_path,
@@ -240,6 +213,29 @@ def buildRivernetwork_level1(
     plot_bool=False,
     labeled_nodes=None,
 ):
+    """Build river-network graphs from level-1 hydroanalysis outputs.
+
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Case directory manager. ``flow_direction.tif`` and ``flow_acc.tif`` are
+        read from ``evb_dir.Hydroanalysis_dir``.
+    threshold : float, optional
+        Flow-accumulation threshold used to extract the network.
+    domain_dataset : netCDF4.Dataset, optional
+        Domain dataset that provides the ``mask`` variable. If ``None``,
+        ``evb_dir.domainFile_path`` is opened internally.
+    plot_bool : bool, optional
+        If ``True``, generate plotting figures and include them in the output.
+    labeled_nodes : iterable, optional
+        Optional node labels forwarded to the plotting routine.
+
+    Returns
+    -------
+    dict
+        Dictionary containing river-network graphs, path statistics, and
+        optional figure objects.
+    """
     # read flow_direction, domain dataset
     flow_direction_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_direction.tif")
     flow_acc_path = os.path.join(evb_dir.Hydroanalysis_dir, "flow_acc.tif")

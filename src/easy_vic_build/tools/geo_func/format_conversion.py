@@ -2,30 +2,9 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: format_conversion
+"""Format-conversion helpers for geospatial datasets.
 
-This module contains functions for converting raster data to shapefiles. Specifically,
-it includes the `raster_to_shp` function, which reads a raster file, extracts its geometries,
-and converts them into a shapefile format. This is useful for transforming raster-based data
-into vector-based formats that can be more easily analyzed and visualized in GIS software.
-
-Functions:
-----------
-    - raster_to_shp: Converts a raster file to a shapefile by extracting the geometries
-      of raster features and saving them as vector data.
-
-Dependencies:
--------------
-    - rasterio: Provides functions for reading and processing raster data.
-    - shapely: Used to create and manipulate geometries, particularly converting raster features to shapes.
-    - geopandas: Provides support for handling geospatial data, specifically creating GeoDataFrames
-      and writing them to shapefiles.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+This module currently provides raster-to-vector conversion utilities.
 """
 
 import geopandas as gpd
@@ -41,19 +20,17 @@ def raster_to_shp(raster_path, shp_path):
     This function reads a raster file, extracts its geometries (features), and saves them
     as a shapefile.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     raster_path : str
         Path to the input raster file.
     shp_path : str
         Path where the output shapefile will be saved.
-    attribute_name : str, optional
-        Name of the attribute field storing raster values (default="value").
     
-    Returns:
-    --------
-    gdf : GeoDataFrame
-        A GeoDataFrame containing the geometries of the features from the raster file.
+    Returns
+    -------
+    None
+        Output shapefile is written to ``shp_path``.
     """
     with rasterio.open(raster_path, "r") as src:
         data = src.read(1)

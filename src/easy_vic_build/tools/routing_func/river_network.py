@@ -2,12 +2,14 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""Module ``easy_vic_build.tools.routing_func.river_network``."""
+
 import numpy as np
 import networkx as nx
 from collections import deque
 
 direction_mapping_num = {
-    1: (0, 1),  # (lat/row: 1 sourth, -1 north, lon/column: 1 east, -1 west)
+    1: (0, 1),  # (lat/row: 1 south, -1 north, lon/column: 1 east, -1 west)
     2: (1, 1),
     4: (1, 0),
     8: (1, -1),
@@ -35,17 +37,84 @@ direction_mapping_str = {
 }
     
 def cal_threshold(flow_acc):
+    """Calculate default river threshold from flow accumulation.
+
+    Parameters
+    ----------
+    flow_acc : numpy.ndarray
+        Flow-accumulation raster.
+
+    Returns
+    -------
+    float
+        80th percentile value of ``flow_acc``.
+    """
     threshold = np.percentile(flow_acc, 80)
     return threshold
 
+
 def get_display_positions(G):
+    """Build plotting positions from node matrix coordinates.
+
+    Parameters
+    ----------
+    G : networkx.Graph
+        Graph whose nodes contain ``matrix_pos=(row, col)`` attributes.
+
+    Returns
+    -------
+    dict
+        Mapping ``node -> (x, y)`` where ``x=col`` and ``y=-row`` for display.
+    """
     pos = {}
     for node in G.nodes():
         i, j = G.nodes[node]['matrix_pos']
         pos[node] = (j, -i)
     return pos
 
+
 def create_river_network_graph(flow_direction, flow_acc, threshold=None, mask=None):
+    """Create directed river-network graph from D8 flow direction and accumulation.
+
+    Parameters
+    ----------
+    flow_direction : numpy.ndarray
+        2D D8 flow-direction raster using codes in ``direction_mapping_num``.
+    flow_acc : numpy.ndarray
+        2D flow-accumulation raster with the same shape as ``flow_direction``.
+    threshold : float, optional
+        River-definition threshold on ``flow_acc``. If ``None``, 80th percentile
+        is used via :func:`cal_threshold`.
+    mask : numpy.ndarray, optional
+        2D mask raster with the same shape as ``flow_direction``.
+
+    Returns
+    -------
+    tuple
+        ``(G, position_to_node, threshold)`` where:
+
+        - ``G`` is a ``networkx.DiGraph`` with node attributes:
+          ``matrix_pos``, ``direction_value``, ``flow_acc``, ``node_type``,
+          ``is_river`` and optional ``mask``.
+        - ``position_to_node`` maps ``(row, col) -> node_name``.
+        - ``threshold`` is the effective threshold used.
+
+    Notes
+    -----
+    Node type rules:
+
+    - ``river``: ``flow_acc >= threshold``
+    - ``sink``: direction is invalid (0/-1/255/None)
+    - ``hillslope``: otherwise
+
+    Examples
+    --------
+    >>> flow_direction = np.array([[1, 4], [64, 0]])
+    >>> flow_acc = np.array([[10.0, 20.0], [5.0, 1.0]])
+    >>> G, pos2node, thr = create_river_network_graph(flow_direction, flow_acc, threshold=8)
+    >>> isinstance(G, nx.DiGraph), isinstance(pos2node, dict)
+    (True, True)
+    """
     # threshold
     if threshold is None:
         threshold = cal_threshold(flow_acc)
@@ -146,6 +215,25 @@ def create_river_network_graph(flow_direction, flow_acc, threshold=None, mask=No
 
 
 def find_path_to_sink(G, start_node, sinks, visited_edges):
+    """Find one downstream river path from a start node to a sink.
+
+    Parameters
+    ----------
+    G : networkx.DiGraph
+        River graph with node attribute ``is_river``.
+    start_node : str
+        Starting node name.
+    sinks : sequence
+        Candidate sink nodes.
+    visited_edges : set
+        Mutable edge set used to reduce duplicate traversals across calls.
+
+    Returns
+    -------
+    list
+        Node sequence of one path. May contain only ``start_node`` when no
+        downstream river successor exists.
+    """
     path = [start_node]
     current = start_node
     max_steps = 1000
@@ -173,6 +261,26 @@ def find_path_to_sink(G, start_node, sinks, visited_edges):
     return path
 
 def find_river_paths(G, min_in_degree=None):
+    """Extract unique downstream paths across river nodes.
+
+    Parameters
+    ----------
+    G : networkx.DiGraph
+        River graph.
+    min_in_degree : int, optional
+        Source-node criterion. If ``None``, the minimum in-degree among river
+        nodes is used.
+
+    Returns
+    -------
+    list of list
+        Unique river paths, each represented by a node-name sequence.
+
+    Notes
+    -----
+    If no sink node (out-degree=0) is found, the river node with maximum
+    ``flow_acc`` is used as fallback sink.
+    """
     river_nodes = [node for node in G.nodes() if G.nodes[node].get("is_river", False)]
     print(f"Find {len(river_nodes)} river nodes")
     
@@ -207,6 +315,21 @@ def find_river_paths(G, min_in_degree=None):
     
 
 def sort_river_paths_by_lengths(river_paths, descending=True):
+    """Sort river paths by path length and return ranking metadata.
+
+    Parameters
+    ----------
+    river_paths : list of list
+        Input river paths.
+    descending : bool, optional
+        If ``True``, longest-first ordering; otherwise shortest-first.
+
+    Returns
+    -------
+    tuple
+        ``(sorted_river_paths, length_info)`` where ``length_info`` is a list
+        of dictionaries with rank, length, start/end nodes, and original path.
+    """
     paths_with_length = [(path, len(path)) for path in river_paths]
     
     if descending:
@@ -233,6 +356,23 @@ def sort_river_paths_by_lengths(river_paths, descending=True):
 
 
 def extract_connected_river_network(G, min_size=10, mask=False):
+    """Extract largest weakly connected river subnetwork.
+
+    Parameters
+    ----------
+    G : networkx.DiGraph
+        Full river graph.
+    min_size : int, optional
+        Minimum component size to keep before selecting largest component.
+    mask : bool, optional
+        If ``True``, only keep river nodes with node attribute ``mask`` truthy.
+
+    Returns
+    -------
+    networkx.DiGraph
+        Largest qualified weakly connected river subgraph. Returns an empty
+        ``DiGraph`` when no component passes ``min_size``.
+    """
     if mask:
         river_nodes = [n for n, d in G.nodes(data=True) if d.get("is_river", False) and d.get("mask")]
     else:
@@ -254,6 +394,23 @@ def extract_connected_river_network(G, min_size=10, mask=False):
 
 
 def build_node_features(G, matrix_features):
+    """Sample raster features to graph nodes by ``matrix_pos``.
+
+    Parameters
+    ----------
+    G : networkx.Graph
+        Graph with node attribute ``matrix_pos=(row, col)``.
+    matrix_features : list of numpy.ndarray
+        Feature rasters to sample. Supported shapes:
+
+        - 2D: ``(row, col)`` -> scalar sampled per node.
+        - 3D: ``(time, row, col)`` -> 1D time series sampled per node.
+
+    Returns
+    -------
+    list of numpy.ndarray
+        Node-aligned features for each input matrix, preserving input order.
+    """
     node_features = [[] for _ in range(len(matrix_features))]
     
     for node_name in G.nodes:
@@ -274,6 +431,26 @@ def build_node_features(G, matrix_features):
 def build_upstream_subgraph_for_node(
     G, target_node, khop=None, cutoff_node=None
 ):
+    """Build upstream subgraph for a target node with optional k-hop limit.
+
+    Parameters
+    ----------
+    G : networkx.DiGraph
+        Directed river graph.
+    target_node : str
+        Node for which upstream contributors are traced.
+    khop : int, optional
+        Maximum upstream hop distance. If ``None``, traverse until exhaustion.
+    cutoff_node : str, optional
+        Upstream node at which traversal stops (node itself is still connected
+        to its downstream edge in the returned subgraph).
+
+    Returns
+    -------
+    tuple
+        ``(new_G, new_edges)`` where ``new_G`` is the upstream subgraph and
+        ``new_edges`` is the collected upstream edge list.
+    """
     new_edges = []
     visited = set()
     queue = deque()

@@ -2,62 +2,13 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: evaluate_metrics
+"""Evaluation metrics for continuous, categorical, and signature analysis.
 
-This module provides a set of evaluation metrics for assessing the performance of
-simulated and observed data. The metrics implemented include commonly used statistical
-and performance measures in model validation, such as Mean Squared Error (MSE), Root
-Mean Squared Error (RMSE), Pearson Correlation Coefficient (R), Nash-Sutcliffe Efficiency
-(NSE), Bias, Percent Bias (PBias), and Kling-Gupta Efficiency (KGE). These metrics help
-to quantify the accuracy and reliability of the simulation model by comparing its
-output with the observed data.
+The module provides:
 
-Class:
---------
-    EvaluationMetric: A class for evaluating simulated and observed data using various statistical metrics.
-
-Class Methods:
----------------
-    - MSE: Computes the Mean Squared Error (MSE) between the simulated and observed values.
-    - RMSE: Computes the Root Mean Squared Error (RMSE) between the simulated and observed values.
-    - RRMSE: Computes the Relative Root Mean Squared Error (RRMSE) between the simulated and observed values.
-    - R: Computes the Pearson Correlation Coefficient (R) and its significance based on a given confidence level.
-    - R2: Computes the R-squared (R²) value of the linear fit between the simulated and observed values.
-    - NSE: Computes the Nash-Sutcliffe Efficiency (NSE) coefficient between the simulated and observed values.
-    - Bias: Computes the bias between the simulated and observed values.
-    - PBias: Computes the Percent Bias (PBias) between the simulated and observed values.
-    - KGE: Computes the Kling-Gupta Efficiency (KGE) metric between the simulated and observed values.
-    - KGE_m: Computes the modified Kling-Gupta Efficiency (KGE-m) metric between the simulated and observed values.
-
-Usage:
-------
-    1. Instantiate the `EvaluationMetric` class with simulated and observed data.
-    2. Call the relevant method to compute the desired evaluation metric:
-        - `MSE()` for Mean Squared Error.
-        - `RMSE()` for Root Mean Squared Error.
-        - `R()` for Pearson Correlation Coefficient.
-        - `NSE()` for Nash-Sutcliffe Efficiency.
-    3. Use the returned metric values to evaluate the model's performance.
-
-Example:
---------
-    sim_data = [1.0, 2.0, 3.0]
-    obs_data = [1.2, 2.1, 2.9]
-
-    eval_metric = EvaluationMetric(sim_data, obs_data)
-    mse = eval_metric.MSE()
-    print(f"Mean Squared Error: {mse}")
-
-Dependencies:
--------------
-    - numpy: For numerical operations on arrays.
-    - scipy: For computing the Pearson correlation coefficient.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+- :class:`EvaluationMetric` for classic scalar and spatial skill scores;
+- :class:`CategoricalEvaluationMetric` for event-based contingency metrics;
+- :class:`SignatureEvaluationMetric` for flow-duration-curve based signatures.
 """
 
 import numpy as np
@@ -68,44 +19,11 @@ import matplotlib.pyplot as plt
 
 
 class EvaluationMetric:
-    """
-    A class for evaluating the performance of simulated and observed data
-    using various statistical metrics.
-
-    Attributes
-    ----------
-    sim : numpy.ndarray
-        Simulated values.
-    obs : numpy.ndarray
-        Observed values.
-
-    Methods
-    -------
-    MSE()
-        Computes the Mean Squared Error (MSE) between the simulated and observed values.
-    RMSE()
-        Computes the Root Mean Squared Error (RMSE) between the simulated and observed values.
-    RRMSE()
-        Computes the Relative Root Mean Squared Error (RRMSE) between the simulated and observed values.
-    R(confidence=0.95)
-        Computes the Pearson correlation coefficient (R) and its significance based on a given confidence level.
-    R2()
-        Computes the R-squared (R²) value of the linear fit between the simulated and observed values.
-    NSE()
-        Computes the Nash-Sutcliffe Efficiency (NSE) coefficient between the simulated and observed values.
-    Bias()
-        Computes the bias between the simulated and observed values.
-    PBias()
-        Computes the Percent Bias (PBias) between the simulated and observed values.
-    KGE()
-        Computes the Kling-Gupta Efficiency (KGE) metric between the simulated and observed values.
-    KGE_m()
-        Computes the modified Kling-Gupta Efficiency (KGE-m) metric between the simulated and observed values.
-    """
+    """Continuous-value evaluation metrics."""
 
     def __init__(self, sim, obs):
         """
-        Initializes the EvaluationMetric class with simulated and observed values.
+        Initialize the metric class with simulated and observed values.
 
         Parameters
         ----------
@@ -189,12 +107,12 @@ class EvaluationMetric:
 
     def R2(self):
         """
-        Computes the R-squared (R²) value of the linear fit between the simulated and observed values.
+        Computes the R-squared (R2) value of the linear fit between the simulated and observed values.
 
         Returns
         -------
         float
-            The calculated R² value.
+            The calculated R2 value.
         """
         r = np.corrcoef(self.sim, self.obs)[0, 1]
         r2 = r**2
@@ -293,6 +211,24 @@ class EvaluationMetric:
             return kge
     
     def ESS(self, lats=None, n_modes=None, remove_mean=True, mask=None):
+        """Compute EOF-based error similarity score for spatiotemporal fields.
+
+        Parameters
+        ----------
+        lats : array-like, optional
+            Latitude values used to build cosine-latitude weights.
+        n_modes : int, optional
+            Number of EOF modes used in the score.
+        remove_mean : bool, optional
+            Whether to remove the temporal mean before EOF decomposition.
+        mask : ndarray of bool, optional
+            Spatial mask of shape ``(nlat, nlon)``. Masked cells are excluded.
+
+        Returns
+        -------
+        numpy.ndarray
+            Score series with length ``ntime``.
+        """
         assert self.obs.shape == self.sim.shape, "sim and obs must have identical dimensions"
         
         ntime, nlat, nlon = self.sim.shape
@@ -347,6 +283,18 @@ class EvaluationMetric:
         return ess
 
     def spatialPCC(self, mask=None):
+        """Compute spatial Pearson correlation for each time step.
+
+        Parameters
+        ----------
+        mask : ndarray of bool, optional
+            Spatial mask of shape ``(nlat, nlon)``. ``True`` cells are ignored.
+
+        Returns
+        -------
+        numpy.ndarray
+            One correlation value per time step.
+        """
         assert self.obs.shape == self.sim.shape, "sim and obs must have identical dimensions"        
 
         ntime, nlat, nlon = self.sim.shape       
@@ -380,10 +328,11 @@ class EvaluationMetric:
 
 
 class CategoricalEvaluationMetric:
-    
+    """Event-based verification metrics from a contingency table."""
+
     def __init__(self, sim, obs):
         """
-        Initializes the EvaluationMetric class with simulated and observed values.
+        Initialize the metric class with simulated and observed values.
 
         Parameters
         ----------
@@ -445,10 +394,11 @@ class CategoricalEvaluationMetric:
         
 
 class SignatureEvaluationMetric:
-    
+    """Hydrologic signature metrics based on discharge series."""
+
     def __init__(self, sim, obs):
         """
-        Initializes the EvaluationMetric class with simulated and observed values.
+        Initialize the metric class with simulated and observed values.
 
         Parameters
         ----------
@@ -461,6 +411,18 @@ class SignatureEvaluationMetric:
         self.obs = np.array(obs)
         
     def BiasRR(self, precip):
+        """Compute runoff-ratio bias in percent.
+
+        Parameters
+        ----------
+        precip : array-like
+            Precipitation series aligned with ``sim`` and ``obs``.
+
+        Returns
+        -------
+        float
+            Relative runoff-ratio bias in percent.
+        """
         rr_obs = self.obs.sum() / precip.sum()
         rr_sim = self.sim.sum() / precip.sum()
         return (rr_sim - rr_obs) / rr_obs * 100
@@ -669,6 +631,18 @@ class SignatureEvaluationMetric:
         
     
 def create_test_data(seed=42):
+    """Create synthetic spatiotemporal fields for metric testing.
+
+    Parameters
+    ----------
+    seed : int, optional
+        Random seed.
+
+    Returns
+    -------
+    tuple of numpy.ndarray
+        ``(reference, perturbed)`` with shape ``(T, H, W)``.
+    """
     np.random.seed(seed)
     
     T, H, W = 10, 25, 25
@@ -682,7 +656,7 @@ def create_test_data(seed=42):
     base_pattern = np.exp(-((X - 0.8)**2 + (Y - 0.2)**2) / 0.05)
     
     # Create time-dependent scaling (simulating seasonal or dynamic variation)
-    time_scaling = np.sin(np.linspace(0, 2*np.pi, T)) + 1.5  # shifted sine wave to ensure all values ≥ 0
+    time_scaling = np.sin(np.linspace(0, 2*np.pi, T)) + 1.5  # shifted sine wave to ensure all values >= 0
 
     # Construct data1: reference dataset with clean spatial-temporal structure
     data1 = np.array([time_scaling[t] * base_pattern for t in range(T)])  # shape: (T, H, W)
@@ -703,6 +677,13 @@ def create_test_data(seed=42):
 
 
 def create_test_data2():
+    """Create synthetic dataset pair with time-varying noise.
+
+    Returns
+    -------
+    tuple of numpy.ndarray
+        ``(obs_data, sim_data)`` with shape ``(n_time, n_lat, n_lon)``.
+    """
     n_time = 30
     n_lat = 25
     n_lon = 25
@@ -735,3 +716,4 @@ if __name__ == "__main__":
     
     ess = EM.ESS()
     
+

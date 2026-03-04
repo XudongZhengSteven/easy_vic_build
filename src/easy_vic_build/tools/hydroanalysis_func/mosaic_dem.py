@@ -2,25 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-""" 
-mosaic_dem.py - A Python module for merging multiple DEM files into a single mosaic with optional boundary clipping.
-
-This module provides a function to merge multiple DEM files into a single mosaic.
-
-Functions:
-----------
-    `merge_dems`: Merge multiple DEM files into a single mosaic with optional boundary clipping.
-
-Example:
---------
-    >>> merge_dems("/path/to/dems/", ".tif", output_file="output.tif")
-    
-Dependencies:
--------------
-    - `os`: Operating system specific module.
-    - `gdal`: Geospatial Data Abstraction Library (GDAL) module.
-
-"""
+"""Merge multiple DEM tiles into one output raster."""
 
 import os
 from ... import logger
@@ -28,46 +10,32 @@ from ... import logger
 def merge_dems(input_dir, suffix=".tif", output_file="merged_dem.tif",
                srcSRS="EPSG:4326", dstSRS="EPSG:4326",
                **gdal_warp_kwargs):
-    """
-    Merge multiple DEM files into a single mosaic with optional boundary clipping.
+    """Merge DEM files in a directory into one raster using GDAL Warp.
 
     Parameters
     ----------
     input_dir : str
-        Directory containing input DEM files (.tif format).
-    
-    suffix: str
-        Suffix of the DEM files (default: ".tif").
-    
+        Directory containing DEM files.
+    suffix : str, optional
+        Filename suffix used to select DEM files.
     output_file : str, optional
-        Output file path (default: "merged_dem.tif").
-        
+        Output raster path.
     srcSRS : str, optional
-        Source coordinate reference system (default: "EPSG:4326").
-        
+        Source CRS string.
     dstSRS : str, optional
-        Target coordinate reference system (default: "EPSG:4326").
-        
+        Destination CRS string.
     **gdal_warp_kwargs : dict
-        Additional GDAL Warp options (override defaults).
+        Additional keyword arguments passed to ``gdal.WarpOptions``.
 
     Returns
     -------
     None
-        Output is written directly to the specified file.
+        The merged raster is written to ``output_file``.
 
     Notes
     -----
-    Default processing parameters:
-    - Cubic resampling
-    - Multithreaded processing
-    - LZW compression
-    - Automatic BIGTIFF handling
-
-    Examples
-    --------
-    >>> merge_dems("/path/to/dems/", output_file="output.tif",
-    ...           cutline_file="aoi.shp", blendDistance=30)
+    Default Warp settings include cubic resampling, LZW compression,
+    and multithreaded processing.
     """
     try:
         from osgeo import gdal

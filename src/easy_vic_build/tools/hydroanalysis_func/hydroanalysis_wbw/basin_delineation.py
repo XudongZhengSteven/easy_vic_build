@@ -2,48 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-basin_delineation - A Python module for watershed and subbasin delineation from DEM data.
-
-This module provides functions for delineating watershed basins and subbasins using flow direction
-and stream network data, with options for output smoothing and format conversion.
-
-Functions:
-----------
-    - `delineate_basins_for_snaped_outlets`: Delineates watersheds for specified outlet points.
-    - `delineate_all_basins`: Delineates all watersheds draining to DEM edges.
-    - `delineate_subbasins`: Delineates subbasins for each link in stream network.
-
-Usage:
-------
-    1. Prepare flow direction and stream network data
-    2. Choose appropriate delineation function based on needs:
-       - Use `delineate_basins_for_snaped_outlets` for custom outlets
-       - Use `delineate_all_basins` for complete watershed partitioning
-       - Use `delineate_subbasins` for stream network-based subcatchments
-    3. Specify output paths and smoothing parameters as needed
-
-Example:
---------
-    >>> from hydroanalysis_wbw import basin_delineation
-    >>> basins_raster, basins_vector = delineate_basins_for_snaped_outlets(
-    ...     wbe, flow_dir, outlets_vector)
-    >>> all_basins = delineate_all_basins(wbe, flow_dir)
-    >>> subbasins = delineate_subbasins(wbe, flow_dir, stream_raster)
-
-Dependencies:
--------------
-    - `whitebox_workflows`: Required for core watershed delineation algorithms
-    - `rasterio`: Used for raster data handling (indirect dependency)
-    - `geopandas`: Used for vector data handling (indirect dependency)
-
-Notes:
-------
-    - All functions support both raster and vector outputs
-    - Vector outputs can be smoothed for cartographic quality
-    - ESRI and non-ESRI flow direction conventions supported
-    - Designed to work with D8 flow direction algorithm
-"""
+"""Basin and subbasin delineation helpers based on flow-direction rasters."""
 import geopandas as gpd
 from copy import deepcopy
 
@@ -58,7 +17,7 @@ def delineate_basins_for_snaped_outlets(
     esri_pointer=True,
 ):
     """
-    Delineate watershed basins for snapped outlet points.
+    Delineate basins for user-provided snapped outlet points.
 
     Parameters
     ----------
@@ -91,20 +50,7 @@ def delineate_basins_for_snaped_outlets(
     Returns
     -------
     tuple
-        A tuple containing:
-        - basins_raster : `WbRaster`
-            Raster of delineated basins.
-            
-        - basins_vector : `WbVector`
-            Vector polygons of basins.
-
-    Notes
-    -----
-    This function:
-    1. Uses watershed algorithm to delineate basins
-    2. Converts results to vector polygons
-    3. Optionally smooths vector boundaries
-    4. Saves both raster and vector outputs
+        ``(basins_raster, basins_vector)``.
     """
     # read
     if isinstance(flow_direction, str):
@@ -143,7 +89,7 @@ def delineate_all_basins(
     esri_pointer=True,
 ):
     """
-    Delineate all watershed basins draining to DEM edges.
+    Delineate all edge-draining basins from a flow-direction raster.
 
     Parameters
     ----------
@@ -172,20 +118,7 @@ def delineate_all_basins(
     Returns
     -------
     tuple
-        A tuple containing:
-        - all_basins_raster : `WbRaster`
-            Raster of all delineated basins
-            
-        - all_basins_vector : `WbVector`
-            Vector polygons of all basins
-
-    Notes
-    -----
-    This function:
-    1. Identifies basins draining to each DEM edge outlet
-    2. Converts results to vector polygons
-    3. Optionally smooths vector boundaries
-    4. Saves both raster and vector outputs
+        ``(all_basins_raster, all_basins_vector)``.
     """
     # Extract all of the watersheds, draining to each outlet on the edge of the DEM using the 'basins' function.
     all_basins_raster = wbe.basins(flow_direction, esri_pointer)
@@ -212,7 +145,7 @@ def delineate_subbasins(
     esri_pointer=True,
 ):
     """
-    Delineate subbasins for each stream network link.
+    Delineate subbasins draining to each stream link.
 
     Parameters
     ----------
@@ -244,20 +177,7 @@ def delineate_subbasins(
     Returns
     -------
     tuple
-        A tuple containing:
-        - subbasins_raster : `WbRaster`
-            Raster of delineated subbasins.
-            
-        - subbasins_vector : `WbVector`
-            Vector polygons of subbasins.
-
-    Notes
-    -----
-    This function:
-    1. Identifies subcatchments draining to each stream link
-    2. Converts results to vector polygons
-    3. Optionally smooths vector boundaries
-    4. Saves both raster and vector outputs
+        ``(subbasins_raster, subbasins_vector)``.
     """
     # How about extracting subcatchments, i.e. the areas draining directly to each link in the stream network?
     subbasins_raster = wbe.subbasins(flow_direction, stream_raster, esri_pointer)
@@ -279,11 +199,7 @@ def repair_basins_vector(
     output_file_basins_vector_path="repaired_basins_vector.shp"
 ):
     """
-    Repair invalid geometries in a vector file (e.g., Shapefile) containing basins.
-
-    This function reads a vector file, fixes topological issues (e.g., self-intersections,
-    duplicate nodes) using Shapely's `make_valid()`, and saves the repaired geometries
-    to a new file.
+    Repair invalid basin-vector geometries using ``make_valid``.
 
     Parameters
     ----------
@@ -291,17 +207,12 @@ def repair_basins_vector(
         Path to the input vector file (e.g., Shapefile, GeoJSON) containing basin polygons.
         
     output_file_basins_vector_path : str, optional
-        Path to save the repaired vector file. Defaults to "repaired_basins_vector.shp".
+        Output path placeholder. The current implementation does not write to file.
 
     Returns
     -------
-    repaired_basins_vector_gdf: `gpd.GeoDataFrame`
+    gpd.GeoDataFrame
         GeoDataFrame with repaired geometries.
-
-    Examples
-    --------
-    >>> repaired_gdf = repair_basins_vector("basins.shp", "repaired_basins.shp")
-    >>> print(repaired_gdf.head())
     """
     # read
     basins_vector_gdf = gpd.read_file(basins_vector_path)

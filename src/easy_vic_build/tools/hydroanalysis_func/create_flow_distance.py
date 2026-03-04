@@ -2,30 +2,7 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: create_flow_distance
-
-This module contains the function `create_flow_distance`, which calculates the flow distance
-for a given flow direction array and its associated x and y grid length arrays. The function
-uses a mapping of flow directions to respective distance types (zonal, meridional, diagonal, and edge)
-and applies the appropriate formula to compute the flow distance for each grid cell. The result
-is then saved as a GeoTIFF file, preserving the spatial transformation and coordinate reference system.
-
-Functions:
-----------
-    - create_flow_distance: Computes the flow distance for a flow direction array based on specified
-      distance types, and saves the result as a GeoTIFF file.
-
-Dependencies:
--------------
-    - rasterio: Provides functionality for reading and writing raster data, as well as managing spatial references.
-    - numpy: Used for efficient numerical operations, particularly for array manipulations and vectorization.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
+"""Create flow-distance rasters from D8 flow-direction grids."""
 
 
 import numpy as np
@@ -41,30 +18,27 @@ def create_flow_distance(
     transform,
     crs_str="EPSG:4326",
 ):
-    """
-    Calculates the flow distance based on the given flow direction array and the respective x and y grid lengths.
-    The function maps flow directions to corresponding distance types and computes the flow distance for each grid
-    cell accordingly. The result is saved as a GeoTIFF file.
+    """Calculate flow distance per grid cell and write it as a GeoTIFF file.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     flow_distance_path : str
-        The file path where the calculated flow distance will be saved as a GeoTIFF file.
+        Output file path for flow-distance raster.
     flow_direction_array : numpy.ndarray
-        A 2D array representing the flow directions of each grid cell.
+        D8 flow-direction code array.
     x_length_array : numpy.ndarray
-        A 2D array representing the horizontal length (in meters) of each grid cell.
+        Grid-cell length in the x direction.
     y_length_array : numpy.ndarray
-        A 2D array representing the vertical length (in meters) of each grid cell.
+        Grid-cell length in the y direction.
     transform : affine.Affine
-        The affine transform representing the spatial reference of the data.
+        Affine transform used when writing the output raster.
     crs_str : str, optional
-        The coordinate reference system in EPSG format. Default is "EPSG:4326".
+        CRS string for the output raster.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
-        The flow distance is saved directly to the specified file path as a GeoTIFF.
+        The function writes output to ``flow_distance_path``.
     """
     flow_direction_distance_map = {
         "zonal": [64, 4],
@@ -80,22 +54,21 @@ def create_flow_distance(
     }
 
     def flow_distance_funcion(flow_direction, x_length, y_length):
-        """
-        Determines the distance type based on the flow direction and computes the flow distance.
+        """Map one flow-direction code to a flow-distance value.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         flow_direction : int
-            The flow direction for the current grid cell.
+            D8 flow-direction code.
         x_length : float
-            The horizontal length of the grid cell.
+            Grid-cell length in the x direction.
         y_length : float
-            The vertical length of the grid cell.
+            Grid-cell length in the y direction.
 
-        Returns:
-        --------
+        Returns
+        -------
         float
-            The calculated flow distance for the grid cell.
+            Flow distance for one grid cell.
         """
         for k in flow_direction_distance_map:
             if flow_direction in flow_direction_distance_map[k]:

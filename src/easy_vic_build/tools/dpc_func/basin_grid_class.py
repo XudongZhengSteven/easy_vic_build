@@ -3,51 +3,14 @@
 # email: z786909151@163.com
 
 """
-Module: basin_grid_class
+Data structures and helpers for basin and grid GeoDataFrames.
 
-This module provides functionality for defining and managing basin-level grid structures
-in hydrological models. It includes classes and methods for grid creation, manipulation,
-and interaction with basin-specific data. This module is particularly useful in spatially
-distributed hydrological models, where basin grids are crucial for discretizing the model domain.
+This module defines lightweight ``geopandas.GeoDataFrame`` subclasses used by
+the data-processing workflow:
 
-Class:
---------
-    - BasinGrid: A class that represents a grid for a specific basin, managing its spatial
-      layout and related data.
-
-Class Methods:
----------------
-    - __init__: Initializes the BasinGrid class with the necessary parameters, including
-      grid resolution and basin boundaries.
-    - create_grid: Creates a grid representation for the basin, dividing the basin into
-      smaller cells for simulation.
-    - assign_data: Assigns specific basin data (e.g., elevation, land use, soil type)
-      to each grid cell.
-    - update_grid: Updates the properties of the grid cells based on new data or model results.
-    - get_cell_data: Retrieves the data associated with a specific grid cell.
-    - visualize_grid: Generates a visual representation of the grid, typically showing
-      elevation, land-use distribution, or other spatially distributed data.
-    - check_grid_integrity: Verifies the integrity of the grid, ensuring no missing data
-      or inconsistencies in the cell structure.
-    - load_basin_data: Loads basin-specific data (e.g., from netCDF, CSV files) for integration
-      into the grid.
-    - save_basin_grid: Saves the grid and its associated data to a file for later use.
-    - resample_grid: Resamples the grid to a different resolution, useful for downscaling or
-      upscaling data.
-
-Dependencies:
--------------
-    - numpy: Provides array manipulation and mathematical operations for grid data.
-    - matplotlib: Used for visualizing grid structures and spatially distributed data.
-    - pandas: Helps with managing and processing basin-related tabular data.
-    - netCDF4: For reading and writing netCDF files containing basin and grid-related data.
-    - os: For file path management and operations related to saving and loading grid data.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
+- ``Basins`` for basin polygons,
+- ``Grids`` for grid polygons and center points,
+- ``Grids_for_shp`` for programmatically building grid layers from boundaries.
 """
 
 import math
@@ -64,73 +27,94 @@ import pandas as pd
 
 class Basins(gpd.GeoDataFrame):
     """
-    A class for handling basin-related operations.
+    Basin polygon container.
 
-    Inherits from GeoDataFrame to handle basin geometries.
-
-    Methods
-    -------
-    __add__(self, basins)
-        Add two basins objects (not yet implemented).
-
-    __sub__(self, basins)
-        Subtract two basins objects (not yet implemented).
-
-    __and__(self, basins)
-        Perform an 'and' operation between two basins objects (not yet implemented).
+    This class inherits from :class:`geopandas.GeoDataFrame` and keeps type
+    propagation behavior for operations that return new frames.
     """
     
     @property
     def _constructor(self):
+        """
+        Return constructor for pandas/geopandas operations.
+
+        Returns
+        -------
+        type
+            ``Basins`` class.
+        """
         return Basins
     
     @classmethod
     def from_shapefile(cls, shapefile_path, **kwargs):
+        """
+        Build a :class:`Basins` object from a shapefile path.
+
+        Parameters
+        ----------
+        shapefile_path : str or path-like
+            Path to a vector file readable by :func:`geopandas.read_file`.
+        **kwargs : dict
+            Additional keyword arguments forwarded to ``Basins(...)``.
+
+        Returns
+        -------
+        Basins
+            Basin GeoDataFrame instance.
+        """
         gdf = gpd.read_file(shapefile_path)
         return cls(gdf, **kwargs)
 
 class Grids(gpd.GeoDataFrame):
     """
-    A class for handling grid-related operations.
+    Grid polygon and point container.
 
-    Inherits from GeoDataFrame to handle grid geometries.
-
-    Methods
-    -------
-    __add__(self, grids)
-        Add two grids objects (not yet implemented).
-
-    __sub__(self, grids)
-        Subtract two grids objects (not yet implemented).
-
-    __and__(self, grids)
-        Perform an 'and' operation between two grids objects (not yet implemented).
+    This class inherits from :class:`geopandas.GeoDataFrame` and is used to
+    store both cell polygons (``geometry``) and cell centers
+    (``point_geometry``).
     """
     
     @property
     def _constructor(self):
+        """
+        Return constructor for pandas/geopandas operations.
+
+        Returns
+        -------
+        type
+            ``Grids`` class.
+        """
         return Grids
     
     @classmethod
     def from_shapefile(cls, shapefile_path, **kwargs):
+        """
+        Build a :class:`Grids` object from a shapefile path.
+
+        Parameters
+        ----------
+        shapefile_path : str or path-like
+            Path to a vector file readable by :func:`geopandas.read_file`.
+        **kwargs : dict
+            Additional keyword arguments forwarded to ``Grids(...)``.
+
+        Returns
+        -------
+        Grids
+            Grid GeoDataFrame instance.
+        """
         gdf = gpd.read_file(shapefile_path)
         return cls(gdf, **kwargs)
     
     def createBoundaryShp(self):
         """
-        Create boundary shapefiles for the grid.
-
-        This method uses the `createBoundaryShp` function to generate boundary shapefiles for the grid.
-        It returns both the center and edge boundary shapefiles along with their coordinates.
+        Create center and edge boundary polygons for the grid.
 
         Returns
         -------
         tuple
-            A tuple containing the following elements:
-            - boundary_point_center_shp: GeoDataFrame with the center boundary shapefile.
-            - boundary_point_center_x_y: List containing the minimum and maximum x, y coordinates of the center boundary.
-            - boundary_grids_edge_shp: GeoDataFrame with the edge boundary shapefile.
-            - boundary_grids_edge_x_y: List containing the minimum and maximum x, y coordinates of the edge boundary.
+            ``(boundary_point_center_shp, boundary_point_center_x_y,
+            boundary_grids_edge_shp, boundary_grids_edge_x_y)``.
         """
         (
             boundary_point_center_shp,
@@ -146,9 +130,33 @@ class Grids(gpd.GeoDataFrame):
         )
 
 class Grids_for_shp(Grids):
+    """
+    Grid container that can be initialized directly from grid-generation rules.
+    """
+
     def __init__(
         self, data=None, *args, geometry=None, crs=None, create_grid_kwargs=None, **kwargs
     ):
+        """
+        Initialize a grid GeoDataFrame.
+
+        Parameters
+        ----------
+        data : object, optional
+            Existing tabular/spatial data accepted by GeoDataFrame.
+        *args : tuple
+            Positional arguments forwarded to ``GeoDataFrame``.
+        geometry : str or array-like, optional
+            Geometry column specification when ``data`` is provided.
+        crs : str or CRS, optional
+            Coordinate reference system. Defaults to ``"EPSG:4326"`` when
+            ``create_grid_kwargs`` is used.
+        create_grid_kwargs : dict, optional
+            Arguments passed to :meth:`create_grid_shp`. When provided, generated
+            grids are used as initialization data.
+        **kwargs : dict
+            Additional keyword arguments forwarded to ``GeoDataFrame``.
+        """
         if create_grid_kwargs is not None:
             grid_shp = self.create_grid_shp(**create_grid_kwargs)
             crs = crs if crs is not None else "EPSG:4326"
@@ -158,6 +166,14 @@ class Grids_for_shp(Grids):
     
     @property
     def _constructor(self):
+        """
+        Return constructor for pandas/geopandas operations.
+
+        Returns
+        -------
+        type
+            ``Grids_for_shp`` class.
+        """
         return Grids_for_shp
     
     def create_grid_shp(
@@ -174,13 +190,36 @@ class Grids_for_shp(Grids):
         boundary=None,
     ):
         """
-        Grids (grid_shp) for a given gshp, it can be any gpd (basins, grids...)
+        Build a grid GeoDataFrame from a target geometry/boundary.
 
-        res=None, one grid for this shp (boundary grid)
-        cen_lons: directly construct grids based on given cen_lons (do not consider gshp boundary)
-        stand_lons: a series of stand_lons, larger than gshp's boundary, construct grids based on standard grids (clip based on gshp boundary)
-        adjust_boundary: adjust boundary by res (res/2)
-        expand_grids_num: int, expand n grid outward
+        Parameters
+        ----------
+        gshp : geopandas.GeoDataFrame, optional
+            Target geometry container. The first row geometry is used as the
+            default boundary when ``boundary`` is not provided.
+        cen_lons : array-like, optional
+            Grid-center longitudes used for direct grid construction.
+        cen_lats : array-like, optional
+            Grid-center latitudes used for direct grid construction.
+        stand_lons : array-like, optional
+            Standard longitude coordinates used to clip/build grids by boundary.
+        stand_lats : array-like, optional
+            Standard latitude coordinates used to clip/build grids by boundary.
+        res : float, optional
+            Grid resolution. If ``None``, only one boundary grid cell is built.
+        adjust_boundary : bool, optional
+            Whether to align boundaries to resolution-compatible edges.
+        crs : str or CRS, optional
+            Output coordinate reference system. Defaults to ``"EPSG:4326"``.
+        expand_grids_num : int, optional
+            Number of grid cells to expand outward beyond boundary.
+        boundary : sequence of float, optional
+            Explicit boundary as ``[xmin, ymin, xmax, ymax]``.
+
+        Returns
+        -------
+        geopandas.GeoDataFrame or None
+            Generated grid GeoDataFrame, or ``None`` when ``gshp`` is ``None``.
 
         """
         if gshp is None:
@@ -347,17 +386,18 @@ class Grids_for_shp(Grids):
 
 def createBoundaryShp(grid_shp):
     """
-    Create boundary shapefiles for the given grid.
+    Create center and edge boundary polygons for a grid dataset.
 
     Parameters
     ----------
     grid_shp : GeoDataFrame
-        The GeoDataFrame containing the grid geometries.
+        Grid GeoDataFrame containing ``geometry`` and ``point_geometry``.
 
     Returns
     -------
     tuple
-        A tuple containing the boundary shapefiles for the center and edge of the grid, along with their coordinates.
+        ``(boundary_point_center_shp, boundary_point_center_x_y,
+        boundary_grids_edge_shp, boundary_grids_edge_x_y)``.
     """
     # boundary: point center
     cgdf_point = CreateGDF()

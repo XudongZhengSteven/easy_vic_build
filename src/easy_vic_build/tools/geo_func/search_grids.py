@@ -2,61 +2,11 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: search_grids
+"""Grid-search utilities for matching source and destination coordinates.
 
-This module contains functions for searching and matching grids between different spatial
-resolutions. It includes methods for locating exact, nearest, or radius-based matches, as well
-as transforming grid indices for advanced data extraction. These functions are useful for geospatial
-applications such as climate models, remote sensing, and other grid-based datasets.
-
-Functions:
-----------
-    - Uniform_precision: Adjusts the precision of coordinates to ensure consistent comparison
-      between destination and source grids.
-    - search_grids_equal: Finds grids with exactly matching coordinates (latitude and longitude).
-    - search_grids_radius: Searches for grids within a specified radius based on latitude and
-      longitude distance.
-    - search_grids_radius_rectangle: Searches for grids within a rectangular region defined by
-      latitude and longitude radii.
-    - search_grids_radius_rectangle_reverse: Searches for grids where the source grids cover
-      the destination grids, in a reverse scenario.
-    - search_grids_nearest: Identifies the nearest grids to a given set of destination grids,
-      based on a specified number of nearest neighbors.
-    - print_ret: Prints the results of grid searches, displaying indices and their corresponding
-      coordinates.
-    - searched_grids_index_to_rows_cols_index: Converts grid indices into row and column indices
-      for use in array indexing.
-    - searched_grids_index_to_bool_index: Converts grid indices into boolean arrays for advanced
-      indexing in datasets.
-
-Dependencies:
--------------
-    - numpy: Provides numerical operations for array manipulation, distance calculations, and
-      indexing operations.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-
-Two basic idea:
--------
-
-(1) index search, and x[index]
-(2) mask array [0, 1], and use matrix multiplication
-
-usage:
-searched_grids_index = search_grids.search_grids_nearest(dst_lat=grids_lat, dst_lon=grids_lon,
-                                                        src_lat=soil_lat_clip, src_lon=soil_lon_clip,
-                                                        search_num=1)
-
-for i in tqdm(grid_shp.index, colour="green", desc=f"loop for each grid to extract soil{l} data", leave=False):
-        # lon/lat
-        searched_grid_index = searched_grids_index[i]
-        sand_searched_grid_data = [sand_clip[l, searched_grid_index[0][j], searched_grid_index[1][j]]
-                                    for j in range(len(searched_grid_index[0]))]  # index: (lat, lon), namely (row, col)
-
+This module provides exact-match, nearest-neighbor, and radius/overlap-based
+search methods, plus helper converters for transforming search results into
+array-friendly indices.
 """
 
 import numpy as np
@@ -68,6 +18,9 @@ from tqdm import *
 
 # TODO parallel
 def parallel_function():
+    """
+    Placeholder for future parallel search implementation.
+    """
     pass
 
 
@@ -78,7 +31,7 @@ def Uniform_precision(coord, percision):
     ----------
     coord : array_like
         1D array containing latitude or longitude values for grids.
-    precision : int
+    percision : int
         Minimum precision to which values should be rounded.
 
     Returns
@@ -170,6 +123,29 @@ def search_grids_radius(
     search_radius,
     **tqdm_kwargs
 ):
+    """
+    Search source grids within circular distance from destination points.
+
+    Parameters
+    ----------
+    dst_lat : array-like
+        Destination latitudes.
+    dst_lon : array-like
+        Destination longitudes.
+    src_lat : array-like
+        Source latitudes.
+    src_lon : array-like
+        Source longitudes.
+    search_radius : float
+        Search radius in coordinate units.
+    **tqdm_kwargs : dict, optional
+        Extra keyword arguments passed to ``tqdm``.
+
+    Returns
+    -------
+    list of tuple
+        For each destination point, a tuple ``(lat_indices, lon_indices)``.
+    """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
     dst_lon = np.array(dst_lon)
@@ -198,6 +174,33 @@ def search_grids_radius_rectangle(
     src_type="mesh",
     **tqdm_kwargs
 ):
+    """
+    Search source grids inside latitude/longitude radius rectangles.
+
+    Parameters
+    ----------
+    dst_lat : array-like
+        Destination latitudes.
+    dst_lon : array-like
+        Destination longitudes.
+    src_lat : array-like
+        Source latitudes.
+    src_lon : array-like
+        Source longitudes.
+    lat_radius : float
+        Latitude half-width of search window.
+    lon_radius : float
+        Longitude half-width of search window.
+    src_type : {"mesh", "points"}, optional
+        Source representation type.
+    **tqdm_kwargs : dict, optional
+        Extra keyword arguments passed to ``tqdm``.
+
+    Returns
+    -------
+    list of tuple
+        For each destination point, a tuple ``(lat_indices, lon_indices)``.
+    """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
     dst_lon = np.array(dst_lon)
@@ -235,6 +238,31 @@ def search_grids_radius_rectangle_reverse(
     lon_radius,
     **tqdm_kwargs
 ):
+    """
+    Rectangle-radius search variant using prebuilt source meshes.
+
+    Parameters
+    ----------
+    dst_lat : array-like
+        Destination latitudes.
+    dst_lon : array-like
+        Destination longitudes.
+    src_lat : array-like
+        Source latitudes.
+    src_lon : array-like
+        Source longitudes.
+    lat_radius : float
+        Latitude half-width of search window.
+    lon_radius : float
+        Longitude half-width of search window.
+    **tqdm_kwargs : dict, optional
+        Extra keyword arguments passed to ``tqdm``.
+
+    Returns
+    -------
+    list of tuple
+        For each destination point, a tuple ``(lat_indices, lon_indices)``.
+    """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
     
@@ -260,6 +288,37 @@ def search_grids_radius_rectangle_overlap(
     src_type="points",
     **tqdm_kwargs
 ):
+    """
+    Search source grids whose extents overlap destination grid extents.
+
+    Parameters
+    ----------
+    dst_lat : array-like
+        Destination latitudes.
+    dst_lon : array-like
+        Destination longitudes.
+    dst_dlat : float
+        Destination latitude resolution.
+    dst_dlon : float
+        Destination longitude resolution.
+    src_lat : array-like
+        Source latitudes.
+    src_lon : array-like
+        Source longitudes.
+    src_dlat : float
+        Source latitude resolution.
+    src_dlon : float
+        Source longitude resolution.
+    src_type : {"mesh", "points"}, optional
+        Source representation type.
+    **tqdm_kwargs : dict, optional
+        Reserved keyword arguments.
+
+    Returns
+    -------
+    list of tuple
+        For each destination point, a tuple ``(lat_indices, lon_indices)``.
+    """
     src_lat = np.asarray(src_lat)
     src_lon = np.asarray(src_lon)
     dst_lat = np.asarray(dst_lat)
@@ -323,6 +382,35 @@ def search_grids_nearest(
     src_type="mesh",
     **tqdm_kwargs,
 ):
+    """
+    Search nearest source grids for each destination point.
+
+    Parameters
+    ----------
+    dst_lat : array-like
+        Destination latitudes.
+    dst_lon : array-like
+        Destination longitudes.
+    src_lat : array-like
+        Source latitudes.
+    src_lon : array-like
+        Source longitudes.
+    search_num : int, optional
+        Number of nearest source points to keep.
+    move_src_lat : float, optional
+        Latitude shift applied to all source points before distance search.
+    move_src_lon : float, optional
+        Longitude shift applied to all source points before distance search.
+    src_type : {"mesh", "points"}, optional
+        Source representation type.
+    **tqdm_kwargs : dict, optional
+        Extra keyword arguments passed to ``tqdm``.
+
+    Returns
+    -------
+    list of tuple
+        For each destination point, a tuple ``(lat_indices, lon_indices)``.
+    """
     src_lon = np.array(src_lon)
     src_lat = np.array(src_lat)
 
@@ -379,6 +467,22 @@ def search_grids_nearest(
 
 def print_ret(searched_grids_index, src_lat, src_lon):
     # print result
+    """
+    Print one search result tuple with corresponding source coordinates.
+
+    Parameters
+    ----------
+    searched_grids_index : list of tuple
+        Search result list returned by grid-search functions.
+    src_lat : array-like
+        Source latitudes.
+    src_lon : array-like
+        Source longitudes.
+
+    Returns
+    -------
+    None
+    """
     searched_grids_index = searched_grids_index[0]
 
     print(f"grids: {len(searched_grids_index[0])}")

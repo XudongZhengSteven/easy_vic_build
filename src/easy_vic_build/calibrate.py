@@ -2,75 +2,14 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-calibrate - A Python module for calibrating the VIC model.
+"""Calibration workflows for VIC/RVIC based on NSGA-II search.
 
-This module provides functionality for calibrating hydrological models using the NSGA-II genetic algorithm approach.
-It includes the implementation of the `NSGAII_VIC_SO` class for single-objective optimization and a placeholder
-for the `NSGAII_VIC_MO` class for multi-objective optimization (which is not yet implemented). The module integrates
-with various tools for parameter setup, evaluation metrics, and simulation, as well as visualization capabilities.
-
-Classes:
---------
-    - `NSGAII_VIC_SO`: Performs single-objective optimization using the NSGA-II genetic algorithm.
-      It inherits from `NSGAII_Base` and handles the calibration process by optimizing model parameters.
-    - `NSGAII_VIC_MO`: Placeholder for multi-objective optimization implementation (currently not implemented).
-
-Usage:
-------
-    1. Initialize an instance of `NSGAII_VIC_SO` with the necessary parameters and configuration.
-    2. Run the calibration process using the `run` method to optimize the model parameters.
-    3. Retrieve the best results using the `get_best_results` method to analyze the calibration performance.
-    4. Visualize the calibration results using the provided plotting functions.
-
-Example:
---------
-    basin_index = 397
-    model_scale = "6km"
-    date_period = ["19980101", "20071231"]
-
-    warmup_date_period = ["19980101", "19991231"]
-    calibrate_date_period = ["20000101", "20071231"]
-    verify_date_period = ["20080101", "20101231"]
-    case_name = f"{basin_index}_{model_scale}"
-
-    evb_dir = Evb_dir(cases_home="/home/xdz/code/VIC_xdz/cases")
-    evb_dir.builddir(case_name)
-    evb_dir.vic_exe_path = "/home/xdz/code/VIC_xdz/vic_image.exe"
-
-    dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level2 = readdpc(evb_dir)
-
-    modify_pourpoint_bool = True
-    if modify_pourpoint_bool:
-        pourpoint_lon = -91.8225
-        pourpoint_lat = 38.3625
-
-        modifyDomain_for_pourpoint(evb_dir, pourpoint_lon, pourpoint_lat)  # mask->1
-        buildPourPointFile(evb_dir, None, names=["pourpoint"], lons=[pourpoint_lon], lats=[pourpoint_lat])
-
-    algParams = {"popSize": 20, "maxGen": 200, "cxProb": 0.7, "mutateProb": 0.2}
-    nsgaII_VIC_SO = NSGAII_VIC_SO(evb_dir, dpc_VIC_level0, dpc_VIC_level1, date_period, warmup_date_period, calibrate_date_period, verify_date_period,
-                                    algParams=algParams, save_path=evb_dir.calibrate_cp_path, reverse_lat=True, parallel=False)
-
-    calibrate_bool = False
-    if calibrate_bool:
-        nsgaII_VIC_SO.run()
-
-    get_best_results_bool = True
-    if get_best_results_bool:
-        cali_result, verify_result = nsgaII_VIC_SO.get_best_results()
-
-Dependencies:
--------------
-    - `os`: For handling file operations and directory structures.
-    - `deap`: A library for evolutionary algorithms, used for genetic operations like crossover, mutation, and selection.
-    - `pandas`: For data manipulation and analysis.
-    - `netCDF4`: For working with netCDF files to handle model output data.
-    - `matplotlib`: For visualizing the calibration results.
-    - `.tools`: Various utility and function modules for parameter setup, evaluation, and grid search.
-    - `.bulid_Param`, `.build_RVIC_Param`, `.build_GlobalParam`: Modules for constructing configuration files and setting up model parameters.
-    - `.tools.decoractors`: For applying the clock decorator to measure function execution time.
-
+Public classes
+--------------
+``NSGAII_VIC_SO``
+    Single-objective calibration using KGE as fitness.
+``NSGAII_VIC_MO``
+    Minimal multi-objective subclass placeholder.
 """
 
 import os
@@ -113,6 +52,7 @@ except:
 
 
 class NSGAII_VIC_SO(NSGAII_Base):
+    """Single-objective NSGA-II calibrator for VIC/RVIC workflows."""
 
     def __init__(
         self,
@@ -142,6 +82,39 @@ class NSGAII_VIC_SO(NSGAII_Base):
         reverse_lat=True,
         parallel=False,
     ):
+        """Initialize calibration state and algorithm settings.
+
+        Parameters
+        ----------
+        evb_dir : Evb_dir
+            Case directory manager and runtime paths.
+        dpc_VIC_level0, dpc_VIC_level1, dpc_VIC_level3 : object
+            DPC instances used for parameter updates and observations.
+        date_period, warmup_date_period, calibrate_date_period, verify_date_period : list
+            Simulation and evaluation date windows (``YYYYMMDD`` strings).
+        domain_dataset : netCDF4.Dataset, optional
+            Domain dataset. If ``None``, it is loaded from disk.
+        snaped_outlet_lons, snaped_outlet_lats, snaped_outlet_names : list, optional
+            Optional outlet definitions for RVIC routing.
+        buildParam_level0_interface_class, buildParam_level1_interface_class : type, optional
+            Interface classes for parameter generation.
+        soillayerresampler : object, optional
+            Soil-layer resampler for level-0 parameter build.
+        TF_VIC_class : type, optional
+            Transfer-function class.
+        nlayer_list : list, optional
+            Soil-layer indices used by scaling.
+        rvic_OUTPUT_INTERVAL, rvic_BASIN_FLOWDAYS, rvic_SUBSET_DAYS, rvic_uhbox_dt : int, optional
+            RVIC runtime/config defaults.
+        algParams : dict, optional
+            NSGA-II control parameters.
+        save_path : str, optional
+            Checkpoint path used by ``NSGAII_Base``.
+        reverse_lat : bool, optional
+            Whether latitude axis is arranged north-to-south.
+        parallel : bool or int, optional
+            VIC parallel execution flag/process count.
+        """
         logger.info(
             "Initializing NSGAII_VIC_SO instance with provided parameters... ..."
         )
@@ -217,6 +190,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         logger.info("Initialized")
     
     def set_GlobalParam_dict(self):
+        """Build and write the default VIC global-parameter configuration."""
         logger.debug("Setting global parameters for the simulation... ...")
         GlobalParam_dict = {
             "Simulation": {
@@ -241,6 +215,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         logger.debug("Set the global parameters successfully")
 
     def get_obs(self):
+        """Load observed streamflow and convert discharge to ``m3/s``."""
         logger.debug("Getting observation... ...")
         basin_shp_with_streamflow = self.dpc_VIC_level3.get_data_from_cache("streamflow")[0]
         self.obs = basin_shp_with_streamflow.streamflow
@@ -252,6 +227,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         logger.debug("Get the observation successfully")
 
     def get_sim(self):
+        """Read simulated discharge at pour point and resample to daily mean."""
         logger.debug("Getting simulation... ...")
 
         # path
@@ -335,9 +311,11 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return sim_df
 
     def createFitness(self):
+        """Register single-objective fitness in DEAP creator."""
         creator.create("Fitness", base.Fitness, weights=(1.0,))
 
     def samplingInd(self):
+        """Sample one individual from parameter bounds via LHS."""
         logger.debug("Starting parameter sampling process... ...")
 
         # n_samples
@@ -353,6 +331,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
     @clock_decorator(print_arg_ret=True)
     def run_vic(self):
+        """Execute VIC using the current global parameter file."""
         if self.parallel:
             command_run_vic = " ".join(
                 [
@@ -380,6 +359,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
     @clock_decorator(print_arg_ret=True)
     def run_rvic(self, conv_cfg_file_dict):
+        """Run RVIC convolution with a loaded configuration dictionary."""
         logger.info("running RVIC convolution... ...")
         logger.debug(f"RVIC configuration: {conv_cfg_file_dict}")
 
@@ -395,6 +375,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         pass
 
     def adjust_vic_params_level0(self, g_params):
+        """Update or build level-0 parameters from a candidate vector."""
         logger.info("Adjusting params_dataset_level0... ...")
         logger.debug(f"Received parameters for adjustment: {g_params}")
 
@@ -440,6 +421,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return params_dataset_level0
 
     def adjust_vic_params_level1(self, params_dataset_level0):
+        """Update/build level-1 parameters and apply level-0 to level-1 scaling."""
         logger.info("Starting to adjust params_dataset_level1... ...")
         
         buildParam_level1_interface_instance = self.buildParam_level1_interface_class(
@@ -490,6 +472,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return params_dataset_level1
 
     def cal_constraint_destroy(self, params_dataset_level0):
+        """Check hard physical constraints on level-0 parameters."""
         # wp < fc
         # Wpwp_FRACT < Wcr_FRACT
         # depth_layer0 < depth_layer1
@@ -540,6 +523,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return constraint_destroy
 
     def adjust_rvic_params(self, guh_params, rvic_params):
+        """Rebuild RVIC routing parameters from candidate UH/routing values."""
         logger.info("Starting to adjust RVIC parameters... ...")
         
         # Cleanup and directory setup
@@ -606,6 +590,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         logger.info("Adjusting RVIC parameters successfully")
 
     def adjust_rvic_conv_params(self):
+        """Build RVIC convolution config and return it as a dictionary."""
         # TODO DATL_LIQ_FLDS, OUT_RUNOFF, OUT_BASEFLOW might be run individually
 
         logger.info("Starting to adjust RVIC convolution parameters... ...")
@@ -633,6 +618,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return conv_cfg_file_dict
 
     def evaluate(self, ind):
+        """Evaluate one individual and return fitness tuple."""
         logger.info("Starting evaluate individual... ...")
 
         # format dtype
@@ -732,6 +718,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return (fitness,)
 
     def simulate(self, ind, GlobalParam_dict):
+        """Run full VIC+RVIC simulation for one individual."""
         logger.info("Starting VIC-RVIC simulation... ...")
 
         # buildGlobalParam
@@ -780,6 +767,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         return sim
 
     def simulate_vic(self, ind, GlobalParam_dict):
+        """Run VIC-only simulation for one individual."""
         logger.info("Starting VIC simulation... ...")
         
         # buildGlobalParam
@@ -819,6 +807,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         
 
     def simulate_rvic(self, ind, GlobalParam_dict):
+        """Prepare RVIC inputs for one individual (execution path is incomplete)."""
         logger.info("Starting RVIC simulation... ...")
         
         # buildGlobalParam
@@ -845,6 +834,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
         pass
     
     def get_best_results(self):
+        """Run best individual and export calibration/verification time series."""
         logger.info(
             "Starting to retrieve best results from optimization history... ..."
         )
@@ -962,6 +952,7 @@ class NSGAII_VIC_SO(NSGAII_Base):
 
 
 class NSGAII_VIC_MO(NSGAII_VIC_SO):
+    """Minimal multi-objective subclass placeholder."""
 
     def createFitness(self):
         creator.create("Fitness", base.Fitness, weights=(-1.0,))

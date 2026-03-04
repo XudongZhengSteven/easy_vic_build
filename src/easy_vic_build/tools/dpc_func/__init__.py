@@ -1,34 +1,22 @@
-"""
-Subpackage: dpc_func
+"""Data-processing modules for basin and grid workflows.
 
-A Subpackage of easy_vic_build.tools
+This subpackage contains core modules used to construct basin/grid data and run
+data-processing pipelines.
 
-This subpackage contains a collection of modules that provide functions for data processing classes (dpc class).
-
-Modules:
---------
-    - basin_grid_class: Contains the class definitions for basin grid-related functionality.
-
-    - basin_grid_func: Provides various functions for manipulating basin grids.
-
-    - aggregate: Implements functions for aggregating data.
-
-    - dpc_base: Provides base functionality for data processing classes.
-
-    - dpc_subclass: Defines subclasses for different types of data processing.
-
-    - readdataIntoBasins_interface: Interfaces for reading data into basins.
-
-    - readdataIntoGrids_interface: Interfaces for reading data into grids.
-
-    - select_basin_shp: Functions for selecting basin shapes from spatial data.
-
-
-Author:
+Modules
 -------
-    Xudong Zheng
-    Email: z786909151@163.com
-
+aggregate
+    Basin-level aggregation helpers for grid-based variables.
+basin_grid_class
+    Basin/grid GeoDataFrame classes and constructors.
+basin_grid_func
+    Grid construction and array-mapping utility functions.
+dpc_base
+    Base pipeline class with step registration and cache management.
+dpc_subclass
+    Level-specific processing pipelines built on ``dpc_base``.
+select_basin_shp
+    Basin filtering helpers based on hydrological criteria.
 """
 
 # Importing submodules for ease of access

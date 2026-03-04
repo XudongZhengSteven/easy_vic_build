@@ -2,60 +2,11 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Module: algorithm_NSGAII
+"""NSGA-II base implementation for calibration workflows.
 
-This module implements the NSGA-II (Non-dominated Sorting Genetic Algorithm II)
-for multi-objective optimization. The algorithm is designed to evolve a population
-of individuals through selection, crossover, and mutation, in order to converge towards
-an optimal Pareto front. It also includes the capability to save and load the state
-of the algorithm, enabling checkpointing for long-running optimization tasks.
-
-Class:
---------
-    - NSGAII_Base: A class representing the core logic of the NSGA-II algorithm.
-
-Class Methods:
----------------
-    - __init__: Initializes the NSGAII algorithm with the given parameters.
-    - get_obs: A placeholder method to get observed values (to be defined for specific use cases).
-    - get_sim: A placeholder method to get simulated values (to be defined for specific use cases).
-    - set_algorithm_params: Configures the algorithm parameters like population size,
-      number of generations, crossover and mutation probabilities.
-    - createFitness: Creates a fitness class with minimization as the objective.
-    - createInd: Creates an individual with a fitness attribute.
-    - samplingInd: Samples a new individual with randomly initialized parameters.
-    - registerInd: Registers the individual creation function to the toolbox.
-    - registerPop: Registers the population creation function to the toolbox.
-    - evaluate: A placeholder method for evaluating the fitness of individuals (to be defined).
-    - registerEvaluate: Registers the evaluation function to the toolbox.
-    - evaluatePop: Evaluates the fitness of the entire population.
-    - operatorMate: A crossover operator for mating two parents.
-    - operatorMutate: A mutation operator that flips a bit in an individual.
-    - operatorSelect: A selection operator based on tournament selection.
-    - registerOperators: Registers the genetic operators (mate, mutate, select) to the toolbox.
-    - apply_genetic_operators: Applies crossover and mutation operators to the offspring.
-    - select_next_generation: Selects the next generation of individuals using non-dominated sorting
-      and crowding distance.
-    - print_results: Prints the best individual and its fitness.
-    - load_state: Loads the algorithm's state from a checkpoint file.
-    - save_state: Saves the algorithm's state to a checkpoint file.
-    - run: Executes the NSGA-II algorithm over multiple generations, applying genetic operators
-      and selecting the next generation, while saving the state after each generation.
-
-Dependencies:
--------------
-    - deap: Provides the core functionality for evolutionary algorithms.
-    - random: Used for generating random values for crossover, mutation, and initial population.
-    - pickle: Used for saving and loading the algorithm's state.
-    - os: Used for checking and managing file paths.
-    - tqdm: Provides a progress bar for the generation loop.
-    - ..decorators: Contains the `clock_decorator` for measuring execution time.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
+This module defines :class:`NSGAII_Base`, a reusable DEAP-based NSGA-II runner
+with checkpoint persistence, generation history tracking, and optional Pareto
+front plotting.
 """
 
 import os
@@ -497,6 +448,24 @@ class NSGAII_Base:
         logger.info("fitness:", best_ind.fitness.values)
         
     def plot_front_pairwise(self, population, front, gen, names_plot=None, plot_dir="pareto_progress", transform_func=None):
+        """Plot pairwise objective scatter for full population and first front.
+
+        Parameters
+        ----------
+        population : list
+            Population to visualize (typically parent + offspring).
+        front : list
+            First non-dominated front.
+        gen : int
+            Generation index used in figure title.
+        names_plot : list of str, optional
+            Objective axis labels. If ``None``, labels are generated as
+            ``obj1``, ``obj2``, ...
+        plot_dir : str, optional
+            Directory used to store figure output.
+        transform_func : callable, optional
+            Optional transformation applied to objective arrays before plotting.
+        """
         # check plot_dir
         if not os.path.exists(plot_dir):
             os.makedirs(plot_dir)
@@ -565,6 +534,17 @@ class NSGAII_Base:
 
         This method applies genetic operators, evaluates individuals,
         selects the next generation, and stores the results.
+
+        Parameters
+        ----------
+        plot_progress : bool, optional
+            Whether to save a pairwise Pareto plot each generation.
+        plot_dir : str, optional
+            Output directory for progress plots.
+        names_plot : list of str, optional
+            Objective labels passed to :meth:`plot_front_pairwise`.
+        transform_func : callable, optional
+            Optional transform function passed to :meth:`plot_front_pairwise`.
 
         Returns
         -------

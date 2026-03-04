@@ -1,6 +1,8 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
+"""Utilities for nested-basin topology and unique mask construction."""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
@@ -10,6 +12,20 @@ from copy import deepcopy
 from tqdm import *
 
 def get_all_upstreams(station, nest_upstream_map):
+    """Collect all upstream stations for a target station.
+
+    Parameters
+    ----------
+    station : str
+        Target station name.
+    nest_upstream_map : dict
+        Mapping ``{station: [direct_upstream_stations]}``.
+
+    Returns
+    -------
+    list of str
+        All upstream stations reachable from ``station``.
+    """
     visited = set()
     stack = list(nest_upstream_map[station])
 
@@ -22,6 +38,21 @@ def get_all_upstreams(station, nest_upstream_map):
     return list(visited)
 
 def get_topo_order(station_names, nest_map):
+    """Return stations in upstream-to-downstream topological order.
+
+    Parameters
+    ----------
+    station_names : sequence of str
+        Station names to be ordered.
+    nest_map : dict
+        Mapping ``{station: [direct_upstream_stations]}``.
+
+    Returns
+    -------
+    list of str
+        Topological order where upstream stations appear before downstream
+        stations.
+    """
     visited = set()
     order = []
 
@@ -46,27 +77,29 @@ def cal_unique_mask_nested_basin(
     plot=False,
     reverse_lat=True
 ):
-    """
-    example:
-        # read basins
-        nested_basins_shp = gpd.read_file(os.path.join(evb_dir_hydroanalysis.Hydroanalysis_dir, "wbw_working_directory_level0", "basins_vector_outlets_with_reference.shp"))
-        basin_shps = {
-            "hanzhong": nested_basins_shp.iloc[0:1, :],
-            "yangxian": nested_basins_shp.iloc[1:2, :],
-            "lianghekou": nested_basins_shp.iloc[2:3, :],
-            "shiquan": nested_basins_shp.iloc[3:4, :],
-            "youshui": nested_basins_shp.iloc[4:5, :],
-        }
-        
-        # enforce_unique_masks
-        unique_masks_level1 = cal_unique_mask_nested_basin(
-            station_names,
-            grid_shp_level1,
-            basin_shps,
-            main_basin_shp=basin_shps["shiquan"],
-            plot=True
-        )
-    
+    """Build mutually exclusive grid masks for nested basins.
+
+    Parameters
+    ----------
+    station_names : sequence of str
+        Station names that define the nested basin set.
+    grid_shp : geopandas.GeoDataFrame
+        Grid polygons used as target cells for mask assignment.
+    basin_shps : dict
+        Mapping ``{station_name: basin_geodataframe}``.
+    main_basin_shp : geopandas.GeoDataFrame
+        Main-basin geometry used to determine UTM projection.
+    plot : bool, optional
+        Whether to plot masks for visual inspection.
+    reverse_lat : bool, optional
+        Whether standard latitude ordering is reversed.
+
+    Returns
+    -------
+    tuple
+        ``(unique_masks, grid_shp_unique_mask)`` where:
+        ``unique_masks`` is a dict mapping station name to 2D binary mask array,
+        and ``grid_shp_unique_mask`` is a GeoDataFrame with assigned station index.
     """
     # Determine the UTM CRS based on the longitude of the basin center
     try:

@@ -2,12 +2,36 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
+"""Create VIC meteorological forcing NetCDF datasets."""
+
 from netCDF4 import Dataset
 import cftime
 import numpy as np
 
 
 def createMeteForcingDataset(dst_path, lat_list, lon_list, time_datetime, start_time="19970101", format="NETCDF4"):
+    """Create a meteorological forcing dataset with VIC-required variables.
+
+    Parameters
+    ----------
+    dst_path : str
+        Output NetCDF file path.
+    lat_list : sequence of float
+        Latitude coordinate values.
+    lon_list : sequence of float
+        Longitude coordinate values.
+    time_datetime : sequence of datetime-like
+        Datetime sequence used to build the ``time`` dimension.
+    start_time : str, optional
+        Time origin in ``YYYYMMDD`` format for the ``time`` units attribute.
+    format : str, optional
+        NetCDF file format passed to ``netCDF4.Dataset``.
+
+    Returns
+    -------
+    tuple
+        ``(meteforcing_dataset, time_v, lats, lons, lat_v, lon_v)``.
+    """
     # create dataset
     meteforcing_dataset = Dataset(dst_path, "w", format=format)
 

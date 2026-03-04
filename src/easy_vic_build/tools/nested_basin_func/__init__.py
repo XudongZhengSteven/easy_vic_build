@@ -1,4 +1,5 @@
-# Importing submodules for ease of access
+"""Nested-basin processing utilities."""
+
 from . import nested_basin_func
 
 # Define the package's public API and version

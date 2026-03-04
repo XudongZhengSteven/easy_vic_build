@@ -2,25 +2,26 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-""" 
-hydroanalysis_wbw: A Python subpackage for performing hydrological analysis based on wbw package.
+"""Whitebox-based hydrological analysis components.
 
-This subpackage contains a collection of modules that provide functions for hydrological analysis,
-including terrain preprocessing, flow distance calculations, and basin-scale hydrological assessments.
-These tools facilitate the extraction and analysis of hydrological features from digital elevation
-models (DEMs) and other spatial datasets.
-
-Modules:
---------
-    - `set_workenv`:
-    - `hydroanalysis`:
-    - `fill_dem`:
-    - `flow_direction`:
-    - `flow_accumulation`: 
-    - `stream_network`:
-    - `outlet_detection`:
-    - `basin_delineation`:
-
+Modules
+-------
+set_workenv
+    Whitebox work-environment setup helpers.
+hydroanalysis
+    End-to-end orchestration helpers.
+fill_dem
+    DEM filling and conditioning routines.
+flow_direction
+    Flow-direction derivation utilities.
+flow_accumulation
+    Flow-accumulation derivation utilities.
+stream_network
+    Stream extraction and network analysis helpers.
+outlet_detection
+    Outlet detection utilities.
+basin_delineation
+    Basin delineation utilities.
 """
 
 # Importing submodules for ease of access

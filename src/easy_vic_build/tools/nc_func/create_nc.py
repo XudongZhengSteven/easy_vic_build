@@ -2,37 +2,7 @@
 # author: "Xudong Zheng"
 # email: Z786909151@163.com
 
-"""
-Module: create_nc
-
-This module provides functionality for creating and managing NetCDF files. It includes a class `create_nc`
-that offers methods to create a NetCDF file with specified dimensions, variables, and values. The module also
-provides methods for copying global and variable attributes between NetCDF files, enabling data management
-and file manipulation for scientific computing.
-
-Class:
-----------
-    - create_nc: A class for creating and managing NetCDF files. It supports:
-        - Creating a NetCDF file with specified dimensions, variables, and values.
-        - Copying global attributes from one NetCDF file to another.
-        - Copying variable attributes from one NetCDF file to another.
-
-Functions:
-----------
-    - copy_vattributefunc: Copies variable attributes from one variable to another.
-    - copy_garrtibutefunc: Copies global attributes from one NetCDF file to another.
-
-Dependencies:
--------------
-    - netCDF4: Used for reading and writing NetCDF files.
-    - numpy: Used for handling arrays and numerical operations.
-    - tqdm: Used for progress bars in the terminal.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
+"""Utilities for creating NetCDF files and copying NetCDF attributes."""
 
 
 import os
@@ -44,64 +14,34 @@ from ... import logger
 
 
 class create_nc:
-    """
-    A class for creating and managing NetCDF files.
-
-    This class provides methods to create NetCDF files by specifying dimensions,
-    variables, and their values. Additionally, it includes functions for copying
-    global and variable attributes from one NetCDF file to another.
-
-    Methods:
-    --------
-    __call__(self, nc_path, dimensions, variables, var_value, return_dataset=False):
-        Creates a NetCDF file at the specified path with the given dimensions and variables.
-
-    copy_garrtibutefunc(self, dst_dataset_path, src_dataset_path):
-        Copies global attributes from the source NetCDF file to the destination NetCDF file.
-
-    copy_vattributefunc(self, dst_dataset_path, src_dataset_path):
-        Copies variable attributes from the source NetCDF file to the destination NetCDF file.
-    """
+    """Helper for creating NetCDF files and copying metadata."""
 
     def __init__(self):
-        """Initializes the create_nc class."""
+        """Initialize a ``create_nc`` helper instance."""
         pass
 
     def __call__(self, nc_path, dimensions, variables, var_value, return_dataset=False):
-        """
-        Creates a NetCDF file with the specified dimensions, variables, and values.
+        """Create a NetCDF file from provided dimensions, variables, and values.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         nc_path : str
-            The path where the created NetCDF file will be saved.
+            Output NetCDF path.
         dimensions : dict
-            A dictionary where keys are dimension names and values are the sizes of the dimensions.
-            The dimensions typically include "lon", "lat", "time", etc. If a dimension is unlimited, set its size to None or 0.
+            Mapping from dimension name to size. Use ``None`` for unlimited
+            dimensions.
         variables : dict
-            A dictionary where keys are variable names, and values are dictionaries of keyword arguments.
-            The keyword arguments can include:
-            - datatype : str, Data type of the variable (e.g., 'float32')
-            - dimensions : tuple, Tuple of dimension names
-            - zlib : bool, Whether to use compression (default is False)
-            - complevel : int, Compression level (default is 4)
-            - shuffle : bool, Whether to use shuffle filter (default is True)
-            - fletcher32 : bool, Whether to use Fletcher32 checksum (default is False)
-            - contiguous : bool, Whether to store data contiguously (default is False)
-            - chunksizes : tuple, Chunk sizes for data storage (default is None)
-            - endian : str, Byte order (default is 'native')
-            - least_significant_digit : int, Precision of floating point data (default is None)
-            - fill_value : int/float, Value used to fill missing data (default is None)
+            Mapping from variable name to keyword arguments for
+            ``Dataset.createVariable``.
         var_value : dict
-            A dictionary where keys are variable names and values are their corresponding values.
-            The values should typically be `np.ma.array` or other compatible data types.
+            Mapping from variable name to data array written to the variable.
         return_dataset : bool, optional
-            If True, returns the NetCDF dataset object for further manipulation. If False (default), closes the file after creation.
+            If ``True``, return an open dataset object.
 
-        Returns:
-        --------
+        Returns
+        -------
         None or Dataset
-            Returns the dataset object if `return_dataset=True`, otherwise the function returns None.
+            Open dataset when ``return_dataset=True``; otherwise ``None``.
         """
         dataset = Dataset(nc_path, "w")
 
@@ -123,18 +63,17 @@ class create_nc:
             dataset.close()
 
     def copy_garrtibutefunc(self, dst_dataset_path, src_dataset_path):
-        """
-        Copies global attributes from the source NetCDF file to the destination NetCDF file.
+        """Copy global attributes from one NetCDF file to another.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         dst_dataset_path : str
-            Path to the destination NetCDF file.
+            Destination NetCDF path.
         src_dataset_path : str
-            Path to the source NetCDF file.
+            Source NetCDF path.
 
-        Returns:
-        --------
+        Returns
+        -------
         None
         """
         with Dataset(src_dataset_path, "r") as src_dataset:
@@ -144,18 +83,17 @@ class create_nc:
                     dst_dataset.setncattr(key, src_dataset.getncattr(key))
 
     def copy_vattributefunc(self, dst_dataset_path, src_dataset_path):
-        """
-        Copies variable attributes from the source NetCDF file to the destination NetCDF file.
+        """Copy variable attributes from one NetCDF file to another.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         dst_dataset_path : str
-            Path to the destination NetCDF file.
+            Destination NetCDF path.
         src_dataset_path : str
-            Path to the source NetCDF file.
+            Source NetCDF path.
 
-        Returns:
-        --------
+        Returns
+        -------
         None
         """
         with Dataset(src_dataset_path, "r") as src_dataset:
@@ -187,18 +125,17 @@ class create_nc:
 
 
 def copy_vattributefunc(src_var, dst_var):
-    """
-    Copies variable attributes from the source variable to the destination variable.
+    """Copy attributes from one NetCDF variable to another.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     src_var : netCDF4.Variable
-        The source variable from which attributes will be copied.
+        Source variable.
     dst_var : netCDF4.Variable
-        The destination variable to which attributes will be copied.
+        Destination variable.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     ncattr_dict = dict(
@@ -216,18 +153,17 @@ def copy_vattributefunc(src_var, dst_var):
 
 
 def copy_garrtibutefunc(src_dataset, dst_dataset):
-    """
-    Copies global attributes from the source NetCDF dataset to the destination NetCDF dataset.
+    """Copy global attributes from one NetCDF dataset to another.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     src_dataset : netCDF4.Dataset
-        The source dataset from which global attributes will be copied.
+        Source dataset.
     dst_dataset : netCDF4.Dataset
-        The destination dataset to which global attributes will be copied.
+        Destination dataset.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     for key in src_dataset.ncattrs():
@@ -235,6 +171,13 @@ def copy_garrtibutefunc(src_dataset, dst_dataset):
 
 
 def demos1():
+    """Legacy example: convert GLDAS percentile data array into NetCDF.
+
+    Notes
+    -----
+    This function is kept as an ad-hoc workflow example and relies on local
+    hard-coded paths.
+    """
     import os
     import time as t
 
@@ -359,6 +302,13 @@ def demos1():
 
 
 def demo_combineTRMM_P_add_time_dim():
+    """Legacy example: combine daily TRMM files into one time-stacked dataset.
+
+    Notes
+    -----
+    This function is kept for reproducibility of historical preprocessing and
+    uses hard-coded local paths.
+    """
     # general
     src_home = "E:/data/hydrometeorology/TRMM_P/TRMM_3B42/data"
     dst_home = "E:/data/hydrometeorology/TRMM_P/TRMM_3B42"
@@ -554,6 +504,13 @@ def demo_combineTRMM_P_add_time_dim():
 
 
 def demo_combineGlobalSnow_SWE_add_time_dim():
+    """Legacy example: combine GlobalSnow SWE files into one NetCDF dataset.
+
+    Notes
+    -----
+    This function is kept for reproducibility of historical preprocessing and
+    uses hard-coded local paths.
+    """
     # general
     src_home = "E:/data/hydrometeorology/globalsnow/archive_v3.0/L3A_daily_SWE/NetCDF4"
     dst_home = "E:/data/hydrometeorology/globalsnow/archive_v3.0/L3A_daily_SWE"

@@ -2,56 +2,13 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-build_GlobalParam - A Python module for building global parameter file.
+"""Build VIC ``global_param.txt`` from a reference template.
 
-This module provides functions for constructing and modifying the global parameter file
-used in the VIC (Variable Infiltration Capacity) model. The main function `buildGlobalParam`
-sets up the global parameter configuration by reading an existing reference file and updating
-it with values from a provided dictionary.
-
-Functions:
-----------
-    - `buildGlobalParam`: Constructs the global parameter file for VIC simulations by reading
-      a reference file and applying configurations from the provided dictionary.
-      It sets default values and overrides them based on the dictionary content.
-
-Usage:
-------
-    1. Call the `buildGlobalParam` to build global parameter file with specificed parameters.
-
-Example:
---------
-    basin_index = 213
-    model_scale = "6km"
-    case_name = f"{basin_index}_{model_scale}"
-    date_period = ["19980101", "19981231"]
-
-    evb_dir = Evb_dir("./examples")
-    evb_dir.builddir(case_name)
-
-    GlobalParam_dict = {"Simulation":{"MODEL_STEPS_PER_DAY": "1",
-                                      "SNOW_STEPS_PER_DAY": "24",
-                                      "RUNOFF_STEPS_PER_DAY": "24",
-                                      "STARTYEAR": str(date_period[0][:4]),
-                                      "STARTMONTH": str(int(date_period[0][4:6])),
-                                      "STARTDAY": str(int(date_period[0][4:6])),
-                                      "ENDYEAR": str(date_period[1][:4]),
-                                      "ENDMONTH": str(int(date_period[1][4:6])),
-                                      "ENDDAY": str(int(date_period[1][4:6])),
-                                      "OUT_TIME_UNITS": "DAYS"},
-                        "Output": {"AGGFREQ": "NDAYS   1"},
-                        "OUTVAR1": {"OUTVAR": ["OUT_RUNOFF", "OUT_BASEFLOW", "OUT_DISCHARGE"]}
-                        }
-
-    buildGlobalParam(evb_dir, GlobalParam_dict)
-
-Dependencies:
--------------
-    - `os`: For file and directory operations.
-    - `re`: For regular expressions to match section names.
-    - `.tools.utilities`: For utilities like `read_globalParam_reference` to load reference files.
-
+Public function
+---------------
+``buildGlobalParam``
+    Load the packaged global-parameter reference, fill required EVB paths, and
+    apply user-provided overrides.
 """
 
 import os
@@ -63,43 +20,33 @@ from .tools.utilities import read_globalParam_reference
 
 def buildGlobalParam(evb_dir, GlobalParam_dict):
     """
-    Build the global parameter configuration file for VIC simulations.
+    Build and write ``global_param.txt`` for one case.
 
-    This function reads a reference global parameter file, sets default values for various
-    sections (such as forcing, domain, parameters, output, and routing), and then updates
-    the sections with values from the provided `GlobalParam_dict`. The updated configuration
-    is saved to the specified file path.
+    The function first sets required default paths from ``evb_dir``:
+    ``FORCING1``, ``DOMAIN``, ``PARAMETERS``, ``LOG_DIR``, and ``RESULT_DIR``.
+    It then applies values from ``GlobalParam_dict``.
 
-    Parameters:
-    -----------
-    evb_dir : `Evb_dir`
-        An instance of the `Evb_dir` class, containing paths for VIC deployment.
-        
+    Section handling:
+    - ``FORCE_TYPE``, ``DOMAIN_TYPE``, and ``OUTVAR*`` use
+      ``set_section_values`` (replace section content).
+    - Other sections are updated key by key with ``set``.
+
+    Parameters
+    ----------
+    evb_dir : Evb_dir
+        Directory/path container for the current case.
     GlobalParam_dict : dict
-        A dictionary containing parameters to override the default values in the global configuration.
+        Nested mapping of section names to configuration values.
 
-    Returns:
-    --------
+    Returns
+    -------
     None
     """
     logger.info("Starting to generate global parameter file... ...")
-    ## ====================== set dir and path ======================
-    # get rout_param
-    # try:
-    #     rout_param_path = os.path.join(
-    #         evb_dir.rout_param_dir, os.listdir(evb_dir.rout_param_dir)[0]
-    #     )
-    # except Exception as e:
-    #     rout_param_path = ""
-    #     logger.warning(f"Routing parameter path could not be determined: {e}")
-
-    ## ====================== build GlobalParam ======================
-    # read GlobalParam_reference parser
+    # Load parser initialized from the package reference file.
     globalParam = read_globalParam_reference()
-    # globalParam = GlobalParamParser()
-    # globalParam.load(evb_dir.globalParam_reference_path)
 
-    # set default param (dir and path)
+    # Set required default paths.
     globalParam.set(
         "Forcing",
         "FORCING1",
@@ -109,12 +56,10 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
     globalParam.set("Param", "PARAMETERS", evb_dir.params_dataset_level1_path)
     globalParam.set("Output", "LOG_DIR", evb_dir.VICLog_dir + "/")
     globalParam.set("Output", "RESULT_DIR", evb_dir.VICResults_dir)
-    # globalParam.set("Routing", "ROUT_PARAM", rout_param_path)
-
-    # set based on GlobalParam_dict (override the default param)
+    # Override defaults with user-provided values.
     for section_name in GlobalParam_dict.keys():
         if re.match(r"^(FORCE_TYPE|DOMAIN_TYPE|OUTVAR\d*)$", section_name):
-            # replace section
+            # Replace the full section for list-like sections.
             section_dict = GlobalParam_dict[section_name]
             globalParam.set_section_values(section_name, section_dict)
 
@@ -123,7 +68,7 @@ def buildGlobalParam(evb_dir, GlobalParam_dict):
             for key, value in section_dict.items():
                 globalParam.set(section_name, key, value)
 
-    # save
+    # Write output file.
     with open(evb_dir.globalParam_path, "w") as f:
         globalParam.write(f)
 

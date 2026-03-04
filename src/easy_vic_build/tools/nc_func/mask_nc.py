@@ -2,39 +2,7 @@
 # author: "Xudong Zheng"
 # email: Z786909151@163.com
 
-"""
-Module: mask_nc
-
-This module provides functionality for applying spatial masking to variables in NetCDF files.
-It includes a class `mask_nc` that allows for masking based on geographic regions or shapefiles,
-and then saves the masked data into a new NetCDF file. This module is particularly useful for
-spatially filtered data processing in atmospheric and hydrological models that rely on NetCDF format.
-
-Class:
-------
-    - mask_nc: A class that handles the application of spatial masks to NetCDF variables,
-      using either a shapefile or defined geographic regions (latitudes and longitudes).
-
-Class Methods:
---------------
-    - __init__: Initializes the mask_nc class.
-    - __call__: Applies the mask to the specified variables from the source NetCDF file and writes
-      the results to the destination NetCDF file.
-    - get_masked_val: Retrieves the masked values by applying the mask based on a shapefile or geographic region.
-
-Dependencies:
--------------
-    - netCDF4: For reading and writing NetCDF files.
-    - regionmask: Optional, used for masking based on shapefiles or geographic regions.
-    - geopandas: Used for reading shapefiles that define the mask.
-    - numpy: Provides array manipulation and mathematical operations for applying the mask.
-    - warnings: Used to suppress warnings related to missing packages.
-
-Author:
--------
-    Xudong Zheng
-    Email: z786909151@163.com
-"""
+"""Apply spatial masks to variables in NetCDF datasets."""
 
 
 from netCDF4 import Dataset
@@ -56,18 +24,10 @@ warnings.filterwarnings("ignore")
 
 
 class mask_nc:
-    """
-    A class for applying spatial masks to variables in NetCDF files.
-    This class allows the user to apply a mask based on either a shapefile or
-    geographic regions (latitude and longitude), and writes the masked data
-    into a new NetCDF file.
-    """
+    """Mask selected NetCDF variables by shapefile or bounding region."""
 
     def __init__(self):
-        """
-        Initializes the mask_nc class.
-        This class does not require any parameters for initialization.
-        """
+        """Initialize a ``mask_nc`` helper instance."""
         pass
 
     def __call__(
@@ -80,33 +40,36 @@ class mask_nc:
         lon_valname="lon",
         lat_valname="lat",
     ):
-        """
-        Apply the mask to variables in a NetCDF file and write the results to a new NetCDF file.
+        """Apply spatial masking and write a new NetCDF file.
 
         Parameters
         ----------
         src_path : str
-            The file path of the source NetCDF file to read data from.
+            Source NetCDF file path.
         dst_path : str
-            The file path of the destination NetCDF file to write the masked data to.
+            Destination NetCDF file path.
         mask_valname : list of str
-            A list of variable names in the source NetCDF file that will be masked.
+            Variable names to be masked.
         mask_shp : str or None, optional
-            The path to a shapefile to use for masking (default is None).
+            Shapefile path used to define the mask.
         mask_region : list of float or None, optional
-            A list of four floats representing the geographic region to mask in the form
-            [lat_min, lat_max, lon_min, lon_max] (default is None).
+            Region bounds ``[lat_min, lat_max, lon_min, lon_max]``.
         lon_valname : str, optional
-            The name of the longitude variable in the NetCDF file (default is "lon").
+            Longitude variable name.
         lat_valname : str, optional
-            The name of the latitude variable in the NetCDF file (default is "lat").
+            Latitude variable name.
+
+        Returns
+        -------
+        None
+            The masked dataset is written to ``dst_path``.
 
         Raises
         ------
         ValueError
-            If neither `mask_shp` nor `mask_region` is provided for masking.
+            If neither ``mask_shp`` nor ``mask_region`` is provided.
         ImportError
-            If the `regionmask` package is not available.
+            If ``regionmask`` is not available.
         """
 
         with Dataset(src_path, mode="r") as src_dataset:
@@ -191,39 +154,38 @@ class mask_nc:
         lat_valname,
         src_dataset,
     ):
-        """
-        Retrieve the masked values based on the provided mask or geographic region.
+        """Compute masked values for a source variable.
 
         Parameters
         ----------
         lon : ndarray
-            The longitude values in the NetCDF file.
+            Longitude coordinates.
         lat : ndarray
-            The latitude values in the NetCDF file.
-        src_val : ndarray
-            The variable data that will be masked.
+            Latitude coordinates.
+        src_val : netCDF4.Variable
+            Source variable to be masked.
         mask_shp : str or None
-            The path to the shapefile to use for masking (default is None).
+            Shapefile path used to define the mask.
         mask_region : list of float or None
-            The geographic region to mask in the form [lat_min, lat_max, lon_min, lon_max] (default is None).
+            Region bounds ``[lat_min, lat_max, lon_min, lon_max]``.
         lon_valname : str
-            The name of the longitude variable in the NetCDF file.
+            Longitude variable name.
         lat_valname : str
-            The name of the latitude variable in the NetCDF file.
+            Latitude variable name.
         src_dataset : Dataset
-            The source NetCDF dataset object.
+            Source NetCDF dataset.
 
         Returns
         -------
         np.ma.array
-            The masked data with a mask applied based on the specified criteria.
+            Masked variable values.
 
         Raises
         ------
         ValueError
-            If neither `mask_shp` nor `mask_region` is provided.
+            If neither ``mask_shp`` nor ``mask_region`` is provided.
         ImportError
-            If the `regionmask` package is not available.
+            If ``regionmask`` is not available.
         """
         if HAS_regionmask:
             if mask_shp is not None:

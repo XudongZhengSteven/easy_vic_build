@@ -2,48 +2,14 @@
 # author: Xudong Zheng
 # email: z786909151@163.com
 
-"""
-Logger - A Python module for configuring and managing logging.
+"""Logging setup utilities used across ``easy_vic_build``.
 
-This module provides a flexible and user-friendly interface to configure logger
-for Python applications. It allows users to dynamically set the logging level,
-format, and output destination (console or file). The module is designed to be
-easy to use while providing advanced customization options.
-
-Functions
----------
-    - `setup_logger`: Configure the logger with user-defined settings.
-
-Usage:
-------
-    1. Call the `setup_logger` to get logger instance.
-    2. Use the `logger` method (logger.info('...'), logger.debug('...')).
-
-Example
--------
-To use the default logger configuration:
-    >>> from Logger import logger
-    >>> logger.info("This is an info message with the default setup.")
-
-To customize the logger configuration:
-    >>> from Logger import setup_logger
-    >>> setup_logger(
-    ...     log_level=logging.DEBUG,
-    ...     log_format="%(asctime)s - %(levelname)s - %(message)s",
-    ...     log_to_file=True,
-    ...     log_file="custom_log.log"
-    ... )
-    >>> logger.debug("This is a debug message with custom configuration.")
-
-Notes
------
-- The default log format is "%(asctime)s - %(levelname)s - %(message)s".
-- If no parameters are passed to `setup_logger`, the default configuration is used.
-
-Dependencies
-------------
-    - `logging` : Python standard library, Provides the core logging functionality.
-
+Public API
+----------
+``setup_logger``
+    Configure and return the module logger.
+``logger``
+    Preconfigured logger instance created at import time.
 """
 
 
@@ -54,40 +20,23 @@ Default_log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
 def setup_logger(log_level=None, log_format=None, log_to_file=None, log_file=None):
     """
-    Configure the logger with user-defined settings.
+    Configure and return the module logger.
 
-    This function allows users to dynamically modify the logger's configuration,
-    including the logging level, format, and output destination (console or file).
-    If no parameters are provided, the default configuration is used.
-
-    Parameters:
-    -----------
+    Parameters
+    ----------
     log_level : int, optional
-        The logging level to set. Default is None (no change).
-
+        Logger level override.
     log_format : str, optional
-        The log format to set. Default is None (no change).
-
+        Formatter pattern. Uses ``Default_log_format`` when omitted.
     log_to_file : bool, optional
-        Whether to log to a file. Default is None (no change).
-
+        If ``True``, also attach a file handler.
     log_file : str, optional
-        If logging to a file, specify the file path. Default is None (no change).
+        Log file path used when ``log_to_file=True``.
 
-    Returns:
-    --------
-    Logging.Logger
+    Returns
+    -------
+    logging.Logger
         The configured logger instance.
-
-    Example:
-    --------
-    To customize the logger configuration:
-        >>> setup_logger(
-        ...     log_level=logging.DEBUG,
-        ...     log_format="%(asctime)s - %(levelname)s - %(message)s",
-        ...     log_to_file=True,
-        ...     log_file="custom_log.log"
-        ... )
     """
     # Get the logger instance
     logger = logging.getLogger(__name__)

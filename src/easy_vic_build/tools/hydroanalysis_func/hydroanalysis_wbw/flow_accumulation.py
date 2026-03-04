@@ -1,30 +1,7 @@
 # code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-""" 
-flow_accumulation - A Python module for calculating flow accumulation from flow direction raster.
-
-This module provides functions for calculating flow accumulation from flow direction raster.
-
-Functions:
-----------
-    - `d8_flowaccumulation`: Calculate D8 flow accumulation from flow direction raster.
-
-Usage:
-------
-    1. Call `d8_flowaccumulation` function with the WhiteboxTools environment and input flow direction raster file.
-
-Example:
---------
-    >>> from hydroanalysis_wbw import d8_flowaccumulation
-    >>> flow_acc = d8_flowaccumulation(wbe, "flow_dir.tif")
-
-Dependencies:
--------------
-    - `whitebox_workflows`: A library that facilitates geospatial processing tasks, such as DEM filling,
-      flow direction, and stream extraction.
-
-"""
+"""Flow-accumulation utilities for D8 flow-direction rasters."""
 
 def d8_flowaccumulation(
     wbe,
@@ -32,7 +9,7 @@ def d8_flowaccumulation(
     output_file="flow_acc.tif",
     **kwargs
 ):
-    """Calculate D8 flow accumulation from flow direction raster.
+    """Calculate D8 flow accumulation from a flow-direction raster.
 
     Computes the number of upstream cells that drain into each cell, representing
     contributing area or flow accumulation.
@@ -43,8 +20,7 @@ def d8_flowaccumulation(
         WhiteboxTools workflow environment instance
         
     flow_direction : `WbRaster`
-        Path to D8 flow direction raster file or WbRaster object. Must use
-        ESRI-style encoding (powers of 2) if esri_pntr=True.
+        D8 flow-direction raster path or ``WbRaster`` object.
         
     output_file : str, optional
         Output file path for flow accumulation raster (default="flow_acc.tif")
@@ -72,30 +48,8 @@ def d8_flowaccumulation(
 
     Returns
     -------
-    flow_acc: `WbRaster`
-        Flow accumulation raster where each cell value represents:
-        - When out_type='cells': Count of upstream cells
-        - When out_type='sca'/'specific': Contributing area in square map units
-
-    Examples
-    --------
-    >>> # Basic flow accumulation calculation
-    >>> flow_acc = d8_flowaccumulation(wbe, "flow_dir.tif")
-
-    >>> # With specific catchment area output
-    >>> flow_acc = d8_flowaccumulation(wbe, "flow_dir.tif",
-    ...                              out_type='sca')
-
-    Notes
-    -----
-    1. Input flow direction must be calculated from a properly conditioned DEM
-       (depressions filled and flats resolved).
-    2. For hydrological applications, 'cells' output is typically used for
-       stream delineation while 'sca' is used for soil moisture modeling.
-    3. Logarithmic transform (log_transform=True) can help visualize large
-       value ranges but should not be used for quantitative analysis.
-    4. Result should be checked for artifacts using visual inspection before
-       use in subsequent analysis.
+    `WbRaster`
+        Flow-accumulation raster written to ``output_file`` and returned.
     """
     # kwargs
     kwargs_ = {"out_type": "cells",

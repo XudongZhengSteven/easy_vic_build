@@ -1,40 +1,7 @@
-# code: utf-8
+﻿# code: utf-8
 # author: Xudong Zheng
 # email: z786909151@163.com
-""" 
-stream_network - A Python module for extracting stream network from flow accumulation data.
-
-This module provides convenience functions for extracting stream network from flow accumulation data.
-
-Functions:
-----------
-    - `d8_streamnetwork`: Extract stream network from flow accumulation data.
-    - `calculate_streamnetwork_threshold`: Calculate threshold for stream extraction using multiple methods.
-    - `threshold_max_ratio`: Calculate stream threshold as a ratio of maximum flow accumulation.
-    - `threshold_percentile`: Calculate stream threshold based on flow accumulation percentile.
-    - `threshold_drainage_area`: Calculate threshold based on minimum drainage area.
-    - `threshold_dynamic_elbow`: Calculate threshold using curvature-based elbow detection.
-    - `threshold_multiscale`: Calculate threshold using multi-scale adaptive approach.
-
-Usage:
-------
-    1. Call `d8_streamnetwork` function with the WhiteboxTools environment and input data.
-    2. Optionally, use `calculate_streamnetwork_threshold` to calculate stream threshold.
-
-Example:
---------
-    >>> from hydroanalysis_wbw import d8_streamnetwork
-    >>> streams = d8_streamnetwork(wbe, flow_acc, flow_direction, filled_dem)
-    
-Dependencies:
--------------
-    - `whitebox_workflows`: A library that facilitates geospatial processing tasks, such as DEM filling,
-      flow direction, and stream extraction.
-    - `numpy`: A library for numerical computing with Python.
-    - `rasterio`: A library for reading and writing raster data.
-    - `..geo_func.format_conversion`: Contains functions for converting raster data to shapefiles.
-
-"""
+"""Stream-network extraction and threshold utilities."""
 
 import rasterio
 import numpy as np
@@ -62,115 +29,57 @@ def d8_streamnetwork(
     snap_dist=0.001,
     esri_pointer=True,
 ):
-    """Extract and analyze D8-based stream network from accumulation and DEM data.
-
-    This function performs a complete stream network extraction workflow including:
-    - Stream raster generation from flow accumulation
-    - Vector conversion and topological analysis
-    - Network repair and feature extraction (confluences, outlets, channel heads)
+    """Extract and analyze a D8-based stream network.
 
     Parameters
     ----------
     wbe : `WbEnvironment`
         WhiteboxTools workflow environment instance.
-        
     flow_acc : `WbRaster`
-        Input flow accumulation raster. Values represent upstream contributing area in number of cells.
-        
+        Flow-accumulation raster or raster object.
     flow_direction : `WbRaster`
-        D8 flow direction raster (path or object). Values should follow WhiteboxTools
-        D8 encoding (0=East, 1=NE, 2=North, etc.).
-        
+        D8 flow-direction raster or raster object.
     filled_dem : `WbRaster`
-        Hydrologically corrected DEM (path or object). Must be depression-filled.
-        
+        Hydrologically conditioned DEM raster or raster object.
     stream_acc_threshold : float, optional
-        Flow accumulation threshold for stream initiation (in number of cells).
-        Default=100.0.
-        
+        Flow-accumulation threshold for stream initiation.
     output_file_stream_raster : str, optional
-        Output path for stream raster (1=stream, 0=non-stream). Default="stream_raster.tif".
-    
-    output_file_stream_raster_link: str, optional
-        Output path for stream raster link. Default="stream_raster_link.tif".
-        
+        Output path for stream raster.
+    output_file_stream_raster_vector : str, optional
+        Output path for vectorized stream raster.
+    output_file_stream_raster_link : str, optional
+        Output path for stream-link raster.
     output_file_stream_vector : str, optional
-        Output path for raw stream vector before repair. Default="stream_vector.shp".
-        
+        Output path for stream vector before topology repair.
     output_file_stream_vector_repaired : str, optional
-        Output path for topologically repaired stream vector. Default="stream_vector_repaired.shp".
-        
+        Output path for repaired stream vector.
     output_file_stream_lines_vector : str, optional
-        Output path for finalized stream lines vector. Default="stream_lines_vector.shp".
-        
+        Output path for stream-line vector.
     output_file_confluences_points_vector : str, optional
-        Output path for confluence points vector. Default="confluences_points_vector.shp".
-        
+        Output path for confluence points vector.
     output_file_outlet_points_vector : str, optional
-        Output path for outlet points vector. Default="outlet_points_vector.shp".
-        
+        Output path for outlet points vector.
     output_file_channel_head_points_vector : str, optional
-        Output path for channel head points vector. Default="channel_head_points_vector.shp".
-        
+        Output path for channel-head points vector.
     kwargs_extract_streams : dict, optional
-        Additional parameters for extract_streams operation. Common options:
-        
-        - zero_background: bool
-            Zero background (default=False)
-
+        Additional keyword arguments passed to ``wbe.extract_streams``.
     kwargs_vector_stream_network_analysis : dict, optional
-        Additional parameters for vector_stream_network_analysis. Common options:
-        
-        - max_ridge_cutting_height: float
-            The maximum ridge-cutting height, in DEM z units (cutting_height) (default=10.0)
-            
+        Additional keyword arguments passed to
+        ``wbe.vector_stream_network_analysis``.
     snap_dist : float, optional
-        Maximum snap distance (in meters) for repairing stream topology. 
-        Recommended: 2-5x DEM resolution. Default=0.001.
-    
-    esri_pointer: bool, optional
-        Whether to use the esri pointer, which should be same as the flow_direction (default=True).
+        Snap distance used in topology repair and vector network analysis.
+    esri_pointer : bool, optional
+        Whether ``flow_direction`` uses ESRI D8 pointer encoding.
 
     Returns
     -------
     tuple
-        Returns a tuple containing:
-        
-        - stream_raster : `WbRaster`
-            Extracted stream raster (binary)
-            
-        - stream_vector : `WbVector`
-            Raw stream vector before repair
-            
-        - repaired_stream_vector : `WbVector`
-            Topologically repaired stream vector
-            
-        - vector_stream_network_analysis_result: tuple
-            Tuple containing (stream_lines_vector, confluences_points_vector,
-            outlet_points_vector, channel_head_points_vector)
+        ``(stream_raster, stream_vector, repaired_stream_vector,
+        vector_stream_network_analysis_result)``.
 
     Notes
     -----
-    1. DEM must be properly hydrologically conditioned (breached/filled) prior to use.
-    2. For small watersheds (<10 km²), consider reducing stream_acc_threshold to 50-80.
-    3. snap_dist should be adjusted based on DEM resolution:
-       - 10m DEM: 20-50m
-       - 30m DEM: 60-150m
-
-    Examples
-    --------
-    >>> # Basic extraction with default parameters
-    >>> results = d8_streamnetwork(wbe, "flow_acc.tif", "flow_dir.tif", "dem_filled.tif")
-
-    >>> # Customized extraction for high-resolution data
-    >>> results = d8_streamnetwork(
-    ...     wbe,
-    ...     "hr_flow_acc.tif",
-    ...     "hr_flow_dir.tif",
-    ...     "hr_dem_filled.tif",
-    ...     stream_acc_threshold=50.0,
-    ...     snap_dist=0.001,
-    ... )
+    ``filled_dem`` should be hydrologically conditioned before use.
     """
     
     # stream raster
@@ -245,103 +154,32 @@ def calculate_streamnetwork_threshold(
     method='hybrid',
     **kwargs                        
 ):
-    """Calculate adaptive threshold for stream extraction using multiple methods.
-
-    This function implements six different approaches for determining optimal
-    flow accumulation thresholds for stream network extraction, including both
-    statistical and physically-based methods. The hybrid method combines all
-    approaches for robust results.
+    """Estimate a stream-extraction threshold from flow accumulation.
 
     Parameters
     ----------
     flow_acc_path : str
-        Path to flow accumulation raster file. Values should represent upstream
-        contributing area in number of cells.
-        
+        Path to the flow-accumulation raster file.
     dem_path : str, optional
-        Path to digital elevation model (DEM) raster file. Required only for
-        'drainage_area' and 'hybrid' methods. Should be hydrologically corrected.
-        
-    method : {'hybrid', 'max_ratio', 'percentile', 'drainage_area', 'dynamic_elbow', 'multi_scale'}, optional
-        Threshold calculation method (default='hybrid'):
-        - 'max_ratio': Uses ratio of maximum flow accumulation value
-        - 'percentile': Uses specified percentile of flow accumulation values
-        - 'drainage_area': Based on minimum drainage area (requires DEM)
-        - 'dynamic_elbow': Automatic curvature-based threshold detection
-        - 'multi_scale': Multi-scale adaptive thresholding
-        - 'hybrid': Weighted combination of all methods (recommended)
-        
+        Path to DEM raster. Required when ``method='drainage_area'``.
+    method : {'hybrid', 'max_ratio', 'percentile', 'drainage_area', 'dynamic_elbow', 'multiscale'}, optional
+        Threshold estimation method.
     **kwargs : dict, optional
-        Method-specific parameters:
-        
-        - max_ratio : float, optional
-            For 'max_ratio' method: ratio of max flow accumulation to use as
-            threshold (default=0.001, range 0.0001-0.1)
-            
-        - percentile : float, optional
-            For 'percentile' method: percentile value to use (default=99.5)
-            
-        - drainage_area_km2 : float, optional
-            For 'drainage_area' method: minimum drainage area in km²
-            (default=0.01)
-            
-        - elbow_sensitivity : float, optional
-            For 'dynamic_elbow' method: sensitivity factor (default=0.1)
-            
-        - scale_levels : list of float, optional
-            For 'multi_scale' method: scale levels as proportions of basin area
-            (default=[0.1, 0.2, 0.3, 0.4, 0.5])
+        Optional method parameters: ``max_ratio``, ``percentile``,
+        ``drainage_area_km2``, ``elbow_sensitivity``, and ``scale_levels``.
 
     Returns
     -------
     float
-        Calculated threshold value in flow accumulation units (cell count).
-        Represents the minimum upstream contributing area required to initiate
-        a stream channel.
+        Stream-extraction threshold in flow-accumulation units.
 
     Raises
     ------
     ValueError
-        If invalid method is specified or required parameters are missing
+        If ``method`` is not supported.
     RuntimeError
-        If flow accumulation data is invalid (no positive values) or
-        DEM is required but not provided
-
-    Notes
-    -----
-    1. For most applications, the 'hybrid' method with default parameters
-       provides the most robust results.
-    2. The 'drainage_area' method requires:
-       - DEM with proper projection (for cell area calculation)
-       - Pre-processing with depression filling/breaching
-    3. Recommended parameter ranges based on DEM resolution:
-       | Resolution | drainage_area_km2 | max_ratio  |
-       |------------|-------------------|-----------|
-       | 1-5m       | 0.001-0.01        | 0.0001-0.005 |
-       | 10-30m     | 0.01-0.1          | 0.001-0.01  |
-       | >30m       | 0.1-1.0           | 0.01-0.05   |
-
-    Examples
-    --------
-    >>> # Hybrid method with default parameters
-    >>> threshold = calculate_streamnetwork_threshold("flow_acc.tif")
-
-    >>> # Drainage area method for high-resolution data
-    >>> threshold = calculate_streamnetwork_threshold(
-    ...     "flow_acc.tif",
-    ...     dem_path="dem_2m.tif",
-    ...     method='drainage_area',
-    ...     drainage_area_km2=0.005
-    ... )
-
-    >>> # Custom hybrid approach with adjusted weights
-    >>> threshold = calculate_streamnetwork_threshold(
-    ...     "flow_acc.tif",
-    ...     dem_path="dem.tif",
-    ...     method='hybrid',
-    ...     percentile=99.7,
-    ...     elbow_sensitivity=0.2
-    ... )
+        If no valid flow-accumulation values are found, or DEM is missing
+        for ``method='drainage_area'``.
     """
     kwargs_ = {
         'max_ratio': 0.001,
@@ -410,26 +248,19 @@ def threshold_max_ratio(
     flow_acc,
     max_ratio
 ):
-    """Calculate stream threshold as a ratio of maximum flow accumulation.
-    
+    """Calculate threshold as a fraction of maximum flow accumulation.
+
     Parameters
     ----------
     flow_acc : `numpy.ndarray`
-        2D array of flow accumulation values (cell counts)
-        
+        Flow-accumulation values.
     max_ratio : float
-        Ratio of maximum flow accumulation to use as threshold (0-1)
-        
+        Ratio applied to the maximum value.
+
     Returns
     -------
     float
-        Threshold value in flow accumulation units (cell count)
-        
-    Examples
-    --------
-    >>> acc = np.array([[1, 5], [10, 100]])
-    >>> threshold_max_ratio(acc, 0.05)
-    5.0  # 100 * 0.05
+        Threshold value.
     """
     return np.max(flow_acc) * max_ratio
 
@@ -437,27 +268,19 @@ def threshold_percentile(
     flow_acc,
     percentile
 ):
-    """Calculate stream threshold based on flow accumulation percentile.
-    
+    """Calculate threshold from a percentile of flow accumulation.
+
     Parameters
     ----------
     flow_acc : `numpy.ndarray`
-        2D array of flow accumulation values (cell counts)
-        
+        Flow-accumulation values.
     percentile : float
-        Percentile value to use (0-100)
-        
+        Percentile value in ``[0, 100]``.
+
     Returns
     -------
     float
-        Threshold value in flow accumulation units (cell count)
-        
-    Notes
-    -----
-    Common percentile values:
-    - 95%: Conservative (extracts more streams)
-    - 99%: Moderate
-    - 99.5%: Aggressive (extracts only major channels)
+        Threshold value.
     """
     return np.percentile(flow_acc, percentile)
 
@@ -468,41 +291,25 @@ def threshold_drainage_area(
     max_ratio=0.1,
     min_cells=30,
 ):
-    """Calculate threshold based on minimum drainage area.
-    
+    """Calculate threshold from a minimum drainage-area constraint.
+
     Parameters
     ----------
     dem_path : str
-        Path to DEM raster file (must have projection info)
-        
+        Path to DEM raster file.
     flow_acc_path : str
-        Path to flow accumulation raster file
-        
+        Path to flow-accumulation raster file.
     drainage_area_km2 : float, optional
-        Minimum drainage area in square kilometers (default=0.1)
-        
+        Minimum drainage area in square kilometers.
     max_ratio : float, optional
-        Maximum ratio of max flow accumulation to use (default=0.1)
-        
+        Upper-limit ratio relative to maximum flow accumulation.
     min_cells : int, optional
-        Minimum cell count threshold (default=30)
-        
+        Lower bound of threshold in cell count.
+
     Returns
     -------
     float
-        Threshold value in flow accumulation units (cell count)
-        
-    Raises
-    ------
-    RuntimeError
-        If DEM or flow accumulation files cannot be read
-        
-    Notes
-    -----
-    The final threshold is constrained by:
-    1. Physical area: drainage_area_km2 / cell_area
-    2. Maximum ratio: max_flow_acc * max_ratio
-    3. Minimum cells: min_cells
+        Threshold value.
     """
     with rasterio.open(dem_path) as dem:
         cell_area_km2 = dem.res[0] * dem.res[1] / 1e6
@@ -523,26 +330,18 @@ def threshold_dynamic_elbow(
     elbow_sensitivity=0.3
 ):
     """Calculate threshold using curvature-based elbow detection.
-    
+
     Parameters
     ----------
     flow_acc : `numpy.ndarray`
-        2D array of flow accumulation values (cell counts)
-        
+        Flow-accumulation values.
     elbow_sensitivity : float, optional
-        Sensitivity factor (0-1) where lower values produce more conservative
-        thresholds (default=0.3)
-        
+        Sensitivity factor applied to the detected elbow value.
+
     Returns
     -------
     float
-        Threshold value in flow accumulation units (cell count)
-        
-    Notes
-    -----
-    1. Applies log-transform to enhance curvature features
-    2. Finds maximum second derivative point (elbow) in distribution
-    3. Applies sensitivity scaling to the detected elbow value
+        Threshold value.
     """
     flow_acc = np.sort(flow_acc[flow_acc > 0])
     if len(flow_acc) == 0:
@@ -563,26 +362,19 @@ def threshold_multiscale(
     flow_acc,
     scale_levels
 ):
-    """Calculate threshold using multi-scale adaptive approach.
-    
+    """Calculate threshold using a multi-scale adaptive approach.
+
     Parameters
     ----------
     flow_acc : `numpy.ndarray`
-        2D array of flow accumulation values (cell counts)
-        
+        Flow-accumulation values.
     scale_levels : list of float
-        Scale levels as proportions (0-1) of basin area to analyze
-        
+        Proportions used to build sub-scale masks.
+
     Returns
     -------
     float
-        Mean threshold across all scales (95th percentile at each scale)
-        
-    Examples
-    --------
-    >>> acc = np.random.randint(0, 1000, (100,100))
-    >>> threshold_multiscale(acc, [0.1, 0.3, 0.5])
-    245.3  # Example output
+        Mean threshold across scales.
     """
     thresholds  = []
     valid_acc = flow_acc[flow_acc > 0]
@@ -602,6 +394,24 @@ def clip_stream_for_basin(
     basin_vector,
     output_file_clipped_stream_vector="clipped_stream_vector.shp",
 ):
+    """Clip stream vectors by a basin polygon and save the clipped output.
+
+    Parameters
+    ----------
+    wbe : WbEnvironment
+        WhiteboxTools workflow environment.
+    stream_vector : str or WbVector
+        Stream layer path or an already loaded stream vector.
+    basin_vector : str or WbVector
+        Basin polygon path or an already loaded basin vector.
+    output_file_clipped_stream_vector : str, optional
+        Output path for clipped stream vectors.
+
+    Returns
+    -------
+    WbVector
+        Clipped stream vector object.
+    """
     if isinstance(stream_vector, str):
         stream_vector = wbe.read_vector(stream_vector)
         
@@ -617,3 +427,10 @@ def clip_stream_for_basin(
     
     return clipped_stream_vector
     
+
+
+
+
+
+
+
