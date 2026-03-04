@@ -1,7 +1,7 @@
-easy\_vic\_build.Evb\_dir\_class
+easy\_vic\_build.tools.utilities
 ================================
 
-.. automodule:: easy_vic_build.Evb_dir_class
+.. automodule:: easy_vic_build.tools.utilities
    :members:
    :undoc-members:
    :show-inheritance:

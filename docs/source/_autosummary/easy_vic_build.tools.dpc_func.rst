@@ -1,7 +1,7 @@
-easy\_vic\_build.Evb\_dir\_class
+easy\_vic\_build.tools.dpc\_func
 ================================
 
-.. automodule:: easy_vic_build.Evb_dir_class
+.. automodule:: easy_vic_build.tools.dpc_func
    :members:
    :undoc-members:
    :show-inheritance:

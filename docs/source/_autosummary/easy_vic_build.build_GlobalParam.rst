@@ -1,7 +1,7 @@
-easy\_vic\_build.build\_RVIC\_Param
+easy\_vic\_build.build\_GlobalParam
 ===================================
 
-.. automodule:: easy_vic_build.build_RVIC_Param
+.. automodule:: easy_vic_build.build_GlobalParam
    :members:
    :undoc-members:
    :show-inheritance:
