@@ -58,6 +58,6 @@ __all__ = [
     "setup_logger",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Xudong Zheng"
 __email__ = "z786909151@163.com"
