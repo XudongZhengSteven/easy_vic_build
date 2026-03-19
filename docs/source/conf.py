@@ -22,8 +22,8 @@ sys.path.insert(0, os.path.abspath("../../src"))
 project = 'easy_vic_build'
 copyright = f'{datetime.now().year}, XudongZheng. Licensed under the MIT License'
 author = 'XudongZheng'
-release = '0.1.0'
-version = '0.1'
+release = '0.2.0'
+version = '0.2'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -2,6 +2,11 @@ easy\_vic\_build.Logger
 =======================
 
 .. automodule:: easy_vic_build.Logger
-   :members:
-   :undoc-members:
-   :show-inheritance:
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      setup_logger
+   

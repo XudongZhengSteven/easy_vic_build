@@ -2,6 +2,12 @@ easy\_vic\_build.calibrate
 ==========================
 
 .. automodule:: easy_vic_build.calibrate
-   :members:
-   :undoc-members:
-   :show-inheritance:
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      NSGAII_VIC_MO
+      NSGAII_VIC_SO
+   
