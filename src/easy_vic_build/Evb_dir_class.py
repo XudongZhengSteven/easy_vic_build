@@ -176,6 +176,10 @@ class Evb_dir:
         self.CalibrateVIC_dir = os.path.join(self._case_dir, "CalibrateVIC")
         check_and_mkdir(self.CalibrateVIC_dir)
         logger.debug(f"CalibrateVIC directory created at: {self.CalibrateVIC_dir}")
+        
+        self.scripts_dir = os.path.join(self._case_dir, "scripts")
+        check_and_mkdir(self.scripts_dir)
+        logger.debug(f"Scripts directory created at: {self.scripts_dir}")
 
         # Set paths for specific files
         self._dpc_VIC_level0_path = os.path.join(self.dpcFile_dir, "dpc_VIC_level0.pkl")
