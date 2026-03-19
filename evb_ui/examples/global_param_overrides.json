@@ -1,0 +1,24 @@
+{
+  "Simulation": {
+    "MODEL_STEPS_PER_DAY": "1",
+    "SNOW_STEPS_PER_DAY": "24",
+    "RUNOFF_STEPS_PER_DAY": "24",
+    "STARTYEAR": "2003",
+    "STARTMONTH": "1",
+    "STARTDAY": "1",
+    "ENDYEAR": "2018",
+    "ENDMONTH": "12",
+    "ENDDAY": "31",
+    "OUT_TIME_UNITS": "DAYS"
+  },
+  "Output": {
+    "AGGFREQ": "NDAYS   1"
+  },
+  "OUTVAR1": {
+    "OUTVAR": [
+      "OUT_RUNOFF",
+      "OUT_BASEFLOW",
+      "OUT_DISCHARGE"
+    ]
+  }
+}
